@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e89743281d320348811183e39d21313, type: 3}
+  m_Name: John 2
+  m_EditorClassIdentifier: 
+  sections:
+  - dialogue:
+    - "Jo, ist das Wetter nicht sch\xF6n?"
+    battleAfterDialogue: 0
+    endAfterDialogue: 0
+    branchPoint:
+      question: Was machst du hier?
+      answers:
+      - answerLabel: Spazieren
+        nextElement: 1
+      - answerLabel: Keine Ahnung
+        nextElement: 2
+  - dialogue:
+    - "Lass k\xE4mpfen!"
+    battleAfterDialogue: 1
+    endAfterDialogue: 0
+    branchPoint:
+      question: 
+      answers:
+      - answerLabel: 
+        nextElement: 0
+  - dialogue:
+    - Achso
+    battleAfterDialogue: 0
+    endAfterDialogue: 1
+    branchPoint:
+      question: 
+      answers:
+      - answerLabel: 
+        nextElement: 0
