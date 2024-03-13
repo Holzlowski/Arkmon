@@ -6,13 +6,18 @@ public class Unit : MonoBehaviour
     private const int ACTION_POINTS_MAX = 3;
 
     public static event EventHandler OnAnyActionPointsChanged;
+    public static event EventHandler OnAttackUISwitch;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
 
     [SerializeField] private bool isEnemy;
+    [SerializeField] private bool isInAttackSelection = false;
 
     private GridPosition gridPosition;
     private HealthSystem healthSystem;
+
+    [SerializeField] private BaseAction[] basicActionArray;
+    [SerializeField] private BaseAction[] attacks;
     private BaseAction[] baseActionArray;
     private int actionPoints = ACTION_POINTS_MAX;
 
@@ -72,7 +77,27 @@ public class Unit : MonoBehaviour
 
     public BaseAction[] GetBaseActionArray()
     {
-        return baseActionArray;
+        if (isEnemy)
+        {
+            return baseActionArray;
+        }
+        else if (isInAttackSelection)
+        {
+            return attacks;
+        }
+        else
+        {
+            return basicActionArray;
+        }
+
+    }
+
+    public void SwitchAttacksUI()
+    {
+        isInAttackSelection = !isInAttackSelection;
+        Debug.Log(isInAttackSelection);
+
+        OnAttackUISwitch?.Invoke(this, EventArgs.Empty);
     }
 
     public bool IsEnemy()

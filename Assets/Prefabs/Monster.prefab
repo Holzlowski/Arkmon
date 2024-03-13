@@ -379,13 +379,13 @@ GameObject:
   - component: {fileID: 4314357635618093357}
   - component: {fileID: 6543595598372907330}
   - component: {fileID: 4314357635618093356}
-  - component: {fileID: 4764012042525587421}
-  - component: {fileID: 1984490745}
+  - component: {fileID: 4490974729535221579}
   - component: {fileID: 8718131490978425275}
   - component: {fileID: 277091576300312845}
-  - component: {fileID: 4490974729535221579}
-  - component: {fileID: -704751755768727363}
+  - component: {fileID: 1984490745}
   - component: {fileID: -5667852141389548557}
+  - component: {fileID: -704751755768727363}
+  - component: {fileID: 4764012042525587421}
   - component: {fileID: -982743487791216345}
   - component: {fileID: 3481143620044879855}
   m_Layer: 6
@@ -447,7 +447,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isEnemy: 0
---- !u!114 &4764012042525587421
+  isInAttackSelection: 0
+  basicActionArray:
+  - {fileID: 4764012042525587421}
+  - {fileID: -982743487791216345}
+  - {fileID: 3481143620044879855}
+  attacks:
+  - {fileID: 1984490745}
+  - {fileID: -5667852141389548557}
+  - {fileID: -704751755768727363}
+--- !u!114 &4490974729535221579
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -456,27 +465,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4314357635618093355}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12944a5ba30f435409eed513aa9b2019, type: 3}
+  m_Script: {fileID: 11500000, guid: 38d07191b262ade43b3b0e7157f9ce44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
-  rotationSpeed: 10
-  maxMoveDistance: 4
---- !u!114 &1984490745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c81f8045a134e584496d7b4fc572828a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  obstaclesLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
+  ragdollPrefab: {fileID: 6459509491820056771, guid: 9ed608bb4658c144198bfe5a8ed136c2,
+    type: 3}
+  originalRagdollRootBone: {fileID: 0}
 --- !u!114 &8718131490978425275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -508,7 +502,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
---- !u!114 &4490974729535221579
+--- !u!114 &1984490745
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -517,12 +511,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 4314357635618093355}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38d07191b262ade43b3b0e7157f9ce44, type: 3}
+  m_Script: {fileID: 11500000, guid: c81f8045a134e584496d7b4fc572828a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ragdollPrefab: {fileID: 6459509491820056771, guid: 9ed608bb4658c144198bfe5a8ed136c2,
-    type: 3}
-  originalRagdollRootBone: {fileID: 0}
+  obstaclesLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+--- !u!114 &-5667852141389548557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4314357635618093355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 947903b57b219dc489e18eed275b673e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-704751755768727363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -537,7 +543,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grenadeProjectilePrefab: {fileID: 3664617654537922735, guid: dfd96fd3d651ec64986b038bbb5cc816,
     type: 3}
---- !u!114 &-5667852141389548557
+--- !u!114 &4764012042525587421
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -546,9 +552,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4314357635618093355}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 947903b57b219dc489e18eed275b673e, type: 3}
+  m_Script: {fileID: 11500000, guid: 12944a5ba30f435409eed513aa9b2019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 4
+  rotationSpeed: 10
+  maxMoveDistance: 4
 --- !u!114 &-982743487791216345
 MonoBehaviour:
   m_ObjectHideFlags: 0

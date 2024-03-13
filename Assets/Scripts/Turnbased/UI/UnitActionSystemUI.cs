@@ -7,6 +7,7 @@ public class UnitActionSystemUI : MonoBehaviour
     [SerializeField] private Transform actionButtonPrefab;
     [SerializeField] private Transform actionButtonContainerTransform;
     [SerializeField] private TextMeshProUGUI actionPointsText;
+    [SerializeField] private Transform attacksUISwitchButtonPrefab;
 
 
     private List<ActionButtonUI> actionButtonUIList;
@@ -23,11 +24,13 @@ public class UnitActionSystemUI : MonoBehaviour
         UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
+        Unit.OnAttackUISwitch += Unit_OnAttackUISwitch;
 
         UpdateActionPoints();
         CreateUnitActionButton();
         UpdateSelectedVisual();
     }
+
     private void CreateUnitActionButton()
     {
         foreach (Transform buttonTransform in actionButtonContainerTransform)
@@ -38,6 +41,8 @@ public class UnitActionSystemUI : MonoBehaviour
         actionButtonUIList.Clear();
 
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+
+        Transform attacksUISwitchButton = Instantiate(attacksUISwitchButtonPrefab, actionButtonContainerTransform);
 
         foreach (BaseAction baseAction in selectedUnit.GetBaseActionArray())
         {
@@ -74,6 +79,12 @@ public class UnitActionSystemUI : MonoBehaviour
     private void Unit_OnAnyActionPointsChanged(object sender, EventArgs e)
     {
         UpdateActionPoints();
+    }
+
+    private void Unit_OnAttackUISwitch(object sender, EventArgs e)
+    {
+        CreateUnitActionButton();
+        UpdateSelectedVisual();
     }
 
     private void UpdateSelectedVisual()
