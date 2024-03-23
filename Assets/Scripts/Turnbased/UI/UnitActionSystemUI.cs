@@ -5,7 +5,6 @@ using UnityEngine;
 public class UnitActionSystemUI : MonoBehaviour
 {
     [SerializeField] private Transform actionButtonPrefab;
-    [SerializeField] private Transform actionButtonContainerPrefab;
     [SerializeField] private Transform actionButtonContainerTransform;
     [SerializeField] private TextMeshProUGUI actionPointsText;
     [SerializeField] private Transform attacksUISwitchButtonPrefab;
@@ -39,7 +38,7 @@ public class UnitActionSystemUI : MonoBehaviour
         {
             //Debug.LogError("actionButtonContainerTransform is null!");
             //return;
-            Instantiate(actionButtonContainerPrefab, transform);
+            //Instantiate(actionButtonContainerPrefab, transform);
         }
 
         foreach (Transform buttonTransform in actionButtonContainerTransform)
@@ -109,5 +108,15 @@ public class UnitActionSystemUI : MonoBehaviour
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
 
         actionPointsText.text = "Action Points: " + selectedUnit.GetActionPoints();
+    }
+
+    private void OnDestroy()
+    {
+        UnitActionSystem.Instance.OnSelectedUnitChange -= UnitActionSystem_OnSelectedUnitChanged;
+        UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
+        UnitActionSystem.Instance.OnActionStarted -= UnitActionSystem_OnActionStarted;
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
+        Unit.OnAttackUISwitch -= Unit_OnAttackUISwitch;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UnitManager : MonoBehaviour
 {
@@ -48,8 +49,16 @@ public class UnitManager : MonoBehaviour
         // Warte 1 Sekunde
         yield return new WaitForSeconds(1f);
 
-        // Rufe die LoadSceneBeforeBattle-Funktion auf
-        SceneLoadManager.instance.LoadSceneBeforeBattle();
+        if (SceneLoadManager.instance != null)
+        {
+            // Rufe die LoadSceneBeforeBattle-Funktion auf
+            SceneLoadManager.instance.LoadSceneBeforeBattle();
+        }
+        else
+        {
+            SceneManager.LoadScene(0);
+        }
+
 
         // Setze hasLoadedScene auf true, um sicherzustellen, dass die Funktion nur einmal aufgerufen wird
         hasLoadedScene = true;
