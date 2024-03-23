@@ -58,7 +58,7 @@ public class UnitAnimator : MonoBehaviour
 
     private void ShootAction_OnShooting(object sender, ShootAction.OnShootEventArgs e)
     {
-        animator.SetTrigger("Shoot");
+        //animator.SetTrigger("Shoot");
 
         Transform bulletProjectileTransform =
             Instantiate(bulletProjectilePrefab, shootPointTransform.position, Quaternion.identity);

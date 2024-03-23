@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class UnitManager : MonoBehaviour
     private List<Unit> unitList;
     private List<Unit> friendlyUnitList;
     private List<Unit> enemyUnitList;
+
+    private bool hasLoadedScene = false;
 
     private void Awake()
     {
@@ -29,6 +32,27 @@ public class UnitManager : MonoBehaviour
 
         Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
         Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
+    }
+
+
+    private void Update()
+    {
+        if (enemyUnitList.Count <= 0 && !hasLoadedScene)
+        {
+            StartCoroutine(LoadSceneAfterDelay());
+        }
+    }
+
+    private IEnumerator LoadSceneAfterDelay()
+    {
+        // Warte 1 Sekunde
+        yield return new WaitForSeconds(1f);
+
+        // Rufe die LoadSceneBeforeBattle-Funktion auf
+        SceneLoadManager.instance.LoadSceneBeforeBattle();
+
+        // Setze hasLoadedScene auf true, um sicherzustellen, dass die Funktion nur einmal aufgerufen wird
+        hasLoadedScene = true;
     }
 
     private void Unit_OnAnyUnitSpawned(object sender, EventArgs e)

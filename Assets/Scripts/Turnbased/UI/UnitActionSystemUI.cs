@@ -5,6 +5,7 @@ using UnityEngine;
 public class UnitActionSystemUI : MonoBehaviour
 {
     [SerializeField] private Transform actionButtonPrefab;
+    [SerializeField] private Transform actionButtonContainerPrefab;
     [SerializeField] private Transform actionButtonContainerTransform;
     [SerializeField] private TextMeshProUGUI actionPointsText;
     [SerializeField] private Transform attacksUISwitchButtonPrefab;
@@ -33,6 +34,14 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void CreateUnitActionButton()
     {
+        // Überprüfe, ob actionButtonContainerTransform gültig ist
+        if (actionButtonContainerTransform == null)
+        {
+            //Debug.LogError("actionButtonContainerTransform is null!");
+            //return;
+            Instantiate(actionButtonContainerPrefab, transform);
+        }
+
         foreach (Transform buttonTransform in actionButtonContainerTransform)
         {
             Destroy(buttonTransform.gameObject);
