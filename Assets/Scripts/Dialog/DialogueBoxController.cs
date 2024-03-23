@@ -99,6 +99,7 @@ public class DialogueBoxController : MonoBehaviour
 
             // Lade die Kampfszene
             SceneManager.LoadScene(battleSceneName);
+            SoundManager.instance.PlayMusic(1);
             yield break;
         }
 

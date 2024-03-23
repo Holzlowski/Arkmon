@@ -398,7 +398,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionButtonPrefab: {fileID: 2261865208129496900, guid: e264c64ee646c8f4db2ec1ccf3fda6e7,
     type: 3}
-  actionButtonContainerPrefab: {fileID: 0}
   actionButtonContainerTransform: {fileID: 1719443728}
   actionPointsText: {fileID: 1165020851}
   attacksUISwitchButtonPrefab: {fileID: 2261865208129496900, guid: cbd051b28b3e5c04aa19a36ea32ab362,
@@ -1075,6 +1074,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 277091576300312845, guid: 4b7b179e37101604789bfb54b9b2c886,
+        type: 3}
+      propertyPath: health
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 4314357635618093355, guid: 4b7b179e37101604789bfb54b9b2c886,
         type: 3}
       propertyPath: m_Name
@@ -1896,7 +1900,7 @@ Transform:
   m_GameObject: {fileID: 858021344}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18, y: 0, z: 20.58}
+  m_LocalPosition: {x: 11.96, y: 0, z: 10.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4610,7 +4614,7 @@ PrefabInstance:
     - target: {fileID: 4060261453532476221, guid: 9e1e6146a6dde0a499f04cb2976973dc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.08
+      value: 17.95
       objectReference: {fileID: 0}
     - target: {fileID: 4060261453532476221, guid: 9e1e6146a6dde0a499f04cb2976973dc,
         type: 3}
@@ -4620,7 +4624,7 @@ PrefabInstance:
     - target: {fileID: 4060261453532476221, guid: 9e1e6146a6dde0a499f04cb2976973dc,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19.87
+      value: 9.85
       objectReference: {fileID: 0}
     - target: {fileID: 4060261453532476221, guid: 9e1e6146a6dde0a499f04cb2976973dc,
         type: 3}
@@ -4683,7 +4687,7 @@ PrefabInstance:
     - target: {fileID: 6103736731089504343, guid: ce195f8b53058b54280a88ae21f1b198,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.018
+      value: 10.01
       objectReference: {fileID: 0}
     - target: {fileID: 6103736731089504343, guid: ce195f8b53058b54280a88ae21f1b198,
         type: 3}
@@ -4693,7 +4697,7 @@ PrefabInstance:
     - target: {fileID: 6103736731089504343, guid: ce195f8b53058b54280a88ae21f1b198,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19.81
+      value: 11.87
       objectReference: {fileID: 0}
     - target: {fileID: 6103736731089504343, guid: ce195f8b53058b54280a88ae21f1b198,
         type: 3}
