@@ -24,15 +24,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        HandleMovement();
-        HandleJump();
-        ApplyFallMultiplier();
         if (Input.GetKeyUp(KeyCode.E))
         {
             TryInteract();
         }
         ToggleObject();
+    }
 
+    private void FixedUpdate()
+    {
+        HandleMovement();
+        HandleJump();
+        ApplyFallMultiplier();
     }
 
     private void TryInteract()
