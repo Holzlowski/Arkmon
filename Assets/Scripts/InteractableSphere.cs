@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InteractableSphere : MonoBehaviour, IInteractableArk
+public class InteractableSphere : MonoBehaviour, IInteractableAsPlayer
 {
     [SerializeField] Material blue;
     [SerializeField] Material red;
@@ -19,7 +19,7 @@ public class InteractableSphere : MonoBehaviour, IInteractableArk
         }
     }
 
-    Vector3 IInteractableArk.GetTransform()
+    Vector3 IInteractableAsPlayer.GetTransform()
     {
         return transform.position;
     }

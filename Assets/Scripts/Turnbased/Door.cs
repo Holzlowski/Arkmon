@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Door : MonoBehaviour, IInteractable
+public class Door : MonoBehaviour, IInteractableInBattle
 {
     [SerializeField] private bool isOpen;
 

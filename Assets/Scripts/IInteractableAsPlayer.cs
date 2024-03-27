@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IInteractableArk
+public interface IInteractableAsPlayer
 {
     // Diese Methode wird aufgerufen, wenn der Spieler mit dem Objekt interagiert
     void InteractWithPlayer();

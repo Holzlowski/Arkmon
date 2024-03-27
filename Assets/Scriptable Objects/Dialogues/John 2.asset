@@ -14,18 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sections:
   - dialogue:
-    - "Jo, ist das Wetter nicht sch\xF6n?"
+    - "Wie ich sehe, seid ihr ein Arktr\xE4ger mein Herr."
+    - "Dank der Sphere w\xE4re es mir eine Ehre euch auf eurem Weg zu pr\xFCfen."
     battleAfterDialogue: 0
     endAfterDialogue: 0
     branchPoint:
-      question: Was machst du hier?
+      question: "W\xE4rt ihr bereit gegen mich anzutreten?"
       answers:
-      - answerLabel: Spazieren
+      - answerLabel: Ja
         nextElement: 1
-      - answerLabel: Keine Ahnung
+      - answerLabel: Nein
         nextElement: 2
   - dialogue:
-    - "Lass k\xE4mpfen!"
+    - Macht euch bereit!
     battleAfterDialogue: 1
     endAfterDialogue: 0
     branchPoint:
@@ -34,7 +35,8 @@ MonoBehaviour:
       - answerLabel: 
         nextElement: 0
   - dialogue:
-    - Achso
+    - Verliert nicht den Mut.
+    - Ich werde hier geduldig auf euch warten.
     battleAfterDialogue: 0
     endAfterDialogue: 1
     branchPoint:

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NPC : MonoBehaviour, IInteractableArk
+public class NPC : MonoBehaviour, IInteractableAsPlayer
 {
     [SerializeField] bool firstInteraction = true;
     [SerializeField] int startSection;
@@ -41,7 +41,7 @@ public class NPC : MonoBehaviour, IInteractableArk
     }
 
 
-    Vector3 IInteractableArk.GetTransform()
+    Vector3 IInteractableAsPlayer.GetTransform()
     {
         return transform.position;
     }

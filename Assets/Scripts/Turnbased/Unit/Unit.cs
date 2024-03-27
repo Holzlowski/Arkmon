@@ -95,9 +95,13 @@ public class Unit : MonoBehaviour
     public void SwitchAttacksUI()
     {
         isInAttackSelection = !isInAttackSelection;
-        Debug.Log(isInAttackSelection);
 
         OnAttackUISwitch?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool GetIsInAttackSelection()
+    {
+        return isInAttackSelection;
     }
 
     public bool IsEnemy()

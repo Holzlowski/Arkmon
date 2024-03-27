@@ -1,6 +1,6 @@
 using System;
 
-public interface IInteractable
+public interface IInteractableInBattle
 {
     void Interact(Action onInteractionComplete);
 }

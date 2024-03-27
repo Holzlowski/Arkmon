@@ -46,19 +46,19 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            List<IInteractableArk> interactableArks = new List<IInteractableArk>();
+            List<IInteractableAsPlayer> interactableArks = new List<IInteractableAsPlayer>();
             Collider[] colliderArray = Physics.OverlapSphere(transform.position, interacRange);
             foreach (Collider collider in colliderArray)
             {
-                if (collider.TryGetComponent(out IInteractableArk interactable))
+                if (collider.TryGetComponent(out IInteractableAsPlayer interactable))
                 {
                     //interactable.InteractWithPlayer();
                     interactableArks.Add(interactable);
                 }
             }
 
-            IInteractableArk closestInteractable = null;
-            foreach (IInteractableArk interactable in interactableArks)
+            IInteractableAsPlayer closestInteractable = null;
+            foreach (IInteractableAsPlayer interactable in interactableArks)
             {
                 if (closestInteractable == null)
                 {
@@ -86,8 +86,6 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Nix zum interagieren hier");
             }
         }
-
-
     }
 
     private void ToggleObject()
