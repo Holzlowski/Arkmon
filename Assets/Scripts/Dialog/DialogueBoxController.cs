@@ -13,6 +13,8 @@ public class DialogueBoxController : MonoBehaviour
     [SerializeField] GameObject dialogueBox;
     [SerializeField] GameObject answerBox;
     [SerializeField] Button[] answerObjects;
+    [SerializeField] string battleSceneName;
+
 
     public static event Action OnDialogueStarted;
     public static event Action OnDialogueEnded;
@@ -44,14 +46,14 @@ public class DialogueBoxController : MonoBehaviour
         }
     }
 
-    public void StartDialogue(DialogueTree dialogueTree, int startSection, string name)
+    public void StartDialogue(DialogueTree dialogueTree, int startSection, string name, string battleSceneName)
     {
         ResetBox();
         nameText.text = name;
         dialogueBox.SetActive(true);
         OnDialogueStarted?.Invoke();
         StartCoroutine(RunDialogue(dialogueTree, startSection));
-
+        this.battleSceneName = battleSceneName;
     }
 
 
@@ -91,8 +93,13 @@ public class DialogueBoxController : MonoBehaviour
             OnDialogueEnded?.Invoke();
             dialogueBox.SetActive(false);
 
+
+            Vector3 playerTransform = GameObject.FindWithTag("Player").gameObject.transform.position;
+            SceneLoadManager.instance.SavePlayerTransform(playerTransform);
+
             // Lade die Kampfszene
-            SceneManager.LoadScene("BattleScene");
+            SceneManager.LoadScene(battleSceneName);
+            //SoundManager.instance.PlayMusic(1);
             yield break;
         }
 

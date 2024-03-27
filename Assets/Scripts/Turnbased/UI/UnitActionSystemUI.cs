@@ -33,6 +33,14 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void CreateUnitActionButton()
     {
+        // Überprüfe, ob actionButtonContainerTransform gültig ist
+        if (actionButtonContainerTransform == null)
+        {
+            //Debug.LogError("actionButtonContainerTransform is null!");
+            //return;
+            //Instantiate(actionButtonContainerPrefab, transform);
+        }
+
         foreach (Transform buttonTransform in actionButtonContainerTransform)
         {
             Destroy(buttonTransform.gameObject);
@@ -100,5 +108,15 @@ public class UnitActionSystemUI : MonoBehaviour
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
 
         actionPointsText.text = "Action Points: " + selectedUnit.GetActionPoints();
+    }
+
+    private void OnDestroy()
+    {
+        UnitActionSystem.Instance.OnSelectedUnitChange -= UnitActionSystem_OnSelectedUnitChanged;
+        UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
+        UnitActionSystem.Instance.OnActionStarted -= UnitActionSystem_OnActionStarted;
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
+        Unit.OnAttackUISwitch -= Unit_OnAttackUISwitch;
     }
 }

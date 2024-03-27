@@ -1,11 +1,14 @@
 using UnityEngine;
 
-public class NPC : MonoBehaviour, IInteractableArk
+public class NPC : MonoBehaviour, IInteractableAsPlayer
 {
     [SerializeField] bool firstInteraction = true;
     [SerializeField] int startSection;
+    [SerializeField] string battleSceneName;
     public string npcName;
     public DialogueTree dialogueTree;
+
+
     public int DialogueStartPosition
     {
         get
@@ -29,11 +32,16 @@ public class NPC : MonoBehaviour, IInteractableArk
 
     public void InteractWithPlayer()
     {
-        DialogueBoxController.instance.StartDialogue(dialogueTree, startSection, npcName);
+        DialogueBoxController.instance.StartDialogue(dialogueTree, startSection, npcName, battleSceneName);
+    }
+
+    public string GetBattleSceneName()
+    {
+        return battleSceneName;
     }
 
 
-    Vector3 IInteractableArk.GetTransform()
+    Vector3 IInteractableAsPlayer.GetTransform()
     {
         return transform.position;
     }

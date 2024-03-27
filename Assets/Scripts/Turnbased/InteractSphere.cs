@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class InteractSphere : MonoBehaviour, IInteractable
+public class InteractSphere : MonoBehaviour, IInteractableInBattle
 {
     [SerializeField] private Material greenMaterial;
     [SerializeField] private Material redMaterial;
