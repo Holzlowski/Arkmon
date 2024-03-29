@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-//abstract, damit keine Instanzen von BaseAction erzeugt werden können
+//abstract, damit keine Instanzen von BaseAction erzeugt werden kï¿½nnen
 public abstract class BaseAction : MonoBehaviour
 {
 
     public static event EventHandler OnAnyActionStarted;
     public static event EventHandler OnAnyActionCompleted;
 
-    //protected, kann nicht von außen zugegriffen werden, aber von Klassen, die von dieser vererben
+    //protected, kann nicht von auï¿½en zugegriffen werden, aber von Klassen, die von dieser vererben
     protected Unit unit;
     protected bool isActive;
     //delegates sind Funktionen, die in Variabeln gespeichert sind
@@ -25,7 +25,7 @@ public abstract class BaseAction : MonoBehaviour
 
     public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
 
-    public virtual bool isValidActionGridPosition(GridPosition gridPosition)
+    public virtual bool IsValidActionGridPosition(GridPosition gridPosition)
     {
         List<GridPosition> validGridPositionList = GetValidActionGridPositionList();
         return validGridPositionList.Contains(gridPosition);
@@ -80,8 +80,6 @@ public abstract class BaseAction : MonoBehaviour
             //No possible Enemmy AI Actions
             return null;
         }
-
-
     }
 
     public abstract EnemyAIAction GetEnemyAIAction(GridPosition gridPosition);

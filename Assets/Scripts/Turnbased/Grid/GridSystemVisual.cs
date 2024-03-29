@@ -64,7 +64,7 @@ public class GridSystemVisual : MonoBehaviour
         UpdateGridVisual();
     }
 
-    public void HideAllGridPosition()
+    public void HideAllGridPositions()
     {
         foreach (GridSystemVisualSingle gridSystemVisual in gridSystemVisualSingleArray)
         {
@@ -128,7 +128,7 @@ public class GridSystemVisual : MonoBehaviour
 
     private void UpdateGridVisual()
     {
-        HideAllGridPosition();
+        HideAllGridPositions();
 
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();

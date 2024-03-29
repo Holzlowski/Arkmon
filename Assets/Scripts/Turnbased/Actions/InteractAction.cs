@@ -45,7 +45,7 @@ public class InteractAction : BaseAction
                     continue;
                 }
 
-                IInteractableInBattle interactable = LevelGrid.Instance.GetInteractableAtGriodPosition(testGridPosition);
+                IInteractableInBattle interactable = LevelGrid.Instance.GetInteractableAtGridPosition(testGridPosition);
 
                 if (interactable == null)
                 {
@@ -61,7 +61,7 @@ public class InteractAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        IInteractableInBattle interactable = LevelGrid.Instance.GetInteractableAtGriodPosition(gridPosition);
+        IInteractableInBattle interactable = LevelGrid.Instance.GetInteractableAtGridPosition(gridPosition);
         interactable.Interact(OnInteractComplete);
         ActionStart(onActionComplete);
     }

@@ -464,7 +464,6 @@ GameObject:
   - component: {fileID: 6543595598372907330}
   - component: {fileID: 4314357635618093356}
   - component: {fileID: 4764012042525587421}
-  - component: {fileID: 6109096062598199554}
   - component: {fileID: 1984490745}
   - component: {fileID: 8718131490978425275}
   - component: {fileID: 277091576300312845}
@@ -551,18 +550,6 @@ MonoBehaviour:
   moveSpeed: 4
   rotationSpeed: 10
   maxMoveDistance: 4
---- !u!114 &6109096062598199554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 287e29a803bdb4043aa4baa678435770, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1984490745
 MonoBehaviour:
   m_ObjectHideFlags: 0
