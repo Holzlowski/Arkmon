@@ -35,7 +35,7 @@ public class SwordAction : BaseAction
         {
             case State.SwingingSwordBeforeHit:
                 Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
-                transform.forward = Vector3.Lerp(transform.forward, aimDirection, rotationSpeed * Time.deltaTime);
+                //transform.forward = Vector3.Lerp(transform.forward, aimDirection, rotationSpeed * Time.deltaTime);
 
                 break;
             case State.SwingingSwordAfterHit:
