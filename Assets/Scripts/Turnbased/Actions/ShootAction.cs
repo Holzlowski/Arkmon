@@ -155,7 +155,7 @@ public class ShootAction : BaseAction
                 Vector3 shootDirection = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
 
 
-                float unitShoulderHeight = 1.7f;
+                float unitShoulderHeight = 0.5f;
                 if (Physics.Raycast(unitWorldPosition + Vector3.up * unitShoulderHeight,
                     shootDirection,
                     Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition()),

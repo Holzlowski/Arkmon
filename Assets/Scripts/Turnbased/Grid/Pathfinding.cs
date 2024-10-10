@@ -6,7 +6,7 @@ public class Pathfinding : MonoBehaviour
     public static Pathfinding Instance { get; private set; }
 
     private const int MOVE_STRAIGHT_COST = 10;
-    //Satz des Pytagoras
+    //Satz des Pyhtagoras
     private const int MOVE_DIAGONAL_COST = 14;
     [SerializeField] private Transform gridDebugObjectPrefab;
     [SerializeField] private LayerMask obstaclesLayerMask;
@@ -70,7 +70,7 @@ public class Pathfinding : MonoBehaviour
 
         for (int x = 0; x < gridSystem.GetWidth(); x++)
         {
-            for (int z = 0; z < gridSystem.GetHeigth(); z++)
+            for (int z = 0; z < gridSystem.GetHeight(); z++)
             {
                 GridPosition gridPosition = new GridPosition(x, z);
                 PathNode pathNode = gridSystem.GetGridObject(gridPosition);
@@ -177,7 +177,7 @@ public class Pathfinding : MonoBehaviour
             //Left
             neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z + 0));
 
-            if (gridPosition.z + 1 < gridSystem.GetHeigth())
+            if (gridPosition.z + 1 < gridSystem.GetHeight())
             {
                 //Left UP
                 neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z + 1));
@@ -193,7 +193,7 @@ public class Pathfinding : MonoBehaviour
         {
             //Right
             neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z + 0));
-            if (gridPosition.z + 1 < gridSystem.GetHeigth())
+            if (gridPosition.z + 1 < gridSystem.GetHeight())
             {
                 //Right Up
                 neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z + 1));
@@ -205,7 +205,7 @@ public class Pathfinding : MonoBehaviour
             }
         }
 
-        if (gridPosition.z + 1 < gridSystem.GetHeigth())
+        if (gridPosition.z + 1 < gridSystem.GetHeight())
         {
             //Up
             neighbourList.Add(GetNode(gridPosition.x + 0, gridPosition.z + 1));

@@ -33,14 +33,6 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void CreateUnitActionButton()
     {
-        // Überprüfe, ob actionButtonContainerTransform gültig ist
-        if (actionButtonContainerTransform == null)
-        {
-            //Debug.LogError("actionButtonContainerTransform is null!");
-            //return;
-            //Instantiate(actionButtonContainerPrefab, transform);
-        }
-
         foreach (Transform buttonTransform in actionButtonContainerTransform)
         {
             Destroy(buttonTransform.gameObject);
