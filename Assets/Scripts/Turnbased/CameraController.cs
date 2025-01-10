@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     private CinemachineTransposer cinemachineTransposer;
 
     private Vector3 targetFollowOffset;
-    float moveSpeed = 10F;
+    float moveSpeed = 20;
     float rotationSpeed = 100f;
     float zoomSpeed = 5f;
 
