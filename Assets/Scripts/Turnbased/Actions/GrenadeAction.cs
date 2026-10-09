@@ -7,6 +7,7 @@ public class GrenadeAction : BaseAction
     [SerializeField] private Transform grenadeProjectilePrefab;
 
     private int maxThrowDistance = 7;
+    private int MaxThrowDistance => Definition != null ? Definition.range : maxThrowDistance;
 
     private void Update()
     {
@@ -35,9 +36,9 @@ public class GrenadeAction : BaseAction
         List<GridPosition> validGridPositionList = new List<GridPosition>();
         GridPosition unitGridPosition = unit.GetGridPosition();
 
-        for (int x = -maxThrowDistance; x <= maxThrowDistance; x++)
+        for (int x = -MaxThrowDistance; x <= MaxThrowDistance; x++)
         {
-            for (int z = -maxThrowDistance; z <= maxThrowDistance; z++)
+            for (int z = -MaxThrowDistance; z <= MaxThrowDistance; z++)
             {
                 GridPosition offsetGridPostion = new GridPosition(x, z);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPostion;
@@ -47,9 +48,9 @@ public class GrenadeAction : BaseAction
                     continue;
                 }
 
-                //für eine eher kreisförmige Reichweite
+                //fÃ¼r eine eher kreisfÃ¶rmige Reichweite
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                if (testDistance > maxThrowDistance)
+                if (testDistance > MaxThrowDistance)
                 {
                     continue;
                 }
@@ -64,7 +65,7 @@ public class GrenadeAction : BaseAction
     {
         Transform grenadeProjectileTransform = Instantiate(grenadeProjectilePrefab, unit.GetWorldPosition(), Quaternion.identity);
         GrenadeProjectile grenadeProjectile = grenadeProjectileTransform.GetComponent<GrenadeProjectile>();
-        grenadeProjectile.Setup(gridPosition, OnGrenadeBehaviourComplete);
+        grenadeProjectile.Setup(gridPosition, OnGrenadeBehaviourComplete, Definition != null ? Definition.damage : 30);
 
         ActionStart(onActionComplete);
     }

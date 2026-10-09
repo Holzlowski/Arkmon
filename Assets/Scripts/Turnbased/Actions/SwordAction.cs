@@ -21,6 +21,7 @@ public class SwordAction : BaseAction
     private float stateTimer;
     private float rotationSpeed = 10f;
     private int maxSwordDistance = 1;
+    private int MaxSwordDistance => Definition != null ? Definition.range : maxSwordDistance;
 
     private void Update()
     {
@@ -63,7 +64,7 @@ public class SwordAction : BaseAction
                 state = State.SwingingSwordAfterHit;
                 float afterHitStateTime = 0.5f;
                 stateTimer = afterHitStateTime;
-                targetUnit.Damage(100, unit.transform);
+                targetUnit.Damage(Definition != null ? Definition.damage : 100, unit.transform);
                 OnAnySwordHit?.Invoke(this, EventArgs.Empty);
                 break;
             case State.SwingingSwordAfterHit:
@@ -96,9 +97,9 @@ public class SwordAction : BaseAction
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
 
-        for (int x = -maxSwordDistance; x <= maxSwordDistance; x++)
+        for (int x = -MaxSwordDistance; x <= MaxSwordDistance; x++)
         {
-            for (int z = -maxSwordDistance; z <= maxSwordDistance; z++)
+            for (int z = -MaxSwordDistance; z <= MaxSwordDistance; z++)
             {
                 GridPosition offsetGridPostion = new GridPosition(x, z);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPostion;
@@ -143,7 +144,7 @@ public class SwordAction : BaseAction
 
     public int GetMaxSwordDistance()
     {
-        return maxSwordDistance;
+        return MaxSwordDistance;
     }
 
     protected override void OnDisable()

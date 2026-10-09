@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.1.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.2.0`).
 
 1. Install Unity Hub and **Unity 2022.3.17f1**, including the build support for your target platform.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -58,6 +58,14 @@ The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSett
 - `TurnSystem` rejects turn changes during active actions and outside a running battle. `TurnSystemUI` disables the End Turn button accordingly.
 - `EnemyAI` evaluates existing Shoot and Sword capabilities when scoring movement; melee-only units can score movement toward an opponent without requiring ShootAction.
 
+## Monster and ability data
+
+Create assets using **Assets > Create > Arkmon > Monster Definition** and **Ability Definition**. Assign a Monster Definition to the Unit component on a monster prefab. Set maximum health, maximum action points, and its ability definitions.
+
+Ability `actionName` must match the corresponding action name exactly: `Move`, `Shoot`, `Sword`, or `Grenade`. Set range and action-point cost; attack definitions also provide damage. For example, a Sword definition can use range 1, cost 1, and damage 100. Movement uses range and cost, and ignores damage.
+
+Definitions supply configuration for action components already attached to the prefab. They do not create components or replace the existing Basic Actions / Attacks UI arrays. Missing definitions retain existing prototype defaults. Current health and action points stay on each unit instance; shared assets are not mutated during combat.
+
 ## Current prototype limitations
 
-Victory and defeat return to the previous scene through the same transition, without rewards, penalties, or persisted results. Initial units must register in Start. Melee approach scoring uses grid distance and can make poor choices around obstacles. Scene transitions and low-frame-rate behavior still require Play Mode validation.
+Victory and defeat currently return to the previous scene through the same transition; there is no dedicated defeat screen, penalty, reward, or persisted battle result. Initialization assumes the scene's initial units register in Start; asynchronous spawning would need an explicit readiness signal. Melee approach scoring uses grid distance and is a simple heuristic, so it can make poor choices around obstacles. Ability assets configure existing actions rather than dynamically granting new ones. Play Mode scene transitions and low-frame-rate behavior still require engine validation.

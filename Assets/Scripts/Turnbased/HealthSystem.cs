@@ -13,6 +13,8 @@ public class HealthSystem : MonoBehaviour
 
     private void Awake()
     {
+        Unit unit = GetComponent<Unit>();
+        if (unit != null && unit.Definition != null) health = unit.Definition.maxHealth;
         healthMax = health;
     }
 

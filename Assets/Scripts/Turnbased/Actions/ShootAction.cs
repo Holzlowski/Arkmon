@@ -25,6 +25,7 @@ public class ShootAction : BaseAction
     [SerializeField] private LayerMask obstaclesLayerMask;
 
     private int maxShootDistance = 6;
+    private int MaxShootDistance => Definition != null ? Definition.range : maxShootDistance;
     private float stateTimer;
     private float rotationSpeed = 0f;
     private bool canShootBullet;
@@ -105,7 +106,7 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        targetUnit.Damage(40, unit.transform);
+        targetUnit.Damage(Definition != null ? Definition.damage : 40, unit.transform);
     }
 
     public override string GetActionName()
@@ -123,9 +124,9 @@ public class ShootAction : BaseAction
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
 
-        for (int x = -maxShootDistance; x <= maxShootDistance; x++)
+        for (int x = -MaxShootDistance; x <= MaxShootDistance; x++)
         {
-            for (int z = -maxShootDistance; z <= maxShootDistance; z++)
+            for (int z = -MaxShootDistance; z <= MaxShootDistance; z++)
             {
                 GridPosition offsetGridPostion = new GridPosition(x, z);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPostion;
@@ -137,7 +138,7 @@ public class ShootAction : BaseAction
 
                 //für eine eher kreisförmige Reichweite
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                if (testDistance > maxShootDistance)
+                if (testDistance > MaxShootDistance)
                 {
                     continue;
                 }
@@ -198,7 +199,7 @@ public class ShootAction : BaseAction
 
     public int GetMaxShootDistance()
     {
-        return maxShootDistance;
+        return MaxShootDistance;
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

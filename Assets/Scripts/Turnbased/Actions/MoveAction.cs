@@ -13,6 +13,7 @@ public class MoveAction : BaseAction
     [SerializeField] float moveSpeed = 4f;
     [SerializeField] float rotationSpeed = 0f;
     [SerializeField] private int maxMoveDistance = 4;
+    private int MaxMoveDistance => Definition != null ? Definition.range : maxMoveDistance;
 
     private List<Vector3> positionList;
     private int currentPositionIndex;
@@ -86,9 +87,9 @@ public class MoveAction : BaseAction
 
         GridPosition unitGridPosition = unit.GetGridPosition();
 
-        for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
+        for (int x = -MaxMoveDistance; x <= MaxMoveDistance; x++)
         {
-            for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
+            for (int z = -MaxMoveDistance; z <= MaxMoveDistance; z++)
             {
                 GridPosition offsetGridPostion = new GridPosition(x, z);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPostion;
@@ -123,7 +124,7 @@ public class MoveAction : BaseAction
 
                 //Weil Werte bei der Wegeberechnung mit 10 multipliziert werden, muss dies hier auch geschehen
                 int pathfindingDistanceMultiplier = 10;
-                if (pathLength > maxMoveDistance * pathfindingDistanceMultiplier)
+                if (pathLength > MaxMoveDistance * pathfindingDistanceMultiplier)
                 {
                     //Weg ist zu lang
                     continue;

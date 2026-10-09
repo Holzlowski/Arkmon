@@ -4,6 +4,9 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     private const int ACTION_POINTS_MAX = 3;
+    [SerializeField] private MonsterDefinition definition;
+    public MonsterDefinition Definition => definition;
+    private int MaxActionPoints => definition != null ? definition.maxActionPoints : ACTION_POINTS_MAX;
 
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAttackUISwitch;
@@ -26,6 +29,7 @@ public class Unit : MonoBehaviour
     void Awake()
     {
         healthSystem = GetComponent<HealthSystem>();
+        actionPoints = MaxActionPoints;
         //findet alle BaseAction Komponenten
         baseActionArray = GetComponents<BaseAction>();
     }
@@ -154,7 +158,7 @@ public class Unit : MonoBehaviour
         if ((IsEnemy() && !TurnSystem.Instance.IsPlayerTurn()) ||
                 (!IsEnemy() && TurnSystem.Instance.IsPlayerTurn()))
         {
-            actionPoints = ACTION_POINTS_MAX;
+            actionPoints = MaxActionPoints;
 
             OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
         }

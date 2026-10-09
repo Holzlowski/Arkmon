@@ -16,6 +16,7 @@ public class GrenadeProjectile : MonoBehaviour
     private float totalDistance;
     float reachedTargetDistance = .2f;
     float damageRadius = 4;
+    private int damage = 30;
 
     private void Update()
     {
@@ -38,7 +39,7 @@ public class GrenadeProjectile : MonoBehaviour
             {
                 if (collider.TryGetComponent<Unit>(out Unit targetUnit))
                 {
-                    targetUnit.Damage(30);
+                    targetUnit.Damage(damage);
                 }
                 if (collider.TryGetComponent<DestructibleCrate>(out DestructibleCrate destructibleCrate))
                 {
@@ -54,8 +55,9 @@ public class GrenadeProjectile : MonoBehaviour
             onGrenadeBehavoiurComplete();
         }
     }
-    public void Setup(GridPosition targetGridPosition, Action onGrenadeBehavoiurComplete)
+    public void Setup(GridPosition targetGridPosition, Action onGrenadeBehavoiurComplete, int damage = 30)
     {
+        this.damage = damage;
         this.onGrenadeBehavoiurComplete = onGrenadeBehavoiurComplete;
         targetPosition = LevelGrid.Instance.GetWorldPosition(targetGridPosition);
 

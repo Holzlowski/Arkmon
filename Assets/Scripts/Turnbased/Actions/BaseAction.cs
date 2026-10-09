@@ -37,8 +37,11 @@ public abstract class BaseAction : MonoBehaviour
 
     public virtual int GetActionPointCost()
     {
-        return 1;
+        return Definition != null ? Definition.actionPointCost : 1;
     }
+
+    protected AbilityDefinition Definition => unit != null && unit.Definition != null
+        ? unit.Definition.GetAbility(GetActionName()) : null;
 
     protected void ActionStart(Action onActionComplete)
     {
