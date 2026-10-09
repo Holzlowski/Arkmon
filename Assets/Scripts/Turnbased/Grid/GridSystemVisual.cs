@@ -26,6 +26,8 @@ public class GridSystemVisual : MonoBehaviour
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
     [SerializeField] public List<GridVisualTypeMaterial> gridVisualTypeMaterialList;
 
+    private UnitActionSystem actionSystem;
+    private LevelGrid levelGrid;
     private GridSystemVisualSingle[,] gridSystemVisualSingleArray;
 
     private void Awake()
@@ -41,6 +43,8 @@ public class GridSystemVisual : MonoBehaviour
 
     private void Start()
     {
+        actionSystem = UnitActionSystem.Instance;
+        levelGrid = LevelGrid.Instance;
         gridSystemVisualSingleArray = new GridSystemVisualSingle[
             LevelGrid.Instance.GetWidth(),
             LevelGrid.Instance.GetHeight()
@@ -58,8 +62,8 @@ public class GridSystemVisual : MonoBehaviour
                 gridSystemVisualSingleArray[x, z] = gridVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
             }
         }
-        UnitActionSystem.Instance.OnSelectedActionChanged += UnityActionSystem_OnSelectedActionChanged;
-        LevelGrid.Instance.OnAnyUnitMoveGridPosition += LevelGrid_OnAnyUnitMoveGridPosition;
+        actionSystem.OnSelectedActionChanged += UnityActionSystem_OnSelectedActionChanged;
+        levelGrid.OnAnyUnitMoveGridPosition += LevelGrid_OnAnyUnitMoveGridPosition;
 
         UpdateGridVisual();
     }
@@ -130,8 +134,9 @@ public class GridSystemVisual : MonoBehaviour
     {
         HideAllGridPositions();
 
-        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
-        BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
+        Unit selectedUnit = actionSystem.GetSelectedUnit();
+        BaseAction selectedAction = actionSystem.GetSelectedAction();
+        if (selectedUnit == null || selectedAction == null) return;
 
         GridVisualType gridVisualType;
 
@@ -184,5 +189,12 @@ public class GridSystemVisual : MonoBehaviour
         }
         Debug.LogError("Could not find GridvisualTypeMaterial for GridVisualType " + gridVisualType);
         return null;
+    }
+
+    private void OnDestroy()
+    {
+        if (actionSystem != null) actionSystem.OnSelectedActionChanged -= UnityActionSystem_OnSelectedActionChanged;
+        if (levelGrid != null) levelGrid.OnAnyUnitMoveGridPosition -= LevelGrid_OnAnyUnitMoveGridPosition;
+        if (Instance == this) Instance = null;
     }
 }

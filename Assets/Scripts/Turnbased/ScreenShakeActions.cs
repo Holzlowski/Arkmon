@@ -3,11 +3,18 @@ using UnityEngine;
 
 public class ScreenShakeActions : MonoBehaviour
 {
-    private void Start()
+    private void OnEnable()
     {
         ShootAction.OnAnyShoot += ShootAction_OnAnyShoot;
         SwordAction.OnAnySwordHit += SwordAction_OnAnySwordHit;
         GrenadeProjectile.OnAnyGrenadeExploded += GrenadeProjectile_OnAnyGrenadeExploded;
+    }
+
+    private void OnDisable()
+    {
+        ShootAction.OnAnyShoot -= ShootAction_OnAnyShoot;
+        SwordAction.OnAnySwordHit -= SwordAction_OnAnySwordHit;
+        GrenadeProjectile.OnAnyGrenadeExploded -= GrenadeProjectile_OnAnyGrenadeExploded;
     }
 
     private void SwordAction_OnAnySwordHit(object sender, EventArgs e)

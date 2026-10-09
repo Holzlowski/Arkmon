@@ -19,10 +19,12 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void Start()
     {
-        UnitActionSystem.Instance.OnSelectedUnitChange += UnitActionSystem_OnSelectedUnitChanged;
-        UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
-        UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        actionSystem = UnitActionSystem.Instance;
+        turnSystem = TurnSystem.Instance;
+        actionSystem.OnSelectedUnitChange += UnitActionSystem_OnSelectedUnitChanged;
+        actionSystem.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
+        actionSystem.OnActionStarted += UnitActionSystem_OnActionStarted;
+        turnSystem.OnTurnChanged += TurnSystem_OnTurnChanged;
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
         Unit.OnAttackUISwitch += Unit_OnAttackUISwitch;
 
@@ -40,7 +42,9 @@ public class UnitActionSystemUI : MonoBehaviour
 
         actionButtonUIList.Clear();
 
-        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        Unit selectedUnit = actionSystem.GetSelectedUnit();
+
+        if (selectedUnit == null) return;
 
         Transform attacksUISwitchButton = Instantiate(attacksUISwitchButtonPrefab, actionButtonContainerTransform);
 
@@ -97,17 +101,20 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UpdateActionPoints()
     {
-        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        Unit selectedUnit = actionSystem.GetSelectedUnit();
 
-        actionPointsText.text = "Action Points: " + selectedUnit.GetActionPoints();
+        actionPointsText.text = "Action Points: " + (selectedUnit != null ? selectedUnit.GetActionPoints() : 0);
     }
+
+    private UnitActionSystem actionSystem;
+    private TurnSystem turnSystem;
 
     private void OnDestroy()
     {
-        UnitActionSystem.Instance.OnSelectedUnitChange -= UnitActionSystem_OnSelectedUnitChanged;
-        UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
-        UnitActionSystem.Instance.OnActionStarted -= UnitActionSystem_OnActionStarted;
-        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        if (actionSystem != null) actionSystem.OnSelectedUnitChange -= UnitActionSystem_OnSelectedUnitChanged;
+        if (actionSystem != null) actionSystem.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
+        if (actionSystem != null) actionSystem.OnActionStarted -= UnitActionSystem_OnActionStarted;
+        if (turnSystem != null) turnSystem.OnTurnChanged -= TurnSystem_OnTurnChanged;
         Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
         Unit.OnAttackUISwitch -= Unit_OnAttackUISwitch;
     }

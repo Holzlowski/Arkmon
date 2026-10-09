@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
 
     private State state;
     private float timer;
+    private TurnSystem subscribedTurnSystem;
 
     private void Awake()
     {
@@ -20,7 +21,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        subscribedTurnSystem = TurnSystem.Instance;
+        subscribedTurnSystem.OnTurnChanged += TurnSystem_OnTurnChanged;
     }
 
     // Update is called once per frame
@@ -125,5 +127,9 @@ public class EnemyAI : MonoBehaviour
         {
             return false;
         }
+    }
+    private void OnDestroy()
+    {
+        if (subscribedTurnSystem != null) subscribedTurnSystem.OnTurnChanged -= TurnSystem_OnTurnChanged;
     }
 }

@@ -3,9 +3,14 @@ using UnityEngine;
 
 public class PathfindingUpdater : MonoBehaviour
 {
-    private void Start()
+    private void OnEnable()
     {
         DestructibleCrate.OnAnyDestroyed += DestructibleCrate_OnAnyDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        DestructibleCrate.OnAnyDestroyed -= DestructibleCrate_OnAnyDestroyed;
     }
 
     private void DestructibleCrate_OnAnyDestroyed(object sender, EventArgs e)

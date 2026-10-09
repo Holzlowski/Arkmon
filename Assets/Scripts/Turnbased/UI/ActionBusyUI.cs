@@ -2,12 +2,19 @@ using UnityEngine;
 
 public class ActionBusyUI : MonoBehaviour
 {
+    private UnitActionSystem actionSystem;
 
     private void Start()
     {
-        UnitActionSystem.Instance.OnBusyChange += UnitActionSystem_OnBusyChanged;
+        actionSystem = UnitActionSystem.Instance;
+        actionSystem.OnBusyChange += UnitActionSystem_OnBusyChanged;
 
         Hide();
+    }
+
+    private void OnDestroy()
+    {
+        if (actionSystem != null) actionSystem.OnBusyChange -= UnitActionSystem_OnBusyChanged;
     }
     private void Show()
     {

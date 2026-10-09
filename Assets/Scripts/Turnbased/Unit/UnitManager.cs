@@ -94,6 +94,13 @@ public class UnitManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        Unit.OnAnyUnitSpawned -= Unit_OnAnyUnitSpawned;
+        Unit.OnAnyUnitDead -= Unit_OnAnyUnitDead;
+        if (Instance == this) Instance = null;
+    }
+
     public List<Unit> GetUnitList()
     {
         return unitList;

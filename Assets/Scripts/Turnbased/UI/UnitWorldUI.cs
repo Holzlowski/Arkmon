@@ -37,4 +37,10 @@ public class UnitWorldUI : MonoBehaviour
     {
         UpdateHealthBar();
     }
+
+    private void OnDestroy()
+    {
+        Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
+        if (healthSystem != null) healthSystem.OnDamage -= HealthSystem_OnDamaged;
+    }
 }

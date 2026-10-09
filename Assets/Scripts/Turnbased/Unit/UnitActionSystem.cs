@@ -46,7 +46,7 @@ public class UnitActionSystem : MonoBehaviour
             return;
         }
 
-        //true wenn Maus über UI ist
+        //true wenn Maus Ã¼ber UI ist
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
@@ -136,6 +136,11 @@ public class UnitActionSystem : MonoBehaviour
         selectedAction = baseAction;
 
         OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public Unit GetSelectedUnit()

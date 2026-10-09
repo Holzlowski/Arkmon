@@ -38,3 +38,16 @@ These mechanics are currently in **concept and design** and represent the **core
 - C#
 - Custom Combat Logic & Environment Interactions
 - Dialogue System with branching paths
+
+## Development setup
+
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.1.1`).
+
+1. Install Unity Hub and **Unity 2022.3.17f1**, including the build support for your target platform.
+2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
+3. Open `Assets/Scenes/StartScene.unity` and press Play. Open `Assets/Scenes/BattleScene.unity` to inspect the tactical combat setup directly.
+4. To build, use **File > Build Settings**, select the target platform, and choose Build. Both StartScene and BattleScene are already enabled in the build settings.
+
+## Combat events
+
+Scene-owned subscribers unregister their event handlers when destroyed. Screen shake and pathfinding update subscriptions follow enable/disable. UI subscribers retain the manager instance they originally subscribed to.

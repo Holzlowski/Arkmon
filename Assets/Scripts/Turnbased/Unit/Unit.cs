@@ -15,6 +15,7 @@ public class Unit : MonoBehaviour
 
     private GridPosition gridPosition;
     private HealthSystem healthSystem;
+    private TurnSystem subscribedTurnSystem;
 
     [SerializeField] private BaseAction[] basicActionArray;
     [SerializeField] private BaseAction[] attacks;
@@ -34,7 +35,8 @@ public class Unit : MonoBehaviour
         LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
 
         //Shift - F12(Windows).This will show you all references(within your solution) to that event
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        subscribedTurnSystem = TurnSystem.Instance;
+        subscribedTurnSystem.OnTurnChanged += TurnSystem_OnTurnChanged;
         healthSystem.OnDead += HealthSystem_OnDead;
 
         OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
@@ -45,7 +47,7 @@ public class Unit : MonoBehaviour
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if (newGridPosition != gridPosition)
         {
-            //Unit ändert ihre Gridposition
+            //Unit Ã¤ndert ihre Gridposition
             GridPosition oldGridPosition = gridPosition;
             gridPosition = newGridPosition;
 
@@ -165,6 +167,13 @@ public class Unit : MonoBehaviour
         Destroy(gameObject);
 
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnDestroy()
+    {
+        if (subscribedTurnSystem != null)
+            subscribedTurnSystem.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        if (healthSystem != null) healthSystem.OnDead -= HealthSystem_OnDead;
     }
 
     public void Damage(int damage)
