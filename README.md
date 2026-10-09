@@ -43,10 +43,18 @@ These mechanics are currently in **concept and design** and represent the **core
 
 The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.2.2`).
 
-1. Install Unity Hub and **Unity 2022.3.17f1**, including the build support for your target platform.
+1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
 3. Open `Assets/Scenes/StartScene.unity` and press Play. Open `Assets/Scenes/BattleScene.unity` to inspect the tactical combat setup directly.
-4. To build, use **File > Build Settings**, select the target platform, and choose Build. Both StartScene and BattleScene are already enabled in the build settings.
+4. To build, use **File > Build Profiles**, select the Windows platform, and choose Build. Both StartScene and BattleScene are already enabled in the scene list.
+
+## Unity 6.3 migration
+
+The project targets Unity `6000.3.26f1` with URP `17.3.0`, Unity UI `2.0.0` (including TextMeshPro), Input System `1.20.0`, and Cinemachine `2.10.7`. Cinemachine remains on the compatible 2.x API. Package versions and their resolved dependencies are pinned in `Packages/manifest.json` and `Packages/packages-lock.json`.
+
+Unity's asset upgrades updated the scenes, prefabs, materials, texture import settings, and URP configuration. Render Graph is enabled; the obsolete compatibility-mode marker is cleared. TextMeshPro essential resources are updated while retaining the existing settings and default font assignment. These serialization changes account for the broad asset diff.
+
+The input asset generates its wrapper at `Assets/Scripts/Player/PlayerInputActions.cs`, avoiding a duplicate class in the Assets root. InputManager enables and disables its actions with the component lifecycle and disposes the generated asset when destroyed. PlayerController uses Unity 6's `Rigidbody.linearVelocity` API.
 
 ## Combat architecture
 
@@ -70,6 +78,8 @@ Definitions supply configuration for action components already attached to the p
 
 Open **Window > General > Test Runner**, select EditMode, and run `Arkmon.EditMode.Tests`. The regression tests cover death without a selection, duplicate lethal damage, replacement and empty selections, turn locking, repeated completion and cancellation, repeated manager subscriptions, battle-result decisions, melee-only movement evaluation, and separate runtime health with shared definitions. The tests use reflection because the existing runtime lives in Unity's predefined Assembly-CSharp assembly.
 
+Select PlayMode and run `Arkmon.PlayMode.Tests` to verify the StartScene startup and three repeated transitions between StartScene and BattleScene. Each battle must initialize both teams and a valid friendly selection. The tests provide virtual mouse and keyboard devices and clean up their scene and devices afterwards.
+
 Also verify the following in Play Mode:
 
 1. Enter and leave a battle at least three times; check the Console for callbacks to destroyed objects and confirm exactly one scene transition per battle.
@@ -82,6 +92,6 @@ Also verify the following in Play Mode:
 
 Victory and defeat currently return to the previous scene through the same transition; there is no dedicated defeat screen, penalty, reward, or persisted battle result. Initialization assumes the scene's initial units register in Start; asynchronous spawning would need an explicit readiness signal. Melee approach scoring uses grid distance and is a simple heuristic, so it can make poor choices around obstacles. Ability assets configure existing actions rather than dynamically granting new ones. Play Mode scene transitions and low-frame-rate behavior still require engine validation.
 
-Validation status: the combat sources and regression-test source passed a separate C# semantic compilation using installed Unity libraries and stand-ins for external package types. This does not verify a complete Unity build or test execution. The target Unity 2022.3.17f1 is unavailable on the current machine; an isolated attempt with another installed editor stopped at license validation before tests ran.
+Validation on Unity `6000.3.26f1`: all seven EditMode tests and both PlayMode tests passed. Asset checks loaded two scenes, 65 prefabs, and 72 materials without missing scripts or invalid shader references. A Windows x64 development build succeeded with zero build errors. Validation ran in batch mode; visual appearance, interactive combat, victory/defeat transitions, and low-frame-rate behavior still need the manual Play Mode checks above.
 
 The local game design PDF in docs and its generation files in tmp/gdd are excluded from Git.

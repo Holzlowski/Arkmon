@@ -16,7 +16,8 @@ MonoBehaviour:
   title: URP Empty Template
   sections:
   - heading: Welcome to the Universal Render Pipeline
-    text: This template includes the settings and assets you need to start creating with the Universal Render Pipeline.
+    text: This template includes the settings and assets you need to start creating
+      with the Universal Render Pipeline.
     linkText: 
     url:
   - heading: URP Documentation

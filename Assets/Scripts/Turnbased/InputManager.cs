@@ -19,7 +19,23 @@ public class InputManager : MonoBehaviour
         Instance = this;
 
         playerInputActions = new PlayerInputActions();
-        playerInputActions.Player.Enable();
+    }
+
+    private void OnEnable()
+    {
+        if (Instance == this) playerInputActions?.Player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInputActions?.Player.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        playerInputActions?.Dispose();
+        playerInputActions = null;
+        if (Instance == this) Instance = null;
     }
 
     public Vector2 GetMouseScreenPosition()

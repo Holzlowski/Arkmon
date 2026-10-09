@@ -1,0 +1,5 @@
+{
+  "name": "Arkmon.PlayMode.Tests",
+  "references": ["Unity.InputSystem"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}
