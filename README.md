@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.2.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.2.2`).
 
 1. Install Unity Hub and **Unity 2022.3.17f1**, including the build support for your target platform.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -83,3 +83,5 @@ Also verify the following in Play Mode:
 Victory and defeat currently return to the previous scene through the same transition; there is no dedicated defeat screen, penalty, reward, or persisted battle result. Initialization assumes the scene's initial units register in Start; asynchronous spawning would need an explicit readiness signal. Melee approach scoring uses grid distance and is a simple heuristic, so it can make poor choices around obstacles. Ability assets configure existing actions rather than dynamically granting new ones. Play Mode scene transitions and low-frame-rate behavior still require engine validation.
 
 Validation status: the combat sources and regression-test source passed a separate C# semantic compilation using installed Unity libraries and stand-ins for external package types. This does not verify a complete Unity build or test execution. The target Unity 2022.3.17f1 is unavailable on the current machine; an isolated attempt with another installed editor stopped at license validation before tests ran.
+
+The local game design PDF in docs and its generation files in tmp/gdd are excluded from Git.
