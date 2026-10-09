@@ -9,6 +9,7 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] private int health = 100;
 
     private int healthMax;
+    public bool IsDead { get; private set; }
 
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class HealthSystem : MonoBehaviour
 
     public void Damage(int damage, Transform damageTransform = null)
     {
+        if (IsDead) return;
         health -= damage;
 
         if (health < 0)
@@ -28,7 +30,8 @@ public class HealthSystem : MonoBehaviour
 
         if (health == 0)
         {
-            Die(UnitActionSystem.Instance.GetSelectedUnit().transform);
+            IsDead = true;
+            Die(damageTransform);
         }
 
         Debug.Log(health);

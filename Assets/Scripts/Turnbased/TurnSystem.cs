@@ -23,10 +23,21 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
+        if (!CanChangeTurn()) return;
         turnNumber++;
         isPlayerTurn = !isPlayerTurn;
 
         OnTurnChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool CanChangeTurn()
+    {
+        return !BaseAction.IsAnyActionActive && UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public int GetTurnNumber()

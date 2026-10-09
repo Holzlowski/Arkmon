@@ -3,47 +3,45 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class TurnSystemUI : MonoBehaviour
 {
     [SerializeField] private Button endTurnButton;
     [SerializeField] private TextMeshProUGUI turnNumberText;
     [SerializeField] private GameObject enemyTurnVisualObject;
+    private TurnSystem turnSystem;
+    private UnitManager unitManager;
 
     private void Start()
     {
-        endTurnButton.onClick.AddListener(() =>
-        {
-            TurnSystem.Instance.NextTurn();
-        });
-
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-
-        UpdateTurnText();
-        UpdateEnemyTurnVisual();
-        UpdateEndTurnButtonVisibility();
+        turnSystem = TurnSystem.Instance;
+        unitManager = UnitManager.Instance;
+        endTurnButton.onClick.AddListener(EndTurn);
+        turnSystem.OnTurnChanged += Refresh;
+        unitManager.OnBattleStateChanged += Refresh;
+        BaseAction.OnAnyActionStarted += Refresh;
+        BaseAction.OnAnyActionCompleted += Refresh;
+        Refresh(this, EventArgs.Empty);
     }
 
-    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+    private void EndTurn()
     {
-        UpdateTurnText();
-        UpdateEnemyTurnVisual();
-        UpdateEndTurnButtonVisibility();
-
+        if (turnSystem.IsPlayerTurn()) turnSystem.NextTurn();
     }
 
-    private void UpdateTurnText()
+    private void Refresh(object sender, EventArgs e)
     {
-        turnNumberText.text = "TURN " + TurnSystem.Instance.GetTurnNumber();
+        turnNumberText.text = "TURN " + turnSystem.GetTurnNumber();
+        enemyTurnVisualObject.SetActive(!turnSystem.IsPlayerTurn() && unitManager.IsBattleRunning);
+        endTurnButton.gameObject.SetActive(turnSystem.IsPlayerTurn());
+        endTurnButton.interactable = turnSystem.IsPlayerTurn() && turnSystem.CanChangeTurn();
     }
 
-    private void UpdateEnemyTurnVisual()
+    private void OnDestroy()
     {
-        enemyTurnVisualObject.SetActive(!TurnSystem.Instance.IsPlayerTurn());
-    }
-
-    private void UpdateEndTurnButtonVisibility()
-    {
-        endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
+        endTurnButton.onClick.RemoveListener(EndTurn);
+        if (turnSystem != null) turnSystem.OnTurnChanged -= Refresh;
+        if (unitManager != null) unitManager.OnBattleStateChanged -= Refresh;
+        BaseAction.OnAnyActionStarted -= Refresh;
+        BaseAction.OnAnyActionCompleted -= Refresh;
     }
 }

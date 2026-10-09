@@ -16,6 +16,7 @@ public class Unit : MonoBehaviour
     private GridPosition gridPosition;
     private HealthSystem healthSystem;
     private TurnSystem subscribedTurnSystem;
+    public bool IsDead => healthSystem.IsDead;
 
     [SerializeField] private BaseAction[] basicActionArray;
     [SerializeField] private BaseAction[] attacks;
@@ -169,16 +170,16 @@ public class Unit : MonoBehaviour
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
     }
 
+    public void Damage(int damage, Transform damageSource = null)
+    {
+        healthSystem.Damage(damage, damageSource);
+    }
+
     private void OnDestroy()
     {
         if (subscribedTurnSystem != null)
             subscribedTurnSystem.OnTurnChanged -= TurnSystem_OnTurnChanged;
         if (healthSystem != null) healthSystem.OnDead -= HealthSystem_OnDead;
-    }
-
-    public void Damage(int damage)
-    {
-        healthSystem.Damage(damage);
     }
 
     public float GetHealthNormalized()

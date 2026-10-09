@@ -6,92 +6,89 @@ using UnityEngine.SceneManagement;
 
 public class UnitManager : MonoBehaviour
 {
+    public enum BattleState { Initializing, Running, Won, Lost }
     public static UnitManager Instance { get; private set; }
-
-    private List<Unit> unitList;
-    private List<Unit> friendlyUnitList;
-    private List<Unit> enemyUnitList;
-
-    private bool hasLoadedScene = false;
+    public event EventHandler OnBattleStateChanged;
+    public event EventHandler OnUnitListChanged;
+    public BattleState State { get; private set; } = BattleState.Initializing;
+    public bool IsBattleRunning => State == BattleState.Running;
+    private readonly List<Unit> unitList = new List<Unit>();
+    private readonly List<Unit> friendlyUnitList = new List<Unit>();
+    private readonly List<Unit> enemyUnitList = new List<Unit>();
 
     private void Awake()
     {
-        unitList = new List<Unit>();
-        friendlyUnitList = new List<Unit>();
-        enemyUnitList = new List<Unit>();
-    }
-
-    private void Start()
-    {
-        if (Instance != null)
-        {
-            Debug.LogError("There's more than one UnitActionSystem! " + transform + " - " + Instance);
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-
         Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
         Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
     }
 
-
-    private void Update()
+    private IEnumerator Start()
     {
-        if (enemyUnitList.Count <= 0 && !hasLoadedScene)
-        {
-            StartCoroutine(LoadSceneAfterDelay());
-        }
+        if (Instance != this) yield break;
+        // Wait until all scene units have registered in Start.
+        yield return null;
+        SetState(BattleState.Running);
+        CheckBattleEnd();
+    }
+
+    private void SetState(BattleState state)
+    {
+        State = state;
+        OnBattleStateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void CheckBattleEnd()
+    {
+        BattleState? result = GetBattleResult();
+        if (result.HasValue) FinishBattle(result.Value);
+    }
+
+    private BattleState? GetBattleResult()
+    {
+        if (!IsBattleRunning) return null;
+        // Defeat takes precedence if both teams are eliminated together.
+        if (friendlyUnitList.Count == 0) return BattleState.Lost;
+        if (enemyUnitList.Count == 0) return BattleState.Won;
+        return null;
+    }
+
+    private void LateUpdate()
+    {
+        CheckBattleEnd();
+    }
+
+    private void FinishBattle(BattleState result)
+    {
+        SetState(result); // Lock before starting the coroutine.
+        StartCoroutine(LoadSceneAfterDelay());
     }
 
     private IEnumerator LoadSceneAfterDelay()
     {
-        // Warte 1 Sekunde
+        while (BaseAction.IsAnyActionActive) yield return null;
         yield return new WaitForSeconds(1f);
-
-        if (SceneLoadManager.instance != null)
-        {
-            // Rufe die LoadSceneBeforeBattle-Funktion auf
-            SceneLoadManager.instance.LoadSceneBeforeBattle();
-        }
-        else
-        {
-            SceneManager.LoadScene(0);
-        }
-
-
-        // Setze hasLoadedScene auf true, um sicherzustellen, dass die Funktion nur einmal aufgerufen wird
-        hasLoadedScene = true;
+        if (SceneLoadManager.instance != null) SceneLoadManager.instance.LoadSceneBeforeBattle();
+        else SceneManager.LoadScene(0);
     }
 
     private void Unit_OnAnyUnitSpawned(object sender, EventArgs e)
     {
         Unit unit = sender as Unit;
-
+        if (unit == null || unitList.Contains(unit)) return;
         unitList.Add(unit);
-        if (unit.IsEnemy())
-        {
-            enemyUnitList.Add(unit);
-        }
-        else
-        {
-            friendlyUnitList.Add(unit);
-        }
+        (unit.IsEnemy() ? enemyUnitList : friendlyUnitList).Add(unit);
+        OnUnitListChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void Unit_OnAnyUnitDead(object sender, EventArgs e)
     {
         Unit unit = sender as Unit;
-
+        if (unit == null) return;
         unitList.Remove(unit);
-        if (unit.IsEnemy())
-        {
-            enemyUnitList.Remove(unit);
-        }
-        else
-        {
-            friendlyUnitList.Remove(unit);
-        }
+        (unit.IsEnemy() ? enemyUnitList : friendlyUnitList).Remove(unit);
+        OnUnitListChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDestroy()
@@ -101,16 +98,7 @@ public class UnitManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    public List<Unit> GetUnitList()
-    {
-        return unitList;
-    }
-    public List<Unit> GetFriendlyUnitList()
-    {
-        return friendlyUnitList;
-    }
-    public List<Unit> GetEnemyUnitList()
-    {
-        return enemyUnitList;
-    }
+    public List<Unit> GetUnitList() => unitList;
+    public List<Unit> GetFriendlyUnitList() => friendlyUnitList;
+    public List<Unit> GetEnemyUnitList() => enemyUnitList;
 }

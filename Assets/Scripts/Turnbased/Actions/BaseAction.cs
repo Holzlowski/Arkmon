@@ -12,6 +12,8 @@ public abstract class BaseAction : MonoBehaviour
     //protected, kann nicht von au�en zugegriffen werden, aber von Klassen, die von dieser vererben
     protected Unit unit;
     protected bool isActive;
+    private static readonly HashSet<BaseAction> activeActions = new HashSet<BaseAction>();
+    public static bool IsAnyActionActive => activeActions.Count > 0;
     //delegates sind Funktionen, die in Variabeln gespeichert sind
     protected Action onActionComplete;
 
@@ -41,6 +43,7 @@ public abstract class BaseAction : MonoBehaviour
     protected void ActionStart(Action onActionComplete)
     {
         isActive = true;
+        activeActions.Add(this);
         this.onActionComplete = onActionComplete;
 
         OnAnyActionStarted?.Invoke(this, EventArgs.Empty);
@@ -48,10 +51,22 @@ public abstract class BaseAction : MonoBehaviour
 
     protected void ActionComplete()
     {
+        if (!isActive) return;
         isActive = false;
-        onActionComplete();
+        activeActions.Remove(this);
+        Action callback = onActionComplete;
+        onActionComplete = null;
+        callback?.Invoke();
 
         OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetActiveActions() => activeActions.Clear();
+
+    protected virtual void OnDisable()
+    {
+        ActionComplete();
     }
 
     public Unit GetUnit()

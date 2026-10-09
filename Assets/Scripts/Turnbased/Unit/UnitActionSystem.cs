@@ -17,6 +17,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private BaseAction selectedAction;
     private bool isBusy;
+    private UnitManager unitManager;
 
     void Awake()
     {
@@ -31,12 +32,30 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Start()
     {
+        unitManager = UnitManager.Instance;
+        unitManager.OnUnitListChanged += UnitManager_OnUnitListChanged;
         SetSelectedUnit(selectedUnit);
+        EnsureValidSelection();
+    }
+
+    private void UnitManager_OnUnitListChanged(object sender, EventArgs e) => EnsureValidSelection();
+
+    private void EnsureValidSelection()
+    {
+        if (selectedUnit != null && !selectedUnit.IsDead && !selectedUnit.IsEnemy()) return;
+        Unit replacement = unitManager.GetFriendlyUnitList().Find(unit => unit != null && !unit.IsDead);
+        SetSelectedUnit(replacement);
+    }
+
+    private void OnDestroy()
+    {
+        if (unitManager != null) unitManager.OnUnitListChanged -= UnitManager_OnUnitListChanged;
+        if (Instance == this) Instance = null;
     }
 
     void Update()
     {
-        if (isBusy)
+        if (isBusy || BaseAction.IsAnyActionActive || !unitManager.IsBattleRunning)
         {
             return;
         }
@@ -62,6 +81,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private void HandleSelectedAction()
     {
+        if (selectedUnit == null || selectedAction == null) return;
         if (InputManager.Instance.IsMouseButtonDownThisFrame())
         {
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
@@ -126,7 +146,7 @@ public class UnitActionSystem : MonoBehaviour
     private void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
-        SetSelectedAction(unit.GetAction<MoveAction>());
+        SetSelectedAction(unit != null ? unit.GetAction<MoveAction>() : null);
 
         OnSelectedUnitChange?.Invoke(this, EventArgs.Empty);
     }
@@ -136,11 +156,6 @@ public class UnitActionSystem : MonoBehaviour
         selectedAction = baseAction;
 
         OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void OnDestroy()
-    {
-        if (Instance == this) Instance = null;
     }
 
     public Unit GetSelectedUnit()

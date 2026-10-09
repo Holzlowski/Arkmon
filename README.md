@@ -41,13 +41,23 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.1.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.1.2`).
 
 1. Install Unity Hub and **Unity 2022.3.17f1**, including the build support for your target platform.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
 3. Open `Assets/Scenes/StartScene.unity` and press Play. Open `Assets/Scenes/BattleScene.unity` to inspect the tactical combat setup directly.
 4. To build, use **File > Build Settings**, select the target platform, and choose Build. Both StartScene and BattleScene are already enabled in the build settings.
 
-## Combat events
+## Combat architecture
 
-Scene-owned subscribers unregister their event handlers when destroyed. Screen shake and pathfinding update subscriptions follow enable/disable. UI subscribers retain the manager instance they originally subscribed to.
+- `LevelGrid` tracks unit occupancy; `Pathfinding` calculates routes.
+- `Unit` owns its current action points and action components; `HealthSystem` owns current health and emits death once.
+- `BaseAction` tracks active player and enemy actions. Completion is idempotent; disabling an active action releases its completion callback and turn lock.
+- `UnitManager` registers units in Awake and evaluates battle results after initialization, at the end of a frame. A result locks the battle immediately; the scene transition waits for active actions to finish and then delays one second. If both teams are eliminated, defeat takes precedence.
+- `UnitActionSystem` selects a surviving friendly unit when the current selection dies. With no survivors, selection and action are cleared. UI and grid visuals support that state.
+- `TurnSystem` rejects turn changes during active actions and outside a running battle. `TurnSystemUI` disables the End Turn button accordingly.
+- `EnemyAI` executes actions sequentially and pauses outside a running battle.
+
+## Current prototype limitations
+
+Victory and defeat return to the previous scene through the same transition, without rewards, penalties, or persisted results. Initial units must register in Start; asynchronous spawning needs an explicit readiness signal. Scene transitions still require Play Mode validation.

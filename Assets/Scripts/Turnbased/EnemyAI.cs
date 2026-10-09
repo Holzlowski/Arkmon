@@ -28,7 +28,7 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (TurnSystem.Instance.IsPlayerTurn())
+        if (TurnSystem.Instance.IsPlayerTurn() || !UnitManager.Instance.IsBattleRunning)
         {
             return;
         }
@@ -42,11 +42,8 @@ public class EnemyAI : MonoBehaviour
                 if (timer <= 0)
                 {
 
-                    if (TryTakeEnemyAIAction(SetStateTakingTurn))
-                    {
-                        state = State.Busy;
-                    }
-                    else
+                    state = State.Busy;
+                    if (!TryTakeEnemyAIAction(SetStateTakingTurn))
                     {
                         //No more enemies have actions they can take, end enemy turn
                         TurnSystem.Instance.NextTurn();
@@ -128,6 +125,7 @@ public class EnemyAI : MonoBehaviour
             return false;
         }
     }
+
     private void OnDestroy()
     {
         if (subscribedTurnSystem != null) subscribedTurnSystem.OnTurnChanged -= TurnSystem_OnTurnChanged;
