@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Die Klasse `MoveAction` ist verantwortlich für die Bewegung und Animation einer Einheit in einer rasterbasierten Spielumgebung.
+/// Die Klasse `MoveAction` ist verantwortlich fÃ¼r die Bewegung und Animation einer Einheit in einer rasterbasierten Spielumgebung.
 /// </summary>
 public class MoveAction : BaseAction
 {
@@ -31,12 +31,10 @@ public class MoveAction : BaseAction
 
         transform.forward = Vector3.Lerp(transform.forward, moveDirection, rotationSpeed * Time.deltaTime);
 
-        if (Vector3.Distance(transform.position, targetPosittion) > stoppingDistance)
+        transform.position = Vector3.MoveTowards(transform.position, targetPosittion, moveSpeed * Time.deltaTime);
+        if (Vector3.Distance(transform.position, targetPosittion) <= stoppingDistance)
         {
-            transform.position += moveDirection * moveSpeed * Time.deltaTime;
-        }
-        else
-        {
+            transform.position = targetPosittion;
             currentPositionIndex++;
             if (currentPositionIndex >= positionList.Count)
             {
@@ -51,11 +49,18 @@ public class MoveAction : BaseAction
     }
 
     /// <summary>
-    /// Diese Methode ermöglicht externem Code, eine neue Zielposition für die Einheit festzulegen, auf die sie sich zubewegen soll.
+    /// Diese Methode ermÃ¶glicht externem Code, eine neue Zielposition fÃ¼r die Einheit festzulegen, auf die sie sich zubewegen soll.
     /// </summary>
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLength);
+
+        if (pathGridPositionList == null || pathGridPositionList.Count == 0)
+        {
+            ActionStart(onActionComplete);
+            ActionComplete();
+            return;
+        }
 
         currentPositionIndex = 0;
         positionList = new List<Vector3>();
@@ -72,9 +77,9 @@ public class MoveAction : BaseAction
     }
 
     /// <summary>
-    /// Generiert eine Liste gültiger Rasterpositionen, zu denen die Einheit sich bewegen kann.
+    /// Generiert eine Liste gÃ¼ltiger Rasterpositionen, zu denen die Einheit sich bewegen kann.
     /// </summary>
-    /// <returns>Liste gültiger Rasterpositionen.</returns>
+    /// <returns>Liste gÃ¼ltiger Rasterpositionen.</returns>
     public override List<GridPosition> GetValidActionGridPositionList()
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
@@ -110,14 +115,15 @@ public class MoveAction : BaseAction
                     continue;
                 }
 
-                if (!Pathfinding.Instance.HasPath(unitGridPosition, testGridPosition))
+                List<GridPosition> path = Pathfinding.Instance.FindPath(unitGridPosition, testGridPosition, out int pathLength);
+                if (path == null)
                 {
                     continue;
                 }
 
                 //Weil Werte bei der Wegeberechnung mit 10 multipliziert werden, muss dies hier auch geschehen
                 int pathfindingDistanceMultiplier = 10;
-                if (Pathfinding.Instance.GetPathLength(unitGridPosition, testGridPosition) > maxMoveDistance * pathfindingDistanceMultiplier)
+                if (pathLength > maxMoveDistance * pathfindingDistanceMultiplier)
                 {
                     //Weg ist zu lang
                     continue;
@@ -134,13 +140,37 @@ public class MoveAction : BaseAction
         return "Move";
     }
 
+    protected override void OnDisable()
+    {
+        if (isActive) OnStopMoving?.Invoke(this, EventArgs.Empty);
+        base.OnDisable();
+    }
+
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
-        int getTargetCountAtGridPosition = unit.GetAction<ShootAction>().GetTargetCountAtPosition(gridPosition);
+        ShootAction shootAction = unit.GetAction<ShootAction>();
+        SwordAction swordAction = unit.GetAction<SwordAction>();
+        int targetCount = shootAction != null ? shootAction.GetTargetCountAtPosition(gridPosition) : 0;
+        if (swordAction != null) targetCount += swordAction.GetValidActionGridPositionList(gridPosition).Count;
+        int approachValue = 0;
+        if (shootAction == null && swordAction != null)
+        {
+            int currentDistance = int.MaxValue;
+            int candidateDistance = int.MaxValue;
+            foreach (Unit target in UnitManager.Instance.GetUnitList())
+            {
+                if (target.IsEnemy() == unit.IsEnemy() || target.IsDead) continue;
+                GridPosition position = target.GetGridPosition();
+                GridPosition current = unit.GetGridPosition();
+                currentDistance = Mathf.Min(currentDistance, Mathf.Max(Mathf.Abs(current.x - position.x), Mathf.Abs(current.z - position.z)));
+                candidateDistance = Mathf.Min(candidateDistance, Mathf.Max(Mathf.Abs(gridPosition.x - position.x), Mathf.Abs(gridPosition.z - position.z)));
+            }
+            if (candidateDistance < currentDistance) approachValue = 1;
+        }
         return new EnemyAIAction()
         {
             gridPosition = gridPosition,
-            actionValue = getTargetCountAtGridPosition * 10,
+            actionValue = targetCount * 10 + approachValue,
         };
     }
 }

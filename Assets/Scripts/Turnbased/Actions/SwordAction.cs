@@ -29,6 +29,13 @@ public class SwordAction : BaseAction
             return;
         }
 
+        if (state == State.SwingingSwordBeforeHit && (targetUnit == null || targetUnit.IsDead))
+        {
+            OnSwordActionCompleted?.Invoke(this, EventArgs.Empty);
+            ActionComplete();
+            return;
+        }
+
         stateTimer -= Time.deltaTime;
 
         switch (state)
@@ -56,7 +63,7 @@ public class SwordAction : BaseAction
                 state = State.SwingingSwordAfterHit;
                 float afterHitStateTime = 0.5f;
                 stateTimer = afterHitStateTime;
-                targetUnit.Damage(100);
+                targetUnit.Damage(100, unit.transform);
                 OnAnySwordHit?.Invoke(this, EventArgs.Empty);
                 break;
             case State.SwingingSwordAfterHit:
@@ -82,8 +89,12 @@ public class SwordAction : BaseAction
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
+        return GetValidActionGridPositionList(unit.GetGridPosition());
+    }
+
+    public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
+    {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
-        GridPosition unitGridPosition = unit.GetGridPosition();
 
         for (int x = -maxSwordDistance; x <= maxSwordDistance; x++)
         {
@@ -133,5 +144,11 @@ public class SwordAction : BaseAction
     public int GetMaxSwordDistance()
     {
         return maxSwordDistance;
+    }
+
+    protected override void OnDisable()
+    {
+        if (isActive) OnSwordActionCompleted?.Invoke(this, EventArgs.Empty);
+        base.OnDisable();
     }
 }

@@ -21,10 +21,10 @@ public class GrenadeProjectile : MonoBehaviour
     {
         Vector3 moveDirection = (targetPosition - positionXZ).normalized;
 
-        positionXZ += moveDirection * moveSpeed * Time.deltaTime;
+        positionXZ = Vector3.MoveTowards(positionXZ, targetPosition, moveSpeed * Time.deltaTime);
 
         float distance = Vector3.Distance(positionXZ, targetPosition);
-        float distanceNormilazied = 1 - distance / totalDistance;
+        float distanceNormilazied = totalDistance > 0f ? 1 - distance / totalDistance : 1f;
 
         float maxHeight = totalDistance / 4f;
         float positionY = archYAnimationCurve.Evaluate(distanceNormilazied) * maxHeight;

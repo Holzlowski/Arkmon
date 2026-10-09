@@ -37,6 +37,12 @@ public class ShootAction : BaseAction
             return;
         }
 
+        if (state != State.Cooloff && (targetUnit == null || targetUnit.IsDead))
+        {
+            ActionComplete();
+            return;
+        }
+
         stateTimer -= Time.deltaTime;
 
         switch (state)
@@ -99,7 +105,7 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        targetUnit.Damage(40);
+        targetUnit.Damage(40, unit.transform);
     }
 
     public override string GetActionName()
@@ -129,7 +135,7 @@ public class ShootAction : BaseAction
                     continue;
                 }
 
-                //für eine eher kreisförmige Reichweite
+                //fÃ¼r eine eher kreisfÃ¶rmige Reichweite
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
                 if (testDistance > maxShootDistance)
                 {
