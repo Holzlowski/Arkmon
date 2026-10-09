@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ActionButtonUI : MonoBehaviour
@@ -21,7 +20,7 @@ public class ActionButtonUI : MonoBehaviour
         {
             if (baseAction is EscapeAction)
             {
-                SceneManager.LoadScene("StartScene");
+                UnitManager.Instance?.TryEscape();
             }
             else
             {

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class UnitManager : MonoBehaviour
 {
-    public enum BattleState { Initializing, Running, Won, Lost }
+    public enum BattleState { Initializing, Running, Won, Lost, Escaped }
     public static UnitManager Instance { get; private set; }
     public event EventHandler OnBattleStateChanged;
     public event EventHandler OnUnitListChanged;
@@ -57,6 +57,16 @@ public class UnitManager : MonoBehaviour
     private void LateUpdate()
     {
         CheckBattleEnd();
+    }
+
+    public bool CanEscape => IsBattleRunning && !BaseAction.IsAnyActionActive
+        && TurnSystem.Instance != null && TurnSystem.Instance.IsPlayerTurn();
+
+    public bool TryEscape()
+    {
+        if (!CanEscape) return false;
+        FinishBattle(BattleState.Escaped);
+        return true;
     }
 
     private void FinishBattle(BattleState result)

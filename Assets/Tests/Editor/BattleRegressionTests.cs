@@ -232,4 +232,27 @@ public class BattleRegressionTests
         Assert.That(Call(sword, "GetMaxSwordDistance"), Is.EqualTo(2));
         Assert.That(definition.GetType().GetField("maxHealth").GetValue(definition), Is.EqualTo(200));
     }
+    [Test]
+    public void Escape_IsBlockedOutsidePlayerTurnAndDuringActions()
+    {
+        Component manager = Create("UnitManager");
+        Component turns = Create("TurnSystem");
+        Call(manager, "Awake");
+        Call(turns, "Awake");
+        Assert.That(Property(manager, "CanEscape"), Is.False);
+        Assert.That(Call(manager, "TryEscape"), Is.False);
+        Type state = RuntimeType("UnitManager").GetNestedType("BattleState");
+        Call(manager, "SetState", Enum.Parse(state, "Running"));
+        Assert.That(Property(manager, "CanEscape"), Is.True);
+        Set(turns, "isPlayerTurn", false);
+        Assert.That(Call(manager, "TryEscape"), Is.False);
+        Set(turns, "isPlayerTurn", true);
+        Component action = Create("SpinAction");
+        Call(action, "ActionStart", (Action)(() => { }));
+        Assert.That(Call(manager, "TryEscape"), Is.False);
+        Call(action, "ActionComplete");
+        Assert.That(Property(manager, "CanEscape"), Is.True);
+        Call(manager, "SetState", Enum.Parse(state, "Escaped"));
+        Assert.That(Call(manager, "TryEscape"), Is.False);
+    }
 }

@@ -95,3 +95,11 @@ Victory and defeat currently return to the previous scene through the same trans
 Validation on Unity `6000.3.26f1`: all seven EditMode tests and both PlayMode tests passed. Asset checks loaded two scenes, 65 prefabs, and 72 materials without missing scripts or invalid shader references. A Windows x64 development build succeeded with zero build errors. Validation ran in batch mode; visual appearance, interactive combat, victory/defeat transitions, and low-frame-rate behavior still need the manual Play Mode checks above.
 
 The local game design PDF in docs and its generation files in tmp/gdd are excluded from Git.
+
+### Battle escape and return
+
+Victory, defeat, and escape use the same return flow: wait for actions to finish,
+then load the saved world scene and restore the player's saved position.
+Escape is accepted only during the player turn while the battle is running and
+no action is active. Repeated clicks cannot start additional return transitions.
+NPC conversations and battles remain repeatable for prototype testing.

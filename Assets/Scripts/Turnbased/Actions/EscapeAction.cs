@@ -1,19 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 
 public class EscapeAction : BaseAction
 {
 
-    private void Update()
-    {
-        if (!isActive)
-        {
-            return;
-        }
-        SceneManager.LoadScene("StartScene");
-        ActionComplete();
-    }
     public override List<GridPosition> GetValidActionGridPositionList()
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
@@ -28,8 +18,10 @@ public class EscapeAction : BaseAction
     //Gridposition macht hier nichts, aber muss aufgrund der Vererbung dabei sein
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        //Funktion ClearBusy wird hier im Feld gespeichert
+        // Request escape before registering this action, so it does not block itself.
+        UnitManager.Instance?.TryEscape();
         ActionStart(onActionComplete);
+        ActionComplete();
     }
 
     public override string GetActionName()
