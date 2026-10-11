@@ -223,4 +223,17 @@ Disabling deployment or unloading the scene cleans up effects and presentation l
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 32 EditMode and 17 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
+Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 17 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
+
+
+### Burning status and fire rules
+
+BurningStatus and BurningSystem add a data-driven status: three full rounds of
+five damage by default. The enemy-to-player boundary resolves damage and one
+cardinal spread attempt per exposed target; new fires wait until the next round.
+Spread can affect either team. MonsterDefinition can make monsters immune to
+burning while preserving direct damage. BurningObstacle marks single-cell
+vegetation or fireproof stone; destroyed plants release their pathfinding cell.
+Fire Rules supplies hit/spread probabilities. Animated paper flames use the six
+frames and material in Resources/Paper Fire.asset; cosmetic variation does not
+consume combat randomness. Attack abilities are added in the following change.

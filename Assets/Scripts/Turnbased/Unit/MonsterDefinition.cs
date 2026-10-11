@@ -5,6 +5,8 @@ public class MonsterDefinition : ScriptableObject
 {
     [Min(1)] public int maxHealth = 100;
     [Min(1)] public int maxActionPoints = 3;
+    [Tooltip("Immune to the Burning status; direct fire damage still applies.")]
+    public bool immuneToBurning;
     public Color summonColor = new Color(1f, 0.42f, 0.1f, 1f);
     public AbilityDefinition[] abilities = new AbilityDefinition[0];
 

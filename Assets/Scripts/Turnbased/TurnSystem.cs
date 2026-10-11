@@ -9,6 +9,7 @@ public class TurnSystem : MonoBehaviour
 
     private int turnNumber = 1;
     private bool isPlayerTurn = true;
+    private BurningSystem burningSystem;
 
     private void Awake()
     {
@@ -19,11 +20,15 @@ public class TurnSystem : MonoBehaviour
             return;
         }
         Instance = this;
+        burningSystem = GetComponent<BurningSystem>();
+        if (burningSystem == null) burningSystem = gameObject.AddComponent<BurningSystem>();
     }
 
     public void NextTurn()
     {
         if (!CanChangeTurn()) return;
+        // A full round ends when the opponent returns control to the player.
+        if (!isPlayerTurn) burningSystem.ResolveRound();
         turnNumber++;
         isPlayerTurn = !isPlayerTurn;
 
@@ -32,7 +37,7 @@ public class TurnSystem : MonoBehaviour
 
     public bool CanChangeTurn()
     {
-        return !BaseAction.IsAnyActionActive && UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning
+        return (burningSystem == null || !burningSystem.IsResolving) && !BaseAction.IsAnyActionActive && UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning
             && (BattleDeployment.Instance == null || !BattleDeployment.Instance.IsRecalling);
     }
 

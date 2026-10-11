@@ -58,6 +58,13 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    public void RefreshWalkability(GridPosition position)
+    {
+        Vector3 world = LevelGrid.Instance.GetWorldPosition(position);
+        bool blocked = Physics.Raycast(world + Vector3.down * 5f, Vector3.up, 10f, obstaclesLayerMask);
+        SetIsWalkableGridPosition(position, !blocked);
+    }
+
     public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, out int pathLength)
     {
         List<PathNode> openList = new List<PathNode>();

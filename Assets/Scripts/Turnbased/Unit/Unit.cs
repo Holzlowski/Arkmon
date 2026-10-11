@@ -31,6 +31,7 @@ public class Unit : MonoBehaviour
     void Awake()
     {
         healthSystem = GetComponent<HealthSystem>();
+        if (GetComponent<BurningStatus>() == null) gameObject.AddComponent<BurningStatus>();
         actionPoints = MaxActionPoints;
         //findet alle BaseAction Komponenten
         baseActionArray = GetComponents<BaseAction>();
