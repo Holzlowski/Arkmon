@@ -565,14 +565,11 @@ GameObject:
   - component: {fileID: 6543595598372907330}
   - component: {fileID: 4314357635618093356}
   - component: {fileID: 4764012042525587421}
-  - component: {fileID: 1984490745}
   - component: {fileID: 8718131490978425275}
   - component: {fileID: 277091576300312845}
   - component: {fileID: 4490974729535221579}
-  - component: {fileID: -704751755768727363}
-  - component: {fileID: -5667852141389548557}
-  - component: {fileID: -982743487791216345}
   - component: {fileID: 4853787424720704145}
+  - component: {fileID: 4079912906019338152}
   m_Layer: 6
   m_Name: Enemy Monster
   m_TagString: Untagged
@@ -634,12 +631,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a338d1206f7d18142a080298d554b12c, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  definition: {fileID: 0}
+  definition: {fileID: 11400000, guid: 6d932e083d236a747bc3107c1a3b6a65, type: 2}
   summonColor: {r: 0.65, g: 0.48, b: 0.78, a: 1}
   isEnemy: 1
   isInAttackSelection: 0
-  basicActionArray: []
-  attacks: []
+  basicActionArray:
+  - {fileID: 4764012042525587421}
+  - {fileID: 4079912906019338152}
+  attacks:
+  - {fileID: 4079912906019338152}
 --- !u!114 &4764012042525587421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,21 +655,6 @@ MonoBehaviour:
   moveSpeed: 4
   rotationSpeed: 10
   maxMoveDistance: 4
---- !u!114 &1984490745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c81f8045a134e584496d7b4fc572828a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  obstaclesLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &8718131490978425275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -714,46 +699,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   ragdollPrefab: {fileID: 0}
-    type: 3}
   originalRagdollRootBone: {fileID: 0}
---- !u!114 &-704751755768727363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede7661e187ce13478b31c8e1029beae, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  grenadeProjectilePrefab: {fileID: 3664617654537922735, guid: dfd96fd3d651ec64986b038bbb5cc816,
-    type: 3}
---- !u!114 &-5667852141389548557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 947903b57b219dc489e18eed275b673e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
---- !u!114 &-982743487791216345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 730f3c7f13830694c9147a9605ffd9cf, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
 --- !u!114 &4853787424720704145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,6 +720,21 @@ MonoBehaviour:
   walkCycleDuration: 0.32
   walkHeight: 0.055
   summonOffset: {x: -0.18, y: 0.9, z: 0}
+--- !u!114 &4079912906019338152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4314357635618093355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85d17a0853fd4aaab498230c7afbefaf, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RamAction
+  windupDuration: 0.15
+  chargeSpeed: 14
+  pushSpeed: 8
 --- !u!1 &6505112563976701019
 GameObject:
   m_ObjectHideFlags: 0

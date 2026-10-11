@@ -24,8 +24,7 @@ public class BattleRegressionTests
     [Test]
     public void DeadUnit_CannotSpendPointsMoveOrReenterGrid()
     {
-        Component attacker = CreateUnit(melee: true);
-        Component ram = attacker.GetComponent(RuntimeType("MoveAction"));
+        Component ram = SetUpRam(out Component attacker, out _);
         Component health = attacker.GetComponent(RuntimeType("HealthSystem"));
         Call(health, "Damage", 100, null);
         Vector3 position = attacker.transform.position;
@@ -33,6 +32,117 @@ public class BattleRegressionTests
         Call(attacker, "MoveToWorldPosition", position + Vector3.right * 2f);
         Assert.That(attacker.transform.position, Is.EqualTo(position));
         Assert.That(((Array)Call(attacker, "GetBaseActionArray")).Length, Is.EqualTo(0));
+    }
+    private static object RamCell(int x, int z) => Activator.CreateInstance(RuntimeType("GridPosition"), x, z);
+
+    private Component SetUpRam(out Component attacker, out Component target)
+    {
+        Component grid = Create("LevelGrid");
+        Set(grid, "width", 10); Set(grid, "height", 10); Set(grid, "cellSize", 2f);
+        Call(grid, "Awake");
+        Component pathfinding = Create("Pathfinding");
+        Call(pathfinding, "Awake"); Call(pathfinding, "Setup", 10, 10, 2f);
+        attacker = CreateUnit(enemy: true);
+        target = CreateUnit();
+        Component ram = attacker.gameObject.AddComponent(RuntimeType("RamAction"));
+        Call(ram, "Awake");
+        PlaceRamUnit(attacker, 4, 4); PlaceRamUnit(target, 7, 4);
+        return ram;
+    }
+
+    private static void PlaceRamUnit(Component unit, int x, int z)
+    {
+        Type gridType = RuntimeType("LevelGrid");
+        object grid = gridType.GetProperty("Instance").GetValue(null);
+        object cell = RamCell(x, z);
+        Set(unit, "gridPosition", cell);
+        unit.transform.position = (Vector3)Call(grid, "GetWorldPosition", cell);
+        Call(grid, "AddUnitAtGridPosition", cell, unit);
+    }
+
+    private static bool ValidRam(Component ram, int x, int z)
+        => (bool)Call(ram, "IsValidActionGridPosition", RamCell(x, z));
+
+    [TestCase(1, 0, 1)] [TestCase(1, 0, 2)] [TestCase(1, 0, 3)]
+    [TestCase(-1, 0, 3)] [TestCase(0, 1, 3)] [TestCase(0, -1, 3)]
+    public void Ram_AllCardinalDirectionsAndDistancesAreAllowed(int dx, int dz, int distance)
+    {
+        Component ram = SetUpRam(out _, out Component target);
+        object grid = RuntimeType("LevelGrid").GetProperty("Instance").GetValue(null);
+        Call(grid, "RemoveUnitAtGridPosition", Call(target, "GetGridPosition"), target);
+        int x = 4 + dx * distance, z = 4 + dz * distance;
+        PlaceRamUnit(target, x, z);
+        Assert.That(ValidRam(ram, x, z), Is.True);
+        Assert.That(Call(ram, "GetActionPointCost"), Is.EqualTo(2));
+    }
+
+    [TestCase(6, 6)] [TestCase(8, 4)] [TestCase(9, 4)]
+    public void Ram_RejectsDiagonalOutOfRangeAndEdgeTargets(int x, int z)
+    {
+        Component ram = SetUpRam(out _, out Component target);
+        object grid = RuntimeType("LevelGrid").GetProperty("Instance").GetValue(null);
+        Call(grid, "RemoveUnitAtGridPosition", Call(target, "GetGridPosition"), target);
+        PlaceRamUnit(target, x, z);
+        Assert.That(ValidRam(ram, x, z), Is.False);
+    }
+
+    [TestCase(5, 4)] [TestCase(6, 4)] [TestCase(7, 4)] [TestCase(8, 4)]
+    public void Ram_RejectsBlockedApproachTargetOrPushField(int x, int z)
+    {
+        Component ram = SetUpRam(out _, out _);
+        object path = RuntimeType("Pathfinding").GetProperty("Instance").GetValue(null);
+        Call(path, "SetIsWalkableGridPosition", RamCell(x, z), false);
+        Assert.That(ValidRam(ram, 7, 4), Is.False);
+    }
+
+    [TestCase(5, 4)] [TestCase(8, 4)]
+    public void Ram_RejectsOccupiedApproachOrPushField(int x, int z)
+    {
+        Component ram = SetUpRam(out _, out _);
+        PlaceRamUnit(CreateUnit(), x, z);
+        Assert.That(ValidRam(ram, 7, 4), Is.False);
+    }
+
+    [Test]
+    public void Ram_RejectsAlliesAndReleasesLockOnInvalidTargetOrCancellation()
+    {
+        Component ram = SetUpRam(out _, out Component target);
+        Set(target, "isEnemy", true);
+        int completed = 0;
+        Call(ram, "TakeAction", RamCell(7, 4), (Action)(() => completed++));
+        Assert.That(completed, Is.EqualTo(1)); Assert.That(AnyActionActive, Is.False);
+        Set(target, "isEnemy", false);
+        Call(ram, "TakeAction", RamCell(7, 4), (Action)(() => completed++));
+        Assert.That(AnyActionActive, Is.True);
+        Call(ram, "OnDisable"); Call(ram, "OnDisable");
+        Assert.That(completed, Is.EqualTo(2)); Assert.That(AnyActionActive, Is.False);
+    }
+
+    [Test]
+    public void Ram_MoveEvaluationPrefersAnAvailableChargeLane()
+    {
+        Component ram = SetUpRam(out Component attacker, out Component target);
+        Component manager = Create("UnitManager"); Call(manager, "Awake");
+        Call(manager, "Unit_OnAnyUnitSpawned", attacker, EventArgs.Empty);
+        Call(manager, "Unit_OnAnyUnitSpawned", target, EventArgs.Empty);
+        Component move = attacker.gameObject.AddComponent(RuntimeType("MoveAction"));
+        Call(move, "Awake"); Call(attacker, "Awake");
+        object aligned = Call(move, "GetEnemyAIAction", RamCell(5, 4));
+        object diagonal = Call(move, "GetEnemyAIAction", RamCell(5, 5));
+        int alignedScore = (int)aligned.GetType().GetField("actionValue").GetValue(aligned);
+        int diagonalScore = (int)diagonal.GetType().GetField("actionValue").GetValue(diagonal);
+        Assert.That(alignedScore, Is.GreaterThan(diagonalScore));
+    }
+
+    [Test]
+    public void Ram_RejectsPushBeyondBorderEvenWithinAttackRange()
+    {
+        Component ram = SetUpRam(out Component attacker, out Component target);
+        object grid = RuntimeType("LevelGrid").GetProperty("Instance").GetValue(null);
+        Call(grid, "RemoveUnitAtGridPosition", Call(attacker, "GetGridPosition"), attacker);
+        Call(grid, "RemoveUnitAtGridPosition", Call(target, "GetGridPosition"), target);
+        PlaceRamUnit(attacker, 7, 4); PlaceRamUnit(target, 9, 4);
+        Assert.That(ValidRam(ram, 9, 4), Is.False);
     }
 
     [Test]

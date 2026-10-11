@@ -23,6 +23,7 @@ public class PaperCharacterVisual : MonoBehaviour
     private Unit unit;
     private ShootAction shootAction;
     private SwordAction swordAction;
+    private RamAction ramAction;
     private float walkPhase;
     private float walkWeight;
 
@@ -38,6 +39,7 @@ public class PaperCharacterVisual : MonoBehaviour
         unit = GetComponent<Unit>();
         shootAction = GetComponent<ShootAction>();
         swordAction = GetComponent<SwordAction>();
+        ramAction = GetComponent<RamAction>();
         phase = Random.value * Mathf.PI * 2f;
         idleWeight = 0f;
         walkWeight = 0f;
@@ -80,6 +82,7 @@ public class PaperCharacterVisual : MonoBehaviour
     {
         Unit target = shootAction != null ? shootAction.TargetUnit : null;
         if (target == null && swordAction != null) target = swordAction.TargetUnit;
+        if (target == null && ramAction != null) target = ramAction.TargetUnit;
         if (target != null && target.IsDead) target = null;
         if (target == null && UnitManager.Instance != null)
         {

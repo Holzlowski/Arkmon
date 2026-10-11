@@ -7,6 +7,7 @@ public class ScreenShakeActions : MonoBehaviour
     {
         ShootAction.OnAnyShoot += ShootAction_OnAnyShoot;
         SwordAction.OnAnySwordHit += SwordAction_OnAnySwordHit;
+        RamAction.OnAnyRamHit += SwordAction_OnAnySwordHit;
         GrenadeProjectile.OnAnyGrenadeExploded += GrenadeProjectile_OnAnyGrenadeExploded;
     }
 
@@ -14,6 +15,7 @@ public class ScreenShakeActions : MonoBehaviour
     {
         ShootAction.OnAnyShoot -= ShootAction_OnAnyShoot;
         SwordAction.OnAnySwordHit -= SwordAction_OnAnySwordHit;
+        RamAction.OnAnyRamHit -= SwordAction_OnAnySwordHit;
         GrenadeProjectile.OnAnyGrenadeExploded -= GrenadeProjectile_OnAnyGrenadeExploded;
     }
 

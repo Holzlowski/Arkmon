@@ -164,10 +164,12 @@ public class MoveAction : BaseAction
     {
         ShootAction shootAction = unit.GetAction<ShootAction>();
         SwordAction swordAction = unit.GetAction<SwordAction>();
+        RamAction ramAction = unit.GetAction<RamAction>();
         int targetCount = shootAction != null ? shootAction.GetTargetCountAtPosition(gridPosition) : 0;
         if (swordAction != null) targetCount += swordAction.GetValidActionGridPositionList(gridPosition).Count;
+        if (ramAction != null) targetCount += ramAction.GetValidActionGridPositionList(gridPosition).Count;
         int approachValue = 0;
-        if (shootAction == null && swordAction != null)
+        if (shootAction == null && (swordAction != null || ramAction != null))
         {
             int currentDistance = int.MaxValue;
             int candidateDistance = int.MaxValue;
@@ -176,8 +178,12 @@ public class MoveAction : BaseAction
                 if (target.IsEnemy() == unit.IsEnemy() || target.IsDead) continue;
                 GridPosition position = target.GetGridPosition();
                 GridPosition current = unit.GetGridPosition();
-                currentDistance = Mathf.Min(currentDistance, Mathf.Max(Mathf.Abs(current.x - position.x), Mathf.Abs(current.z - position.z)));
-                candidateDistance = Mathf.Min(candidateDistance, Mathf.Max(Mathf.Abs(gridPosition.x - position.x), Mathf.Abs(gridPosition.z - position.z)));
+                int currentX = Mathf.Abs(current.x - position.x), currentZ = Mathf.Abs(current.z - position.z);
+                int candidateX = Mathf.Abs(gridPosition.x - position.x), candidateZ = Mathf.Abs(gridPosition.z - position.z);
+                currentDistance = Mathf.Min(currentDistance, ramAction != null
+                    ? currentX + currentZ : Mathf.Max(currentX, currentZ));
+                candidateDistance = Mathf.Min(candidateDistance, ramAction != null
+                    ? candidateX + candidateZ : Mathf.Max(candidateX, candidateZ));
             }
             if (candidateDistance < currentDistance) approachValue = 1;
         }
