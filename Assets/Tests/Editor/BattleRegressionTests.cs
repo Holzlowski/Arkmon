@@ -211,6 +211,11 @@ public class BattleRegressionTests
         foreach (string side in new[] { "Left", "Right", "Bottom", "Top" })
         {
             Set(configuration, "playerSide", Enum.Parse(sideType, side));
+            object ownTrainer = Call(configuration, "GetTrainerPosition", 8, 8);
+            object otherTrainer = Call(configuration, "GetOpponentTrainerPosition", 8, 8);
+            Assert.That(otherTrainer, Is.Not.EqualTo(ownTrainer));
+            Assert.That(Call(configuration, "Contains", otherTrainer, 8, 8, true), Is.True);
+            Assert.That(Call(configuration, "Contains", otherTrainer, 8, 8, false), Is.False);
             int friendlyCount = 0;
             for (int x = 0; x < 8; x++)
                 for (int z = 0; z < 8; z++)

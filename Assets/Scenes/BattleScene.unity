@@ -10815,6 +10815,7 @@ MonoBehaviour:
     type: 2}
   trainerPrefab: {fileID: 2794607168333020598, guid: f280af38f3f48724d8e20f5af199e94f,
     type: 3}
+  opponentTrainerPrefab: {fileID: 2116019950198084097, guid: 13735bfcee3bdfa4abbcb15e99d8384b, type: 3}
   summonEffect: {fileID: 1226122236}
 --- !u!114 &1226122236
 MonoBehaviour:

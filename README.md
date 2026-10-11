@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.4.0-alpha.2`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.4.0-alpha.3`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -90,9 +90,9 @@ Also verify the following in Play Mode:
 
 ## Current prototype limitations
 
-Victory and defeat currently return to the previous scene through the same transition; there is no dedicated defeat screen, penalty, reward, or persisted battle result. Initialization assumes the scene's initial units register in Start; asynchronous spawning would need an explicit readiness signal. Melee approach scoring uses grid distance and is a simple heuristic, so it can make poor choices around obstacles. Ability assets configure existing actions rather than dynamically granting new ones. Play Mode scene transitions and low-frame-rate behavior still require engine validation.
+Victory and defeat currently return to the previous scene through the same transition; there is no dedicated defeat screen, penalty, reward, or persisted battle result. BattleDeployment provides the readiness signal for the staged team summons; arbitrary mid-battle reinforcements are not implemented. Melee approach scoring uses grid distance and is a simple heuristic, so it can make poor choices around obstacles. Ability assets configure existing actions rather than dynamically granting new ones. Automated PlayMode checks cover repeated scene transitions and action endpoints; subjective presentation and interactive low-frame-rate behavior still require manual checks.
 
-Validation on Unity `6000.3.26f1`: all seven EditMode tests and both PlayMode tests passed. Asset checks loaded two scenes, 65 prefabs, and 72 materials without missing scripts or invalid shader references. A Windows x64 development build succeeded with zero build errors. Validation ran in batch mode; visual appearance, interactive combat, victory/defeat transitions, and low-frame-rate behavior still need the manual Play Mode checks above.
+Original Unity migration validation on `6000.3.26f1`: all seven then-existing EditMode tests and both PlayMode tests passed. Asset checks loaded two scenes, 65 prefabs, and 72 materials without missing scripts or invalid shader references. A Windows x64 development build succeeded with zero build errors. Validation ran in batch mode; visual appearance, interactive combat, victory/defeat transitions, and low-frame-rate behavior still need the manual Play Mode checks above.
 
 The local game design PDF in docs and its generation files in tmp/gdd are excluded from Git.
 
@@ -137,7 +137,12 @@ A private material copy prevents recoloring the shared effect material.
 Camera controls remain available during
 deployment, and the initial camera position focuses on the trainer's side.
 
-The manager stays in `Deploying` until every friendly monster is registered.
+After all friendly monsters are placed, a visible shepherd on the opposite side
+summons the enemy monsters sequentially with their own colors. Both trainers' cells
+are reserved. The camera pans to the opponent, locks manual camera input for this
+presentation, and returns to its previous position. Enemy units do not exist before
+this sequence. The manager stays in `Deploying` until both teams are registered
+and the camera has returned.
 Attacks, movement, turn changes, AI, and escape are blocked during deployment.
 Repeated placement clicks during summoning are ignored. NPC battles remain
 repeatable. Automated tests cover all four deployment sides and repeated
@@ -182,7 +187,7 @@ StartScene uses a warm limestone courtyard, terracotta keep, wooden benches and 
 
 Each scene has its own Volume profile with ACES tonemapping, restrained bloom, desaturation and vignette. Directional lighting is warm with soft shadows; old baked lighting and environment reflections are cleared. New decoration has no colliders and does not introduce new gameplay obstacles.
 
-The enemy prefab uses **Distelwolle**, a non-starter meadow sheep inspired by the original Schafi: cream wool, lavender face, ram horns, thistles and a small brass bell. Its summon color is muted lilac. It uses data-driven Rammstoß; wool shields remain future work. Art prompts are recorded in `docs/paper-art-generation.json`.
+The enemy prefab uses **Distelwolle**, a non-starter meadow sheep inspired by the original Schafi: cream wool, lavender face, ram horns, thistles and a small brass bell. Its summon color is muted lilac. It uses the data-driven Rammstoß described below; wool shields remain a future design idea. Art prompts are recorded in `docs/paper-art-generation.json`.
 
 The StartScene NPC uses a generated shepherd paper sprite, the same camera-facing idle animation as the player, and an unlit transparent material. Its body is kinematic with gravity disabled: it is a stationary conversation partner with its existing BoxCollider and dialogue configuration retained. The former mesh presentation is hidden.
 
@@ -201,7 +206,21 @@ Enemy movement evaluates possible charge lanes and approaches targets when out o
 
 To try it, enter the NPC battle, place the cat, and end the player turn with a free lane and at most three cells between the monsters. To change balance, edit the Rammstoß and Distelwolle data assets in the Inspector.
 
-
 ### Death handling for paper monsters
 
-Paper monsters never spawn the legacy skeletal ragdoll, including old scene overrides with missing skeleton references. Lethal damage resolves death before cosmetic/UI listeners. Dead units immediately leave the grid and manager, lose action points and deactivate, cancelling their actions. Dead units cannot move, spend points or reenter the grid; AI skips them. Animator parameters require a live controller.
+Paper monsters do not spawn the legacy skeletal ragdoll. Distelwolle's obsolete ragdoll reference is cleared; the spawner also rejects paper visuals and missing skeleton references, including old scene overrides. Its death subscription is removed on disable.
+
+A lethal hit marks the unit dead and resolves its death event before damage/UI notifications. The unit immediately leaves the grid, loses its action points, disables its actions, colliders, health canvas and unit logic (cancelling movement
+and attacks), and is removed from the manager immediately. Its paper visual stays
+active: over 0.35 seconds it sags vertically and darkens without tilting. After a
+0.65-second defeat hold it shrinks into a pulse in its monster color. The pulse
+travels back to its own trainer's vessel, reversing the summon sequence. The root
+is hidden on absorption and destroyed after the return flight. This uses the
+existing sprite procedurally; dedicated defeated artwork is not yet included.
+Turns, new actions, AI and escape wait for recalls; victory/defeat scene transitions
+also wait for every active recall, including simultaneous defeated monsters.
+Disabling deployment or unloading the scene cleans up effects and presentation locks. Dead units cannot spend points or update their grid position, and enemy AI skips them. Legacy Animator parameters are only invoked when a live controller is available.
+
+Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
+
+Current battle regression validation on Unity `6000.3.26f1`: 32 EditMode and 16 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.

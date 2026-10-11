@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterSummonEffect : MonoBehaviour
@@ -7,63 +9,92 @@ public class MonsterSummonEffect : MonoBehaviour
     [SerializeField, Min(0.1f)] private float arrivalDuration = 0.3f;
     [SerializeField] private Color color = new Color(0.2f, 0.85f, 1f, 1f);
     [SerializeField] private Material effectMaterial;
-    private GameObject effectRoot;
-    private Material runtimeMaterial;
+    private readonly Dictionary<GameObject, Material> activeEffects = new Dictionary<GameObject, Material>();
 
     public IEnumerator Play(Vector3 origin, Vector3 destination, Color? monsterColor = null)
+        => Animate(origin, destination + Vector3.up * 0.6f, monsterColor ?? color, false, null, null);
+
+    public IEnumerator PlayRecall(Vector3 monsterOrigin, Vector3 trainerVessel, Color monsterColor,
+        Action<float> onAbsorbProgress, Action onAbsorbed)
+        => Animate(monsterOrigin, trainerVessel, monsterColor, true, onAbsorbProgress, onAbsorbed);
+
+    private IEnumerator Animate(Vector3 origin, Vector3 destination, Color tint, bool reverse,
+        Action<float> onAbsorbProgress, Action onAbsorbed)
     {
-        Color tint = monsterColor ?? color;
-        effectRoot = new GameObject("Monster summon effect");
-        effectRoot.transform.SetParent(transform, false);
-        // Tint a private copy so different monsters never recolor the shared asset.
-        runtimeMaterial = effectMaterial != null ? new Material(effectMaterial)
+        GameObject root = new GameObject(reverse ? "Monster recall effect" : "Monster summon effect");
+        root.transform.SetParent(transform, false);
+        Material material = effectMaterial != null ? new Material(effectMaterial)
             : new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        runtimeMaterial.color = tint;
-        Material material = runtimeMaterial;
-        GameObject pulse = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        pulse.transform.SetParent(effectRoot.transform, false);
-        Destroy(pulse.GetComponent<Collider>());
-        pulse.GetComponent<Renderer>().sharedMaterial = material;
-        pulse.transform.localScale = Vector3.one * 0.3f;
-        TrailRenderer trail = pulse.AddComponent<TrailRenderer>();
-        trail.sharedMaterial = material;
-        trail.time = 0.2f;
-        trail.startWidth = 0.18f;
-        trail.endWidth = 0.01f;
-        trail.startColor = Color.white;
-        trail.endColor = Color.white;
-        pulse.transform.position = origin;
-        trail.Clear();
-        Vector3 target = destination + Vector3.up * 0.6f;
-        float elapsed = 0f;
-        while (elapsed < travelDuration)
+        material.color = tint;
+        activeEffects.Add(root, material);
+        try
         {
-            float t = Mathf.Clamp01(elapsed / travelDuration);
-            pulse.transform.position = Vector3.Lerp(origin, target, t)
-                + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 1.5f);
-            elapsed += Time.deltaTime;
-            yield return null;
+            GameObject pulse = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            pulse.transform.SetParent(root.transform, false);
+            Destroy(pulse.GetComponent<Collider>());
+            pulse.GetComponent<Renderer>().sharedMaterial = material;
+            pulse.transform.position = origin;
+            pulse.transform.localScale = Vector3.one * 0.3f;
+            TrailRenderer trail = pulse.AddComponent<TrailRenderer>();
+            trail.sharedMaterial = material;
+            trail.time = 0.2f;
+            trail.startWidth = 0.18f; trail.endWidth = 0.01f;
+            trail.startColor = Color.white; trail.endColor = Color.white;
+            trail.emitting = !reverse;
+            trail.Clear();
+            if (reverse)
+            {
+                float elapsed = 0f;
+                while (elapsed < arrivalDuration)
+                {
+                    float t = Mathf.Clamp01(elapsed / arrivalDuration);
+                    pulse.transform.localScale = Vector3.one * Mathf.Lerp(1.3f, 0.3f, t);
+                    onAbsorbProgress?.Invoke(t);
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+                onAbsorbProgress?.Invoke(1f);
+                onAbsorbed?.Invoke();
+                pulse.transform.localScale = Vector3.one * 0.3f;
+                trail.emitting = true;
+                trail.Clear();
+            }
+            float travel = 0f;
+            while (travel < travelDuration)
+            {
+                float t = Mathf.Clamp01(travel / travelDuration);
+                pulse.transform.position = Vector3.Lerp(origin, destination, t)
+                    + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 1.5f);
+                travel += Time.deltaTime;
+                yield return null;
+            }
+            pulse.transform.position = destination;
+            trail.emitting = false;
+            if (!reverse)
+            {
+                float elapsed = 0f;
+                while (elapsed < arrivalDuration)
+                {
+                    pulse.transform.localScale = Vector3.one * Mathf.Lerp(0.3f, 1.3f, elapsed / arrivalDuration);
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+            }
         }
-        pulse.transform.position = target;
-        trail.emitting = false;
-        elapsed = 0f;
-        while (elapsed < arrivalDuration)
-        {
-            float t = elapsed / arrivalDuration;
-            pulse.transform.localScale = Vector3.one * Mathf.Lerp(0.3f, 1.3f, t);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        Clear();
+        finally { Clear(root, material); }
     }
 
-    private void Clear()
+    private void Clear(GameObject root, Material material)
     {
-        if (effectRoot != null) Destroy(effectRoot);
-        if (runtimeMaterial != null) Destroy(runtimeMaterial);
-        effectRoot = null;
-        runtimeMaterial = null;
+        if (!activeEffects.Remove(root)) return;
+        if (root != null) Destroy(root);
+        if (material != null) Destroy(material);
     }
 
-    private void OnDisable() => Clear();
+    private void OnDisable() => CancelAll();
+
+    public void CancelAll()
+    {
+        foreach (GameObject root in new List<GameObject>(activeEffects.Keys)) Clear(root, activeEffects[root]);
+    }
 }

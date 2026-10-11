@@ -193,8 +193,13 @@ public class Unit : MonoBehaviour
         foreach (Canvas canvas in GetComponentsInChildren<Canvas>()) canvas.enabled = false;
         UnitAnimator animator = GetComponent<UnitAnimator>();
         if (animator != null) animator.enabled = false;
-        gameObject.SetActive(false);
-        Destroy(gameObject);
+        enabled = false; // Gameplay stops immediately; the paper child can still show defeat.
+        bool recalling = BattleDeployment.Instance != null && BattleDeployment.Instance.TryRecall(this);
+        if (!recalling)
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
     }
 

@@ -67,6 +67,7 @@ public class UnitManager : MonoBehaviour
     }
 
     public bool CanEscape => IsBattleRunning && !BaseAction.IsAnyActionActive
+        && (BattleDeployment.Instance == null || !BattleDeployment.Instance.IsRecalling)
         && TurnSystem.Instance != null && TurnSystem.Instance.IsPlayerTurn();
 
     public bool TryEscape()
@@ -84,7 +85,8 @@ public class UnitManager : MonoBehaviour
 
     private IEnumerator LoadSceneAfterDelay()
     {
-        while (BaseAction.IsAnyActionActive) yield return null;
+        while (BaseAction.IsAnyActionActive || (BattleDeployment.Instance != null && BattleDeployment.Instance.IsRecalling))
+            yield return null;
         yield return new WaitForSeconds(1f);
         if (SceneLoadManager.instance != null) SceneLoadManager.instance.LoadSceneBeforeBattle();
         else SceneManager.LoadScene(0);

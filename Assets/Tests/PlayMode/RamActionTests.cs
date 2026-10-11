@@ -26,6 +26,13 @@ public class RamActionTests
         for (int i = 0; i < 4; i++) yield return null;
         ((Behaviour)UnityEngine.Object.FindFirstObjectByType(TypeOf("EnemyAI"))).enabled = false;
         ((Behaviour)TypeOf("UnitManager").GetProperty("Instance").GetValue(null)).enabled = false;
+        object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
+        var available = (IList)deployment.GetType().GetField("available", Fields).GetValue(deployment);
+        Assert.That(Call(deployment, "TryPlace", available[0]), Is.EqualTo(true));
+        float setupDeadline = Time.realtimeSinceStartup + 10f;
+        while (!(bool)deployment.GetType().GetProperty("IsReady").GetValue(deployment)
+            && Time.realtimeSinceStartup < setupDeadline) yield return null;
+        Assert.That(deployment.GetType().GetProperty("IsReady").GetValue(deployment), Is.EqualTo(true));
         grid = TypeOf("LevelGrid").GetProperty("Instance").GetValue(null);
         attacker = ((IEnumerable)Call(TypeOf("UnitManager").GetProperty("Instance").GetValue(null),
             "GetEnemyUnitList")).Cast<Component>().First();
@@ -58,6 +65,18 @@ public class RamActionTests
         SceneManager.SetActiveScene(SceneManager.CreateScene("RamCleanup"));
         yield return SceneManager.UnloadSceneAsync(previous);
         Assert.That(Busy, Is.False);
+    }
+
+    private IEnumerator WaitForRecall()
+    {
+        object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
+        Assert.That(deployment.GetType().GetProperty("IsRecalling").GetValue(deployment), Is.EqualTo(true));
+        Assert.That(Call(TypeOf("TurnSystem").GetProperty("Instance").GetValue(null), "CanChangeTurn"), Is.EqualTo(false));
+        float deadline = Time.realtimeSinceStartup + 5f;
+        while ((bool)deployment.GetType().GetProperty("IsRecalling").GetValue(deployment)
+            && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(deployment.GetType().GetProperty("IsRecalling").GetValue(deployment), Is.EqualTo(false));
+        yield return null;
     }
 
     private IEnumerator WaitForAction()
@@ -222,14 +241,18 @@ public class RamActionTests
         LogAssert.Expect(LogType.Log, "0");
         Call(attacker, "Damage", 50, null);
         Assert.That((bool)attacker.GetType().GetProperty("IsDead").GetValue(attacker), Is.True);
-        Assert.That(attacker.gameObject.activeSelf, Is.False);
+        Assert.That(attacker.gameObject.activeSelf, Is.True);
+        Assert.That(((Behaviour)attacker).enabled, Is.False);
+        Component paper = attacker.GetComponent(TypeOf("PaperCharacterVisual"));
+        Assert.That(paper.GetType().GetProperty("IsDefeated").GetValue(paper), Is.EqualTo(true));
+        Assert.That(attacker.GetComponentsInChildren<Collider>().Any(c => c.enabled), Is.False);
         Assert.That(Call(grid, "HasAnyUnitOnGridPosition", cell), Is.EqualTo(false));
         Assert.That(((ICollection)Call(manager, "GetEnemyUnitList")).Count, Is.EqualTo(count - 1));
         Assert.That(Call(attacker, "TrySpendActionPointsToTakeAction", ram), Is.EqualTo(false));
         Assert.That(Call(attacker, "GetActionPoints"), Is.EqualTo(0));
         Assert.That(UnityEngine.Object.FindObjectsByType(TypeOf("UnitRagdoll"), FindObjectsSortMode.None).Length,
             Is.EqualTo(ragdolls));
-        yield return null;
+        yield return WaitForRecall();
         Assert.That(attacker == null, Is.True);
         LogAssert.NoUnexpectedReceived();
     }
@@ -253,7 +276,7 @@ public class RamActionTests
         Call(attacker, "MoveToWorldPosition", deathPosition + Vector3.right * 2f);
         Assert.That(attacker.transform.position, Is.EqualTo(deathPosition));
         Assert.That(Call(grid, "HasAnyUnitOnGridPosition", cell), Is.EqualTo(false));
-        yield return null;
+        yield return WaitForRecall();
         Assert.That(attacker == null, Is.True);
         Assert.That(completed, Is.EqualTo(1));
         LogAssert.NoUnexpectedReceived();
@@ -272,9 +295,82 @@ public class RamActionTests
         Call(attacker, "Damage", 50, null);
         Assert.That(completed, Is.EqualTo(1));
         Assert.That(Busy, Is.False);
-        yield return null;
+        yield return WaitForRecall();
         Assert.That(attacker == null, Is.True);
         Assert.That(Call(target, "GetHealthNormalized"), Is.EqualTo(1f));
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
+    public IEnumerator Recall_HoldsUprightDefeatPoseThenReturnsLilacPulseToOpponent()
+    {
+        object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
+        Transform actor = (Transform)deployment.GetType().GetProperty("OpponentTrainer").GetValue(deployment);
+        Component trainerVisual = actor.GetComponent(TypeOf("PaperCharacterVisual"));
+        SpriteRenderer sprite = attacker.GetComponentInChildren<SpriteRenderer>();
+        Vector3 deathPosition = attacker.transform.position;
+        float fullHeight = sprite.transform.localScale.y;
+        LogAssert.Expect(LogType.Log, "0");
+        Call(attacker, "Damage", 50, null);
+        Assert.That(Call(deployment, "TryRecall", attacker), Is.EqualTo(false), "No duplicate recalls.");
+        yield return new WaitForSeconds(0.4f);
+        Assert.That(attacker.gameObject.activeSelf, Is.True);
+        Assert.That(attacker.transform.position, Is.EqualTo(deathPosition));
+        Assert.That(sprite.transform.localScale.y, Is.LessThan(fullHeight * 0.7f));
+        Assert.That(Vector3.Dot(sprite.transform.up, Camera.main.transform.up), Is.GreaterThan(0.999f));
+        float deadline = Time.realtimeSinceStartup + 3f;
+        GameObject effect = null;
+        while (effect == null && Time.realtimeSinceStartup < deadline)
+        {
+            effect = GameObject.Find("Monster recall effect");
+            yield return null;
+        }
+        Assert.That(effect, Is.Not.Null);
+        Renderer pulse = effect.GetComponentInChildren<Renderer>();
+        Color tint = pulse.sharedMaterial.color;
+        Assert.That(tint.r, Is.EqualTo(0.65f).Within(0.001f));
+        Assert.That(tint.g, Is.EqualTo(0.48f).Within(0.001f));
+        Assert.That(tint.b, Is.EqualTo(0.78f).Within(0.001f));
+        while (attacker != null && attacker.gameObject.activeSelf && Time.realtimeSinceStartup < deadline)
+            yield return null;
+        Assert.That(attacker, Is.Not.Null, "The root survives until the pulse reaches the trainer.");
+        Assert.That(attacker.gameObject.activeSelf, Is.False);
+        Vector3 vessel = (Vector3)Call(trainerVisual, "GetSummonOrigin");
+        float closest = float.PositiveInfinity;
+        while (pulse != null && Time.realtimeSinceStartup < deadline)
+        {
+            closest = Mathf.Min(closest, Vector3.Distance(pulse.transform.position, vessel));
+            yield return null;
+        }
+        Assert.That(closest, Is.LessThan(0.4f));
+        Assert.That(attacker == null, Is.True);
+        Assert.That(deployment.GetType().GetProperty("IsRecalling").GetValue(deployment), Is.EqualTo(false));
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
+    public IEnumerator Recall_FriendlyReturnsOrangePulseAndStopsWhenDeploymentDisabled()
+    {
+        object manager = TypeOf("UnitManager").GetProperty("Instance").GetValue(null);
+        Component friendly = ((IEnumerable)Call(manager, "GetFriendlyUnitList")).Cast<Component>()
+            .First(u => u.GetComponent(TypeOf("PaperCharacterVisual")) != null);
+        object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
+        LogAssert.Expect(LogType.Log, "0");
+        Call(friendly, "Damage", 1000, null);
+        float deadline = Time.realtimeSinceStartup + 3f;
+        while (GameObject.Find("Monster recall effect") == null && Time.realtimeSinceStartup < deadline)
+            yield return null;
+        GameObject effect = GameObject.Find("Monster recall effect");
+        Assert.That(effect, Is.Not.Null);
+        Color tint = effect.GetComponentInChildren<Renderer>().sharedMaterial.color;
+        Assert.That(tint.r, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(tint.g, Is.EqualTo(0.42f).Within(0.001f));
+        Assert.That(tint.b, Is.EqualTo(0.1f).Within(0.001f));
+        ((Behaviour)deployment).enabled = false;
+        yield return null;
+        Assert.That(friendly == null, Is.True);
+        Assert.That(GameObject.Find("Monster recall effect"), Is.Null);
+        Assert.That(deployment.GetType().GetProperty("IsRecalling").GetValue(deployment), Is.EqualTo(false));
         LogAssert.NoUnexpectedReceived();
     }
 
@@ -293,7 +389,9 @@ public class RamActionTests
         Assert.That(((ICollection)Call(manager, "GetEnemyUnitList")).Count, Is.EqualTo(0));
         Assert.That(manager.GetType().GetProperty("State").GetValue(manager).ToString(), Is.EqualTo("Won"));
         Assert.That(Busy, Is.False);
-        yield return null;
+        yield return WaitForRecall();
+        Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("BattleScene"));
+        Assert.That(enemies.All(e => e == null), Is.True);
         LogAssert.NoUnexpectedReceived();
     }
 }

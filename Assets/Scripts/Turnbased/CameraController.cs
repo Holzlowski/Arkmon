@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
     float moveSpeed = 20;
     float rotationSpeed = 100f;
     float zoomSpeed = 5f;
+    public bool IsPresentationLocked { get; set; }
 
     void Start()
     {
@@ -22,6 +23,7 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (IsPresentationLocked) return;
         HandleMovement();
         HandleRotation();
         HandleZoom();

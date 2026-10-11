@@ -12,8 +12,16 @@ public class BattleConfiguration : ScriptableObject
     public Unit[] enemyTeam;
 
     public GridPosition GetTrainerPosition(int width, int height)
+        => GetTrainerPositionForSide(playerSide, width, height);
+
+    public GridPosition GetOpponentTrainerPosition(int width, int height)
+        => GetTrainerPositionForSide(playerSide == DeploymentSide.Left ? DeploymentSide.Right
+            : playerSide == DeploymentSide.Right ? DeploymentSide.Left
+            : playerSide == DeploymentSide.Bottom ? DeploymentSide.Top : DeploymentSide.Bottom, width, height);
+
+    private static GridPosition GetTrainerPositionForSide(DeploymentSide side, int width, int height)
     {
-        switch (playerSide)
+        switch (side)
         {
             case DeploymentSide.Right: return new GridPosition(Mathf.Max(0, width - 2), height / 2);
             case DeploymentSide.Bottom: return new GridPosition(width / 2, Mathf.Min(1, height - 1));

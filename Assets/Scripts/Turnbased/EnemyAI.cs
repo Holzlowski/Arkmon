@@ -28,7 +28,8 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (TurnSystem.Instance.IsPlayerTurn() || !UnitManager.Instance.IsBattleRunning)
+        if (TurnSystem.Instance.IsPlayerTurn() || !UnitManager.Instance.IsBattleRunning
+            || (BattleDeployment.Instance != null && BattleDeployment.Instance.IsRecalling))
         {
             return;
         }

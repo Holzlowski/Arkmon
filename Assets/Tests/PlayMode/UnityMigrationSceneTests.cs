@@ -79,6 +79,11 @@ public class UnityMigrationSceneTests
             object managerInstance = managerBefore.GetProperty("Instance").GetValue(null);
             Assert.That(managerBefore.GetProperty("IsBattleRunning").GetValue(managerInstance), Is.False);
             Assert.That(deploymentType.GetProperty("Trainer").GetValue(deployment), Is.Not.Null);
+            Transform opponent = (Transform)deploymentType.GetProperty("OpponentTrainer").GetValue(deployment);
+            Assert.That(opponent, Is.Not.Null);
+            Assert.That(opponent.GetComponentInChildren<SpriteRenderer>().sprite.name, Is.EqualTo("Shepherd-Paper"));
+            Assert.That(((ICollection)managerBefore.GetMethod("GetEnemyUnitList").Invoke(managerInstance, null)).Count, Is.EqualTo(0));
+            bool sawOpponentSummon = false;
             Type gridType = RuntimeType("LevelGrid");
             object grid = gridType.GetProperty("Instance").GetValue(null);
             int width = (int)gridType.GetMethod("GetWidth").Invoke(grid, null);
@@ -144,11 +149,24 @@ public class UnityMigrationSceneTests
                 Assert.That(material.color.r, Is.EqualTo(1f).Within(0.0001f));
                 Assert.That(material.color.g, Is.EqualTo(0.42f).Within(0.0001f));
                 Assert.That(material.color.b, Is.EqualTo(0.1f).Within(0.0001f));
-                float deadline = Time.realtimeSinceStartup + 5f;
+                float deadline = Time.realtimeSinceStartup + 10f;
                 while ((bool)deploymentType.GetProperty("IsSummoning").GetValue(deployment)
-                    && Time.realtimeSinceStartup < deadline) yield return null;
+                    && Time.realtimeSinceStartup < deadline)
+                {
+                    Assert.That(managerBefore.GetProperty("IsBattleRunning").GetValue(managerInstance), Is.False);
+                    if ((bool)deploymentType.GetProperty("IsOpponentSummoning").GetValue(deployment))
+                    {
+                        sawOpponentSummon = true;
+                        Component cameraControl = (Component)UnityEngine.Object.FindFirstObjectByType(RuntimeType("CameraController"));
+                        Assert.That(cameraControl.GetType().GetProperty("IsPresentationLocked").GetValue(cameraControl), Is.EqualTo(true));
+                    }
+                    yield return null;
+                }
                 Assert.That(deploymentType.GetProperty("IsSummoning").GetValue(deployment), Is.False);
             }
+            Assert.That(sawOpponentSummon, Is.True);
+            Component cameraAfter = (Component)UnityEngine.Object.FindFirstObjectByType(RuntimeType("CameraController"));
+            Assert.That(cameraAfter.GetType().GetProperty("IsPresentationLocked").GetValue(cameraAfter), Is.EqualTo(false));
             yield return null;
             yield return null;
             Type managerType = RuntimeType("UnitManager");

@@ -32,7 +32,8 @@ public class TurnSystem : MonoBehaviour
 
     public bool CanChangeTurn()
     {
-        return !BaseAction.IsAnyActionActive && UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning;
+        return !BaseAction.IsAnyActionActive && UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning
+            && (BattleDeployment.Instance == null || !BattleDeployment.Instance.IsRecalling);
     }
 
     private void OnDestroy()
