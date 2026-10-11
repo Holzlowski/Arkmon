@@ -11,6 +11,31 @@ using Object = UnityEngine.Object;
 public class BattleRegressionTests
 {
     [Test]
+    public void LethalDamage_ReportsDeadBeforeDamageListenersRun()
+    {
+        Component health = Create("HealthSystem"); Call(health, "Awake");
+        bool observedDead = false;
+        EventHandler listener = (sender, e) => observedDead = (bool)Property(health, "IsDead");
+        health.GetType().GetEvent("OnDamage").AddEventHandler(health, listener);
+        Call(health, "Damage", 100, null);
+        Assert.That(observedDead, Is.True);
+    }
+
+    [Test]
+    public void DeadUnit_CannotSpendPointsMoveOrReenterGrid()
+    {
+        Component attacker = CreateUnit(melee: true);
+        Component ram = attacker.GetComponent(RuntimeType("MoveAction"));
+        Component health = attacker.GetComponent(RuntimeType("HealthSystem"));
+        Call(health, "Damage", 100, null);
+        Vector3 position = attacker.transform.position;
+        Assert.That(Call(attacker, "TrySpendActionPointsToTakeAction", ram), Is.EqualTo(false));
+        Call(attacker, "MoveToWorldPosition", position + Vector3.right * 2f);
+        Assert.That(attacker.transform.position, Is.EqualTo(position));
+        Assert.That(((Array)Call(attacker, "GetBaseActionArray")).Length, Is.EqualTo(0));
+    }
+
+    [Test]
     public void PaperMonster_PrefersActiveAttackTargetOverNearestOpponent()
     {
         Component manager = Create("UnitManager");

@@ -28,13 +28,14 @@ public class HealthSystem : MonoBehaviour
             health = 0;
         }
 
-        OnDamage?.Invoke(this, EventArgs.Empty);
-
         if (health == 0)
         {
             IsDead = true;
             Die(damageTransform);
         }
+
+        // Resolve death before cosmetic damage/UI listeners can run.
+        OnDamage?.Invoke(this, EventArgs.Empty);
 
         Debug.Log(health);
     }

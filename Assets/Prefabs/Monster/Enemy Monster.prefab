@@ -713,7 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38d07191b262ade43b3b0e7157f9ce44, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  ragdollPrefab: {fileID: 6459509491820056771, guid: 9ed608bb4658c144198bfe5a8ed136c2,
+  ragdollPrefab: {fileID: 0}
     type: 3}
   originalRagdollRootBone: {fileID: 0}
 --- !u!114 &-704751755768727363

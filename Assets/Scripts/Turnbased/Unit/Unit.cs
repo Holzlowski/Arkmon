@@ -51,6 +51,19 @@ public class Unit : MonoBehaviour
 
     void Update()
     {
+        SyncGridPosition();
+    }
+
+    public void MoveToWorldPosition(Vector3 worldPosition)
+    {
+        if (IsDead) return;
+        transform.position = worldPosition;
+        SyncGridPosition();
+    }
+
+    private void SyncGridPosition()
+    {
+        if (IsDead) return;
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if (newGridPosition != gridPosition)
         {
@@ -86,6 +99,7 @@ public class Unit : MonoBehaviour
 
     public BaseAction[] GetBaseActionArray()
     {
+        if (IsDead) return Array.Empty<BaseAction>();
         if (isEnemy)
         {
             return baseActionArray;
@@ -133,6 +147,7 @@ public class Unit : MonoBehaviour
 
     public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
+        if (IsDead || !enabled || baseAction == null || !baseAction.enabled) return false;
         if (actionPoints >= baseAction.GetActionPointCost())
         {
             return true;
@@ -157,6 +172,7 @@ public class Unit : MonoBehaviour
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        if (IsDead) return;
         if ((IsEnemy() && !TurnSystem.Instance.IsPlayerTurn()) ||
                 (!IsEnemy() && TurnSystem.Instance.IsPlayerTurn()))
         {
@@ -170,9 +186,15 @@ public class Unit : MonoBehaviour
     private void HealthSystem_OnDead(object sender, Transform e)
     {
         LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
-
+        actionPoints = 0;
+        foreach (BaseAction action in baseActionArray) action.enabled = false;
+        foreach (Collider collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
+        foreach (Rigidbody body in GetComponentsInChildren<Rigidbody>()) body.isKinematic = true;
+        foreach (Canvas canvas in GetComponentsInChildren<Canvas>()) canvas.enabled = false;
+        UnitAnimator animator = GetComponent<UnitAnimator>();
+        if (animator != null) animator.enabled = false;
+        gameObject.SetActive(false);
         Destroy(gameObject);
-
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
     }
 

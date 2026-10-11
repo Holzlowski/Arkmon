@@ -86,6 +86,7 @@ public class EnemyAI : MonoBehaviour
 
     private bool TryTakeEnemyAIAction(Unit enemyUnit, Action onEnemyAIActionComplete)
     {
+        if (enemyUnit == null || enemyUnit.IsDead || !enemyUnit.isActiveAndEnabled) return false;
         EnemyAIAction bestEnemyAIAction = null;
         BaseAction bestBaseAction = null;
 

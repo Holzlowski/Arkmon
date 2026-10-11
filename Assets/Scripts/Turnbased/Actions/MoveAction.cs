@@ -27,6 +27,13 @@ public class MoveAction : BaseAction
             return;
         }
 
+        if (unit.IsDead)
+        {
+            OnStopMoving?.Invoke(this, EventArgs.Empty);
+            ActionComplete();
+            return;
+        }
+
         Vector3 targetPosittion = positionList[currentPositionIndex];
         Vector3 moveDirection = (targetPosittion - transform.position).normalized;
 
@@ -54,6 +61,11 @@ public class MoveAction : BaseAction
     /// </summary>
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        if (unit.IsDead || !isActiveAndEnabled)
+        {
+            onActionComplete?.Invoke();
+            return;
+        }
         List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLength);
 
         if (pathGridPositionList == null || pathGridPositionList.Count == 0)
@@ -84,6 +96,7 @@ public class MoveAction : BaseAction
     public override List<GridPosition> GetValidActionGridPositionList()
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
+        if (unit.IsDead) return validGridPositionList;
 
         GridPosition unitGridPosition = unit.GetGridPosition();
 

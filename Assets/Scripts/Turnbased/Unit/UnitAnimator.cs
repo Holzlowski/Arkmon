@@ -8,6 +8,8 @@ public class UnitAnimator : MonoBehaviour
     [SerializeField] private Transform shootPointTransform;
     [SerializeField] private Transform rifleTransform;
     [SerializeField] private Transform swordTransform;
+    private bool CanAnimate => animator != null && animator.isActiveAndEnabled
+        && animator.runtimeAnimatorController != null;
 
     private void Awake()
     {
@@ -43,17 +45,17 @@ public class UnitAnimator : MonoBehaviour
     private void SwordAction_OnSwordActionStarted(object sender, EventArgs e)
     {
         EquipSword();
-        animator.SetTrigger("SwordSlash");
+        if (CanAnimate) animator.SetTrigger("SwordSlash");
     }
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {
-        animator.SetBool("IsWalking", true);
+        if (CanAnimate) animator.SetBool("IsWalking", true);
     }
 
     private void MoveAction_OnStopMoving(object sender, EventArgs e)
     {
-        animator.SetBool("IsWalking", false);
+        if (CanAnimate) animator.SetBool("IsWalking", false);
     }
 
     private void ShootAction_OnShooting(object sender, ShootAction.OnShootEventArgs e)

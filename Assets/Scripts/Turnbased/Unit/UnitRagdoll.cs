@@ -6,6 +6,7 @@ public class UnitRagdoll : MonoBehaviour
 
     public void Setup(Transform originalRootBone, Transform damageSourceTransform = null)
     {
+        if (originalRootBone == null || ragdollRootBone == null) return;
         MatchAllChildTransforms(originalRootBone, ragdollRootBone);
 
         if (damageSourceTransform == null)
