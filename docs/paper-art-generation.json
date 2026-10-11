@@ -1,0 +1,44 @@
+{
+  "generator": "Built-in image_gen tool",
+  "styleReference": "Local Arkmon Game Design Dokument.pdf, page 12 upper paperlook row",
+  "transparentBackground": true,
+  "assets": [
+    {
+      "output": "Assets/Sprites/Monster/Flaca-Paper.png",
+      "references": [
+        "GDD page 12 render",
+        "Assets/Sprites/Monster/Flaca.png"
+      ],
+      "prompt": "Use case: style-transfer. Asset type: single transparent Unity game sprite, not a mockup. Image 1 is a style reference: match ONLY the upper PAPERLOOK row, never the lower 3D row, and do not copy page text or background. Image 2 is the current fire-cat identity reference. Redesign this one creature as a small brave medieval fire-cat starter: orange fur, cream muzzle and belly, big expressive eyes, burgundy cape with small gold clasp, simple wooden sword held in a paw, curved tail ending in a small flame. Flat illustrated paper-cutout style, strong dark brown outlines, few clean color areas, minimal flat cel shading, thin warm ivory cut-paper rim. Same friendly orange-cat identity, simplify away tiny fur strands and shiny metal. One full-body character only in a neutral standing idle pose, slight three-quarter view, clearly separated limbs, grounded feet aligned near lower canvas, silhouette fits with generous transparent margin. True transparent background, no ground shadow, no environment, no labels, no letters, no sheet, no other poses, no watermark. Suitable to animate by subtle squash, stretch and rocking as a single paper sprite."
+    },
+    {
+      "output": "Assets/Sprites/Characters/Prince-Paper.png",
+      "references": [
+        "GDD page 12 render",
+        "Assets/Sprites/Characters/Player.png",
+        "Assets/Sprites/Monster/Flaca-Paper.png"
+      ],
+      "prompt": "Use case: style-transfer. Asset type: one single transparent Unity player sprite. Image 1: match only the upper PAPERLOOK art style, not 3D or page layout. Image 2: existing player identity: dark wavy hair, green medieval cloak, tan clothes, leather boots. Image 3: final fire-cat style to match as a companion. Redesign the player as the young boy prince in the Arkmon document: friendly youthful face, shorter child proportions, dark wavy hair, muted forest-green short cloak with small brass clasp, simple tan medieval tunic and trousers, brown leather boots, a small brass magical vessel/lamp held beside the waist as the source of monster-summoning light. Modest clothes, no ornate crown, no weapons. Strong warm dark-brown outlines, flat illustrated cut-paper appearance, few clean color areas, minimal flat cel shading, thin warm ivory paper-cut rim, consistent with Image 3. One whole-body character, neutral relaxed standing idle pose, slight three-quarter view, expressive readable silhouette, both feet planted and fully visible, enough transparent margin all around. True transparent background, no environment, no ground shadow, no text, no watermarks, no additional poses or characters. Intended for subtle breathing and rocking animation as a single flat paper character.",
+      "cleanupPrompt": "Use case: background-extraction. This is an edit of the provided player sprite. Keep the boy's face, pose, proportions, green cloak, tan clothes, boots, brass vessel, all outlines, all internal colors and the thin ivory cut-paper border exactly unchanged. Remove EVERY bit of the exterior dark vignette, beige glow, halo and drop shadow surrounding the ivory silhouette. Produce only the clean full-body boy cutout, with completely transparent empty pixels outside the ivory cut-paper edge. The figure must be fully opaque inside. No background, no glow outside the silhouette, no floor shadow, no changes to character design, no text."
+    },
+    {
+      "output": "Assets/Sprites/Monster/Distelwolle-Paper.png",
+      "references": [
+        "Assets/Sprites/Monster/Schafi.png",
+        "Assets/Sprites/Monster/Flaca-Paper.png"
+      ],
+      "prompt": "Use case: stylized-concept. Create ONE transparent full-body Unity game monster sprite named Distelwolle (do NOT write the name). Reference image 1 is the old sheep monster: preserve its appealing round cream wool silhouette, lavender-purple face and legs, pink ear interiors, four little dark hooves and expressive gentle eyes. Develop a distinct NON-STARTER meadow guardian for a friendly medieval fantasy world: a small stout woolly sheep with two short curled warm-brown ram horns, a small cluster of sage-green thorny thistle leaves and two muted lilac thistle flowers caught in its wool, a rustic small brass bell on a muted green neck ribbon. Slightly stubborn confident expression, cute rather than fierce. Reference image 2 sets the final art style: match strong warm dark-brown outlines, simplified flat color areas, subtle paper texture, restrained cel shading, thin warm ivory cut-paper silhouette rim. No fire, ice, crystals, weapons or armor; this is a countryside wild monster, not any starter creature. Full body, four sturdy planted feet, neutral standing pose, three-quarter side view facing screen RIGHT (head noticeably toward the right), readable compact silhouette, all horns and hooves fully visible, centered with transparent margin, bottom-aligned feet. True transparent background; fully opaque character interior. No exterior glow, no drop shadow, no ground, no text, no watermark, no environment, no additional poses. Suitable for upright horizontal mirroring and gentle procedural paper bobbing.",
+      "role": "Active enemy sprite; replaces the Frostling starter concept in Enemy Monster.prefab"
+    },
+    {
+      "output": "Assets/Sprites/Characters/Shepherd-Paper.png",
+      "references": [
+        "Assets/Sprites/Characters/Prince-Paper.png",
+        "Assets/Sprites/Monster/Distelwolle-Paper.png"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: one transparent full-body Unity NPC sprite. Reference image 1 provides the youthful medieval illustrated paper-cutout style, green/tan earthy palette and proportions of the game's player; do NOT copy its dark exterior halo. Reference image 2 is the NPC's sheep companion: match warm brown contours, cream cut-paper rim, flat cel shading and thistle/meadow accents. Create a friendly adult medieval shepherd NPC, slightly taller and stockier than the young prince, warm expressive face, short chestnut beard, tousled brown hair, soft worn moss-green brimmed shepherd hat, cream linen shirt, muted olive vest, russet trousers and sturdy brown boots. One hand holds a simple curved wooden shepherd crook, the other rests relaxed beside a small satchel with one tiny lilac thistle tucked in. Practical humble rural clothes, no armor, no crown, no modern items. Readable face, gentle inviting smile, compact simple silhouette. Full body, relaxed standing pose, slight three-quarter view facing screen RIGHT, both feet planted and fully visible. Strong dark-brown outlines, few clean flat color areas, subtle paper texture, thin warm ivory silhouette edge. True transparent empty background outside the thin ivory rim, fully opaque interior. No exterior halo or glow, no shadow, no floor, no text, no watermark, no other characters or additional poses. Intended for upright left/right mirroring and gentle procedural idle breathing.",
+      "cleanupPrompt": "Use case: background-extraction. Edit the supplied shepherd NPC sprite. Keep every part of the character unchanged: face, hat, beard, clothes, thistle, satchel, staff, boots, proportions, pose, colors, outlines and thin ivory cut-paper edge. Remove ALL dark brown vignette, beige glow, halo and shadow OUTSIDE the thin ivory silhouette. Output only the fully opaque character cutout with truly transparent empty pixels everywhere outside its ivory edge. No exterior glow or floor shadow. Do not replace transparency with gray, black, white or checkerboard. No redesign.",
+      "role": "NPC shepherd in StartScene"
+    }
+  ]
+}

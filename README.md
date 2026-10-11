@@ -104,6 +104,35 @@ Escape is accepted only during the player turn while the battle is running and
 no action is active. Repeated clicks cannot start additional return transitions.
 NPC conversations and battles remain repeatable for prototype testing.
 
-### Upcoming battle deployment (0.3.0-alpha.1)
+### Character asset integration (0.3.0-alpha.2)
 
-The runtime foundation supports configured teams, circular player deployment around a trainer, opposite-side enemy placement, colored summoning, a shared grid origin and separate visual highlight elevation. Battle actions remain blocked until placement finishes. PaperCharacterVisual provides upright sprites, horizontal facing and procedural idle/walk motion. Scene and art integration follows in the next commits; existing scenes retain their fallback battles until configured.
+Paper character prefabs and a default battle configuration are available. BattleDeployment scene wiring and the courtyard presentation follow in the final integration commit.
+
+### Paper characters and idle animation
+
+The player and the battle trainer now use `Assets/Sprites/Characters/Prince-Paper.png`.
+The friendly monster uses `Assets/Sprites/Monster/Flaca-Paper.png`; the enemy uses `Distelwolle-Paper.png`.
+These are generated transparent illustrations based on the locally kept GDD's
+paperlook direction: strong contours, simple color areas, an orange fire-cat with
+cape and wooden sword, and a young prince in a green cloak carrying a vessel.
+The earlier sprite files remain available. Generation prompts are recorded in
+`docs/paper-art-generation.json`; the local GDD remains excluded from Git.
+
+`PaperCharacterVisual` animates a separate `Paper Visual` child with gentle
+breathing and bobbing. Figures stay upright in the camera's image plane and face
+left or right only by flipping the sprite. The player faces its screen-horizontal
+movement; purely vertical movement retains its previous facing. Monsters face
+their active attack target, otherwise the nearest living opponent.
+Idle motion eases out during movement or actions. Movement uses a rhythmic
+step bounce and subtle squash, without rotating the figure. Both example monsters
+use `Visual Scale = 0.5`, half their previous width and height.
+Only the visual child changes; colliders, world position and grid occupancy do not.
+Cycle duration, visual scale, and motion amounts are adjustable in the Inspector. These are
+procedural paper animations, not skeletal rigs or frame-by-frame sprite sheets.
+The existing unit Animator and attack callbacks are retained, with the old
+body and equipment renderers hidden. Dedicated paper attack and walk poses are
+still future work. The exploration player's C key still toggles the paper visual
+and the diagnostic capsule.
+
+
+The enemy is Distelwolle, a non-starter sheep with cream wool, lavender face, thistles and a brass bell. The NPC is a shepherd using an unlit paper sprite and a stationary kinematic body; existing dialogue and collision remain. Both retain prototype gameplay actions. New assets include the trainer, default teams and the summon-effect material.

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ef82680d652f52489e542f0d021e713, type: 3}
+  m_Name: Default NPC Battle
+  m_EditorClassIdentifier: Assembly-CSharp::BattleConfiguration
+  playerSide: 0
+  deploymentRadius: 3
+  deploymentDepth: 2
+  playerTeam:
+  - {fileID: 4314357635618093356, guid: 4b7b179e37101604789bfb54b9b2c886, type: 3}
+  enemyTeam:
+  - {fileID: 4314357635618093356, guid: 2f8b526739e5ccc468844e37ebf50fa7, type: 3}
+  - {fileID: 4314357635618093356, guid: 2f8b526739e5ccc468844e37ebf50fa7, type: 3}
