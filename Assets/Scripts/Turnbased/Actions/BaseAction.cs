@@ -12,6 +12,7 @@ public abstract class BaseAction : MonoBehaviour
     //protected, kann nicht von au�en zugegriffen werden, aber von Klassen, die von dieser vererben
     protected Unit unit;
     protected bool isActive;
+    public bool IsActive => isActive;
     private static readonly HashSet<BaseAction> activeActions = new HashSet<BaseAction>();
     public static bool IsAnyActionActive => activeActions.Count > 0;
     //delegates sind Funktionen, die in Variabeln gespeichert sind

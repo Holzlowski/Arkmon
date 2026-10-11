@@ -17,6 +17,7 @@ public class SwordAction : BaseAction
 
     private State state;
     private Unit targetUnit;
+    public Unit TargetUnit => IsActive ? targetUnit : null;
 
     private float stateTimer;
     private float rotationSpeed = 10f;

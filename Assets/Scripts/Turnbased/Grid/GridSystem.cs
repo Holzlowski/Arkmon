@@ -6,14 +6,16 @@ public class GridSystem<TGridObject>
     private int width;
     private int height;
     private float cellSize;
+    private readonly Vector3 origin;
     private TGridObject[,] gridObjectArray; //2 dimensionales Array
 
     //weil wir in new() keine Parameter eingeben können, benutzen wir das Delegate Func umd die Parameter mitzuliefern
-    public GridSystem(int width, int height, float cellSize, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObejct)
+    public GridSystem(int width, int height, float cellSize, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObejct, Vector3 origin = default)
     {
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
+        this.origin = origin;
 
         gridObjectArray = new TGridObject[width, height];
         for (int x = 0; x < width; x++)
@@ -29,14 +31,14 @@ public class GridSystem<TGridObject>
 
     public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
-        return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize;
+        return origin + new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize;
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition)
     {
         return new GridPosition(
-            Mathf.RoundToInt(worldPosition.x / cellSize),
-            Mathf.RoundToInt(worldPosition.z / cellSize)
+            Mathf.RoundToInt((worldPosition.x - origin.x) / cellSize),
+            Mathf.RoundToInt((worldPosition.z - origin.z) / cellSize)
         );
     }
 

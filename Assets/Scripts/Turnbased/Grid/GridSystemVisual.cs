@@ -24,6 +24,7 @@ public class GridSystemVisual : MonoBehaviour
 
 
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
+    [SerializeField, Min(0.01f)] private float visualHeight = 0.06f;
     [SerializeField] public List<GridVisualTypeMaterial> gridVisualTypeMaterialList;
 
     private UnitActionSystem actionSystem;
@@ -57,7 +58,9 @@ public class GridSystemVisual : MonoBehaviour
                 GridPosition gridPosition = new GridPosition(x, z);
 
                 Transform gridVisualSingleTransform =
-                    Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
+                    Instantiate(gridSystemVisualSinglePrefab,
+                        LevelGrid.Instance.GetWorldPosition(gridPosition) + Vector3.up * visualHeight,
+                        Quaternion.identity);
 
                 gridSystemVisualSingleArray[x, z] = gridVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
             }
@@ -65,6 +68,7 @@ public class GridSystemVisual : MonoBehaviour
         actionSystem.OnSelectedActionChanged += UnityActionSystem_OnSelectedActionChanged;
         levelGrid.OnAnyUnitMoveGridPosition += LevelGrid_OnAnyUnitMoveGridPosition;
 
+        HideAllGridPositions();
         UpdateGridVisual();
     }
 
@@ -130,8 +134,11 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
+    public void Refresh() => UpdateGridVisual();
+
     private void UpdateGridVisual()
     {
+        if (UnitManager.Instance != null && !UnitManager.Instance.IsBattleRunning) return;
         HideAllGridPositions();
 
         Unit selectedUnit = actionSystem.GetSelectedUnit();

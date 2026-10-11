@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class UnitManager : MonoBehaviour
 {
-    public enum BattleState { Initializing, Running, Won, Lost, Escaped }
+    public enum BattleState { Initializing, Running, Won, Lost, Escaped, Deploying }
     public static UnitManager Instance { get; private set; }
     public event EventHandler OnBattleStateChanged;
     public event EventHandler OnUnitListChanged;
@@ -29,7 +29,14 @@ public class UnitManager : MonoBehaviour
         if (Instance != this) yield break;
         // Wait until all scene units have registered in Start.
         yield return null;
+        if (BattleDeployment.Instance != null && !BattleDeployment.Instance.IsReady)
+        {
+            SetState(BattleState.Deploying);
+            while (BattleDeployment.Instance != null && !BattleDeployment.Instance.IsReady) yield return null;
+        }
+        yield return null;
         SetState(BattleState.Running);
+        if (GridSystemVisual.Instance != null) GridSystemVisual.Instance.Refresh();
         CheckBattleEnd();
     }
 

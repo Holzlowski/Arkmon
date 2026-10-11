@@ -103,3 +103,7 @@ then load the saved world scene and restore the player's saved position.
 Escape is accepted only during the player turn while the battle is running and
 no action is active. Repeated clicks cannot start additional return transitions.
 NPC conversations and battles remain repeatable for prototype testing.
+
+### Upcoming battle deployment (0.3.0-alpha.1)
+
+The runtime foundation supports configured teams, circular player deployment around a trainer, opposite-side enemy placement, colored summoning, a shared grid origin and separate visual highlight elevation. Battle actions remain blocked until placement finishes. PaperCharacterVisual provides upright sprites, horizontal facing and procedural idle/walk motion. Scene and art integration follows in the next commits; existing scenes retain their fallback battles until configured.

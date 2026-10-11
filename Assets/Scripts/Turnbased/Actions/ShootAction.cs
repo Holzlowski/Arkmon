@@ -30,6 +30,7 @@ public class ShootAction : BaseAction
     private float rotationSpeed = 0f;
     private bool canShootBullet;
     private Unit targetUnit;
+    public Unit TargetUnit => IsActive ? targetUnit : null;
 
     private void Update()
     {

@@ -22,6 +22,7 @@ public class DialogueBoxController : MonoBehaviour
     bool skipLineTriggered;
     bool answerTriggered;
     int answerIndex;
+    private BattleConfiguration battleConfiguration;
 
     float charactersPerSecond = 90;
 
@@ -46,14 +47,16 @@ public class DialogueBoxController : MonoBehaviour
         }
     }
 
-    public void StartDialogue(DialogueTree dialogueTree, int startSection, string name, string battleSceneName)
+    public void StartDialogue(DialogueTree dialogueTree, int startSection, string name, string battleSceneName,
+        BattleConfiguration configuration = null)
     {
         ResetBox();
+        this.battleSceneName = battleSceneName;
+        battleConfiguration = configuration;
         nameText.text = name;
         dialogueBox.SetActive(true);
         OnDialogueStarted?.Invoke();
         StartCoroutine(RunDialogue(dialogueTree, startSection));
-        this.battleSceneName = battleSceneName;
     }
 
 
@@ -96,6 +99,7 @@ public class DialogueBoxController : MonoBehaviour
 
             Vector3 playerTransform = GameObject.FindWithTag("Player").gameObject.transform.position;
             SceneLoadManager.instance.SavePlayerTransform(playerTransform);
+            SceneLoadManager.instance.SetPendingBattle(battleConfiguration);
 
             // Lade die Kampfszene
             SceneManager.LoadScene(battleSceneName);

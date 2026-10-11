@@ -6,6 +6,8 @@ public class Unit : MonoBehaviour
     private const int ACTION_POINTS_MAX = 3;
     [SerializeField] private MonsterDefinition definition;
     public MonsterDefinition Definition => definition;
+    [SerializeField] private Color summonColor = new Color(1f, 0.42f, 0.1f, 1f);
+    public Color GetSummonColor() => definition != null ? definition.summonColor : summonColor;
     private int MaxActionPoints => definition != null ? definition.maxActionPoints : ACTION_POINTS_MAX;
 
     public static event EventHandler OnAnyActionPointsChanged;

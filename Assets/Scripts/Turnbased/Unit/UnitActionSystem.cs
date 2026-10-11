@@ -42,7 +42,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private void EnsureValidSelection()
     {
-        if (selectedUnit != null && !selectedUnit.IsDead && !selectedUnit.IsEnemy()) return;
+        if (selectedUnit != null && selectedUnit.isActiveAndEnabled && !selectedUnit.IsDead && !selectedUnit.IsEnemy()) return;
         Unit replacement = unitManager.GetFriendlyUnitList().Find(unit => unit != null && !unit.IsDead);
         SetSelectedUnit(replacement);
     }

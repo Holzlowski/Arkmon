@@ -10,6 +10,97 @@ using Object = UnityEngine.Object;
 // reference that assembly directly, so resolve its types through reflection.
 public class BattleRegressionTests
 {
+    [Test]
+    public void PaperMonster_PrefersActiveAttackTargetOverNearestOpponent()
+    {
+        Component manager = Create("UnitManager");
+        Call(manager, "Awake");
+        Component owner = CreateUnit();
+        Component near = CreateUnit(enemy: true);
+        Component far = CreateUnit(enemy: true);
+        near.transform.position = Vector3.right * 2f;
+        far.transform.position = Vector3.right * 8f;
+        foreach (Component unit in new[] { owner, near, far }) Call(manager, "Unit_OnAnyUnitSpawned", unit, EventArgs.Empty);
+        Component shoot = owner.gameObject.AddComponent(RuntimeType("ShootAction"));
+        Component visual = owner.gameObject.AddComponent(RuntimeType("PaperCharacterVisual"));
+        GameObject pivot = new GameObject("Paper pivot");
+        pivot.transform.SetParent(owner.transform);
+        pivot.AddComponent<SpriteRenderer>();
+        Set(visual, "paperPivot", pivot.transform);
+        Call(visual, "OnEnable");
+        Assert.That(Call(visual, "GetOpponentDirection"), Is.EqualTo(Vector3.right * 2f));
+        Set(shoot, "targetUnit", far);
+        Set(shoot, "isActive", true);
+        Assert.That(Call(visual, "GetOpponentDirection"), Is.EqualTo(Vector3.right * 8f));
+        Set(shoot, "isActive", false);
+        Assert.That(Call(visual, "GetOpponentDirection"), Is.EqualTo(Vector3.right * 2f));
+    }
+    [Test]
+    public void SummonColor_UsesMonsterDefinitionWithoutChangingOtherUnits()
+    {
+        Component first = CreateUnit();
+        Component second = CreateUnit();
+        Set(first, "summonColor", Color.red);
+        Set(second, "summonColor", Color.blue);
+        Assert.That(Call(first, "GetSummonColor"), Is.EqualTo(Color.red));
+        ScriptableObject definition = ScriptableObject.CreateInstance(RuntimeType("MonsterDefinition"));
+        assets.Add(definition);
+        Set(definition, "summonColor", Color.green);
+        Set(first, "definition", definition);
+        Assert.That(Call(first, "GetSummonColor"), Is.EqualTo(Color.green));
+        Assert.That(Call(second, "GetSummonColor"), Is.EqualTo(Color.blue));
+    }
+    [Test]
+    public void GridOrigin_OffsetsWorldCoordinatesAndRoundTrips()
+    {
+        Component grid = Create("LevelGrid");
+        Set(grid, "width", 8);
+        Set(grid, "height", 8);
+        Set(grid, "cellSize", 2f);
+        Set(grid, "origin", new Vector3(8f, 0f, 2f));
+        Call(grid, "Awake");
+        object cell = Activator.CreateInstance(RuntimeType("GridPosition"), 2, 3);
+        Vector3 world = (Vector3)Call(grid, "GetWorldPosition", cell);
+        Assert.That(world, Is.EqualTo(new Vector3(12f, 0f, 8f)));
+        Assert.That(Call(grid, "GetGridPosition", world), Is.EqualTo(cell));
+    }
+    [Test]
+    public void DeploymentZones_RespectSideBoundsAndOpposingTeams()
+    {
+        ScriptableObject configuration = ScriptableObject.CreateInstance(RuntimeType("BattleConfiguration"));
+        assets.Add(configuration);
+        Type sideType = RuntimeType("BattleConfiguration").GetNestedType("DeploymentSide");
+        Type positionType = RuntimeType("GridPosition");
+        Set(configuration, "deploymentDepth", 2);
+        Set(configuration, "deploymentRadius", 2);
+        foreach (string side in new[] { "Left", "Right", "Bottom", "Top" })
+        {
+            Set(configuration, "playerSide", Enum.Parse(sideType, side));
+            int friendlyCount = 0;
+            for (int x = 0; x < 8; x++)
+                for (int z = 0; z < 8; z++)
+                {
+                    object cell = Activator.CreateInstance(positionType, x, z);
+                    bool player = (bool)Call(configuration, "Contains", cell, 8, 8, false);
+                    bool enemy = (bool)Call(configuration, "Contains", cell, 8, 8, true);
+                    Assert.That(player && enemy, Is.False);
+                    if (player) friendlyCount++;
+                }
+            Assert.That(friendlyCount, Is.EqualTo(11));
+            object outside = Activator.CreateInstance(positionType, -1, 0);
+            Assert.That(Call(configuration, "Contains", outside, 8, 8, false), Is.False);
+        }
+        Set(configuration, "playerSide", Enum.Parse(sideType, "Left"));
+        object boundary = Activator.CreateInstance(positionType, 3, 4);
+        object diagonalOutside = Activator.CreateInstance(positionType, 3, 6);
+        Assert.That(Call(configuration, "Contains", boundary, 8, 8, false), Is.True);
+        Assert.That(Call(configuration, "Contains", diagonalOutside, 8, 8, false), Is.False);
+        object trainerCell = Activator.CreateInstance(positionType, 1, 4);
+        Assert.That(Call(configuration, "Contains", trainerCell, 8, 8, false), Is.False);
+        Set(configuration, "deploymentRadius", 100);
+        object enemyCell = Activator.CreateInstance(positionType, 7, 4);
+        Assert.That(Call(configuration, "Contains", enemyCell, 8, 8, false), Is.False);
+    }
     private readonly List<GameObject> objects = new List<GameObject>();
     private readonly List<ScriptableObject> assets = new List<ScriptableObject>();
     private const BindingFlags Fields = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;

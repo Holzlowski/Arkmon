@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 public class SceneLoadManager : MonoBehaviour
 {
     public static SceneLoadManager instance;
+    public BattleConfiguration PendingBattle { get; private set; }
+    public void SetPendingBattle(BattleConfiguration configuration) => PendingBattle = configuration;
     // Hier könnten alle Daten gespeichert werden, die zwischen den Szenen ausgetauscht werden sollen
     [SerializeField] Vector3 playerPosition;
     [SerializeField] int sceneIndex;
@@ -40,6 +42,7 @@ public class SceneLoadManager : MonoBehaviour
 
     public void LoadSceneBeforeBattle()
     {
+        PendingBattle = null;
         SceneManager.LoadSceneAsync(sceneIndex).completed += OnSceneLoaded;
     }
 

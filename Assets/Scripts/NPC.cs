@@ -5,6 +5,7 @@ public class NPC : MonoBehaviour, IInteractableAsPlayer
     [SerializeField] bool firstInteraction = true;
     [SerializeField] int startSection;
     [SerializeField] string battleSceneName;
+    [SerializeField] BattleConfiguration battleConfiguration;
     public string npcName;
     public DialogueTree dialogueTree;
 
@@ -32,7 +33,7 @@ public class NPC : MonoBehaviour, IInteractableAsPlayer
 
     public void InteractWithPlayer()
     {
-        DialogueBoxController.instance.StartDialogue(dialogueTree, startSection, npcName, battleSceneName);
+        DialogueBoxController.instance.StartDialogue(dialogueTree, startSection, npcName, battleSceneName, battleConfiguration);
     }
 
     public string GetBattleSceneName()
