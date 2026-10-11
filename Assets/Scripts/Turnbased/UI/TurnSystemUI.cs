@@ -23,6 +23,13 @@ public class TurnSystemUI : MonoBehaviour
         Refresh(this, EventArgs.Empty);
     }
 
+    private void Update()
+    {
+        // Recall completion can release the turn without another action or state event.
+        if (turnSystem != null)
+            endTurnButton.interactable = turnSystem.IsPlayerTurn() && turnSystem.CanChangeTurn();
+    }
+
     private void EndTurn()
     {
         if (turnSystem.IsPlayerTurn()) turnSystem.NextTurn();

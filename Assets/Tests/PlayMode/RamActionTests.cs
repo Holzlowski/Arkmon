@@ -302,6 +302,38 @@ public class RamActionTests
     }
 
     [UnityTest]
+    public IEnumerator EndTurnButton_LethalSwordHitUnlocksAfterRecallAndChangesTurn()
+    {
+        object manager = TypeOf("UnitManager").GetProperty("Instance").GetValue(null);
+        Component friendly = ((IEnumerable)Call(manager, "GetFriendlyUnitList")).Cast<Component>()
+            .First(u => u.GetComponent(TypeOf("SwordAction")) != null);
+        Call(friendly, "MoveToWorldPosition", Call(grid, "GetWorldPosition", Cell(1, 2)));
+        Component sword = friendly.GetComponent(TypeOf("SwordAction"));
+        Component ui = (Component)UnityEngine.Object.FindFirstObjectByType(TypeOf("TurnSystemUI"));
+        var button = (UnityEngine.UI.Button)ui.GetType().GetField("endTurnButton", Fields).GetValue(ui);
+        object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
+        yield return null;
+        Assert.That(button.interactable, Is.True);
+        LogAssert.Expect(LogType.Log, "0");
+        Call(sword, "TakeAction", Cell(2, 2), (Action)(() => { }));
+        yield return null;
+        Assert.That(button.interactable, Is.False);
+        float deadline = Time.realtimeSinceStartup + 6f;
+        while (Busy && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That(Busy, Is.False);
+        Assert.That(deployment.GetType().GetProperty("IsRecalling").GetValue(deployment), Is.EqualTo(true));
+        Assert.That(button.interactable, Is.False);
+        yield return WaitForRecall();
+        yield return null;
+        Assert.That(button.interactable, Is.True);
+        button.onClick.Invoke();
+        object turns = TypeOf("TurnSystem").GetProperty("Instance").GetValue(null);
+        Assert.That(Call(turns, "IsPlayerTurn"), Is.EqualTo(false));
+        Assert.That(Call(turns, "GetTurnNumber"), Is.EqualTo(2));
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
     public IEnumerator Recall_HoldsUprightDefeatPoseThenReturnsLilacPulseToOpponent()
     {
         object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);

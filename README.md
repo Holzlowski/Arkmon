@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.4.0-alpha.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.4.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -217,10 +217,10 @@ active: over 0.35 seconds it sags vertically and darkens without tilting. After 
 travels back to its own trainer's vessel, reversing the summon sequence. The root
 is hidden on absorption and destroyed after the return flight. This uses the
 existing sprite procedurally; dedicated defeated artwork is not yet included.
-Turns, new actions, AI and escape wait for recalls; victory/defeat scene transitions
+The End Turn button continuously reflects the turn permission, so it unlocks after a recall even when no further action event fires. Turns, new actions, AI and escape wait for recalls; victory/defeat scene transitions
 also wait for every active recall, including simultaneous defeated monsters.
 Disabling deployment or unloading the scene cleans up effects and presentation locks. Dead units cannot spend points or update their grid position, and enemy AI skips them. Legacy Animator parameters are only invoked when a live controller is available.
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 32 EditMode and 16 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
+Current battle regression validation on Unity `6000.3.26f1`: 32 EditMode and 17 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
