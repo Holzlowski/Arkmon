@@ -104,9 +104,51 @@ Escape is accepted only during the player turn while the battle is running and
 no action is active. Repeated clicks cannot start additional return transitions.
 NPC conversations and battles remain repeatable for prototype testing.
 
-### Character asset integration (0.3.0-alpha.2)
+### NPC teams, deployment, and monster summoning
 
-Paper character prefabs and a default battle configuration are available. BattleDeployment scene wiring and the courtyard presentation follow in the final integration commit.
+`BattleConfiguration` assets define the player and enemy unit prefabs, the player
+deployment side (Left, Right, Bottom, or Top), a player deployment radius in grid
+cells, and the enemy deployment depth in columns or rows. Create one via
+**Assets > Create > Arkmon > Battle Configuration** and
+assign it to an NPC's `Battle Configuration` field. Leaving that field empty uses
+the BattleScene default: `Assets/Scriptable Objects/Battles/Default NPC Battle.asset`.
+The example contains one friendly monster and two opponents. Team prefabs must
+have the matching `Unit.isEnemy` setting. This is a prototype roster per encounter;
+an inventory or persistent player team is not implemented yet.
+
+BattleScene's `Battle Deployment` object handles setup. It replaces the existing
+scene units with the configured teams; these scene units remain as a fallback if
+configuration is invalid. The player clicks free, walkable blue cells within a
+radius of three grid cells around the trainer on the left by default. The trainer
+stands inside the arena, one cell inward from the grid edge. Its cell is reserved
+and blocked for monster movement. The circle is clipped to the playable area.
+Only free, walkable cells outside the enemy zone are selectable.
+Other sides use the corresponding edge; enemy
+units are distributed along the opposite edge. Multiple friendly monsters are
+placed sequentially, with occupied cells excluded.
+
+A stationary `Battle Trainer` prefab uses the young prince paper sprite.
+A monster-colored pulse with a trail travels in an arc from the trainer's vessel to the chosen
+cell, then expands into an arrival flash. The monster is instantiated after the
+effect completes. `MonsterSummonEffect` exposes color, material, travel duration,
+and arrival duration in the Inspector. The monster's `MonsterDefinition.summonColor`
+controls the pulse; prefabs without a definition use `Unit`'s `Summon Color` field.
+A private material copy prevents recoloring the shared effect material.
+Camera controls remain available during
+deployment, and the initial camera position focuses on the trainer's side.
+
+The manager stays in `Deploying` until every friendly monster is registered.
+Attacks, movement, turn changes, AI, and escape are blocked during deployment.
+Repeated placement clicks during summoning are ignored. NPC battles remain
+repeatable. Automated tests cover all four deployment sides and repeated
+scene/deployment/summon cycles; effect appearance and camera framing require a
+manual check in the Editor.
+
+BattleScene uses an 11 by 10 grid with cell size 2 and world origin `(8, 0, 2)`.
+This keeps the complete cell footprints inside the existing arena perimeter colliders.
+`LevelGrid.Origin` is shared by grid visuals, mouse-to-cell conversion, spawning,
+and pathfinding. When changing an arena, adjust its grid origin and dimensions
+to the interior of the walls; the walls are not moved automatically.
 
 ### Paper characters and idle animation
 
@@ -134,5 +176,15 @@ body and equipment renderers hidden. Dedicated paper attack and walk poses are
 still future work. The exploration player's C key still toggles the paper visual
 and the diagnostic capsule.
 
+### Courtyard and arena presentation
 
-The enemy is Distelwolle, a non-starter sheep with cream wool, lavender face, thistles and a brass bell. The NPC is a shepherd using an unlit paper sprite and a stationary kinematic body; existing dialogue and collision remain. Both retain prototype gameplay actions. New assets include the trainer, default teams and the summon-effect material.
+StartScene uses a warm limestone courtyard, terracotta keep, wooden benches and simple garden trees. BattleScene uses stone paving and low visual parapets; the original perimeter colliders and grid origin/dimensions are retained. Old decorative tree visuals are disabled. The generated scenery uses native Unity meshes and materials in `Assets/Art/SceneStyle`.
+
+Each scene has its own Volume profile with ACES tonemapping, restrained bloom, desaturation and vignette. Directional lighting is warm with soft shadows; old baked lighting and environment reflections are cleared. New decoration has no colliders and does not introduce new gameplay obstacles.
+
+The enemy prefab uses **Distelwolle**, a non-starter meadow sheep inspired by the original Schafi: cream wool, lavender face, ram horns, thistles and a small brass bell. Its summon color is muted lilac. It retains the existing prototype combat actions and stats; wool shields and ram attacks are future design ideas, not implemented abilities. Art prompts are recorded in `docs/paper-art-generation.json`.
+
+The StartScene NPC uses a generated shepherd paper sprite, the same camera-facing idle animation as the player, and an unlit transparent material. Its body is kinematic with gravity disabled: it is a stationary conversation partner with its existing BoxCollider and dialogue configuration retained. The former mesh presentation is hidden.
+
+Grid markings are spawned with a separate visual height of 0.06 world units. This keeps deployment and action highlights above the arena paving (top at 0.035), while logical grid positions, mouse picking and unit movement stay on the original ground plane. PlayMode regression checks verify visible markings clear the paving and the NPC stays upright and stationary.
+The shepherd position can be adjusted in StartScene. Regression checks validate its active sprite, material, upright facing and stationary body without imposing a fixed starting-camera composition.
