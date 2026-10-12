@@ -11,6 +11,21 @@ public class Unit : MonoBehaviour
     private int MaxActionPoints => definition != null ? definition.maxActionPoints : ACTION_POINTS_MAX;
 
     public static event EventHandler OnAnyActionPointsChanged;
+    public static event EventHandler OnAnyKnockdownChanged;
+    public bool IsKnockedDown { get; private set; }
+
+    public bool CanPerformAction(BaseAction action) => !IsDead && enabled
+        && action != null && action.enabled
+        && (IsKnockedDown ? action is StandUpAction : !(action is StandUpAction));
+
+    public void SetKnockedDown(bool knockedDown)
+    {
+        if (IsDead || IsKnockedDown == knockedDown) return;
+        IsKnockedDown = knockedDown;
+        if (knockedDown) isInAttackSelection = false;
+        OnAnyKnockdownChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     public static event EventHandler OnAttackUISwitch;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
@@ -33,6 +48,7 @@ public class Unit : MonoBehaviour
         healthSystem = GetComponent<HealthSystem>();
         if (GetComponent<BurningStatus>() == null) gameObject.AddComponent<BurningStatus>();
         actionPoints = MaxActionPoints;
+        if (GetComponent<StandUpAction>() == null) gameObject.AddComponent<StandUpAction>();
         //findet alle BaseAction Komponenten
         baseActionArray = GetComponents<BaseAction>();
     }
@@ -101,17 +117,18 @@ public class Unit : MonoBehaviour
     public BaseAction[] GetBaseActionArray()
     {
         if (IsDead) return Array.Empty<BaseAction>();
+        if (IsKnockedDown) return new BaseAction[] { GetAction<StandUpAction>() };
         if (isEnemy)
         {
             return baseActionArray;
         }
         else if (isInAttackSelection)
         {
-            return attacks;
+            return attacks ?? Array.Empty<BaseAction>();
         }
         else
         {
-            return basicActionArray;
+            return basicActionArray ?? Array.Empty<BaseAction>();
         }
 
     }
@@ -148,7 +165,7 @@ public class Unit : MonoBehaviour
 
     public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
-        if (IsDead || !enabled || baseAction == null || !baseAction.enabled) return false;
+        if (!CanPerformAction(baseAction)) return false;
         if (actionPoints >= baseAction.GetActionPointCost())
         {
             return true;

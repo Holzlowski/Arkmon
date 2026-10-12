@@ -30,6 +30,7 @@ public abstract class BaseAction : MonoBehaviour
 
     public virtual bool IsValidActionGridPosition(GridPosition gridPosition)
     {
+        if (!unit.CanPerformAction(this)) return false;
         List<GridPosition> validGridPositionList = GetValidActionGridPositionList();
         return validGridPositionList.Contains(gridPosition);
     }

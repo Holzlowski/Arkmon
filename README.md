@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.4.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.6.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -223,7 +223,7 @@ Disabling deployment or unloading the scene cleans up effects and presentation l
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 26 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons, repeated scene entry, fire immunity, deferred spread, obstacle burnout and lethal burn damage. Additional rendered previews were inspected in an isolated project copy.
+Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 30 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons, repeated scene entry, fire immunity, deferred spread, obstacle burnout and lethal burn damage. Additional rendered previews were inspected in an isolated project copy.
 
 ### Fire, burning and the cat's abilities
 
@@ -347,3 +347,21 @@ and simpler distant LODs. The meshes are transient rather than large committed
 assets, release their CPU copies after upload and are destroyed on disable/scene
 unload. The seed and spacing are editable on `Living grass and golden fields`.
 These settings and terrain sampling currently match this specific BattleScene.
+
+### Knockdown and standing up
+
+Rammstoß still pushes a living target one cardinal cell and claims its old cell
+when the destination is free. An obstacle or the board boundary behind the target
+now causes knockdown instead: the target keeps its cell, and Distelwolle stops
+on the preceding cell. Another monster behind the target blocks the attack.
+A killing blow still lets Distelwolle claim the vacated cell.
+
+Knocked-down monsters keep occupying their field and remain vulnerable to damage
+and burning. Their only available action is Aufstehen (1 AP), selected automatically
+for the player and available to the AI. Click the monster's own highlighted field
+to stand up. The action locks turn changes for 0.35 seconds; interruption leaves
+the monster down. The upright paper silhouette flattens and recovers without
+rotating the collider. This prototype pose uses deformation rather than new artwork.
+Regression tests cover obstacle/border targeting, blocked lanes, lethal hits,
+action-point costs, interrupted standing, player selection, upright paper pose
+and AI standing before attacks.

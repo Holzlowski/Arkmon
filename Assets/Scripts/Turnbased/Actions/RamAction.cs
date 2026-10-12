@@ -16,6 +16,7 @@ public class RamAction : BaseAction
     private Unit targetUnit;
     private GridPosition startCell, targetCell, pushCell, approachCell;
     private bool hitApplied;
+    private bool blockedPush;
     private int MaxRange => Definition != null ? Definition.range : 3;
 
     public override string GetActionName() => "Rammstoß";
@@ -53,7 +54,7 @@ public class RamAction : BaseAction
         out Unit target, out GridPosition direction, out GridPosition pushed)
     {
         target = null; direction = default; pushed = default;
-        if (unit == null || unit.IsDead) return false;
+        if (unit == null || !unit.CanPerformAction(this)) return false;
         int dx = destination.x - origin.x, dz = destination.z - origin.z;
         int distance = Mathf.Abs(dx) + Mathf.Abs(dz);
         if (!LevelGrid.Instance.IsValidGridPosition(origin)
@@ -67,7 +68,9 @@ public class RamAction : BaseAction
             if (!IsFree(new GridPosition(origin.x + direction.x * step,
                 origin.z + direction.z * step))) return false;
         pushed = destination + direction;
-        return IsFree(pushed);
+        // An obstacle or board boundary stops the push; another monster blocks the attack.
+        return !LevelGrid.Instance.IsValidGridPosition(pushed)
+            || !LevelGrid.Instance.HasAnyUnitOnGridPosition(pushed);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
@@ -85,6 +88,7 @@ public class RamAction : BaseAction
             targetUnit = null;
             return;
         }
+        blockedPush = !IsFree(pushCell);
         targetCell = gridPosition;
         approachCell = targetCell + new GridPosition(-direction.x, -direction.z);
         phase = Phase.Windup;
@@ -124,10 +128,17 @@ public class RamAction : BaseAction
                 break;
             case Phase.Charge:
                 if (!Advance(unit, approachCell, chargeSpeed)) break;
+                blockedPush = !IsFree(pushCell);
                 hitApplied = true;
                 targetUnit.Damage(Definition != null ? Definition.damage : 30, unit.transform);
                 OnAnyRamHit?.Invoke(this, EventArgs.Empty);
-                phase = Phase.Push;
+                if (blockedPush && targetUnit != null && !targetUnit.IsDead)
+                {
+                    targetUnit.SetKnockedDown(true);
+                    targetUnit = null;
+                    ActionComplete();
+                }
+                else phase = Phase.Push;
                 break;
             case Phase.Push:
                 // A killing blow still lets the attacker claim the vacated field.
@@ -151,9 +162,9 @@ public class RamAction : BaseAction
         if (hitApplied)
         {
             if (targetUnit != null && !targetUnit.IsDead)
-                targetUnit.MoveToWorldPosition(LevelGrid.Instance.GetWorldPosition(pushCell));
+                targetUnit.MoveToWorldPosition(LevelGrid.Instance.GetWorldPosition(blockedPush ? targetCell : pushCell));
             if (unit != null && !unit.IsDead)
-                unit.MoveToWorldPosition(LevelGrid.Instance.GetWorldPosition(targetCell));
+                unit.MoveToWorldPosition(LevelGrid.Instance.GetWorldPosition(blockedPush && targetUnit != null && !targetUnit.IsDead ? approachCell : targetCell));
         }
         else if (unit != null && !unit.IsDead)
             unit.MoveToWorldPosition(LevelGrid.Instance.GetWorldPosition(startCell));

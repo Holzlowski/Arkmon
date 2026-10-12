@@ -158,16 +158,117 @@ public class RamActionTests
     }
 
     [UnityTest]
-    public IEnumerator Ram_ChangedPushObstacleBeforeImpactCancelsWithoutDamage()
+    public IEnumerator Ram_ObstacleKnocksDownAndStandingCostsOnePoint()
     {
         int completed = 0;
         Call(ram, "TakeAction", Cell(5, 2), (Action)(() => completed++));
         object path = TypeOf("Pathfinding").GetProperty("Instance").GetValue(null);
         Call(path, "SetIsWalkableGridPosition", Cell(6, 2), false);
+        LogAssert.Expect(LogType.Log, "70");
         yield return WaitForAction();
         Assert.That(completed, Is.EqualTo(1));
+        Assert.That(Call(attacker, "GetGridPosition"), Is.EqualTo(Cell(4, 2)));
+        Assert.That(Call(target, "GetGridPosition"), Is.EqualTo(Cell(5, 2)));
+        Assert.That(target.GetType().GetProperty("IsKnockedDown").GetValue(target), Is.EqualTo(true));
+        Component move = target.GetComponent(TypeOf("MoveAction"));
+        Assert.That(Call(target, "TrySpendActionPointsToTakeAction", move), Is.EqualTo(false));
+        int moved = 0;
+        Call(move, "TakeAction", Cell(5, 3), (Action)(() => moved++));
+        Assert.That(moved, Is.EqualTo(1));
+        Assert.That(Busy, Is.False);
+        Array available = (Array)Call(target, "GetBaseActionArray");
+        Assert.That(available.Length, Is.EqualTo(1));
+        Component standing = target.GetComponent(TypeOf("StandUpAction"));
+        Assert.That(available.GetValue(0), Is.SameAs(standing));
+        Assert.That(Call(target, "TrySpendActionPointsToTakeAction", standing), Is.EqualTo(true));
+        int stood = 0;
+        Call(standing, "TakeAction", Cell(5, 2), (Action)(() => stood++));
+        Assert.That(Call(TypeOf("TurnSystem").GetProperty("Instance").GetValue(null), "CanChangeTurn"), Is.EqualTo(false));
+        yield return new WaitForSeconds(0.5f);
+        Assert.That(stood, Is.EqualTo(1));
+        Assert.That(Busy, Is.False);
+        Assert.That(target.GetType().GetProperty("IsKnockedDown").GetValue(target), Is.EqualTo(false));
+        Assert.That(Call(target, "GetActionPoints"), Is.EqualTo(2));
+        Assert.That(Call(target, "CanSpendActionPointsToTakeAction", move), Is.EqualTo(true));
+        Assert.That(Call(target, "GetGridPosition"), Is.EqualTo(Cell(5, 2)));
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
+    public IEnumerator Standing_DisabledLeavesMonsterDownAndCompletesOnce()
+    {
+        Call(target, "SetKnockedDown", true);
+        Component standing = target.GetComponent(TypeOf("StandUpAction"));
+        int completed = 0;
+        Call(standing, "TakeAction", Cell(5, 2), (Action)(() => completed++));
+        ((Behaviour)standing).enabled = false;
+        yield return null;
+        Assert.That(completed, Is.EqualTo(1));
+        Assert.That(Busy, Is.False);
+        Assert.That(target.GetType().GetProperty("IsKnockedDown").GetValue(target), Is.EqualTo(true));
+    }
+
+    [UnityTest]
+    public IEnumerator Ram_LethalObstacleHitClaimsFieldWithoutKnockingDown()
+    {
+        object path = TypeOf("Pathfinding").GetProperty("Instance").GetValue(null);
+        Call(path, "SetIsWalkableGridPosition", Cell(6, 2), false);
+        LogAssert.Expect(LogType.Log, "20");
+        Call(target, "Damage", 80, null);
+        LogAssert.Expect(LogType.Log, "0");
+        Call(ram, "TakeAction", Cell(5, 2), (Action)(() => { }));
+        yield return WaitForAction();
+        Assert.That(Call(attacker, "GetGridPosition"), Is.EqualTo(Cell(5, 2)));
+        Assert.That(target == null, Is.True);
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
+    public IEnumerator KnockedDownEnemy_AIStandsUpBeforeAnyAttack()
+    {
+        Call(attacker, "SetKnockedDown", true);
+        ((Behaviour)UnityEngine.Object.FindFirstObjectByType(TypeOf("EnemyAI"))).enabled = true;
+        LogAssert.Expect(LogType.Log, "Take Enemy AI Action");
+        Call(TypeOf("TurnSystem").GetProperty("Instance").GetValue(null), "NextTurn");
+        Component standing = attacker.GetComponent(TypeOf("StandUpAction"));
+        float deadline = Time.realtimeSinceStartup + 5f;
+        while (!(bool)standing.GetType().GetProperty("IsActive").GetValue(standing)
+            && Time.realtimeSinceStartup < deadline) yield return null;
+        Assert.That((bool)standing.GetType().GetProperty("IsActive").GetValue(standing), Is.True);
+        Assert.That((bool)ram.GetType().GetProperty("IsActive").GetValue(ram), Is.False);
+        ((Behaviour)UnityEngine.Object.FindFirstObjectByType(TypeOf("EnemyAI"))).enabled = false;
+        yield return new WaitForSeconds(0.5f);
+        Assert.That(attacker.GetType().GetProperty("IsKnockedDown").GetValue(attacker), Is.EqualTo(false));
+        Assert.That(Call(attacker, "GetActionPoints"), Is.EqualTo(2));
         Assert.That(Call(attacker, "GetGridPosition"), Is.EqualTo(Cell(2, 2)));
-        Assert.That(Call(target, "GetHealthNormalized"), Is.EqualTo(1f));
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
+    public IEnumerator SelectedMonster_KnockdownSelectsStandingAndRecoversMovement()
+    {
+        object selection = TypeOf("UnitActionSystem").GetProperty("Instance").GetValue(null);
+        Component friendly = (Component)Call(selection, "GetSelectedUnit");
+        Assert.That(friendly, Is.Not.Null);
+        Call(friendly, "SwitchAttacksUI");
+        Call(friendly, "SetKnockedDown", true);
+        Assert.That(Call(friendly, "GetIsInAttackSelection"), Is.EqualTo(false));
+        Component visual = friendly.GetComponent(TypeOf("PaperCharacterVisual"));
+        Transform pivot = (Transform)visual.GetType().GetField("paperPivot", Fields).GetValue(visual);
+        Vector3 rest = pivot.localScale;
+        Vector3 position = friendly.transform.position;
+        yield return new WaitForSeconds(0.4f);
+        Assert.That(pivot.localScale.y, Is.LessThan(rest.y * 0.5f));
+        Assert.That(Vector3.Dot(pivot.up, Camera.main.transform.up), Is.GreaterThan(0.999f));
+        Assert.That(friendly.transform.position, Is.EqualTo(position));
+        Component standing = friendly.GetComponent(TypeOf("StandUpAction"));
+        Assert.That(Call(selection, "GetSelectedAction"), Is.SameAs(standing));
+        Assert.That(Call(friendly, "TrySpendActionPointsToTakeAction", standing), Is.EqualTo(true));
+        Call(standing, "TakeAction", Call(friendly, "GetGridPosition"), (Action)(() => { }));
+        yield return new WaitForSeconds(0.5f);
+        Assert.That(Call(selection, "GetSelectedAction"), Is.SameAs(friendly.GetComponent(TypeOf("MoveAction"))));
+        Assert.That(Call(friendly, "GetActionPoints"), Is.EqualTo(2));
+        Assert.That(Busy, Is.False);
         LogAssert.NoUnexpectedReceived();
     }
 

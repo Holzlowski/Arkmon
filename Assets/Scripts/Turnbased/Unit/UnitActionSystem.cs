@@ -17,6 +17,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private BaseAction selectedAction;
     private bool isBusy;
+    public bool IsBusy => isBusy;
     private UnitManager unitManager;
 
     void Awake()
@@ -34,6 +35,7 @@ public class UnitActionSystem : MonoBehaviour
     {
         unitManager = UnitManager.Instance;
         unitManager.OnUnitListChanged += UnitManager_OnUnitListChanged;
+        Unit.OnAnyKnockdownChanged += Unit_OnKnockdownChanged;
         SetSelectedUnit(selectedUnit);
         EnsureValidSelection();
     }
@@ -47,9 +49,17 @@ public class UnitActionSystem : MonoBehaviour
         SetSelectedUnit(replacement);
     }
 
+    private void Unit_OnKnockdownChanged(object sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, selectedUnit)) return;
+        SetSelectedAction(selectedUnit.IsKnockedDown
+            ? (BaseAction)selectedUnit.GetAction<StandUpAction>() : selectedUnit.GetAction<MoveAction>());
+    }
+
     private void OnDestroy()
     {
         if (unitManager != null) unitManager.OnUnitListChanged -= UnitManager_OnUnitListChanged;
+        Unit.OnAnyKnockdownChanged -= Unit_OnKnockdownChanged;
         if (Instance == this) Instance = null;
     }
 
@@ -147,7 +157,8 @@ public class UnitActionSystem : MonoBehaviour
     private void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
-        SetSelectedAction(unit != null ? unit.GetAction<MoveAction>() : null);
+        SetSelectedAction(unit != null ? (unit.IsKnockedDown
+            ? (BaseAction)unit.GetAction<StandUpAction>() : unit.GetAction<MoveAction>()) : null);
 
         OnSelectedUnitChange?.Invoke(this, EventArgs.Empty);
     }

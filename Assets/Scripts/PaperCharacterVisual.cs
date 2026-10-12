@@ -29,6 +29,7 @@ public class PaperCharacterVisual : MonoBehaviour
     private float walkWeight;
     public bool IsDefeated { get; private set; }
     private float defeatProgress;
+    private float knockdownProgress;
     private float recallProgress;
     private Color restColor;
 
@@ -44,6 +45,7 @@ public class PaperCharacterVisual : MonoBehaviour
         if (spriteRenderer != null) restColor = spriteRenderer.color;
         IsDefeated = false;
         defeatProgress = 0f;
+        knockdownProgress = 0f;
         recallProgress = 0f;
         unit = GetComponent<Unit>();
         shootAction = GetComponent<ShootAction>();
@@ -71,6 +73,10 @@ public class PaperCharacterVisual : MonoBehaviour
                     new Color(restColor.r * 0.65f, restColor.g * 0.65f, restColor.b * 0.75f, restColor.a), defeatProgress);
             return;
         }
+        StandUpAction standing = unit != null ? unit.GetAction<StandUpAction>() : null;
+        if (standing != null && standing.IsActive) knockdownProgress = 1f - standing.Progress;
+        else knockdownProgress = Mathf.MoveTowards(knockdownProgress,
+            unit != null && unit.IsKnockedDown ? 1f : 0f, Time.deltaTime / 0.35f);
         Vector3 movement = transform.position - previousPosition;
         movement.y = 0f;
         bool walking = movement.sqrMagnitude > 0.000001f;
@@ -88,6 +94,10 @@ public class PaperCharacterVisual : MonoBehaviour
         paperPivot.localScale = Vector3.Scale(restScale * visualScale,
             new Vector3(1f - wave * breathingAmount * 0.5f + step * 0.025f,
                 1f + wave * breathingAmount - step * 0.04f, 1f));
+        // Flatten the paper silhouette without rotating the logical unit or its collider.
+        paperPivot.localScale = Vector3.Scale(paperPivot.localScale,
+            new Vector3(Mathf.Lerp(1f, 1.15f, knockdownProgress),
+                Mathf.Lerp(1f, 0.35f, knockdownProgress), 1f));
         Camera camera = Camera.main;
         if (camera != null)
         {

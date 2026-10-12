@@ -61,7 +61,7 @@ public class MoveAction : BaseAction
     /// </summary>
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        if (unit.IsDead || !isActiveAndEnabled)
+        if (!unit.CanPerformAction(this))
         {
             onActionComplete?.Invoke();
             return;
@@ -96,7 +96,7 @@ public class MoveAction : BaseAction
     public override List<GridPosition> GetValidActionGridPositionList()
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
-        if (unit.IsDead) return validGridPositionList;
+        if (!unit.CanPerformAction(this)) return validGridPositionList;
 
         GridPosition unitGridPosition = unit.GetGridPosition();
 

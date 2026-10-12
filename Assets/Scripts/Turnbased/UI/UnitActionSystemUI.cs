@@ -27,6 +27,7 @@ public class UnitActionSystemUI : MonoBehaviour
         turnSystem.OnTurnChanged += TurnSystem_OnTurnChanged;
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
         Unit.OnAttackUISwitch += Unit_OnAttackUISwitch;
+        Unit.OnAnyKnockdownChanged += Unit_OnKnockdownChanged;
 
         UpdateActionPoints();
         CreateUnitActionButton();
@@ -91,6 +92,13 @@ public class UnitActionSystemUI : MonoBehaviour
         UpdateSelectedVisual();
     }
 
+    private void Unit_OnKnockdownChanged(object sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, actionSystem.GetSelectedUnit())) return;
+        CreateUnitActionButton();
+        UpdateSelectedVisual();
+    }
+
     private void UpdateSelectedVisual()
     {
         foreach (ActionButtonUI actionButtonUI in actionButtonUIList)
@@ -117,5 +125,6 @@ public class UnitActionSystemUI : MonoBehaviour
         if (turnSystem != null) turnSystem.OnTurnChanged -= TurnSystem_OnTurnChanged;
         Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
         Unit.OnAttackUISwitch -= Unit_OnAttackUISwitch;
+        Unit.OnAnyKnockdownChanged -= Unit_OnKnockdownChanged;
     }
 }

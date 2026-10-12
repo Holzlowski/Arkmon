@@ -23,7 +23,7 @@ public abstract class MeleeAttackAction : BaseAction
     public List<GridPosition> GetValidActionGridPositionList(GridPosition origin)
     {
         var result = new List<GridPosition>();
-        if (unit.IsDead) return result;
+        if (!unit.CanPerformAction(this)) return result;
         for (int x = -Range; x <= Range; x++)
             for (int z = -Range; z <= Range; z++)
             {

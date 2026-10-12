@@ -86,13 +86,22 @@ public class BattleRegressionTests
         Assert.That(ValidRam(ram, x, z), Is.False);
     }
 
-    [TestCase(5, 4)] [TestCase(6, 4)] [TestCase(7, 4)] [TestCase(8, 4)]
-    public void Ram_RejectsBlockedApproachTargetOrPushField(int x, int z)
+    [TestCase(5, 4)] [TestCase(6, 4)] [TestCase(7, 4)]
+    public void Ram_RejectsBlockedApproachOrTargetField(int x, int z)
     {
         Component ram = SetUpRam(out _, out _);
         object path = RuntimeType("Pathfinding").GetProperty("Instance").GetValue(null);
         Call(path, "SetIsWalkableGridPosition", RamCell(x, z), false);
         Assert.That(ValidRam(ram, 7, 4), Is.False);
+    }
+
+    [Test]
+    public void Ram_AllowsObstacleBehindTargetForKnockdown()
+    {
+        Component ram = SetUpRam(out _, out _);
+        object path = RuntimeType("Pathfinding").GetProperty("Instance").GetValue(null);
+        Call(path, "SetIsWalkableGridPosition", RamCell(8, 4), false);
+        Assert.That(ValidRam(ram, 7, 4), Is.True);
     }
 
     [TestCase(5, 4)] [TestCase(8, 4)]
@@ -135,14 +144,14 @@ public class BattleRegressionTests
     }
 
     [Test]
-    public void Ram_RejectsPushBeyondBorderEvenWithinAttackRange()
+    public void Ram_AllowsKnockdownAtBoardBorder()
     {
         Component ram = SetUpRam(out Component attacker, out Component target);
         object grid = RuntimeType("LevelGrid").GetProperty("Instance").GetValue(null);
         Call(grid, "RemoveUnitAtGridPosition", Call(attacker, "GetGridPosition"), attacker);
         Call(grid, "RemoveUnitAtGridPosition", Call(target, "GetGridPosition"), target);
         PlaceRamUnit(attacker, 7, 4); PlaceRamUnit(target, 9, 4);
-        Assert.That(ValidRam(ram, 9, 4), Is.False);
+        Assert.That(ValidRam(ram, 9, 4), Is.True);
     }
 
     [Test]
