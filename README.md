@@ -196,7 +196,7 @@ The shepherd position can be adjusted in StartScene. Regression checks validate 
 
 ### Distelwolle: Rammstoß
 
-Distelwolle now has **Move** and **Rammstoß**, replacing its Shoot, Sword, Grenade and other test actions. The cat now uses Krallenhieb and Flammenschwert.
+Distelwolle now has **Move** and **Rammstoß**, replacing its Shoot, Sword, Grenade and other test actions. The cat uses non-elemental Krallenhieb and fire Flammenschwert, described below.
 
 Rammstoß targets an opposing living unit 1–3 grid cells away in the same row or column. Every transit cell must be walkable and unoccupied, and the cell immediately behind the target must be inside the arena, walkable and empty. Diagonal charges and blocked pushes are not allowed. A hit currently deals 30 damage and costs 2 action points. These values live in `Assets/Scriptable Objects/Abilities/Ram.asset`; the Distelwolle definition retains 50 health, 3 action points and its lilac summon color.
 
@@ -223,8 +223,7 @@ Disabling deployment or unloading the scene cleans up effects and presentation l
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 24 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
-
+Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 26 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons, repeated scene entry, fire immunity, deferred spread, obstacle burnout and lethal burn damage. Additional rendered previews were inspected in an isolated project copy.
 
 ### Fire, burning and the cat's abilities
 
@@ -254,10 +253,17 @@ existing fire. A source may spread on its final damage tick before it burns out.
 Small upright orange/yellow flames show the status and disappear on expiration or
 death. Lethal fire damage uses the same defeat pose and recall as attack damage.
 
-Try the attacks against opposing monsters. Add BurningObstacle to single-cell
-vegetation or stone props to enable burnable terrain. Arena scenery follows in a
-separate change.
+BattleScene contains a small **Burnable arena garden** with trees, bushes and stones.
+These are actual single-cell movement obstacles; vegetation has 15 health and
+opens its field after burning out. Remaining physical obstacles are checked before
+making the cell walkable. Add `BurningObstacle` to a single-cell prop and select
+Vegetation or Stone to extend this setup. Outside-arena decorative scenery remains
+visual-only; multi-cell obstacles, dousing/extinguish actions and fire persistence
+between battles are not implemented. StartScene is unchanged.
 
+To try it: deploy Flaca, move beside a tree or bush, open ATTACKS and select
+FLAMMENSCHWERT. End both sides' turns to see burn damage and possible spread. Change
+balance in Fire Rules or the ability assets rather than in action code.
 
 ### Paper sword swing
 
@@ -280,6 +286,44 @@ art provenance and the full built-in image-generation prompt are recorded in
 `docs/paper-art-generation.json`. Tests cover both facing directions, delayed
 contact damage, stable logical position/upright body, recovery and death cancellation.
 
+### Paper arena obstacles
+
+BattleScene's six gameplay obstacles now use illustrated tree, thistle bush and
+limestone rock sprites in `Assets/Sprites/Environment`. Decorative courtyard
+trees use the same tree artwork. `PaperPropVisual` turns only the visual child
+toward the main camera; the original root position, obstacle layer and colliders
+remain fixed. Native sprite slices remove transparent margins and place the pivot
+at the base. Trees are 3.7 units high, bushes and rocks 0.9 units high; courtyard
+trees are 5.8 units high. Existing 3D foliage renderers are hidden.
+
+Vegetation still burns and releases its blocked cell when destroyed; stone stays
+fireproof. Paving, walls and garden edging retain their spatial geometry. Trees, bushes and rocks are static cutouts with no wind animation or dynamic cast shadows. Full
+built-in generation prompts are recorded in `docs/paper-art-generation.json`.
+
+
+### Meadow landscape and moving sky
+
+BattleScene's arena has warmer paving and stone borders, taller paper trees and
+an illustrated crate over the existing crate collider. A 400 by 400 unit decorative
+meadow surrounds it: rolling grassland, golden fields, tree groups, thistle
+bushes and paper wildflowers. The ground uses a native mesh with vertex colors; its
+height stays flat near the arena. None of the surrounding vegetation or terrain
+adds gameplay colliders. Distant colors blend into light atmospheric fog.
+
+`BlueSky.shader` draws a blue horizon-to-zenith gradient and a subtle sun. Sixteen
+paper clouds move at different gentle speeds via `CloudDrift`, wrap beyond the
+arena and face the camera. The sky is visible when the camera framing includes
+the horizon; the normal close battle view emphasizes the board. The landscape is
+finite decorative scenery, not an explorable level. StartScene is unchanged.
+
+### Animated paper fire and sword polish
+
+`Assets/Resources/Paper Fire.asset` supplies six fire animation frames, sprite
+material, frame rate and the soft sword-trail material. `BurningVisual` uses three
+flames for vegetation and two smaller flames for monsters, with different frame
+phases and rates. Flames follow the upright paper layer, stay in front of the
+artwork and disappear on burnout or death. Cosmetic variation uses a local
+`System.Random`, so it does not change ignition/spread random rolls.
 
 Flaca's sword arm now attaches beneath the cloak instead of drawing its shoulder
 cap over the chest. A native `Flaca-Forearm.asset` reuses the same texture pixels
@@ -288,3 +332,18 @@ The swing has a brief follow-through before its smooth return.
 The blade-tip trail uses sampled points along the curved swing, rounded corners,
 soft edges and fading transparency, including when a slow frame skips poses.
 Contact time, action-point cost, damage, ignition and recovery locks are unchanged.
+Tests cover frame animation/cleanup, independent cosmetic randomness, moving
+clouds across scene loads and curved trails when rendered frames are skipped.
+
+
+`MeadowVegetation` fills the surrounding hills with green grass and taller golden
+stalks with small grain heads. Broad field regions blend into grassland; the arena
+and a margin around its walls stay clear. The wind shader bends the tips in gentle
+waves while the bases remain fixed. Decoration adds no gameplay colliders or
+burning targets.
+
+The component generates meshes in 40-unit chunks, with denser nearby vegetation
+and simpler distant LODs. The meshes are transient rather than large committed
+assets, release their CPU copies after upload and are destroyed on disable/scene
+unload. The seed and spacing are editable on `Living grass and golden fields`.
+These settings and terrain sampling currently match this specific BattleScene.
