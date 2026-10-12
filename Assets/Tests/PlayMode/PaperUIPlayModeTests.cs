@@ -137,4 +137,69 @@ public class PaperUIPlayModeTests
         LogAssert.NoUnexpectedReceived();
     }
 
+    private static ScriptableObject Tree(int answerCount, string[] lines)
+    {
+        ScriptableObject tree = ScriptableObject.CreateInstance(T("DialogueTree"));
+        object section = Activator.CreateInstance(T("DialogueSection"));
+        T("DialogueSection").GetField("dialogue").SetValue(section, lines);
+        object branch = Activator.CreateInstance(T("BranchPoint"));
+        T("BranchPoint").GetField("question").SetValue(branch, "Bereit für einen Übungskampf?");
+        Array answers = Array.CreateInstance(T("Answer"), answerCount);
+        for (int i = 0; i < answerCount; i++)
+        {
+            object answer = Activator.CreateInstance(T("Answer"));
+            T("Answer").GetField("answerLabel").SetValue(answer, "Antwort " + (i + 1));
+            T("Answer").GetField("nextElement").SetValue(answer, 0); answers.SetValue(answer, i);
+        }
+        T("BranchPoint").GetField("answers").SetValue(branch, answers);
+        T("DialogueSection").GetField("branchPoint").SetValue(section, branch);
+        Array sections = Array.CreateInstance(T("DialogueSection"), 1); sections.SetValue(section, 0);
+        T("DialogueTree").GetField("sections").SetValue(tree, sections);
+        return tree;
+    }
+
+    [UnityTest]
+    public IEnumerator Dialogue_GrowsAnswerListAndCloseCancelsPendingInputOnce()
+    {
+        yield return SceneManager.LoadSceneAsync("StartScene"); yield return null; yield return null;
+        Component dialog = (Component)T("DialogueBoxController").GetField("instance").GetValue(null);
+        ScriptableObject tree = Tree(4, Array.Empty<string>());
+        int closed = 0; Action listener = () => closed++;
+        T("DialogueBoxController").GetEvent("OnDialogueEnded").AddEventHandler(null, listener);
+        try
+        {
+            Call(dialog, "StartDialogue", tree, 0, "Arkhüter", "BattleScene", null, null);
+            yield return null;
+            Button[] buttons = (Button[])Field(dialog, "answerObjects");
+            Assert.That(buttons.Length, Is.EqualTo(4));
+            Assert.That(buttons.All(b => b.gameObject.activeInHierarchy), Is.True);
+            Call(dialog, "AnswerQuestion", 8);
+            Assert.That(Field(dialog, "answerTriggered"), Is.EqualTo(false));
+            Call(dialog, "CloseDialogue"); Call(dialog, "CloseDialogue");
+            yield return null;
+            Assert.That(closed, Is.EqualTo(1));
+            Assert.That(T("DialogueBoxController").GetProperty("IsOpen").GetValue(dialog), Is.EqualTo(false));
+            Assert.That(((GameObject)Field(dialog, "answerBox")).activeInHierarchy, Is.False);
+            Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("StartScene"));
+        }
+        finally { T("DialogueBoxController").GetEvent("OnDialogueEnded").RemoveEventHandler(null, listener); UnityEngine.Object.Destroy(tree); }
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]
+    public IEnumerator Dialogue_FirstContinueRevealsTextNextContinueShowsChoices()
+    {
+        yield return SceneManager.LoadSceneAsync("StartScene"); yield return null; yield return null;
+        Component dialog = (Component)T("DialogueBoxController").GetField("instance").GetValue(null);
+        string line = new string('a', 120);
+        ScriptableObject tree = Tree(2, new[] { line });
+        Call(dialog, "StartDialogue", tree, 0, "Arkhüter", "BattleScene", null, null);
+        Call(dialog, "SkipLine"); yield return null; yield return null;
+        Assert.That(((TextMeshProUGUI)Field(dialog, "dialogueText")).text, Is.EqualTo(line));
+        Assert.That(((GameObject)Field(dialog, "answerBox")).activeSelf, Is.False);
+        Call(dialog, "SkipLine"); yield return null; yield return null;
+        Assert.That(((GameObject)Field(dialog, "answerBox")).activeSelf, Is.True);
+        Call(dialog, "CloseDialogue"); UnityEngine.Object.Destroy(tree);
+        LogAssert.NoUnexpectedReceived();
+    }
 }

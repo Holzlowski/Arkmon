@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (inConversation) return;
         HandleMovement();
         HandleJump();
         ApplyFallMultiplier();

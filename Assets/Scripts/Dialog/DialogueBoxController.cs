@@ -23,6 +23,11 @@ public class DialogueBoxController : MonoBehaviour
     bool answerTriggered;
     int answerIndex;
     private BattleConfiguration battleConfiguration;
+    public bool IsOpen => dialogueBox != null && dialogueBox.activeSelf;
+    private Image portraitImage;
+    private bool typing;
+    private bool revealLine;
+    private int answerCount;
 
     float charactersPerSecond = 90;
 
@@ -35,6 +40,7 @@ public class DialogueBoxController : MonoBehaviour
         else
         {
             Destroy(this);
+            return;
         }
     }
 
@@ -45,15 +51,19 @@ public class DialogueBoxController : MonoBehaviour
             // Deaktiviere jedes Kindobjekt.
             child.gameObject.SetActive(false);
         }
+        if (PaperDialogueLayout.Build(this, out GameObject box, out GameObject answers,
+            out TextMeshProUGUI text, out TextMeshProUGUI speaker, out Button[] choices, out Image portrait))
+        { dialogueBox = box; answerBox = answers; dialogueText = text; nameText = speaker; answerObjects = choices; portraitImage = portrait; }
     }
 
     public void StartDialogue(DialogueTree dialogueTree, int startSection, string name, string battleSceneName,
-        BattleConfiguration configuration = null)
+        BattleConfiguration configuration = null, Sprite portrait = null)
     {
         ResetBox();
         this.battleSceneName = battleSceneName;
         battleConfiguration = configuration;
         nameText.text = name;
+        if (portraitImage != null) { portraitImage.sprite = portrait != null ? portrait : PaperUIStyle.Load().hunterPortrait; }
         dialogueBox.SetActive(true);
         OnDialogueStarted?.Invoke();
         StartCoroutine(RunDialogue(dialogueTree, startSection));
@@ -64,6 +74,8 @@ public class DialogueBoxController : MonoBehaviour
     {
         for (int i = 0; i < dialogueTree.sections[section].dialogue.Length; i++)
         {
+            typing = true;
+            revealLine = false;
             float timer = 0;
             float interval = 1 / charactersPerSecond;
             string textBuffer = null;
@@ -71,6 +83,7 @@ public class DialogueBoxController : MonoBehaviour
             int j = 0;
             while (j < chars.Length)
             {
+                if (revealLine) { dialogueText.text = new string(chars); break; }
                 if (timer < Time.deltaTime)
                 {
                     textBuffer += chars[j];
@@ -84,6 +97,7 @@ public class DialogueBoxController : MonoBehaviour
                     yield return null;
                 }
             }
+            typing = false;
             while (skipLineTriggered == false)
             {
                 yield return null;
@@ -128,7 +142,13 @@ public class DialogueBoxController : MonoBehaviour
     void ShowAnswers(BranchPoint branchPoint)
     {
         answerBox.SetActive(true);
-        for (int i = 0; i < 3; i++)
+        answerCount = branchPoint.answers.Length;
+        if (answerCount > answerObjects.Length && PaperUIStyle.Load() != null)
+        {
+            PaperUIFactory.ClearChildren(answerBox.transform);
+            answerObjects = PaperDialogueLayout.CreateChoices(this, answerBox.transform, answerCount);
+        }
+        for (int i = 0; i < answerObjects.Length; i++)
         {
             if (i < branchPoint.answers.Length)
             {
@@ -140,15 +160,20 @@ public class DialogueBoxController : MonoBehaviour
                 answerObjects[i].gameObject.SetActive(false);
             }
         }
+        if (answerCount > 0 && UnityEngine.EventSystems.EventSystem.current != null)
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(answerObjects[0].gameObject);
     }
 
     public void SkipLine()
     {
-        skipLineTriggered = true;
+        if (!IsOpen || answerBox.activeSelf) return;
+        if (typing) revealLine = true;
+        else skipLineTriggered = true;
     }
 
     public void AnswerQuestion(int answer)
     {
+        if (!IsOpen || !answerBox.activeSelf || answer < 0 || answer >= answerCount || answerTriggered) return;
         answerIndex = answer;
         answerTriggered = true;
     }
@@ -160,6 +185,28 @@ public class DialogueBoxController : MonoBehaviour
         answerBox.SetActive(false);
         skipLineTriggered = false;
         answerTriggered = false;
+        typing = revealLine = false;
+        answerCount = 0;
+    }
+
+    public void CloseDialogue()
+    {
+        if (!IsOpen) return;
+        ResetBox();
+        OnDialogueEnded?.Invoke();
+        UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(null);
+    }
+
+    private void Update()
+    {
+        if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) CloseDialogue();
+    }
+
+    private void OnDestroy()
+    {
+        if (instance != this) return;
+        if (IsOpen) OnDialogueEnded?.Invoke();
+        instance = null;
     }
 
 }
