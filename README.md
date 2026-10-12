@@ -158,7 +158,7 @@ to the interior of the walls; the walls are not moved automatically.
 ### Paper characters and idle animation
 
 The player and the battle trainer now use `Assets/Sprites/Characters/Prince-Paper.png`.
-The friendly monster uses `Assets/Sprites/Monster/Flaca-Paper.png`; the enemy uses `Distelwolle-Paper.png`.
+The friendly monster uses `Assets/Sprites/Monster/Flaca-SwordRig.png`; the enemy uses `Distelwolle-Paper.png`.
 These are generated transparent illustrations based on the locally kept GDD's
 paperlook direction: strong contours, simple color areas, an orange fire-cat with
 cape and wooden sword, and a young prince in a green cloak carrying a vessel.
@@ -223,7 +223,7 @@ Disabling deployment or unloading the scene cleans up effects and presentation l
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 21 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
+Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 24 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
 
 
 ### Fire, burning and the cat's abilities
@@ -257,3 +257,34 @@ death. Lethal fire damage uses the same defeat pose and recall as attack damage.
 Try the attacks against opposing monsters. Add BurningObstacle to single-cell
 vegetation or stone props to enable burnable terrain. Arena scenery follows in a
 separate change.
+
+
+### Paper sword swing
+
+Flaca's `Flaca-SwordRig.png` is a non-destructive generated variant of the original
+cat illustration. Unity slices it into body, arm and wooden sword sprites; the
+original image remains available. `PaperSwordAnimation` joins the parts below the
+paper pivot. The tightly cropped body sits 0.04 world units above the logical root
+to keep its feet clear of the arena paving. Only the shoulder and wrist rotate in the camera plane, with the
+whole limb assembly mirrored for left/right attacks. Logical position, colliders
+and the upright body are unaffected; breathing, walking, defeat and recall still
+apply to the complete visual child.
+
+Flammenschwert winds up, swings through contact at 0.42 seconds, then recovers;
+the full action lasts 0.85 seconds. The gameplay hit explicitly marks the impact
+pose so damage and ignition match the swing. A warm sword tint and short trail
+follow the actual blade tip, replacing the earlier projected arc for this rig.
+Cancellation or death restores the idle limb pose and clears the trail. Krallenhieb
+keeps its existing short strike effect; it does not swing the sword. Generated
+art provenance and the full built-in image-generation prompt are recorded in
+`docs/paper-art-generation.json`. Tests cover both facing directions, delayed
+contact damage, stable logical position/upright body, recovery and death cancellation.
+
+
+Flaca's sword arm now attaches beneath the cloak instead of drawing its shoulder
+cap over the chest. A native `Flaca-Forearm.asset` reuses the same texture pixels
+for the hand and forearm in front of the body, while the shoulder stays behind it.
+The swing has a brief follow-through before its smooth return.
+The blade-tip trail uses sampled points along the curved swing, rounded corners,
+soft edges and fading transparency, including when a slow frame skips poses.
+Contact time, action-point cost, damage, ignition and recovery locks are unchanged.

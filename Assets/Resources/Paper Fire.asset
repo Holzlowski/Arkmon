@@ -20,4 +20,5 @@ MonoBehaviour:
   - {fileID: 878189216771012884, guid: 5e0743a3a9dd0bc44a5c41c04adae622, type: 3}
   - {fileID: 7458006062559498672, guid: 5e0743a3a9dd0bc44a5c41c04adae622, type: 3}
   material: {fileID: 2100000, guid: 88783aab1a2021941b53b5c7497e91f2, type: 2}
+  swordTrailMaterial: {fileID: 2100000, guid: 87244d1fb7ef9fb488ff3401b722f4fa, type: 2}
   framesPerSecond: 12

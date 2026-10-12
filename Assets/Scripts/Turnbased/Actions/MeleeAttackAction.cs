@@ -14,6 +14,7 @@ public abstract class MeleeAttackAction : BaseAction
     private GridPosition targetCell;
     private float timer;
     private bool hitApplied;
+    private PaperSwordAnimation swordAnimation;
     public int Range => Definition != null ? Definition.range : 1;
 
     public override List<GridPosition> GetValidActionGridPositionList()
@@ -52,7 +53,9 @@ public abstract class MeleeAttackAction : BaseAction
             || !FindTarget(cell, out Unit target, out BurningObstacle prop))
         { completed?.Invoke(); return; }
         TargetUnit = target; obstacle = prop; targetCell = cell;
-        hitApplied = false; timer = 0.3f;
+        swordAnimation = IsFire ? unit.GetComponent<PaperSwordAnimation>() : null;
+        hitApplied = false; timer = swordAnimation != null ? PaperSwordAnimation.HitTime : 0.3f;
+        if (swordAnimation != null) swordAnimation.BeginSwing(LevelGrid.Instance.GetWorldPosition(cell), true);
         ActionStart(completed);
     }
 
@@ -67,12 +70,13 @@ public abstract class MeleeAttackAction : BaseAction
             || !FindTarget(targetCell, out Unit current, out BurningObstacle currentProp)
             || current != TargetUnit || currentProp != obstacle)
         { Finish(); return; }
+        if (swordAnimation != null) swordAnimation.MarkImpact();
         hitApplied = true;
-        timer = 0.3f;
+        timer = swordAnimation != null ? PaperSwordAnimation.Duration - PaperSwordAnimation.HitTime : 0.3f;
         Vector3 destination = LevelGrid.Instance.GetWorldPosition(targetCell) + Vector3.up * 0.5f;
         PaperCharacterVisual visual = unit.GetComponent<PaperCharacterVisual>();
         Vector3 origin = visual != null ? visual.GetAttackOrigin() : unit.transform.position + Vector3.up * 0.6f;
-        CombatStrikeVisual.Show(origin, destination, IsFire);
+        if (swordAnimation == null) CombatStrikeVisual.Show(origin, destination, IsFire);
         OnAnyMeleeHit?.Invoke(this, EventArgs.Empty);
         if (TargetUnit != null) TargetUnit.Damage(Definition != null ? Definition.damage : DefaultDamage, unit.transform);
         if (IsFire)
@@ -93,10 +97,12 @@ public abstract class MeleeAttackAction : BaseAction
         => new EnemyAIAction { gridPosition = cell, actionValue = 180 + (IsFire ? 20 : 0) };
     private void Finish()
     {
+        if (swordAnimation != null) swordAnimation.CancelSwing();
         TargetUnit = null; obstacle = null; ActionComplete();
     }
     protected override void OnDisable()
     {
+        if (swordAnimation != null) swordAnimation.CancelSwing();
         TargetUnit = null; obstacle = null; base.OnDisable();
     }
 }

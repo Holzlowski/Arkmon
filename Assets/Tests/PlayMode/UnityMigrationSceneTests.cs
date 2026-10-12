@@ -178,7 +178,7 @@ public class UnityMigrationSceneTests
             Assert.That(friendlies.Count, Is.GreaterThan(0));
             foreach (Component friendly in friendlies)
             {
-                Assert.That(friendly.GetComponentInChildren<SpriteRenderer>().sprite.name, Is.EqualTo("Flaca-Paper"));
+                Assert.That(friendly.GetComponentInChildren<SpriteRenderer>().sprite.name, Is.EqualTo("Flaca-Sword-Body"));
                 Transform paper = friendly.GetComponentInChildren<SpriteRenderer>().transform;
                 Assert.That(paper.localScale.y, Is.InRange(0.48f, 0.52f));
                 Assert.That(Vector3.Dot(paper.up, Camera.main.transform.up), Is.GreaterThan(0.999f));

@@ -98,6 +98,82 @@ public class FireCombatTests
         Assert.That(P(enemy.GetComponent(T("BurningStatus")), "IsBurning"), Is.EqualTo(false));
         LogAssert.NoUnexpectedReceived();
     }
+    [UnityTest] public IEnumerator FlameSword_MovesTheSwordBothWaysAndHitsAtContact()
+    {
+        Set(rules, "monsterHitChance", 0f);
+        Component animation = cat.GetComponent(T("PaperSwordAnimation"));
+        SpriteRenderer body = cat.GetComponentInChildren<SpriteRenderer>();
+        Transform mirror = (Transform)animation.GetType().GetField("mirrorRoot", Flags).GetValue(animation);
+        Component action = cat.GetComponent(T("FlameSwordAction"));
+        foreach (bool left in new[] { false, true })
+        {
+            Call(enemy, "MoveToWorldPosition", Call(grid, "GetWorldPosition", Cell(left ? 3 : 5, 2)));
+            Set(enemy.GetComponent(T("HealthSystem")), "health", 50);
+            yield return null; yield return null;
+            Vector3 root = cat.transform.position;
+            Vector3 rest = (Vector3)Call(animation, "GetTipPosition");
+            int completed = 0;
+            Assert.That(Call(cat, "TrySpendActionPointsToTakeAction", action), Is.EqualTo(true));
+            LogAssert.Expect(LogType.Log, "25");
+            Call(action, "TakeAction", Cell(left ? 3 : 5, 2), (Action)(() => completed++));
+            yield return new WaitForSeconds(0.18f);
+            Assert.That(Call(enemy, "GetHealthNormalized"), Is.EqualTo(1f), "No damage during windup.");
+            Assert.That(P(animation, "IsSwinging"), Is.EqualTo(true));
+            Assert.That(mirror.localScale.x, Is.EqualTo(left ? -1f : 1f));
+            float motion = 0f, deadline = Time.realtimeSinceStartup + 3;
+            while ((float)Call(enemy, "GetHealthNormalized") == 1f && Time.realtimeSinceStartup < deadline)
+            {
+                motion = Mathf.Max(motion, Vector3.Distance(rest, (Vector3)Call(animation, "GetTipPosition")));
+                Assert.That(cat.transform.position, Is.EqualTo(root));
+                Assert.That(Vector3.Dot(body.transform.up, Camera.main.transform.up), Is.GreaterThan(.999f));
+                yield return null;
+            }
+            Assert.That(motion, Is.GreaterThan(.05f));
+            Assert.That(Call(enemy, "GetHealthNormalized"), Is.EqualTo(.5f));
+            Assert.That(P(animation, "IsSwinging"), Is.EqualTo(true));
+            Assert.That(completed, Is.EqualTo(0), "Recovery still holds the action lock.");
+            while ((bool)P(action, "IsActive") && Time.realtimeSinceStartup < deadline) yield return null;
+            yield return null;
+            Assert.That(completed, Is.EqualTo(1)); Assert.That(P(animation, "IsSwinging"), Is.EqualTo(false));
+            Assert.That(Vector3.Distance(rest, (Vector3)Call(animation, "GetTipPosition")), Is.LessThan(.04f));
+            FullRound();
+        }
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest] public IEnumerator FlameSword_ImpactTrailSamplesACurveWhenTheSwingSkipsRenderedFrames()
+    {
+        Component animation = cat.GetComponent(T("PaperSwordAnimation"));
+        Call(animation, "BeginSwing", enemy.transform.position, true);
+        // Jump straight from idle to contact, as on a slow frame.
+        Call(animation, "MarkImpact");
+        TrailRenderer trail = (TrailRenderer)animation.GetType().GetField("fireTrail", Flags).GetValue(animation);
+        Assert.That(trail.positionCount, Is.GreaterThan(8));
+        var points = new Vector3[trail.positionCount]; trail.GetPositions(points);
+        Vector3 chord = points[points.Length - 1] - points[0];
+        float curvature = points.Max(p => Vector3.Cross(p - points[0], chord.normalized).magnitude);
+        Assert.That(curvature, Is.GreaterThan(.015f));
+        Assert.That(trail.sharedMaterial.shader.name, Is.EqualTo("Arkmon/Soft Fire Trail"));
+        Call(animation, "CancelSwing");
+        Assert.That(trail.positionCount, Is.EqualTo(0));
+        yield return null;
+    }
+
+    [UnityTest] public IEnumerator FlameSword_DeathCancelsTheSwingAndClearsItsFireTrail()
+    {
+        Component action = cat.GetComponent(T("FlameSwordAction"));
+        Component animation = cat.GetComponent(T("PaperSwordAnimation"));
+        int completed = 0; Call(action, "TakeAction", Cell(5, 2), (Action)(() => completed++));
+        yield return new WaitForSeconds(.1f);
+        Vector3 root = cat.transform.position;
+        LogAssert.Expect(LogType.Log, "0"); Call(cat, "Damage", 100, null);
+        Assert.That(completed, Is.EqualTo(1)); Assert.That(P(animation, "IsSwinging"), Is.EqualTo(false));
+        TrailRenderer trail = (TrailRenderer)animation.GetType().GetField("fireTrail", Flags).GetValue(animation);
+        Assert.That(trail.emitting, Is.False); Assert.That(trail.positionCount, Is.EqualTo(0));
+        yield return null; Assert.That(cat.transform.position, Is.EqualTo(root));
+        LogAssert.NoUnexpectedReceived();
+    }
+
     [UnityTest] public IEnumerator LethalBurnDamage_UsesRecallAndVictoryWaitsForBothMonsters()
     {
         Component[] enemies = ((IEnumerable)Call(manager, "GetEnemyUnitList")).Cast<Component>().ToArray();
