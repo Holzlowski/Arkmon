@@ -567,13 +567,11 @@ GameObject:
   - component: {fileID: 4490974729535221579}
   - component: {fileID: 8718131490978425275}
   - component: {fileID: 277091576300312845}
-  - component: {fileID: 1984490745}
-  - component: {fileID: -5667852141389548557}
-  - component: {fileID: -704751755768727363}
   - component: {fileID: 4764012042525587421}
-  - component: {fileID: -982743487791216345}
   - component: {fileID: 3481143620044879855}
   - component: {fileID: 4676760841538552944}
+  - component: {fileID: 1414206396278152963}
+  - component: {fileID: 9020210939237321796}
   m_Layer: 6
   m_Name: Monster
   m_TagString: Untagged
@@ -635,18 +633,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a338d1206f7d18142a080298d554b12c, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  definition: {fileID: 0}
+  definition: {fileID: 11400000, guid: 8034bd4e4cfe7234bb7b3daf4d55ea9f, type: 2}
   summonColor: {r: 1, g: 0.42, b: 0.1, a: 1}
   isEnemy: 0
   isInAttackSelection: 0
   basicActionArray:
   - {fileID: 4764012042525587421}
-  - {fileID: -982743487791216345}
   - {fileID: 3481143620044879855}
   attacks:
-  - {fileID: 1984490745}
-  - {fileID: -5667852141389548557}
-  - {fileID: -704751755768727363}
+  - {fileID: 1414206396278152963}
+  - {fileID: 9020210939237321796}
 --- !u!114 &4490974729535221579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,47 +688,6 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   health: 100
---- !u!114 &1984490745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c81f8045a134e584496d7b4fc572828a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  obstaclesLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
---- !u!114 &-5667852141389548557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 947903b57b219dc489e18eed275b673e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
---- !u!114 &-704751755768727363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede7661e187ce13478b31c8e1029beae, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  grenadeProjectilePrefab: {fileID: 3664617654537922735, guid: dfd96fd3d651ec64986b038bbb5cc816,
-    type: 3}
 --- !u!114 &4764012042525587421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -748,18 +703,6 @@ MonoBehaviour:
   moveSpeed: 4
   rotationSpeed: 10
   maxMoveDistance: 4
---- !u!114 &-982743487791216345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4314357635618093355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 730f3c7f13830694c9147a9605ffd9cf, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
 --- !u!114 &3481143620044879855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -785,11 +728,37 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PaperCharacterVisual
   paperPivot: {fileID: 4844930182447269127}
-  visualScale: 0.5
   cycleDuration: 2.4
   breathingAmount: 0.012
   bobHeight: 0.015
+  visualScale: 0.5
+  walkCycleDuration: 0.32
+  walkHeight: 0.055
   summonOffset: {x: -0.18, y: 0.9, z: 0}
+--- !u!114 &1414206396278152963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4314357635618093355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e1b7ccc2a962be44a2f59f8828f79cd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ClawAction
+--- !u!114 &9020210939237321796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4314357635618093355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab12543d90267de4d8f148bd0847c521, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FlameSwordAction
 --- !u!1 &6505112563976701019
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22d3cb3bf2174fbc9531dee022e06d27, type: 3}
+  m_Name: Flaca
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterDefinition
+  maxHealth: 100
+  maxActionPoints: 3
+  immuneToBurning: 1
+  summonColor: {r: 1, g: 0.42, b: 0.1, a: 1}
+  abilities:
+  - {fileID: 11400000, guid: 7a036af0bea63ad44888f8a3539ca2dd, type: 2}
+  - {fileID: 11400000, guid: 3dd1079263d4b194c951eb94aceba6ec, type: 2}
+  - {fileID: 11400000, guid: 910311b0f1f8b7045971491326b76959, type: 2}

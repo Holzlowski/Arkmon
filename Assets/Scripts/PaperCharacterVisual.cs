@@ -24,6 +24,7 @@ public class PaperCharacterVisual : MonoBehaviour
     private ShootAction shootAction;
     private SwordAction swordAction;
     private RamAction ramAction;
+    private MeleeAttackAction[] meleeActions;
     private float walkPhase;
     private float walkWeight;
     public bool IsDefeated { get; private set; }
@@ -48,6 +49,7 @@ public class PaperCharacterVisual : MonoBehaviour
         shootAction = GetComponent<ShootAction>();
         swordAction = GetComponent<SwordAction>();
         ramAction = GetComponent<RamAction>();
+        meleeActions = GetComponents<MeleeAttackAction>();
         phase = Random.value * Mathf.PI * 2f;
         idleWeight = 0f;
         walkWeight = 0f;
@@ -103,6 +105,9 @@ public class PaperCharacterVisual : MonoBehaviour
         Unit target = shootAction != null ? shootAction.TargetUnit : null;
         if (target == null && swordAction != null) target = swordAction.TargetUnit;
         if (target == null && ramAction != null) target = ramAction.TargetUnit;
+        foreach (MeleeAttackAction melee in meleeActions)
+            if (target == null && melee.TargetPosition.HasValue)
+                return melee.TargetPosition.Value - transform.position;
         if (target != null && target.IsDead) target = null;
         if (target == null && UnitManager.Instance != null)
         {
@@ -122,6 +127,13 @@ public class PaperCharacterVisual : MonoBehaviour
         Vector3 offset = summonOffset;
         if (spriteRenderer != null && spriteRenderer.flipX) offset.x = -offset.x;
         return paperPivot != null ? paperPivot.TransformPoint(offset) : transform.position + Vector3.up * 1.2f;
+    }
+
+    public Vector3 GetAttackOrigin()
+    {
+        if (spriteRenderer == null || Camera.main == null) return transform.position + Vector3.up * 0.6f;
+        return spriteRenderer.bounds.center + Camera.main.transform.right
+            * spriteRenderer.bounds.size.x * (spriteRenderer.flipX ? -0.35f : 0.35f);
     }
 
     public void FaceWorldDirection(Vector3 direction)

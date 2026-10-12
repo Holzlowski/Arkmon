@@ -196,7 +196,7 @@ The shepherd position can be adjusted in StartScene. Regression checks validate 
 
 ### Distelwolle: Rammstoß
 
-Distelwolle now has **Move** and **Rammstoß**, replacing its Shoot, Sword, Grenade and other test actions. The cat retains its test kit for the next ability pass (planned: non-elemental Krallenhieb and stronger fire Flammenschwert).
+Distelwolle now has **Move** and **Rammstoß**, replacing its Shoot, Sword, Grenade and other test actions. The cat now uses Krallenhieb and Flammenschwert.
 
 Rammstoß targets an opposing living unit 1–3 grid cells away in the same row or column. Every transit cell must be walkable and unoccupied, and the cell immediately behind the target must be inside the arena, walkable and empty. Diagonal charges and blocked pushes are not allowed. A hit currently deals 30 damage and costs 2 action points. These values live in `Assets/Scriptable Objects/Abilities/Ram.asset`; the Distelwolle definition retains 50 health, 3 action points and its lilac summon color.
 
@@ -223,17 +223,37 @@ Disabling deployment or unloading the scene cleans up effects and presentation l
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 17 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
+Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 21 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons and repeated scene entry. Additional rendered previews were inspected in an isolated project copy.
 
 
-### Burning status and fire rules
+### Fire, burning and the cat's abilities
 
-BurningStatus and BurningSystem add a data-driven status: three full rounds of
-five damage by default. The enemy-to-player boundary resolves damage and one
-cardinal spread attempt per exposed target; new fires wait until the next round.
-Spread can affect either team. MonsterDefinition can make monsters immune to
-burning while preserving direct damage. BurningObstacle marks single-cell
-vegetation or fireproof stone; destroyed plants release their pathfinding cell.
-Fire Rules supplies hit/spread probabilities. Animated paper flames use the six
-frames and material in Resources/Paper Fire.asset; cosmetic variation does not
-consume combat randomness. Attack abilities are added in the following change.
+Flaca now uses **Krallenhieb** (15 direct non-elemental damage, 1 action point) and
+**Flammenschwert** (25 direct fire damage to monsters, 2 action points). Both target
+adjacent cells, including diagonals, and show a short paper-style strike effect.
+The old Shoot/Sword/Grenade and other test abilities are removed from its prefab.
+Movement and Escape remain in the basic menu. Monster and ability values are in
+`Assets/Scriptable Objects/Monsters/Flaca.asset` and the corresponding ability assets.
+Flaca's `immuneToBurning` prevents the Burning status; direct fire damage still applies.
+
+`Assets/Scriptable Objects/Battles/Fire Rules.asset` defines the initial balance:
+25% monster ignition chance on fire hits, 3 damage ticks of 5 damage, 20% spread
+chance to monsters and 50% to vegetation. Flammenschwert always ignites vegetation
+without immediate direct damage. Stones cannot ignite and are not valid fire targets.
+Hitting an already burning target successfully refreshes its duration; damage does
+not stack. There is no elemental resistance multiplier or immunity to direct fire
+damage in this pass.
+
+A full round completes when the enemy turn returns to the player. BurningSystem
+snapshots existing fires, collects four-neighbour exposure (no diagonals), deals
+existing fire damage and then attempts new ignitions. Each target gets one spread
+roll even with multiple sources. Newly spread fires wait until the next full-round
+boundary for damage and propagation. Spread can affect either team and can move
+between monsters and vegetation in both directions. Spread does not refresh an
+existing fire. A source may spread on its final damage tick before it burns out.
+Small upright orange/yellow flames show the status and disappear on expiration or
+death. Lethal fire damage uses the same defeat pose and recall as attack damage.
+
+Try the attacks against opposing monsters. Add BurningObstacle to single-cell
+vegetation or stone props to enable burnable terrain. Arena scenery follows in a
+separate change.

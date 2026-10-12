@@ -168,8 +168,10 @@ public class MoveAction : BaseAction
         int targetCount = shootAction != null ? shootAction.GetTargetCountAtPosition(gridPosition) : 0;
         if (swordAction != null) targetCount += swordAction.GetValidActionGridPositionList(gridPosition).Count;
         if (ramAction != null) targetCount += ramAction.GetValidActionGridPositionList(gridPosition).Count;
+        MeleeAttackAction[] meleeActions = unit.GetComponents<MeleeAttackAction>();
+        foreach (MeleeAttackAction melee in meleeActions) targetCount += melee.GetValidActionGridPositionList(gridPosition).Count;
         int approachValue = 0;
-        if (shootAction == null && (swordAction != null || ramAction != null))
+        if (shootAction == null && (swordAction != null || ramAction != null || meleeActions.Length > 0))
         {
             int currentDistance = int.MaxValue;
             int candidateDistance = int.MaxValue;

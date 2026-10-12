@@ -302,13 +302,15 @@ public class RamActionTests
     }
 
     [UnityTest]
-    public IEnumerator EndTurnButton_LethalSwordHitUnlocksAfterRecallAndChangesTurn()
+    public IEnumerator EndTurnButton_LethalClawHitUnlocksAfterRecallAndChangesTurn()
     {
         object manager = TypeOf("UnitManager").GetProperty("Instance").GetValue(null);
         Component friendly = ((IEnumerable)Call(manager, "GetFriendlyUnitList")).Cast<Component>()
-            .First(u => u.GetComponent(TypeOf("SwordAction")) != null);
+            .First(u => u.GetComponent(TypeOf("ClawAction")) != null);
         Call(friendly, "MoveToWorldPosition", Call(grid, "GetWorldPosition", Cell(1, 2)));
-        Component sword = friendly.GetComponent(TypeOf("SwordAction"));
+        Component sword = friendly.GetComponent(TypeOf("ClawAction"));
+        LogAssert.Expect(LogType.Log, "15");
+        Call(attacker, "Damage", 35, null);
         Component ui = (Component)UnityEngine.Object.FindFirstObjectByType(TypeOf("TurnSystemUI"));
         var button = (UnityEngine.UI.Button)ui.GetType().GetField("endTurnButton", Fields).GetValue(ui);
         object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
@@ -368,13 +370,18 @@ public class RamActionTests
         Assert.That(attacker, Is.Not.Null, "The root survives until the pulse reaches the trainer.");
         Assert.That(attacker.gameObject.activeSelf, Is.False);
         Vector3 vessel = (Vector3)Call(trainerVisual, "GetSummonOrigin");
-        float closest = float.PositiveInfinity;
+        float closest = float.PositiveInfinity, largestStep = 0f;
+        Vector3 previousPulse = pulse.transform.position;
         while (pulse != null && Time.realtimeSinceStartup < deadline)
         {
-            closest = Mathf.Min(closest, Vector3.Distance(pulse.transform.position, vessel));
+            Vector3 currentPulse = pulse.transform.position;
+            largestStep = Mathf.Max(largestStep, Vector3.Distance(previousPulse, currentPulse));
+            previousPulse = currentPulse;
+            closest = Mathf.Min(closest, Vector3.Distance(currentPulse, vessel));
             yield return null;
         }
-        Assert.That(closest, Is.LessThan(0.4f));
+        // The effect is destroyed on arrival; the last observable frame depends on frame rate.
+        Assert.That(closest, Is.LessThan(largestStep + 0.1f));
         Assert.That(attacker == null, Is.True);
         Assert.That(deployment.GetType().GetProperty("IsRecalling").GetValue(deployment), Is.EqualTo(false));
         LogAssert.NoUnexpectedReceived();
