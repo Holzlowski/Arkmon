@@ -45,6 +45,41 @@ public class PaperUIPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator HealthBars_ShrinkRenderedWidthAfterDamage()
+    {
+        yield return Battle();
+        Component enemy = ((IList)Call(Instance("UnitManager"), "GetEnemyUnitList"))[0] as Component;
+        Image cardFill = GameObject.Find("Opponent monster card").GetComponentsInChildren<Image>()
+            .First(i => i.name == "Health fill");
+        Image worldFill = enemy.GetComponentsInChildren<Image>().First(i => i.name == "Health paper fill");
+        Canvas.ForceUpdateCanvases();
+        float cardWidth = RenderedWidth(cardFill), worldWidth = RenderedWidth(worldFill);
+        Component health = enemy.GetComponent(T("HealthSystem"));
+        int maximum = (int)T("HealthSystem").GetProperty("MaxHealth").GetValue(health);
+        LogAssert.Expect(LogType.Log, (maximum - 15).ToString());
+        Call(health, "Damage", 15, null);
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        float ratio = (maximum - 15f) / maximum;
+        Assert.That(RenderedWidth(cardFill), Is.EqualTo(cardWidth * ratio).Within(.1f));
+        Assert.That(RenderedWidth(worldFill), Is.EqualTo(worldWidth * ratio).Within(.1f));
+    }
+
+    private static float RenderedWidth(Image image)
+    {
+        using (var vertices = new VertexHelper())
+        {
+            typeof(Image).GetMethod("OnPopulateMesh", Flags, null, new[] { typeof(VertexHelper) }, null)
+                .Invoke(image, new object[] { vertices });
+            var mesh = new Mesh();
+            vertices.FillMesh(mesh);
+            float width = mesh.bounds.size.x;
+            UnityEngine.Object.Destroy(mesh);
+            return width;
+        }
+    }
+
+    [UnityTest]
     public IEnumerator Commands_SeparateAttacksDisableUnaffordableAndReplaceWithStanding()
     {
         yield return Battle();

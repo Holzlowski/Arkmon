@@ -26,9 +26,7 @@ public class PaperMonsterCard : MonoBehaviour
         Image track = PaperUIFactory.Image("Health track", transform, null,
             new Vector2(0.35f, 0.55f), new Vector2(1, 0.65f), Vector2.zero, new Vector2(-24, 0));
         track.color = style.ink;
-        healthFill = PaperUIFactory.Image("Health fill", track.transform, null, Vector2.zero, Vector2.one,
-            new Vector2(2, 2), new Vector2(-2, -2));
-        healthFill.type = Image.Type.Filled; healthFill.fillMethod = Image.FillMethod.Horizontal;
+        healthFill = PaperUIFactory.HealthFill("Health fill", track.transform);
         healthFill.color = enemy ? new Color(0.76f, 0.39f, 0.22f) : new Color(0.46f, 0.65f, 0.33f);
         healthLabel = PaperUIFactory.Text("Health value", transform, "", 18,
             new Vector2(0.35f, 0.35f), new Vector2(1, 0.54f), Vector2.zero, new Vector2(-24, 0));
@@ -48,7 +46,7 @@ public class PaperMonsterCard : MonoBehaviour
             ? UnitManager.Instance.GetEnemyUnitList().Find(u => u != null && !u.IsDead) : null)
             : (UnitActionSystem.Instance != null ? UnitActionSystem.Instance.GetSelectedUnit() : null);
         if (next == null || next.IsDead)
-        { if (nameLabel.text != "") { nameLabel.text = ""; healthLabel.text = ""; pointsLabel.text = ""; statusLabel.text = ""; portrait.enabled = false; healthFill.fillAmount = 0; pointsRoot.gameObject.SetActive(false); } current = null; return; }
+        { if (nameLabel.text != "") { nameLabel.text = ""; healthLabel.text = ""; pointsLabel.text = ""; statusLabel.text = ""; portrait.enabled = false; PaperUIFactory.SetHealthFill(healthFill, 0); pointsRoot.gameObject.SetActive(false); } current = null; return; }
         if (next != current)
         {
             current = next; shownHealth = shownPoints = shownRounds = -1;
@@ -60,7 +58,7 @@ public class PaperMonsterCard : MonoBehaviour
         }
         HealthSystem health = current.GetComponent<HealthSystem>();
         if (shownHealth != health.Health)
-        { shownHealth = health.Health; healthLabel.text = $"{health.Health} / {health.MaxHealth}"; healthFill.fillAmount = health.GetHealthNormalized(); }
+        { shownHealth = health.Health; healthLabel.text = $"{health.Health} / {health.MaxHealth}"; PaperUIFactory.SetHealthFill(healthFill, health.GetHealthNormalized()); }
         if (shownPoints != current.GetActionPoints())
         {
             shownPoints = current.GetActionPoints();

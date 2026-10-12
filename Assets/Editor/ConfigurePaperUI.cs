@@ -81,4 +81,3 @@ public static class ConfigurePaperUI
         return sprite;
     }
 }
-

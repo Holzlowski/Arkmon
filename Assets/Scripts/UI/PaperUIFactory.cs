@@ -26,6 +26,22 @@ public static class PaperUIFactory
         return image;
     }
 
+    public static Image HealthFill(string name, Transform track)
+    {
+        RectTransform inset = Rect(name + " inset", track, Vector2.zero, Vector2.one,
+            new Vector2(2, 2), new Vector2(-2, -2));
+        return Image(name, inset, null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, false);
+    }
+
+    public static void SetHealthFill(Image image, float normalizedHealth)
+    {
+        float ratio = Mathf.Clamp01(normalizedHealth);
+        // Sprite-less UI images ignore fillAmount, so resize the actual rectangle instead.
+        image.fillAmount = ratio;
+        if (image.sprite == null)
+            image.rectTransform.anchorMax = new Vector2(ratio, 1f);
+    }
+
     public static TextMeshProUGUI Text(string name, Transform parent, string value, float size,
         Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax,
         TextAlignmentOptions alignment = TextAlignmentOptions.MidlineLeft)

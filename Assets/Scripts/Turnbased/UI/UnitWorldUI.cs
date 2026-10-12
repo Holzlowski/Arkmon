@@ -37,7 +37,7 @@ public class UnitWorldUI : MonoBehaviour
 
     private void UpdateHealthBar()
     {
-        healthBarImage.fillAmount = healthSystem.GetHealthNormalized();
+        PaperUIFactory.SetHealthFill(healthBarImage, healthSystem.GetHealthNormalized());
     }
 
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
@@ -58,9 +58,7 @@ public class UnitWorldUI : MonoBehaviour
         Image track = PaperUIFactory.Image("Health ink track", transform, null,
             new Vector2(0.06f, 0.07f), new Vector2(0.74f, 0.22f), Vector2.zero, Vector2.zero);
         track.color = style.ink;
-        healthBarImage = PaperUIFactory.Image("Health paper fill", track.transform, null,
-            Vector2.zero, Vector2.one, new Vector2(2, 2), new Vector2(-2, -2));
-        healthBarImage.type = Image.Type.Filled; healthBarImage.fillMethod = Image.FillMethod.Horizontal;
+        healthBarImage = PaperUIFactory.HealthFill("Health paper fill", track.transform);
         healthBarImage.color = unit.IsEnemy() ? new Color(.76f, .39f, .22f) : new Color(.46f, .65f, .33f);
         actionPointText = PaperUIFactory.Text("World action points", transform, "", 21,
             new Vector2(.78f, .0f), new Vector2(1f, .29f), Vector2.zero, Vector2.zero);
