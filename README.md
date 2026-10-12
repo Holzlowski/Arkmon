@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.6.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.7.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -223,7 +223,7 @@ Disabling deployment or unloading the scene cleans up effects and presentation l
 
 Regression tests kill the actual Distelwolle prefab, inject an obsolete ragdoll reference, interrupt movement and charge with lethal damage, confirm the last opponent still triggers victory, verify upright defeat and both recall colors, and check cleanup and repeated sequential deployment.
 
-Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 30 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons, repeated scene entry, fire immunity, deferred spread, obstacle burnout and lethal burn damage. Additional rendered previews were inspected in an isolated project copy.
+Current battle regression validation on Unity `6000.3.26f1`: 39 EditMode and 33 PlayMode tests pass, covering Rammstoß, death interruption, defeat recalls, colored return effects, staged NPC summons, repeated scene entry, fire immunity, deferred spread, obstacle burnout and lethal burn damage. Additional rendered previews were inspected in an isolated project copy.
 
 ### Fire, burning and the cat's abilities
 
@@ -365,3 +365,39 @@ rotating the collider. This prototype pose uses deformation rather than new artw
 Regression tests cover obstacle/border targeting, blocked lanes, lethal hits,
 action-point costs, interrupted standing, player selection, upright paper pose
 and AI standing before attacks.
+
+### Shared paper interface
+
+BattleScene uses the shared style asset `Assets/Resources/Paper UI.asset`.
+It supplies cream paper panels, sage answer/end-turn buttons, selected orange cards,
+illustrated action/status icons, portraits and the existing LiberationSans font.
+`PaperUIFactory` constructs anchored Unity UI elements; the existing battle controllers bind their views in Start. Legacy scene/prefab children are
+hidden during Play Mode rather than rewriting scene geometry or stored dialogues.
+The style asset can be edited in the Inspector. `Arkmon > Configure paper UI assets`
+recreates the native sprite slices from the two UI atlases and existing character
+textures. Full built-in image-generation prompts are in `docs/paper-art-generation.json`.
+
+The command bar separates Aktionen (movement, standing and escape) from Attacken
+using paper category tabs, with AP costs, hover explanations and an orange
+selected card. Up to four cards are shown per page; additional abilities are
+available through previous/next buttons. Switching categories or pages selects
+the first visible action. Knockdown returns to Aktionen and disables Attacken. Unaffordable actions, enemy turns and
+ongoing actions/recalls disable cards; callbacks recheck availability before acting.
+Monster cards show names, current/max HP and graphical AP diamonds. Small world
+labels and the cards show burning duration and knockdown, updating from runtime
+state. An action-in-progress hint and deployment instructions use the same paper
+style. The turn tab reports the controlling side and full round number.
+
+Visual review rendered the actual Unity interface at 1600x900, 1280x720 and
+1200x900 (4:3). The layouts target desktop landscape screens. The current portrait
+set covers Flaca, Distelwolle and the shepherd NPC; additional characters will
+need portrait assets. The surrounding world was not redesigned in this UI change.
+
+UI validation: all 39 EditMode and 33 PlayMode project tests passed; the four
+UI tests were repeated after the final callback/busy-state changes, and the
+Unity render review covered the three landscape resolutions listed above.
+
+Category-tab validation: the five UI tests and selected-monster knockdown/standing
+regression passed. A render review confirmed the tabs at 16:9 and 4:3; paging
+was checked with six attacks, and an unassigned attack list was checked separately.
+

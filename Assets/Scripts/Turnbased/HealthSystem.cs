@@ -9,6 +9,8 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] private int health = 100;
 
     private int healthMax;
+    public int Health => health;
+    public int MaxHealth => healthMax;
     public bool IsDead { get; private set; }
 
     private void Awake()

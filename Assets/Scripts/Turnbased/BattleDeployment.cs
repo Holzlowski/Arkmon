@@ -31,6 +31,7 @@ public class BattleDeployment : MonoBehaviour
     private int nextMonster;
     private bool initialized;
     private TextMeshProUGUI placementLabel;
+    private GameObject placementPanel;
 
     private void Awake()
     {
@@ -131,6 +132,17 @@ public class BattleDeployment : MonoBehaviour
         placementLabel.text = $"Platziere Monster {nextMonster + 1}/{configuration.playerTeam.Length}: Wähle ein blaues Feld.";
     }
 
+    private static GameObject ImagePrompt(Transform canvas, Transform label, PaperUIStyle style)
+    {
+        var panel = PaperUIFactory.Image("Deployment paper tab", canvas, style.panel,
+            new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(-410, -151), new Vector2(410, -86));
+        label.SetParent(panel.transform, false);
+        PaperUIFactory.Fill((RectTransform)label);
+        ((RectTransform)label).offsetMin = new Vector2(18, 10);
+        ((RectTransform)label).offsetMax = new Vector2(-18, -10);
+        return panel.gameObject;
+    }
+
     private void CreatePrompt()
     {
         GameObject canvasObject = new GameObject("Deployment instructions", typeof(Canvas));
@@ -148,7 +160,15 @@ public class BattleDeployment : MonoBehaviour
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(1, 1);
         rect.pivot = new Vector2(0.5f, 1);
-        rect.anchoredPosition = new Vector2(0, -55);
+        rect.anchoredPosition = new Vector2(0, -92);
+        PaperUIStyle uiStyle = PaperUIStyle.Load();
+        if (uiStyle != null)
+        {
+            PaperUIFactory.Scale(canvas);
+            placementLabel.color = uiStyle.ink;
+            placementLabel.font = uiStyle.font;
+            placementPanel = ImagePrompt(canvasObject.transform, label.transform, uiStyle);
+        }
         rect.sizeDelta = new Vector2(-40, 55);
     }
 
@@ -247,6 +267,7 @@ public class BattleDeployment : MonoBehaviour
             IsReady = true;
             IsSummoning = false;
             placementLabel.gameObject.SetActive(false);
+            if (placementPanel != null) placementPanel.SetActive(false);
         }
         else { IsSummoning = false; RefreshAvailable(); ShowCells(); }
     }

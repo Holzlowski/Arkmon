@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3cab285815400f833a765faa959e66, type: 3}
+  m_Name: Paper UI
+  m_EditorClassIdentifier: Assembly-CSharp::PaperUIStyle
+  panel: {fileID: 21300000, guid: 48124c56b39df0f428ccc08df4485c49, type: 2}
+  card: {fileID: 21300000, guid: 79543f4d3f45b034eac1d9eb725c4842, type: 2}
+  sageButton: {fileID: 21300000, guid: 53978718493b8b84b960fe67223dd98d, type: 2}
+  selectedCard: {fileID: 21300000, guid: 4eece37689bde124b9e50efd82538c75, type: 2}
+  moveIcon: {fileID: 21300000, guid: be9f95a45e2316f4e9aced7d09af8543, type: 2}
+  clawIcon: {fileID: 21300000, guid: a99dc39e8941247439cf3bb15658ef49, type: 2}
+  swordIcon: {fileID: 21300000, guid: 13e71564540eca34bb7edc96551e1885, type: 2}
+  escapeIcon: {fileID: 21300000, guid: 111214b004cac3845bd7320d9227931f, type: 2}
+  fireIcon: {fileID: 21300000, guid: fcd1e4f2dc049c043b8ff862f542c275, type: 2}
+  downIcon: {fileID: 21300000, guid: fc66f7e168125694b882098717a4ceed, type: 2}
+  flacaPortrait: {fileID: 21300000, guid: 9cbf71574a0f7094f8b684b342c49c55, type: 2}
+  sheepPortrait: {fileID: 21300000, guid: 92c8536ec6568114c997568874853cac, type: 2}
+  hunterPortrait: {fileID: 21300000, guid: d11694f504cb7a2499222cb29e1a0ff1, type: 2}
+  font: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  ink: {r: 0.22, g: 0.14, b: 0.09, a: 1}
+  sage: {r: 0.37, g: 0.44, b: 0.27, a: 1}
+  amber: {r: 0.93, g: 0.52, b: 0.12, a: 1}
+  cream: {r: 1, g: 0.95, b: 0.82, a: 1}

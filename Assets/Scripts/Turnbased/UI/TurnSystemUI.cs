@@ -13,6 +13,8 @@ public class TurnSystemUI : MonoBehaviour
 
     private void Start()
     {
+        if (PaperBattleLayout.Turns(this, out Button end, out TextMeshProUGUI turn, out GameObject enemy))
+        { endTurnButton = end; turnNumberText = turn; enemyTurnVisualObject = enemy; }
         turnSystem = TurnSystem.Instance;
         unitManager = UnitManager.Instance;
         endTurnButton.onClick.AddListener(EndTurn);
@@ -37,7 +39,7 @@ public class TurnSystemUI : MonoBehaviour
 
     private void Refresh(object sender, EventArgs e)
     {
-        turnNumberText.text = "TURN " + turnSystem.GetTurnNumber();
+        turnNumberText.text = (turnSystem.IsPlayerTurn() ? "Dein Zug" : "Gegner am Zug") + " · Runde " + ((turnSystem.GetTurnNumber() + 1) / 2);
         enemyTurnVisualObject.SetActive(!turnSystem.IsPlayerTurn() && unitManager.IsBattleRunning);
         endTurnButton.gameObject.SetActive(turnSystem.IsPlayerTurn());
         endTurnButton.interactable = turnSystem.IsPlayerTurn() && turnSystem.CanChangeTurn();

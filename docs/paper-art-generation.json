@@ -82,6 +82,20 @@
       "output": "Assets/Sprites/Environment/WoodenCrate-Paper.png",
       "generator": "Built-in image_gen",
       "prompt": "Use case: stylized-concept. Asset type: one transparent 2D wooden crate sprite for a cut-paper medieval fantasy game. One squat sturdy wooden supply crate with warm walnut and honey brown plank grain, simple diagonal bracing, four tiny dark iron nail heads. Slight three-quarter front view with narrow right side visible, top visible a little, compact readable square silhouette. Hand illustrated storybook style, bold warm dark-brown contour, thin ivory cut-paper rim, subtle paper texture and simple restrained flat cel shading. Full crate with bottom base visible, centered, generous transparent margin. No items on top, no labels, no text, no ground, no exterior glow, no shadows or vignette, no background. Truly transparent empty background, opaque crate interior."
+    },
+    {
+      "output": "Assets/Art/UI/Paper-Panels.png",
+      "references": [
+        "Arkmon battle/dialogue UI mockups from this conversation"
+      ],
+      "prompt": "Generate a production GAME UI SPRITE ATLAS, one square transparent PNG, for ARKMON cozy illustrated paper adventure. EXACTLY FOUR isolated sprites arranged in a perfectly regular 2 columns x 2 rows grid. Equal square cells, sprites centered within each cell and separated with large transparent gutters. NO TEXT, NO LETTERS, NO ICONS, NO characters. Each sprite is an approximately square UI background to be nine-sliced in Unity into panels/cards/buttons; keep every ornament exclusively near the outer corners and edges, large empty center. TOP LEFT: cream warm parchment panel with irregular subtly torn paper edge and dark brown ink thin rounded rectangular outline inset from paper edge; delicate hand painted paper texture, subtle lower right soft shadow. TOP RIGHT: pale cream parchment card, same thin brown inset ink border, slightly more rounded edges, tiny sage leaf corner motifs only. BOTTOM LEFT: sage green paper button with dark brown thin outer border and a second fine cream inset line, plain empty sage center, tiny leaf corner accents, same paper cutout edges. BOTTOM RIGHT: warm cream selected action card, same as top right but glowing warm amber orange border, no heavy glow and no motifs beyond corners. Style: hand illustrated flat paper cutout with restrained watercolor texture, consistent dark warm brown ink outlines, tasteful simple medieval storybook feel, extremely clean game-ready edges. Crucial: all four elements square, uniform scale, no text, no extra shapes, actual transparent background around cutouts and between tiles. This is a texture sheet, not a mockup."
+    },
+    {
+      "output": "Assets/Art/UI/Action-Icons.png",
+      "references": [
+        "Arkmon battle/dialogue UI mockups from this conversation"
+      ],
+      "prompt": "One square transparent PNG GAME UI ICON ATLAS for ARKMON cozy paper fantasy. Precisely SIX separate centered icons arranged regular TWO columns THREE rows, equal cells, very generous transparent margins, no text/no letters/no numbers/no frames/no tiles. TOP LEFT two dark brown walking boot prints, TOP RIGHT three dark brown curved claw scratches. MIDDLE LEFT wooden short sword engulfed in a small elegant orange flame pointing diagonally up-right, MIDDLE RIGHT dark brown silhouette of running person escaping pointing right. BOTTOM LEFT bright orange yellow hand illustrated flame with dark brown outline, BOTTOM RIGHT a simple cute lilac wool sheep lying down with small dark brown ground line to signify knocked down (eyes open not dead). All icons flat hand-illustrated paper cutout, strong clean dark brown ink contours, few color areas, subtle watercolor paper texture only inside shapes, highly legible at small sizes, same line weight throughout. No extras, no background, no shadows bleeding into adjacent cells, actual transparent background. A production sprite sheet, no screenshot."
     }
   ]
 }
