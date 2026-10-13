@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.8.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.11.0-alpha.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -175,15 +175,62 @@ step bounce and subtle squash, without rotating the figure. Both example monster
 use `Visual Scale = 0.5`, half their previous width and height.
 Only the visual child changes; colliders, world position and grid occupancy do not.
 Cycle duration, visual scale, and motion amounts are adjustable in the Inspector. These are
-procedural paper animations, not skeletal rigs or frame-by-frame sprite sheets.
+procedural paper animations for monsters and idle motion. The exploration player
+uses eight painted walking frames per outfit, advanced by actual distance travelled.
+The cycle spans 4.8 world units and avoids an additional procedural walking
+squash/bounce while these frames are playing, reducing competing movement rhythms.
+Raw directional input and immediate horizontal velocity changes remove input smoothing
+and release drift; diagonal input is capped to the configured movement speed.
 The existing unit Animator and attack callbacks are retained, with the old
-body and equipment renderers hidden. Dedicated paper attack and walk poses are
-still future work. The exploration player's C key still toggles the paper visual
+body and equipment renderers hidden. Dedicated monster walk poses remain future
+work. The exploration player's C key still toggles the paper visual
 and the diagnostic capsule.
 
 ### Courtyard and arena presentation
 
 StartScene uses a warm limestone courtyard, terracotta keep, wooden benches and simple garden trees. BattleScene uses stone paving and low visual parapets; the original perimeter colliders and grid origin/dimensions are retained. Old decorative tree visuals are disabled. The generated scenery uses native Unity meshes and materials in `Assets/Art/SceneStyle`.
+
+The courtyard stable, wheelbarrow, workbench, fountain, bench, crates, raised herb
+bed edging and tower doorway use painted 3D geometry, matching the wardrobe and
+bed approach. Their depth follows the camera perspective and their colliders
+keep the player outside solid furniture. Flowers and characters retain paper sprites.
+Rebuild these props with `Arkmon/Build painted courtyard props`; import player
+walking sheets with `Arkmon/Import player walk cycles`. Fountain water is currently
+static, and the stable is decorative rather than an accessible interior.
+
+The first courtyard arrival briefly reveals John before returning camera control.
+After the first successful trial and John's return dialogue, a dismissible demo
+completion panel points toward the Arkanmeisterin; repeat practice remains available.
+Battle commands explain why they are disabled and show a target-selection prompt
+when no attack preview or detailed explanation is already displayed.
+Available command cards clear the legacy Button renderer tint when adopting the
+paper layout; disabled cards use the availability-driven CanvasGroup instead.
+The guard shield is native maskable UI geometry with its own CanvasRenderer.
+The two command areas stay in a left sidebar. Battle starts at area selection;
+opening Actions or Attacks does not select a command automatically. The heading
+tracks area, command and target selection. Cancel (or Escape) clears the selected
+targetable command; Back from the command list returns to area selection.
+Category controls are unavailable while an action runs or the enemy takes its turn.
+
+The trial arena keeps two open approaches around central stone cover, with a
+burnable bush and fences offering destructible routes. `Arkmon/Configure John
+trial arena` reapplies the scoped obstacle arrangement. During John's first trial,
+optional advice reacts once to moving behind cover, an ignited obstacle and the
+player monster being knocked down. These messages queue until an action finishes,
+do not pause combat, and can be dismissed. After the first victory, John's return
+dialogue and the objective point toward waiting for the Arkanmeisterin; further
+practice is available. Her arrival remains outside the current demo.
+
+In the tower opening, the player starts without mantle or lamp. The golden lamp
+is collected from the writing desk and the green mantle from the wardrobe, in
+either order. Both use quest shimmer until collected; room exit requires both.
+The objective and item dialogue name the remaining equipment. Separate session
+flags survive scene changes and reset on a new play session. World sprites,
+eight-frame walking cycles and upper-body dialogue portraits cover all four
+equipment combinations through `PlayerEquipmentAppearance`. Opening StartScene
+or BattleScene directly retains the fully equipped prototype appearance.
+Use `Arkmon/Configure preparation equipment` to import the extra variants,
+refresh equipment portraits and place the table lamp without rebuilding furniture.
 
 Each scene has its own Volume profile with ACES tonemapping, restrained bloom, desaturation and vignette. Directional lighting is warm with soft shadows; old baked lighting and environment reflections are cleared. New decoration has no colliders and does not introduce new gameplay obstacles.
 
@@ -721,11 +768,12 @@ Builds/courtyard-tower-fountain-prompt.json.
 
 ## Tactical demo and waking sequence
 
-The first TowerRoom visit opens with an occupied-bed paper sprite, a short morning
-fade and a camera focus on the bed. The standing player is hidden and input is
-locked during this sequence. The occupied bed then returns to the existing empty
-bed and the player becomes visible. This is a sprite/fade sequence, not a complete
-frame-by-frame getting-out-of-bed animation. Waking runs once per play session.
+The first TowerRoom visit keeps the same 3D bed visible throughout sleep, sitting
+and standing. A separate paper boy lies on the mattress beneath the raised mesh
+cover; the standing player is hidden and input locked. The camera leans down for
+a closer mattress view, then restores its exploration angle. Short fades join the
+lying, seated and standing poses; this is not a skeletal getting-out-of-bed animation.
+Waking runs once per play session.
 Taking the mantle plays a short paper-body movement and switches the outfit at
 midpoint before the personal dialogue; movement and exit are locked until finished.
 An opening victory changes the courtyard objective to awaiting the Arkanmeisterin;
@@ -890,3 +938,61 @@ in Builds/demo-refinements-tests.xml and demo-refinements-final-review.xml. Clos
 mask capture is uniformly black; full-open capture preserves the scene.
 
 Wardrobe interaction: doors open before dressing, hold the hanging mantle in view, then close after the outfit changes. Recorded Kenney CC0 wood/cloth cues accompany the sequence; movement and room exit remain locked until it finishes.
+
+Wake-up presentation: the 3D bed stays visible while the lying boy changes to a seated pose; the boy straightens beside the bed over 0.9 seconds while the camera eases back to exploration. A dedicated seated sprite now bridges the sleeping illustration and standing pose; climbing is still suggested by the short fade.
+
+The tower canopy bed now uses separate 3D oak frame/posts, linen mattress and pillows, folded green cover, canopy and gathered corner curtains. The opening keeps this geometry throughout sleep, sitting and standing; the player starts at the bedside marker. Configure via Arkmon > Build painted canopy bed. Dedicated painted velvet and linen textures replace the plaster placeholder, and the pillows use rounded geometry.
+
+Tower window: a 2.7-unit opening with a rounded stone arch replaces the wide rectangular opening. The wall masks oversized background, field and cloud layers; stronger depth-dependent camera follow, eased movement and independent cloud drift improve parallax. Configure via Arkmon > Build small arched tower window. The landscape remains layered illustration planes rather than explorable terrain.
+
+
+### Tower opening details
+
+The opening flows from sleep to a dedicated seated pose, then a short rise into the standing character. Camera and input are restored on completion or interruption. Wardrobe dressing frames the open doors before the outfit changes and returns to exploration afterwards. A short courtyard thought points to John on the first arrival only; his repeatable practice battles remain available.
+
+The desk and chair use separate 3D parts with painted oak surfaces, drawers, books, a letter, ink pot, quill and animated candle. The room adds a warm window light, a subtle transparent shaft and at most 180 drifting dust particles. Quiet recorded courtyard ambience fades down for dialogue and scene transitions; sources and the reproducible mix are recorded in `docs/audio-sources.json` and `tools/render_tower_ambience.py`.
+
+`PlayerInteractionFocus` shares collider and distance rules between the visible [E] prompt and actual interaction. A small gold ground halo marks the closest reachable object; prompts hide during dialogue, dressing and transitions. `Arkmon > Finish tower opening details` rebuilds the furniture and atmosphere without altering the combat arena.
+
+Prototype limitations: sitting and standing are separate paper poses joined by a short fade, not a skeletal animation; props use simplified geometry, and the distant courtyard sound bed is a sparse recording mix rather than a dynamic ambient simulation.
+
+
+### Circular tower room and visible morning light
+
+The tower bedroom has a circular floor/ceiling and curved stone shell (radius 7.82, center Z -1.7). Front walls are a visual cutaway with solid collision bounds. The arched window and right-wall doorway remain open in the shell; the window has invisible fall protection and the door has a stone recess. Furniture fits the curved wall, and eight radial oak beams support the ceiling. Rebuild with `Arkmon > Build round tower room`.
+
+Tower stone now uses a room-specific triplanar painted shader that receives real main/additional light and shadow maps. Tower-only material copies preserve courtyard and arena appearances. A warm spotlight shines from outside the arched window through slender wooden mullions; cooler ambient fill preserves readable shadows. Matte wood/cloth and slightly glossier brass separate material responses. Reapply with `Arkmon > Refine tower lighting` after rebuilding room geometry.
+
+`Prince-Sleeping.png` is the isolated boy, not a bed illustration. The sprite lies on the mattress; the actual mesh blanket covers his legs and the bed frame never switches to a sprite. Sleep camera framing is closer and steeper to show the lying pose. The character retains the game's paper style even while the furniture is 3D.
+
+
+### Layered vista, dense morning and first John trial
+
+The arched tower window now uses separate painted sky, mountain, farmland and low hill images plus independently drifting clouds. WindowVistaParallax projects the camera position relative to the fixed aperture, with a stable reference even during the wake-up camera sequence. Oversized layers and bounded offsets keep edges behind the wall. The view remains distant: no wheat stands immediately outside the tower. Configure with Arkmon > Finish tower opening details.
+
+The morning uses one restrained stylized shaft, soft golden dust motes drifting slowly inside a narrow volume aligned with the window beam (prewarmed, at most 180 particles), softer window shadows and small flickering candle accents. Extra haze sheets and the additive golden floor patch are disabled, preserving painted surface detail. Three soft contact-shadow decals anchor the bed, wardrobe and writing desk without changing collisions. Bloom is restrained and the color filter is neutral. These shafts/contact decals are artistic approximations, not physically simulated volumetric fog or screen-space ambient occlusion. High Fidelity supports actual additional-light shadows; lower quality presets may omit the spotlight shadows while retaining lighting and contact shading.
+
+John offers a short first-trial conversation with a prepare-later choice. Acceptance activates optional, dismissible battle advice for summoning, movement, attack targeting and ending the turn. Advice reacts to actions without requiring a fixed solution. Cancelling the introduction keeps it available; later practice battles use the existing dialogue without repeated advice. Progress is session-only and resets for a new play session. First victory points toward the awaited Arkanmeisterin; her arrival is not yet implemented.
+
+AttackPreview uses the same impact/cover/push rules as gameplay. Gold grid outlines show hits, red warns of allies, grey shows blocked fan cells, green marks damaged cover, violet shows pushed targets and a smaller blue outline shows the rammer's final position. Killing blows omit a push/knockdown that will not happen. Text explains AP, direct damage, cover absorption and burn chance/damage/duration. Marker renderers are pooled and hide during actions, opponent turns, transitions and UI hover.
+
+These features form the 0.11.0 demo milestone.
+
+Validation: nine distinct focused PlayMode cases pass across `Builds/first-trial-tests.xml` and `Builds/first-trial-final-tests.xml`, including actual John dialogue acceptance through the scene transition, cancellation/repeated practice, fan and ram preview plans, real Ember damage, door/parallax behavior and native render captures. Native screenshots are `Builds/tower-dense-morning.png`, `Builds/tower-layered-vista-left.png`, `Builds/tower-layered-vista-right.png`, `Builds/john-first-trial-dialogue.png` and `Builds/battle-tactical-attack-preview.png`.
+
+
+Tower collision and burning-hover refinement: the mountain layer is raised by 0.9 world units and the low-hill layer by 1.25, placing both within the arched view. Exploration movement now sets Rigidbody horizontal velocity while preserving vertical gravity, with continuous dynamic collision detection; it no longer translates the Transform through contacts. The tower doorway's stone backing retains its collider: leave through [E], rather than walking through the scene boundary.
+
+Obstacle inspection labels show current LP and existing burn damage/remaining rounds. When a valid attack preview is displayed, competing world labels hide. The attack panel is explicitly labelled as the next attack, uses readable obstacle names and shows LP before/after the hit. Already burning targets show refresh behavior instead of being described as newly ignited, and the repetitive Glutfunke color legend is removed.
+
+Six distinct focused checks pass after the hover-input fix: normal-controller movement against four tower boundaries, prior cutaway physics, actual door interaction/parallax, burning-fence wording, actual Ember damage and the native vista render. Results are in `Builds/tower-hover-tests.xml` and the successful targeted rerun `Builds/tower-hover-final-tests.xml`. No version increment, commit or push was made.
+
+
+Command navigation: both Actions and Attacks have a Back button that closes command cards and clears targeting without spending AP. Category buttons reopen either list, including the previously selected category. Commands rebind to the selected summoned unit when deployment changes into Running. Guard uses a native paper shield graphic instead of movement footsteps. The focused first-turn/navigation integration test confirms all three basic buttons are interactable, both back/reopen paths work, targeting clears and the shield exists (`Builds/command-navigation-tests.xml`, 1 passed). Included in the 0.11.0 demo milestone.
+
+
+Quest hints: the wardrobe uses subdued emissive contours with softly twinkling particles along each illustrated door; the door surfaces remain unchanged. Other mesh items, such as the collectible lamp, retain the surface shimmer. SetObjectiveActive controls the task cue; SetInteractionTarget supports a separate interaction component. Brightness follows PlayerInteractionFocus.Current, so dialogue, transitions and dressing return the cue to its distant intensity. PaintedWardrobe binds the closest wardrobe interaction point and disables the cue as soon as HasMantle is set. Particles follow the moving door faces, and runtime particle objects, overlay meshes and materials are cleaned up. The resource shader is included in builds. The focused PlayMode test passes for distant, reachable, dialogue-blocked and completed states; native previews are Builds/quest-wardrobe-dim.png, quest-wardrobe-bright.png and quest-wardrobe-complete.png. Included in the 0.11.0 demo milestone.
+
+Wardrobe quest contours now use a subdued continuous line with 72 softly twinkling, drifting motes per door. The particles follow the hinges, brighten with interaction focus and clear immediately when the mantle is taken.
+
+Painted room surfaces retain their source resolution and mipmaps, with trilinear filtering, 16x anisotropy and a restrained -0.25 mip bias. Windows imports explicitly use uncompressed RGBA32 for these seven surface textures. Render scale was already 1.0; this is a modest texture clarity adjustment, not an upscale or invented image detail. Reapply via Arkmon > Refine painted texture clarity after regenerating texture imports.

@@ -62,12 +62,15 @@ public class SceneLoadManager : MonoBehaviour
         string name = speaker != null ? speaker.npcName : "Dein Prüfer";
         if (speaker != null) speaker.FacePlayer();
         string line = result == UnitManager.BattleState.Won
-            ? "Gut gemacht! Du und Kafla habt eure Prüfung bestanden. Die Arkanmeisterin wird bald am Hof erwartet. Bis dahin können wir jederzeit weiter üben."
+            ? DemoOpening.PassedFirstTrial ? "Gut gekämpft! Kafla und du werdet ein eingespieltes Team. Für eine weitere Übungsrunde bin ich jederzeit bereit."
+              : "Prüfung bestanden! Du und Kafla seid bereit. Als Nächstes erwarten wir die Arkanmeisterin am Hof. Bis dahin können wir jederzeit weiter üben."
             : result == UnitManager.BattleState.Lost
             ? "Jeder Kampf lehrt uns etwas. Achte auf Kaflas Zustände und nutze die freien Felder. Versuchen wir es später noch einmal!"
             : "Eine Pause ist völlig in Ordnung. Komm wieder, wenn du und Kafla bereit für die nächste Prüfung seid.";
+        bool firstVictory=result==UnitManager.BattleState.Won && battleSpeaker=="John" && !DemoOpening.PassedFirstTrial;
         DialogueBoxController.instance.ShowMessage(line, name);
-        if (result == UnitManager.BattleState.Won && DemoOpening.Started) DemoOpening.RecordTrialVictory();
+        if (result == UnitManager.BattleState.Won && battleSpeaker == "John") DemoOpening.RecordTrialVictory();
+        if(firstVictory)DemoCompletionPanel.Queue();
     }
 
     private static IEnumerator AnimateIris(LampIrisGraphic iris, float from, float to)

@@ -16,15 +16,31 @@ public class PlayerController : MonoBehaviour
     public float interacRange = 3f;
 
     bool inConversation;
+    private PlayerInteractionFocus interactionFocus;
+    private Vector2 moveInput;
+    private bool jumpRequested;
+    public bool IsMoving => rb != null && moveInput.sqrMagnitude > .01f
+        && new Vector2(rb.linearVelocity.x, rb.linearVelocity.z).sqrMagnitude > .02f
+        && !inConversation && !SceneLoadManager.IsTransitioning && !DemoOpening.IsPresenting;
+    private void Awake() => interactionFocus = GetComponent<PlayerInteractionFocus>() ?? gameObject.AddComponent<PlayerInteractionFocus>();
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        GetComponent<PaperCharacterVisual>()?.SetRestingSprite(PlayerEquipmentAppearance.RestingSprite);
     }
 
     void Update()
     {
-        if (SceneLoadManager.IsTransitioning || DemoOpening.IsPresenting) return;
+        if (SceneLoadManager.IsTransitioning || DemoOpening.IsPresenting || inConversation)
+        {
+            moveInput = Vector2.zero; jumpRequested = false;
+            if (inConversation && Input.GetKeyUp(KeyCode.E)) TryInteract();
+            return;
+        }
+        moveInput = Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1);
+        jumpRequested |= Input.GetKeyDown(KeyCode.Space);
         if (Input.GetKeyUp(KeyCode.E))
         {
             TryInteract();
@@ -52,45 +68,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            List<IInteractableAsPlayer> interactableArks = new List<IInteractableAsPlayer>();
-            Collider[] colliderArray = Physics.OverlapSphere(transform.position, interacRange);
-            foreach (Collider collider in colliderArray)
-            {
-                if (collider.TryGetComponent(out IInteractableAsPlayer interactable))
-                {
-                    //interactable.InteractWithPlayer();
-                    interactableArks.Add(interactable);
-                }
-            }
-
-            IInteractableAsPlayer closestInteractable = null;
-            foreach (IInteractableAsPlayer interactable in interactableArks)
-            {
-                if (closestInteractable == null)
-                {
-                    closestInteractable = interactable;
-                }
-                else
-                {
-                    Vector3 interactablePosition = interactable.GetTransform();
-                    //Vector3 interactablePosition = (interactable as MonoBehaviour).transform.position;
-                    Debug.Log(interactablePosition);
-                    if (Vector3.Distance(transform.position, interactablePosition) <
-                        Vector3.Distance(transform.position, closestInteractable.GetTransform()))
-                    {
-                        closestInteractable = interactable;
-                    }
-                }
-            }
-
-            if (closestInteractable != null)
-            {
-                closestInteractable.InteractWithPlayer();
-            }
-            else
-            {
-                Debug.Log("Nix zum interagieren hier");
-            }
+            interactionFocus.Refresh()?.InteractWithPlayer();
         }
     }
 
@@ -113,23 +91,25 @@ public class PlayerController : MonoBehaviour
     private void HandleJump()
     {
         // Springen
-        if (Input.GetKeyDown("space") && isGrounded)
+        if (jumpRequested && isGrounded)
         {
             Jump();
         }
+        jumpRequested = false;
     }
 
     private void HandleMovement()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        ApplyMovement(moveInput);
+    }
 
-        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput).normalized * speed * Time.deltaTime;
-
-        if (!isJumping)
-        {
-            transform.Translate(movement);
-        }
+    // Let physics resolve walls instead of teleporting the Transform each fixed tick.
+    private void ApplyMovement(Vector2 input)
+    {
+        if (isJumping) return;
+        Vector3 movement = new Vector3(input.x, 0, input.y) * speed;
+        if (movement.sqrMagnitude > speed * speed) movement = movement.normalized * speed;
+        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
     }
 
     void Jump()
@@ -173,6 +153,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnDisable()
     {
+        moveInput = Vector2.zero; jumpRequested = false;
+        if(rb != null && !rb.isKinematic) rb.linearVelocity = new Vector3(0,rb.linearVelocity.y,0);
         DialogueBoxController.OnDialogueStarted -= JoinConversation;
         DialogueBoxController.OnDialogueEnded -= LeaveConversation;
     }

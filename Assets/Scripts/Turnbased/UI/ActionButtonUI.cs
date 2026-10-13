@@ -12,6 +12,7 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private Image background;
     private CanvasGroup group;
     private bool hovered;
+    private TextMeshProUGUI costLabel;
 
     public void SetBaseAction(BaseAction action)
     {
@@ -33,16 +34,26 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             button = GetComponent<Button>();
             if (button == null) button = gameObject.AddComponent<Button>();
             button.targetGraphic = background; button.transition = Selectable.Transition.None;
+            // The prefab may already be fading to its disabled color during deployment.
+            // Switching to Transition.None does not clear that renderer tint or tween.
+            background.CrossFadeColor(Color.white, 0f, true, true);
             group = GetComponent<CanvasGroup>();
             if (group == null) group = gameObject.AddComponent<CanvasGroup>();
             Image icon = PaperUIFactory.Image("Action icon", transform, style.Icon(action),
                 new Vector2(0.22f, 0.43f), new Vector2(0.78f, 0.83f), Vector2.zero, Vector2.zero, false);
             icon.preserveAspect = true;
+            if (action is GuardAction)
+            {
+                icon.enabled = false;
+                var shield = PaperUIFactory.Rect("Guard shield", icon.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                shield.gameObject.AddComponent<PaperGuardIcon>().raycastTarget = false;
+            }
             textMeshProUGUI = PaperUIFactory.Text("Action name", transform, PaperUIStyle.ActionName(action), 20,
                 new Vector2(0.08f, 0.23f), new Vector2(0.92f, 0.44f), Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
             textMeshProUGUI.fontStyle = FontStyles.Bold;
-            PaperUIFactory.Text("Action cost", transform, action is EscapeAction ? "Rückzug" : $"{action.GetActionPointCost()} AP", 17,
+            costLabel = PaperUIFactory.Text("Action cost", transform, action is EscapeAction ? "Rückzug" : $"{action.GetActionPointCost()} AP", 17,
                 new Vector2(0.1f, 0.15f), new Vector2(0.9f, 0.27f), Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
+            costLabel.enableAutoSizing=true;costLabel.fontSizeMin=12;costLabel.fontSizeMax=17;
         }
         else textMeshProUGUI.text = PaperUIStyle.ActionName(action);
         button.onClick.RemoveAllListeners(); button.onClick.AddListener(ChooseAction);
@@ -51,13 +62,23 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private bool CanChoose()
     {
-        if (baseAction == null || baseAction.GetUnit() == null) return false;
-        return TurnSystem.Instance != null && TurnSystem.Instance.IsPlayerTurn()
-            && UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning
-            && !BaseAction.IsAnyActionActive
-            && UnitActionSystem.Instance != null && !UnitActionSystem.Instance.IsBusy
-            && (BattleDeployment.Instance == null || !BattleDeployment.Instance.IsRecalling)
-            && baseAction.GetUnit().CanSpendActionPointsToTakeAction(baseAction);
+        return UnavailableReason(baseAction).Length == 0;
+    }
+    public static string UnavailableReason(BaseAction action)
+    {
+        if(action==null || action.GetUnit()==null)return "Kein Monster gewählt";
+        if(SceneLoadManager.IsTransitioning)return "Szenenwechsel läuft";
+        if(UnitManager.Instance==null || !UnitManager.Instance.IsBattleRunning)return "Kampf noch nicht bereit";
+        if(TurnSystem.Instance==null || !TurnSystem.Instance.IsPlayerTurn())return "Gegner am Zug";
+        if(BaseAction.IsAnyActionActive || UnitActionSystem.Instance==null || UnitActionSystem.Instance.IsBusy)return "Aktion läuft";
+        if(BattleDeployment.Instance!=null && BattleDeployment.Instance.IsRecalling)return "Rückruf läuft";
+        Unit unit=action.GetUnit();
+        if(unit.IsDead)return "Monster besiegt";
+        if(unit.IsKnockedDown && !(action is StandUpAction))return "Zuerst aufstehen";
+        if(action is GuardAction && unit.IsGuarding)return "Abwehr schon aktiv";
+        if(!unit.CanPerformAction(action))return "Aktion nicht verfügbar";
+        if(unit.GetActionPoints()<action.GetActionPointCost())return "Zu wenig AP";
+        return "";
     }
 
     private void ChooseAction()
@@ -72,6 +93,8 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (baseAction == null) return;
         button.interactable = CanChoose();
         if (group != null) group.alpha = button.interactable ? 1f : 0.48f;
+        if(costLabel != null)costLabel.text=button.interactable
+            ? baseAction is EscapeAction ? "Rückzug" : $"{baseAction.GetActionPointCost()} AP" : UnavailableReason(baseAction);
         if (hovered) ShowExplanation();
     }
 
@@ -99,7 +122,8 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             : baseAction is MoveAction ? "Wähle ein erreichbares Feld, um dein Monster zu bewegen."
             : baseAction is EscapeAction ? "Rufe dein Team zurück und verlasse den Kampf."
             : "Wähle ein markiertes Zielfeld.";
-        if (!baseAction.GetUnit().CanSpendActionPointsToTakeAction(baseAction)) message = "Nicht genügend Aktionspunkte oder Aktion im aktuellen Zustand gesperrt.";
+        string reason=UnavailableReason(baseAction);
+        if(reason.Length>0)message=reason+". "+message;
         ui.ShowTooltip(message);
     }
     public void OnPointerEnter(PointerEventData eventData) { hovered = true; UpdateSelectedVisual(); ShowExplanation(); }

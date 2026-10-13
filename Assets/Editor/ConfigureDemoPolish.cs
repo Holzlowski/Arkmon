@@ -44,6 +44,11 @@ public static class ConfigureDemoPolish
         Lighting(true); CameraFraming(true);
         ConfigureTowerCeiling.Apply(parent);
         ConfigureDemoRefinements.ApplyWardrobe();
+        ConfigureOpeningDetails.ImportArt();
+        ConfigurePaintedBed.Apply();
+        ConfigureOpeningDetails.Apply();
+        ConfigureArchedWindow.Apply();
+        ConfigureRoundTowerRoom.Apply();
         EditorSceneManager.SaveScene(scene);
 
         scene = EditorSceneManager.OpenScene("Assets/Scenes/StartScene.unity");
@@ -74,6 +79,7 @@ public static class ConfigureDemoPolish
         Patch(parent, "John practice paving", new Vector3(13, .018f, 1.2f), new Vector3(5.5f, .035f, 3.5f), practice);
         ClearTerrain("Castle horizon and golden fields", "Courtyard meadow cutout", new Vector4(-26, -12, 26, 10));
         Lighting(false); CameraFraming(false);
+        ConfigureCourtyardProps.Apply();
         EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
         EditorSceneManager.OpenScene("Assets/Scenes/TowerRoom.unity");
         Debug.Log("Demo visual polish applied without replacing scene systems.");
@@ -161,14 +167,16 @@ public static class ConfigureDemoPolish
         var collider = root.GetComponent<BoxCollider>();
         collider.center = Vector3.up * 1.9f; collider.size = new Vector3(.18f, 3.8f, 2.1f);
     }
-    private static void PaintedVista(Transform parent)
+    public static void PaintedVista(Transform parent)
     {
         Remove("Painted window scenery"); Remove("Painted window vista");
         var root = new GameObject("Painted window scenery"); root.transform.SetParent(parent);
-        var background = VistaLayer(root.transform, "Painted window vista", "PaintedWindowVista.png", new Vector3(0, 3.2f, 6.72f), new Vector2(9, 6), false);
-        var fields = VistaLayer(root.transform, "Distant field hills", "WindowFieldHills.png", new Vector3(0, 3.2f, 6.5f), new Vector2(9, 6), true);
-        var clouds = VistaLayer(root.transform, "Drifting painted clouds", "WindowClouds.png", new Vector3(0, 4.3f, 6.3f), new Vector2(11, 3), true);
-        root.AddComponent<WindowVistaParallax>().Configure(background, fields, clouds);
+        var background = VistaLayer(root.transform, "Painted window vista", "TowerVista-Sky.png", new Vector3(0, 3.4f, 7.3f), new Vector2(11, 7), false);
+        var mountains = VistaLayer(root.transform, "Distant painted mountains", "TowerVista-Mountains.png", new Vector3(0, 4.3f, 7.1f), new Vector2(11, 7), true);
+        var fields = VistaLayer(root.transform, "Distant field hills", "TowerVista-Fields.png", new Vector3(0, 3.4f, 6.9f), new Vector2(11, 7), true);
+        var hills = VistaLayer(root.transform, "Hills below the tower", "TowerVista-Hills.png", new Vector3(0, 4.65f, 6.7f), new Vector2(11, 7), true);
+        var clouds = VistaLayer(root.transform, "Drifting painted clouds", "WindowClouds.png", new Vector3(0, 4.3f, 7.2f), new Vector2(11, 2), true);
+        root.AddComponent<WindowVistaParallax>().ConfigureDepthLayers(background, mountains, fields, hills, clouds);
         // The window now shows the painted vista; nearby procedural hills must not overlap it.
         var landscape = GameObject.Find("Tower golden field vista"); if (landscape != null) landscape.SetActive(false);
     }
@@ -179,6 +187,7 @@ public static class ConfigureDemoPolish
         if (importer == null) throw new System.InvalidOperationException("Missing painted window vista: " + path);
         importer.textureType = TextureImporterType.Default; importer.npotScale = TextureImporterNPOTScale.None;
         importer.maxTextureSize = 2048; importer.wrapMode = TextureWrapMode.Clamp; importer.SaveAndReimport();
+        importer.alphaIsTransparency = transparent; importer.textureCompression = TextureImporterCompression.Uncompressed; importer.SaveAndReimport();
         string materialPath = Art + name + ".mat";
         var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
         if (material == null) { material = new Material(Shader.Find("Universal Render Pipeline/Unlit")); AssetDatabase.CreateAsset(material, materialPath); }

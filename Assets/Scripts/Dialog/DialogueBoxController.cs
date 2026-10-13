@@ -38,6 +38,16 @@ public class DialogueBoxController : MonoBehaviour
         temporaryDialogue = tree;
     }
 
+    // Own generated conversations just like one-line messages, including cancellation.
+    public void ShowConversation(DialogueSection[] sections, string speaker, string scene,
+        BattleConfiguration configuration)
+    {
+        DialogueTree tree = ScriptableObject.CreateInstance<DialogueTree>();
+        tree.sections = sections;
+        StartDialogue(tree, 0, speaker, scene, configuration);
+        temporaryDialogue = tree;
+    }
+
     float charactersPerSecond = 90;
 
     private void Awake()
@@ -128,9 +138,11 @@ public class DialogueBoxController : MonoBehaviour
             SceneLoadManager.instance.SavePlayerTransform(playerTransform);
             SceneLoadManager.instance.SetPendingBattle(battleConfiguration);
             SceneLoadManager.instance.SetBattleSpeaker(nameText.text);
+            DemoOpening.BeginTrial(nameText.text);
 
             // Lade die Kampfszene
             SceneLoadManager.instance.LoadBattleScene(battleSceneName);
+            if (temporaryDialogue != null) { Destroy(temporaryDialogue); temporaryDialogue = null; }
             //SoundManager.instance.PlayMusic(1);
             yield break;
         }

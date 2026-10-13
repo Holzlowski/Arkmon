@@ -27,7 +27,8 @@
         "cloth4.ogg",
         "knifeSlice2.ogg",
         "creak1.ogg",
-        "doorClose_1.ogg"
+        "doorClose_1.ogg",
+        "creak2.ogg"
       ]
     },
     {
@@ -39,7 +40,9 @@
         "impactPunch_medium_001.ogg",
         "impactWood_heavy_000.ogg",
         "footstep_grass_001.ogg",
-        "footstep_grass_002.ogg"
+        "footstep_grass_002.ogg",
+        "impactWood_light_000.ogg",
+        "impactWood_light_001.ogg"
       ]
     },
     {
@@ -106,5 +109,10 @@
     "license": "https://github.com/mrbumpy409/GeneralUser-GS/blob/main/documentation/LICENSE.txt",
     "reference": "Theophany Colgera arrangement: mood reference only; no source audio or melody copied",
     "runtime_installed": false
+  },
+  "tower_ambience": {
+    "runtime_file": "Assets/Resources/Audio/tower-courtyard-ambience.wav",
+    "recipe": "tools/render_tower_ambience.py",
+    "note": "Quiet distant grass footsteps, wood creaks and cloth breeze, mixed from the Kenney CC0 sources above."
   }
 }

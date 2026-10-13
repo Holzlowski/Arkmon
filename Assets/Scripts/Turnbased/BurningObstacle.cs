@@ -17,6 +17,19 @@ public class BurningObstacle : MonoBehaviour
     public int MaxHealth => maxHealth;
     public bool IsDestroyed { get; private set; }
     public int Health { get; private set; }
+    public string DisplayName
+    {
+        get
+        {
+            string lower = name.ToLowerInvariant();
+            if (lower.Contains("bush")) return "Busch";
+            if (lower.Contains("tree")) return "Baum";
+            if (lower.Contains("fence")) return "Holzzaun";
+            if (lower.Contains("crate")) return "Holzkiste";
+            if (lower.Contains("rock") || lower.Contains("stone")) return "Stein";
+            return name.Replace("(Clone)", "").Trim();
+        }
+    }
     private bool registered;
     private GridPosition position;
     private void Awake() { Health = maxHealth; }

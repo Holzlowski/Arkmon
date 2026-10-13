@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,19 +10,31 @@ public class DemoOpening : MonoBehaviour
 {
     public static bool Started { get; private set; }
     public static bool HasMantle { get; private set; }
+    public static bool HasLamp { get; private set; }
+    public static bool IsEquipped => HasMantle && HasLamp;
     public static bool EnteredCourtyard { get; private set; }
     public static bool HasAwakened { get; private set; }
     public static bool PassedFirstTrial { get; private set; }
-    public static bool IsPresenting => presentation != null && presentation.IsBusy;
+    public static bool TrialIntroductionSeen { get; private set; }
+    private static bool firstTrialPending;
+    public static void BeginTrial(string speaker)
+    {
+        firstTrialPending = speaker == "John" && !TrialIntroductionSeen;
+        if (firstTrialPending) TrialIntroductionSeen = true;
+    }
+    public static bool ConsumeTrialGuide()
+    {
+        bool pending = firstTrialPending; firstTrialPending = false; return pending;
+    }
+    public static bool IsPresenting => presentation != null && presentation.IsBusy
+        || CourtyardArrivalPresentation.IsPresenting || DemoCompletionPanel.IsOpen;
     private static DemoOpeningPresentation presentation;
     public static void RecordTrialVictory() => PassedFirstTrial = true;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetSession() { Started = HasMantle = EnteredCourtyard = HasAwakened = PassedFirstTrial = false; presentation = null; }
+    private static void ResetSession() { Started = HasMantle = HasLamp = EnteredCourtyard = HasAwakened = PassedFirstTrial = TrialIntroductionSeen = firstTrialPending = false; presentation = null; }
     [SerializeField] private bool towerRoom;
     [SerializeField] private Vector3 courtyardArrival = new Vector3(-17, 1, 0);
     private TextMeshProUGUI objective;
-    private DemoInteractable[] interactions;
-    private Transform playerTransform;
     private IEnumerator Start()
     {
         if (towerRoom) Started = true;
@@ -37,8 +48,6 @@ public class DemoOpening : MonoBehaviour
             new Vector2(24, 12), new Vector2(-24, -12));
         yield return null;
         GameObject player = GameObject.FindWithTag("Player");
-        playerTransform = player != null ? player.transform : null;
-        interactions = FindObjectsByType<DemoInteractable>(FindObjectsSortMode.None);
         ApplyOutfit(player);
         if (towerRoom)
         {
@@ -46,9 +55,9 @@ public class DemoOpening : MonoBehaviour
             if (!HasAwakened && !HasMantle)
             { yield return presentation.StartCoroutine(presentation.WakeUp(player)); HasAwakened = true; }
         }
-        if (towerRoom && !HasMantle)
+        if (towerRoom && !IsEquipped)
         {
-            DialogueBoxController.instance.ShowMessage("Heute ist der große Tag meiner Prüfung. Und die Arkanmeisterin kommt an den Hof … Ich sollte mich vorbereiten.", "Der Junge");
+            DialogueBoxController.instance.ShowMessage("Heute ist der große Tag meiner Prüfung. Noch bevor die Arkanmeisterin an den Hof kommt … Meine Lampe steht auf dem Tisch, mein grüner Mantel hängt im Schrank. Beides brauche ich für John.", "Der Junge");
             var camera = FindFirstObjectByType<CinemachineVirtualCamera>();
             var follow = camera != null ? camera.GetCinemachineComponent<CinemachineTransposer>() : null;
             if (follow != null)
@@ -85,24 +94,31 @@ public class DemoOpening : MonoBehaviour
             if (player != null) player.transform.position = entrance != null
                 ? new Vector3(entrance.position.x, courtyardArrival.y, entrance.position.z - 1.4f)
                 : courtyardArrival;
+            StartCoroutine(CourtyardGreeting());
         }
+    }
+    private IEnumerator CourtyardGreeting()
+    {
+        while (SceneLoadManager.IsTransitioning) yield return null;
+        yield return new WaitForSecondsRealtime(.3f);
+        var john=FindObjectsByType<NPC>(FindObjectsSortMode.None);
+        NPC examiner=System.Array.Find(john,n=>n.npcName=="John");
+        var player=GameObject.FindWithTag("Player");
+        if(examiner!=null && player!=null)
+            yield return gameObject.AddComponent<CourtyardArrivalPresentation>().Reveal(player.transform,examiner.transform);
+        if (Started && EnteredCourtyard && DialogueBoxController.instance != null && !DialogueBoxController.instance.IsOpen)
+            DialogueBoxController.instance.ShowMessage("Da ist der Hof. John wartet am Übungsplatz … Heute zeigen Kafla und ich, was wir können!", "Der Junge");
     }
     private void Update()
     {
         if (objective == null) return;
         if (IsPresenting)
-        { objective.text = HasAwakened ? "Vorbereitung · Du ziehst deinen Mantel an" : "Der Morgen deiner Prüfung"; return; }
-        objective.text = towerRoom ? (HasMantle ? "Bereit!  ·  Geh durch die Tür in den Hof" : "Vorbereitung  ·  Hol deinen Mantel aus dem Schrank")
-            : PassedFirstTrial ? "Prüfung bestanden  ·  Die Arkanmeisterin wird erwartet. Bei John kannst du weiter üben."
+        { objective.text = !towerRoom ? PassedFirstTrial ? "Prüfung bestanden · Du und Kafla seid bereit!" : "Ankunft im Hof · John wartet am Übungsplatz"
+            : IsEquipped ? "Bereit für deine Prüfung" : HasAwakened ? "Vorbereitung · Lampe und Mantel für deine Prüfung" : "Der Morgen deiner Prüfung"; return; }
+        objective.text = towerRoom ? (IsEquipped ? "Bereit!  ·  Geh durch die Tür in den Hof" : HasMantle ? "Vorbereitung · Hol deine Lampe vom Tisch" : HasLamp ? "Vorbereitung · Hol deinen Mantel aus dem Schrank" : "Vorbereitung · Lampe vom Tisch und Mantel aus dem Schrank")
+            : PassedFirstTrial ? "Neuer Auftrag · Erwarte die Arkanmeisterin. Bei John kannst du weiter üben."
             : "Deine Prüfung  ·  Sprich mit John beim Übungsplatz [E]";
-        if (playerTransform != null && interactions != null && !SceneLoadManager.IsTransitioning && DialogueBoxController.instance != null && !DialogueBoxController.instance.IsOpen)
-        {
-            var closest = interactions.Where(item => item != null)
-                .OrderBy(item => (item.transform.position - playerTransform.position).sqrMagnitude).FirstOrDefault();
-            if (closest != null && Vector3.Distance(closest.transform.position, playerTransform.position) < 3)
-                objective.text += "  ·  [E] " + (closest.kind == DemoInteractable.Kind.Wardrobe ? "Mantel holen"
-                    : closest.kind == DemoInteractable.Kind.RoomDoor ? "In den Hof" : closest.kind == DemoInteractable.Kind.Window ? "Aussicht ansehen" : "Ansehen");
-        }
+
     }
     public static void TakeMantle()
     {
@@ -111,16 +127,29 @@ public class DemoOpening : MonoBehaviour
         else FinishTakingMantle();
     }
     public static void FinishTakingMantle() { HasMantle = true; ApplyOutfit(GameObject.FindWithTag("Player")); }
+    public static void TakeLamp()
+    {
+        if (HasLamp || IsPresenting) return;
+        HasLamp = true;
+        ApplyOutfit(GameObject.FindWithTag("Player"));
+        foreach (var lamp in FindObjectsByType<CollectiblePlayerLamp>(FindObjectsSortMode.None)) lamp.Refresh();
+        DialogueBoxController.instance?.ShowMessage(HasMantle
+            ? "Meine Lampe! Kafla wartet darin. Mit Mantel und Lampe bin ich jetzt bereit für John."
+            : "Meine Lampe! Kafla wartet darin. Jetzt fehlt noch der grüne Mantel aus dem Schrank.", "Der Junge");
+    }
     private static void ApplyOutfit(GameObject player)
     {
         if (player == null || !Started) return;
         var visual = player.GetComponent<PaperCharacterVisual>();
-        if (visual != null) visual.SetRestingSprite(Resources.Load<Sprite>(HasMantle ? "Prince-Mantle" : "Prince-Room"));
+        if (visual != null) visual.SetRestingSprite(PlayerEquipmentAppearance.RestingSprite);
     }
     public static void LeaveRoom()
     {
         if (IsPresenting) return;
-        if (!HasMantle) { DialogueBoxController.instance.ShowMessage("Erst meinen grünen Mantel holen. Er hängt im Kleiderschrank.", "Der Junge"); return; }
+        if (!IsEquipped) { DialogueBoxController.instance.ShowMessage(!HasMantle && !HasLamp
+            ? "Für die Prüfung brauche ich meinen Mantel aus dem Schrank und meine Lampe vom Tisch."
+            : !HasLamp ? "Meine Lampe steht noch auf dem Tisch. Ohne sie kann ich Kafla nicht rufen."
+            : "Erst meinen grünen Mantel holen. Er hängt im Kleiderschrank.", "Der Junge"); return; }
         SceneLoadManager.instance.LoadExplorationScene("StartScene");
     }
 }

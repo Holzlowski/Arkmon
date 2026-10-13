@@ -29,7 +29,12 @@ public class TurnSystemUI : MonoBehaviour
     {
         // Recall completion can release the turn without another action or state event.
         if (turnSystem != null)
+        {
             endTurnButton.interactable = turnSystem.IsPlayerTurn() && turnSystem.CanChangeTurn();
+            var label=endTurnButton.GetComponentInChildren<TextMeshProUGUI>();
+            if(label!=null)label.text=BaseAction.IsAnyActionActive ? "Aktion läuft …"
+                : BattleDeployment.Instance!=null && BattleDeployment.Instance.IsRecalling ? "Rückruf läuft …" : "Zug beenden";
+        }
     }
 
     private void EndTurn()

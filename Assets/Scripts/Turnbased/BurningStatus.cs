@@ -5,6 +5,7 @@ using UnityEngine;
 // Shared by units and single-cell obstacles. A spread never refreshes an existing fire.
 public class BurningStatus : MonoBehaviour
 {
+    public static event EventHandler OnAnyIgnited;
     private static readonly HashSet<BurningStatus> active = new HashSet<BurningStatus>();
     public static IEnumerable<BurningStatus> Active => active;
     public int RemainingRounds { get; private set; }
@@ -30,6 +31,7 @@ public class BurningStatus : MonoBehaviour
     {
         if (!CanBurn || chance <= 0f || rounds <= 0 || damage <= 0) return false;
         if (chance < 1f && UnityEngine.Random.value >= chance) return false;
+        bool newlyBurning = !IsBurning;
         RemainingRounds = rounds;
         DamagePerRound = damage;
         if (Application.isPlaying && visual == null)
@@ -38,6 +40,7 @@ public class BurningStatus : MonoBehaviour
             visual.transform.SetParent(transform, false);
             visual.AddComponent<BurningVisual>();
         }
+        if (newlyBurning) OnAnyIgnited?.Invoke(this, EventArgs.Empty);
         return true;
     }
 

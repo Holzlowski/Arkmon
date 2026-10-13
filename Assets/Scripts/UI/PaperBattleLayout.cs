@@ -22,15 +22,26 @@ public static class PaperBattleLayout
             Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
         points.gameObject.SetActive(false);
         RectTransform actions = PaperUIFactory.Rect("Action cards", band.transform,
-            new Vector2(0.24f, 0), new Vector2(0.81f, .78f), new Vector2(0, 15), new Vector2(-6, -3));
+            new Vector2(0.40f, 0), new Vector2(0.81f, .78f), new Vector2(0, 15), new Vector2(-6, -3));
         RectTransform tabs = PaperUIFactory.Rect("Command categories", band.transform,
-            new Vector2(.24f, .79f), new Vector2(.81f, 1), new Vector2(0, 0), new Vector2(-6, -6));
-        Button basic = Category("Aktionen", tabs, style, 0, .29f);
-        Button attacks = Category("Attacken", tabs, style, .31f, .60f);
-        Button previous = Category("<", tabs, style, .65f, .73f);
-        Button next = Category(">", tabs, style, .91f, .99f);
+            new Vector2(.40f, .79f), new Vector2(.81f, 1), new Vector2(0, 0), new Vector2(-6, -6));
+        RectTransform categories = PaperUIFactory.Rect("Choose command area", band.transform,
+            new Vector2(.24f, 0), new Vector2(.39f, 1), new Vector2(0, 15), new Vector2(-8, -12));
+        Button basic = PaperUIFactory.Button("Aktionen tab", categories, style.card, new Vector2(0,.53f), Vector2.one, Vector2.zero, Vector2.zero);
+        Button attacks = PaperUIFactory.Button("Attacken tab", categories, style.card, Vector2.zero, new Vector2(1,.47f), Vector2.zero, Vector2.zero);
+        PaperUIFactory.Text("Actions category", basic.transform, "<b>Aktionen</b>\n<size=70%>Bewegen · Abwehr · Fliehen</size>", 23, Vector2.zero, Vector2.one, new Vector2(12,8), new Vector2(-12,-8), TextAlignmentOptions.Center);
+        PaperUIFactory.Text("Attacks category", attacks.transform, "<b>Attacken</b>\n<size=70%>Kaflas Fähigkeiten</size>", 23, Vector2.zero, Vector2.one, new Vector2(12,8), new Vector2(-12,-8), TextAlignmentOptions.Center);
+        var heading = PaperUIFactory.Text("Command step", tabs, "1 · Wähle einen Bereich", 19, Vector2.zero, new Vector2(.66f,1), Vector2.zero, Vector2.zero);
+        var landing = PaperUIFactory.Text("Command choice instructions", band.transform,
+            "Was soll Kafla tun?\n\nLinks einen Bereich wählen.\nDanach einen Befehl und sein Zielfeld wählen.", 23,
+            new Vector2(.40f,0), new Vector2(.81f,.78f), new Vector2(12,20), new Vector2(-12,-8), TextAlignmentOptions.Center);
+        controller.ConfigureMenuPresentation(landing.gameObject, heading);
+        Button back = Category("Zurück", tabs, style, .68f, .84f);
+        controller.ConfigureBack(back);
+        Button previous = Category("<", tabs, style, .85f, .90f);
+        Button next = Category(">", tabs, style, .95f, 1);
         var page = PaperUIFactory.Text("Attack page", tabs, "", 16,
-            new Vector2(.74f, 0), new Vector2(.9f, 1), Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
+            new Vector2(.90f, 0), new Vector2(.95f, 1), Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
         controller.ConfigureCategoryTabs(basic, attacks, previous, next, page);
         var layout = actions.gameObject.AddComponent<HorizontalLayoutGroup>();
         layout.spacing = 10; layout.childAlignment = TextAnchor.MiddleCenter;
@@ -51,6 +62,7 @@ public static class PaperBattleLayout
         tooltip.gameObject.AddComponent<BattlePhaseVisibility>();
         tooltip.gameObject.SetActive(false);
         controller.gameObject.AddComponent<AttackPreview>().Build(controller.transform);
+        controller.gameObject.AddComponent<BattleCommandPrompt>().Build(controller);
         return true;
     }
 

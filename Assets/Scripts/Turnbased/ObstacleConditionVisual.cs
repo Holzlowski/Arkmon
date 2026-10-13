@@ -20,7 +20,7 @@ public class ObstacleConditionVisual : MonoBehaviour
         if (body != null) original = body.color;
         var canvas = new GameObject("Cover condition", typeof(Canvas)); canvas.transform.SetParent(transform, false);
         var screen = canvas.GetComponent<Canvas>(); screen.renderMode = RenderMode.WorldSpace;
-        var rect = canvas.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(180, 42); rect.localScale = Vector3.one * .012f;
+        var rect = canvas.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(220, 64); rect.localScale = Vector3.one * .012f;
         hud = canvas.transform;
         label = PaperUIFactory.Text("Cover health", hud, "", 22, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
         label.color = new Color(.22f, .14f, .09f); Refresh(); hud.gameObject.SetActive(false);
@@ -28,7 +28,7 @@ public class ObstacleConditionVisual : MonoBehaviour
     public void Refresh()
     {
         if (obstacle == null || label == null) return;
-        label.text = $"{(obstacle.BlocksSight ? "Sichtblockade" : "Deckung")} · {obstacle.Health}/{obstacle.MaxHealth}";
+        label.text = CurrentCondition(obstacle);
         if (body == null) return;
         float condition = obstacle.Health / (float)obstacle.MaxHealth;
         body.color = Color.Lerp(new Color(original.r * .65f, original.g * .62f, original.b * .6f, original.a), original, condition);
@@ -52,7 +52,7 @@ public class ObstacleConditionVisual : MonoBehaviour
     private void LateUpdate()
     {
         if (hud == null || Camera.main == null) return;
-        bool hovered = false;
+        bool hovered = false, attackPreview = false;
         if (UnityEngine.InputSystem.Mouse.current != null && InputManager.Instance != null
             && !(UnityEngine.EventSystems.EventSystem.current != null
                 && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()))
@@ -61,16 +61,29 @@ public class ObstacleConditionVisual : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, LayerMask.GetMask("Obstacles")))
                 hovered = hit.collider.GetComponentInParent<BurningObstacle>() == obstacle;
             BaseAction action = UnitActionSystem.Instance?.GetSelectedAction();
+            attackPreview = action != null && !UnitActionSystem.Instance.IsBusy && !BaseAction.IsAnyActionActive
+                && UnitManager.Instance.IsBattleRunning && TurnSystem.Instance.IsPlayerTurn() && !SceneLoadManager.IsTransitioning
+                && (action is EmberAction || action is MeleeAttackAction || action is ShootAction || action is RamAction)
+                && action.IsValidActionGridPosition(LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition()));
             if (action is EmberAction fan && !BaseAction.IsAnyActionActive)
             {
                 GridPosition centre = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
                 hovered |= fan.IsValidActionGridPosition(centre) && fan.GetImpactGridPositionList(centre).Contains(obstacle.GetGridPosition());
             }
         }
-        hud.gameObject.SetActive(!obstacle.IsDestroyed && (hovered || Time.time < visibleUntil));
+        // The attack panel already describes these targets; avoid a competing world label.
+        hud.gameObject.SetActive(!obstacle.IsDestroyed && !attackPreview && (hovered || Time.time < visibleUntil));
+        label.text = CurrentCondition(obstacle);
         float top = body != null ? body.bounds.max.y : transform.position.y + 1;
         hud.position = new Vector3(transform.position.x, top + .28f, transform.position.z);
         hud.rotation = Camera.main.transform.rotation;
+    }
+    public static string CurrentCondition(BurningObstacle obstacle)
+    {
+        string text = $"{obstacle.DisplayName} · {obstacle.Health}/{obstacle.MaxHealth} LP";
+        BurningStatus status = obstacle.GetComponent<BurningStatus>();
+        if (status != null && status.IsBurning) text += $"\nBrennt: {status.DamagePerRound} LP/Runde · noch {status.RemainingRounds} Runden";
+        return text;
     }
     private void OnDestroy() { if (crackMaterial != null) Destroy(crackMaterial); }
 }

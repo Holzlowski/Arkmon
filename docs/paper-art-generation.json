@@ -96,6 +96,112 @@
         "Arkmon battle/dialogue UI mockups from this conversation"
       ],
       "prompt": "One square transparent PNG GAME UI ICON ATLAS for ARKMON cozy paper fantasy. Precisely SIX separate centered icons arranged regular TWO columns THREE rows, equal cells, very generous transparent margins, no text/no letters/no numbers/no frames/no tiles. TOP LEFT two dark brown walking boot prints, TOP RIGHT three dark brown curved claw scratches. MIDDLE LEFT wooden short sword engulfed in a small elegant orange flame pointing diagonally up-right, MIDDLE RIGHT dark brown silhouette of running person escaping pointing right. BOTTOM LEFT bright orange yellow hand illustrated flame with dark brown outline, BOTTOM RIGHT a simple cute lilac wool sheep lying down with small dark brown ground line to signify knocked down (eyes open not dead). All icons flat hand-illustrated paper cutout, strong clean dark brown ink contours, few color areas, subtle watercolor paper texture only inside shapes, highly legible at small sizes, same line weight throughout. No extras, no background, no shadows bleeding into adjacent cells, actual transparent background. A production sprite sheet, no screenshot."
+    },
+    {
+      "output": "Assets/Resources/Prince-Sitting.png",
+      "references": [
+        "Assets/Resources/Prince-Room.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit reference into one matching standalone transparent game sprite of the SAME young brown-haired boy, same face proportions cream tunic brown trousers boots and cream paper-cut outline, NO green cloak. Seated upright on an invisible bed edge, torso upright, knees bent at right angles, both lower legs hanging downward, boots visible and parallel, hands resting naturally on knees, sleepy gentle smile eyes half open. Three-quarter view facing right, strictly upright no leaning silhouette. No bed, chair, scenery or shadows, no lantern in hands. Fully isolated transparent alpha background. Maintain illustrated textured storybook cut-paper game style, full head and feet, tight composition with small margin. This is a seated waking pose for the reference character, not a new character."
+    },
+    {
+      "output": "Assets/Art/SceneStyle/Bed-Velvet-Painted.png",
+      "references": [],
+      "transparentBackground": false,
+      "prompt": "A seamless tileable diffuse albedo texture for a storybook fantasy game's emerald green velvet bed cover and curtains. Flat orthographic fabric swatch filling whole square image edge to edge, opaque. Hand painted gouache and watercolor paper grain, rich sage and muted deep forest green, delicate visible woven cloth fibers, very subtle broad soft fold shading but no baked hard shadows, repeated tiny elegant pale-gold embroidered four-point botanical stars spaced widely. No objects, no frame, no text, no lighting gradient, no perspective, no borders. Seamless matching opposite edges, restrained small motifs not large symbols. Soft charming illustrated 2D game texture, not photorealistic."
+    },
+    {
+      "output": "Assets/Art/SceneStyle/Bed-Linen-Painted.png",
+      "references": [],
+      "transparentBackground": false,
+      "prompt": "Seamless tileable diffuse albedo fabric texture for an illustrated fantasy storybook game's cream linen pillows and mattress. Entire square is warm ivory woven linen, delicate hand-painted watercolor fiber grain with subtle pale beige irregularities. Flat orthographic surface, no objects no border no text no perspective no baked shadows, no large folds, no dark areas. Seamless matching opposite edges. Soft warm paper-illustration finish, restrained contrast, clearly fabric rather than stone or plaster."
+    },
+    {
+      "output": "Assets/Resources/Prince-Sleeping.png",
+      "references": [
+        "Assets/Resources/Prince-Room.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit target reference into a matching standalone TOP-DOWN lying asleep pose of this SAME brown-haired fantasy boy. Keep same face and hair, cream tunic, brown trousers, paper-cut cream outline, storybook watercolor texture. Whole body resting on his back, completely horizontal as viewed directly overhead, head at top of image and feet at bottom, eyes gently closed, hands resting together over belly, legs relaxed straight side by side. NO lamp in hands, NO green cloak. Only the boy isolated on genuine transparent alpha background: no bed, no mattress, no pillow, no blanket, no floor, no scenery, no shadow, no text. This will be placed flat on a REAL 3D mattress and partly covered by a real mesh blanket. Do not draw any furniture or bedding. Clean full silhouette with generous margins, upright image composition without tilt, preserve character identity and proportions exactly."
+    },
+    {
+      "output": "Assets/Art/SceneStyle/TowerVista-Sky.png",
+      "mode": "built-in image_gen",
+      "transparentBackground": false,
+      "prompt": "Use case: stylized-concept. Asset type: separate parallax landscape layer for a hand-painted paper fantasy Unity game. Wide panoramic canvas, painterly gouache, elegant brushwork, idyllic adventurous golden morning palette, consistent eye level horizon at 55 percent from top. Only a luminous pale blue dawn sky, subtle golden glow low down, no clouds, no landscape, no ground. Full canvas opaque. No text, border, window frame or characters. This is one single isolated layer, not a complete landscape."
+    },
+    {
+      "output": "Assets/Art/SceneStyle/TowerVista-Mountains.png",
+      "mode": "built-in image_gen",
+      "transparentBackground": true,
+      "prompt": "Use case: stylized-concept. Asset type: separate parallax landscape layer for a hand-painted paper fantasy Unity game. Wide panoramic canvas, painterly gouache, elegant brushwork, idyllic adventurous golden morning palette, consistent eye level horizon at 55 percent from top. Only distant hazy blue mountain silhouette along the lower 40 percent of canvas. Upper 60 percent genuinely transparent. No sky no clouds no fields. Mountain base reaches bottom edge. No text, border, window frame or characters. This is one single isolated layer, not a complete landscape."
+    },
+    {
+      "output": "Assets/Art/SceneStyle/TowerVista-Fields.png",
+      "mode": "built-in image_gen",
+      "transparentBackground": true,
+      "prompt": "Use case: stylized-concept. Asset type: separate parallax landscape layer for a hand-painted paper fantasy Unity game. Wide panoramic canvas, painterly gouache, elegant brushwork, idyllic adventurous golden morning palette, consistent eye level horizon at 55 percent from top. Only sweeping rolling golden farmland viewed from a HIGH castle tower, tiny distant hamlet, patchwork fields and winding road, located lower 45 percent of canvas. Upper 55 percent genuinely transparent. No sky no mountains no clouds. Landscape reaches bottom edge. No close-up wheat. No text, border, window frame or characters. This is one single isolated layer, not a complete landscape."
+    },
+    {
+      "output": "Assets/Art/SceneStyle/TowerVista-Hills.png",
+      "mode": "built-in image_gen",
+      "transparentBackground": true,
+      "prompt": "Use case: stylized-concept. Asset type: separate parallax landscape layer for a hand-painted paper fantasy Unity game. Wide panoramic canvas, painterly gouache, elegant brushwork, idyllic adventurous golden morning palette, consistent eye level horizon at 55 percent from top. Only the nearest low grassy hills and dark olive treetops far BELOW a high castle tower, lower 22 percent of canvas. Upper 78 percent genuinely transparent. No sky, no mountains, no wheat stalks, no buildings. Terrain reaches bottom edge. No text, border, window frame or characters. This is one single isolated layer, not a complete landscape."
+    },
+    {
+      "output": "Assets/Resources/Prince-Room-Walk.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "C:/Users/Holz/Documents/Unity/Arkmon/Assets/Resources/Prince-Room.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Use case: identity-preserve. Asset type: production Unity WALK CYCLE SPRITE SHEET. Reference image is the exact young boy identity and paper illustration style, NOT its background. Create ONE transparent sprite sheet with EXACTLY 8 animation frames in a precisely aligned 4 COLUMN x 2 ROW grid. All 8 frames show the SAME boy walking toward screen RIGHT in a side-three-quarter view, eyes and face to the right. Outfit: cream tunic, tan trousers, brown boots, NO mantle. He carries his identical small gold lantern steadily in the near hand. Eight clearly distinct consecutive WALKING leg poses: contact, down, passing, up, opposite contact, down, passing, up. Alternating visible legs and subtle opposite free-arm swing; face, hair, proportions, height, outlines, lantern, and clothing MUST remain consistent. Flat hand-painted cut-paper art, dark brown outlines, thin ivory silhouette border. Each full-body frame occupies exactly one equal-sized grid cell with generous clear transparent margins, aligned SAME baseline and SAME head height; no feet or cape cross into another cell. Whole sheet is wider than tall: cell aspect approximately 2:3, sheet aspect 4:3. ALL empty pixels genuinely transparent, no black or beige backdrop, no halo, no ground shadows, no labels, no grid lines, no frame numbers. Never change character identity. No idle poses: all frames demonstrate visible walking, legs alternating."
+    },
+    {
+      "output": "Assets/Resources/Prince-Mantle-Walk.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "C:/Users/Holz/Documents/Unity/Arkmon/Assets/Resources/Prince-Mantle.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Use case: identity-preserve. Asset type: production Unity WALK CYCLE SPRITE SHEET. Reference image is the exact young boy identity and paper illustration style, NOT its background. Create ONE transparent sprite sheet with EXACTLY 8 animation frames in a precisely aligned 4 COLUMN x 2 ROW grid. All 8 frames show the SAME boy walking toward screen RIGHT in a side-three-quarter view, eyes and face to the right. Outfit: forest-green mantle with gold clasp over cream tunic, tan trousers, brown boots. He carries his identical small gold lantern steadily in the near hand. Eight clearly distinct consecutive WALKING leg poses: contact, down, passing, up, opposite contact, down, passing, up. Alternating visible legs and subtle opposite free-arm swing; face, hair, proportions, height, outlines, lantern, and clothing MUST remain consistent. Flat hand-painted cut-paper art, dark brown outlines, thin ivory silhouette border. Each full-body frame occupies exactly one equal-sized grid cell with generous clear transparent margins, aligned SAME baseline and SAME head height; no feet or cape cross into another cell. Whole sheet is wider than tall: cell aspect approximately 2:3, sheet aspect 4:3. ALL empty pixels genuinely transparent, no black or beige backdrop, no halo, no ground shadows, no labels, no grid lines, no frame numbers. Never change character identity. No idle poses: all frames demonstrate visible walking, legs alternating."
+    },
+    {
+      "output": "Assets/Resources/Prince-Room-NoLamp.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "C:/Users/Holz/Documents/Unity/Arkmon/Assets/Resources/Prince-Room.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit the supplied paper fantasy boy idle sprite. Preserve the exact character identity, face, proportions, clothes, cream paper-cut border, brown outlines, painted parchment shading, full-body upright pose, boots positions and canvas framing. Remove ONLY the golden lantern from his hand; redraw that left-of-image hand and forearm relaxed naturally down beside his waist, with empty hand. No lamp, no glow, no item. Keep the beige tunic outfit WITHOUT green cloak. True transparent background everywhere outside the figure, no vignette or backdrop. Production Unity 2D idle sprite, same size and baseline as reference."
+    },
+    {
+      "output": "Assets/Resources/Prince-Mantle-NoLamp.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "C:/Users/Holz/Documents/Unity/Arkmon/Assets/Resources/Prince-Mantle.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit the supplied green-cloaked paper fantasy boy idle sprite. Preserve exact identity, face, proportions, green mantle and clasp, cream tunic, brown boots, cream paper-cut border, brown outlines, painted shading, upright full-body pose and canvas framing. Remove ONLY the golden lantern from his hand. Redraw that left-of-image hand and forearm relaxed naturally down beside waist, empty hand. No lantern, no glow, no other object. Keep green mantle. True transparent background everywhere outside figure, no vignette/backdrop. Production Unity idle sprite same size and feet baseline as reference."
+    },
+    {
+      "output": "Assets/Resources/Prince-Room-NoLamp-Walk.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "C:/Users/Holz/Documents/Unity/Arkmon/Assets/Resources/Prince-Room-Walk.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit this exact production Unity sprite sheet. Keep EXACTLY the same 8 boy walking frames in a precisely aligned 4 COLUMN x 2 ROW grid, same image dimensions, grid cells, feet baselines, face, hair, tunic, trousers, boots, poses, paper outlines and parchment illustration style. Remove the golden lantern from EVERY frame. Replace each lamp-holding arm with a natural empty-handed walking arm swing. All eight characters have NO lantern and NO green cloak. No items, no glow, no particles. True transparent background outside all eight figures including between cells. Preserve all walking leg poses and framing. No labels/gridlines."
+    },
+    {
+      "output": "Assets/Resources/Prince-Mantle-NoLamp-Walk.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "C:/Users/Holz/Documents/Unity/Arkmon/Assets/Resources/Prince-Mantle-Walk.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit this exact production Unity sprite sheet. Keep EXACTLY the same 8 green-cloaked boy walking frames in a precisely aligned 4 COLUMN x 2 ROW grid, same image dimensions, grid cells, feet baselines, face, hair, green mantle and gold clasp, tunic, trousers, boots, walking leg poses, paper outlines and parchment illustration style. Remove the golden lantern from EVERY frame. Replace each lamp-holding arm with a natural empty-handed walking arm swing beneath the cloak. All eight characters wear the green mantle but have NO lantern. No items, no glow, no particles. True transparent background outside all eight figures including between cells. Preserve framing. No labels/gridlines."
     }
   ]
 }

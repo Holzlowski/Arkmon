@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class DemoInteractable : MonoBehaviour, IInteractableAsPlayer
 {
-    public enum Kind { Wardrobe, RoomDoor, Window, CourtyardGate, Description }
+    public enum Kind { Wardrobe, RoomDoor, Window, CourtyardGate, Description, Lamp }
     public Kind kind;
     [TextArea] public string description;
     public Vector3 GetTransform() => transform.position;
     public void InteractWithPlayer()
     {
-        if (SceneLoadManager.IsTransitioning || DialogueBoxController.instance == null || DialogueBoxController.instance.IsOpen) return;
+        if (DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning || DialogueBoxController.instance == null || DialogueBoxController.instance.IsOpen) return;
         switch (kind)
         {
             case Kind.Wardrobe:
@@ -16,6 +16,7 @@ public class DemoInteractable : MonoBehaviour, IInteractableAsPlayer
                 else DialogueBoxController.instance.ShowMessage("Meinen Mantel habe ich schon an. Auf zur Prüfung!", "Der Junge");
                 break;
             case Kind.RoomDoor: DemoOpening.LeaveRoom(); break;
+            case Kind.Lamp: DemoOpening.TakeLamp(); break;
             case Kind.Window: DialogueBoxController.instance.ShowMessage("Goldene Felder bis zum Horizont … Irgendwann werde ich all das erkunden. Heute wartet erst einmal meine Prüfung.", "Der Junge"); break;
             case Kind.CourtyardGate: DialogueBoxController.instance.ShowMessage(DemoOpening.PassedFirstTrial
                 ? "Kafla und ich haben die Prüfung bestanden. Bevor wir die goldenen Felder erkunden, erwarten wir noch die Arkanmeisterin am Hof."

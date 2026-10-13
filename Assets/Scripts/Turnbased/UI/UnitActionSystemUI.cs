@@ -18,6 +18,30 @@ public class UnitActionSystemUI : MonoBehaviour
     private int commandPage;
     private Button actionsTab, attacksTab, previousPage, nextPage;
     private TextMeshProUGUI pageText;
+    private Button backButton;
+    private bool categoryOpen;
+    private GameObject landing;
+    private TextMeshProUGUI categoryTitle;
+    public bool IsCategoryOpen => categoryOpen;
+    public void ConfigureMenuPresentation(GameObject root, TextMeshProUGUI title) { landing=root; categoryTitle=title; }
+    public bool IsShowingExplanation => tooltip != null && tooltip.activeInHierarchy;
+    public void ConfigureBack(Button back)
+    {
+        backButton = back; back.onClick.AddListener(BackToCategories);
+    }
+    public void BackToCategories()
+    {
+        if (actionSystem == null || actionSystem.IsBusy || BaseAction.IsAnyActionActive) return;
+        if (actionSystem.GetSelectedAction() != null)
+        { actionSystem.SetSelectedAction(null); HideTooltip(); RefreshTabs(actionSystem.GetSelectedUnit(), Mathf.Max(1, Mathf.CeilToInt(actionSystem.GetSelectedUnit().GetBaseActionArray().Length / (float)CardsPerPage))); return; }
+        categoryOpen = false; commandPage = 0; HideTooltip();
+        if (landing != null) landing.SetActive(true);
+        if (categoryTitle != null) categoryTitle.text="1 · Wähle einen Bereich";
+        actionSystem.SetSelectedAction(null);
+        actionButtonContainerTransform.gameObject.SetActive(false);
+        backButton.gameObject.SetActive(false);
+        previousPage.gameObject.SetActive(false); nextPage.gameObject.SetActive(false); pageText.gameObject.SetActive(false);
+    }
 
     public void ConfigureCategoryTabs(Button basic, Button attacks, Button previous, Button next, TextMeshProUGUI page)
     {
@@ -33,11 +57,12 @@ public class UnitActionSystemUI : MonoBehaviour
         Unit selected = actionSystem.GetSelectedUnit();
         if (selected == null || selected.IsDead || selected.IsKnockedDown && attacks
             || BaseAction.IsAnyActionActive || actionSystem.IsBusy) return;
-        if (selected.GetIsInAttackSelection() == attacks) return;
+        categoryOpen = true; actionButtonContainerTransform.gameObject.SetActive(true);
         commandPage = 0;
-        selected.SwitchAttacksUI();
-        BaseAction[] available = selected.GetBaseActionArray();
-        actionSystem.SetSelectedAction(available.Length > 0 ? available[0] : null);
+        if (selected.GetIsInAttackSelection() != attacks) selected.SwitchAttacksUI();
+        else CreateUnitActionButton();
+        actionSystem.SetSelectedAction(null);
+        RefreshTabs(selected, Mathf.Max(1, Mathf.CeilToInt(selected.GetBaseActionArray().Length / (float)CardsPerPage)));
     }
 
     private void ChangePage(int direction)
@@ -47,7 +72,7 @@ public class UnitActionSystemUI : MonoBehaviour
         CreateUnitActionButton();
         Unit selected = actionSystem.GetSelectedUnit();
         BaseAction[] commands = selected != null ? selected.GetBaseActionArray() : Array.Empty<BaseAction>();
-        if (commands.Length > 0) actionSystem.SetSelectedAction(commands[commandPage * CardsPerPage]);
+        actionSystem.SetSelectedAction(null);
         UpdateSelectedVisual();
     }
     public void SetTooltip(GameObject root, TextMeshProUGUI label) { tooltip = root; tooltipText = label; }
@@ -68,6 +93,7 @@ public class UnitActionSystemUI : MonoBehaviour
         actionSystem.OnSelectedUnitChange += UnitActionSystem_OnSelectedUnitChanged;
         actionSystem.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         actionSystem.OnActionStarted += UnitActionSystem_OnActionStarted;
+        UnitManager.Instance.OnBattleStateChanged += BattleStateChanged;
         turnSystem.OnTurnChanged += TurnSystem_OnTurnChanged;
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
         Unit.OnAttackUISwitch += Unit_OnAttackUISwitch;
@@ -113,10 +139,9 @@ public class UnitActionSystemUI : MonoBehaviour
     private void UnitActionSystem_OnSelectedUnitChanged(object sender, EventArgs e)
     {
         commandPage = 0;
+        categoryOpen = false;
+        actionSystem.SetSelectedAction(null);
         CreateUnitActionButton();
-        Unit selected = actionSystem.GetSelectedUnit();
-        BaseAction[] visible = selected != null ? selected.GetBaseActionArray() : Array.Empty<BaseAction>();
-        if (visible != null && visible.Length > 0) actionSystem.SetSelectedAction(visible[0]);
         UpdateSelectedVisual();
         UpdateActionPoints();
     }
@@ -128,6 +153,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
     {
+        if (actionSystem.GetSelectedUnit() != null) RefreshTabs(actionSystem.GetSelectedUnit(), Mathf.Max(1, Mathf.CeilToInt(actionSystem.GetSelectedUnit().GetBaseActionArray().Length / (float)CardsPerPage)));
         UpdateSelectedVisual();
     }
 
@@ -152,6 +178,8 @@ public class UnitActionSystemUI : MonoBehaviour
     private void Unit_OnKnockdownChanged(object sender, EventArgs e)
     {
         if (!ReferenceEquals(sender, actionSystem.GetSelectedUnit())) return;
+        categoryOpen = false;
+        actionSystem.SetSelectedAction(null);
         commandPage = 0;
         CreateUnitActionButton();
         UpdateSelectedVisual();
@@ -167,17 +195,22 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void RefreshTabs(Unit unit, int pages)
     {
-        if (actionsTab == null) return;
+        if (actionsTab == null || unit == null) return;
+        actionButtonContainerTransform.gameObject.SetActive(categoryOpen);
+        if (landing != null) landing.SetActive(!categoryOpen);
+        if (backButton != null) backButton.gameObject.SetActive(categoryOpen);
         bool attacks = unit.GetIsInAttackSelection() && !unit.IsKnockedDown;
+        if (categoryTitle != null) categoryTitle.text = !categoryOpen ? "1 · Wähle einen Bereich" : actionSystem.GetSelectedAction() == null ? "2 · " + (attacks ? "Attacke" : "Aktion") + " wählen" : "3 · " + PaperUIStyle.ActionName(actionSystem.GetSelectedAction()) + " · Ziel wählen";
+        if (backButton != null) backButton.GetComponentInChildren<TextMeshProUGUI>().text = actionSystem.GetSelectedAction() == null ? "Zurück" : "Abbrechen";
         PaperUIStyle style = PaperUIStyle.Load();
-        actionsTab.GetComponent<Image>().sprite = attacks ? style.card : style.sageButton;
-        attacksTab.GetComponent<Image>().sprite = attacks ? style.sageButton : style.card;
-        actionsTab.GetComponentInChildren<TextMeshProUGUI>().color = attacks ? style.ink : style.cream;
-        attacksTab.GetComponentInChildren<TextMeshProUGUI>().color = attacks ? style.cream : style.ink;
+        actionsTab.GetComponent<Image>().sprite = !categoryOpen || attacks ? style.card : style.sageButton;
+        attacksTab.GetComponent<Image>().sprite = categoryOpen && attacks ? style.sageButton : style.card;
+        actionsTab.GetComponentInChildren<TextMeshProUGUI>().color = !categoryOpen || attacks ? style.ink : style.cream;
+        attacksTab.GetComponentInChildren<TextMeshProUGUI>().color = categoryOpen && attacks ? style.cream : style.ink;
         attacksTab.interactable = !unit.IsKnockedDown;
-        previousPage.gameObject.SetActive(pages > 1);
-        nextPage.gameObject.SetActive(pages > 1);
-        pageText.gameObject.SetActive(pages > 1);
+        previousPage.gameObject.SetActive(categoryOpen && pages > 1);
+        nextPage.gameObject.SetActive(categoryOpen && pages > 1);
+        pageText.gameObject.SetActive(categoryOpen && pages > 1);
         previousPage.interactable = commandPage > 0;
         nextPage.interactable = commandPage + 1 < pages;
         pageText.text = $"{commandPage + 1} / {pages}";
@@ -192,9 +225,28 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private UnitActionSystem actionSystem;
     private TurnSystem turnSystem;
+    private void LateUpdate()
+    {
+        if (actionSystem == null || actionsTab == null || turnSystem == null) return;
+        bool ready = UnitManager.Instance != null && UnitManager.Instance.IsBattleRunning && turnSystem.IsPlayerTurn()
+            && !actionSystem.IsBusy && !BaseAction.IsAnyActionActive && !SceneLoadManager.IsTransitioning;
+        var unit = actionSystem.GetSelectedUnit();
+        actionsTab.interactable = ready && unit != null && !unit.IsDead;
+        attacksTab.interactable = actionsTab.interactable && !unit.IsKnockedDown;
+        if (backButton != null) backButton.interactable = ready;
+        if (ready && categoryOpen && Input.GetKeyDown(KeyCode.Escape)) BackToCategories();
+    }
+    private void BattleStateChanged(object sender, EventArgs e)
+    {
+        if (!UnitManager.Instance.IsBattleRunning) return;
+        // Rebind after deployment: never keep cards pointing at a retired scene template.
+        categoryOpen = false; actionSystem.SetSelectedAction(null);
+        CreateUnitActionButton(); UpdateActionPoints(); UpdateSelectedVisual();
+    }
 
     private void OnDestroy()
     {
+        if (UnitManager.Instance != null) UnitManager.Instance.OnBattleStateChanged -= BattleStateChanged;
         if (actionSystem != null) actionSystem.OnSelectedUnitChange -= UnitActionSystem_OnSelectedUnitChanged;
         if (actionSystem != null) actionSystem.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
         if (actionSystem != null) actionSystem.OnActionStarted -= UnitActionSystem_OnActionStarted;

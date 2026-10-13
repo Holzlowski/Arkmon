@@ -29,6 +29,7 @@ public class UnitManager : MonoBehaviour
         if (Instance != this) yield break;
         // Wait until all scene units have registered in Start.
         yield return null;
+        if (DemoOpening.ConsumeTrialGuide()) gameObject.AddComponent<FirstTrialGuide>();
         if (BattleDeployment.Instance != null && !BattleDeployment.Instance.IsReady)
         {
             SetState(BattleState.Deploying);

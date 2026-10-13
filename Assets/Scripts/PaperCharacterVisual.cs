@@ -37,6 +37,12 @@ public class PaperCharacterVisual : MonoBehaviour
     private Color restColor;
     private float hitRemaining;
     private float outfitProgress = -1;
+    private float wakeProgress = -1;
+    private PlayerController playerController;
+    private Sprite[] roomWalk, mantleWalk, roomNoLampWalk, mantleNoLampWalk;
+    private float travelled;
+    public bool IsPlayingWalkCycle { get; private set; }
+    public void SetWakeUpProgress(float progress) => wakeProgress = progress;
     public void SetOutfitChangeProgress(float progress) => outfitProgress = progress;
     public void PlayHitReaction() => hitRemaining = .22f;
 
@@ -57,6 +63,19 @@ public class PaperCharacterVisual : MonoBehaviour
         recallProgress = 0f;
         hitRemaining = 0f;
         unit = GetComponent<Unit>();
+        playerController = GetComponent<PlayerController>();
+        if(playerController != null)
+        {
+            roomWalk = Resources.LoadAll<Sprite>("Prince-Room-Walk");
+            mantleWalk = Resources.LoadAll<Sprite>("Prince-Mantle-Walk");
+            roomNoLampWalk = Resources.LoadAll<Sprite>("Prince-Room-NoLamp-Walk");
+            mantleNoLampWalk = Resources.LoadAll<Sprite>("Prince-Mantle-NoLamp-Walk");
+            System.Array.Sort(roomWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
+            System.Array.Sort(mantleWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
+            System.Array.Sort(roomNoLampWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
+            System.Array.Sort(mantleNoLampWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
+        }
+        travelled = 0;
         shootAction = GetComponent<ShootAction>();
         swordAction = GetComponent<SwordAction>();
         ramAction = GetComponent<RamAction>();
@@ -90,17 +109,20 @@ public class PaperCharacterVisual : MonoBehaviour
         Vector3 movement = transform.position - previousPosition;
         movement.y = 0f;
         bool walking = movement.sqrMagnitude > 0.000001f;
+        if(playerController != null) walking = playerController.isActiveAndEnabled && playerController.IsMoving;
+        UpdateWalkFrame(walking, movement.magnitude);
         bool idle = !walking;
         previousPosition = transform.position;
         foreach (BaseAction action in actions) if (action.IsActive) idle = false;
         idleWeight = Mathf.MoveTowards(idleWeight, idle ? 1f : 0f, Time.deltaTime * 6f);
         phase += Time.deltaTime * Mathf.PI * 2f / cycleDuration;
         walkWeight = Mathf.MoveTowards(walkWeight, walking ? 1f : 0f, Time.deltaTime * 10f);
+        if(playerController != null)walkWeight=walking?1:0;
         walkPhase += Time.deltaTime * Mathf.PI * 2f / walkCycleDuration;
         float wave = Mathf.Sin(phase) * idleWeight;
-        float step = Mathf.Abs(Mathf.Sin(walkPhase)) * walkWeight;
+        float step = IsPlayingWalkCycle ? 0f : Mathf.Abs(Mathf.Sin(walkPhase)) * walkWeight;
         paperPivot.localPosition = restPosition + Vector3.up * visualScale
-            * ((wave + idleWeight) * 0.5f * bobHeight + step * walkHeight);
+            * ((wave + idleWeight) * 0.5f * bobHeight + step * walkHeight * (IsPlayingWalkCycle ? .2f : 1));
         paperPivot.localScale = Vector3.Scale(restScale * visualScale,
             new Vector3(1f - wave * breathingAmount * 0.5f + step * 0.025f,
                 1f + wave * breathingAmount - step * 0.04f, 1f));
@@ -113,6 +135,13 @@ public class PaperCharacterVisual : MonoBehaviour
             float motion = Mathf.Sin(Mathf.Clamp01(outfitProgress) * Mathf.PI);
             paperPivot.localScale = Vector3.Scale(paperPivot.localScale, new Vector3(1 + motion * .035f, 1 - motion * .07f, 1));
             paperPivot.localPosition += Vector3.up * -.025f * motion;
+        }
+        if (wakeProgress >= 0)
+        {
+            float rise = Mathf.SmoothStep(0, 1, Mathf.Clamp01(wakeProgress));
+            paperPivot.localScale = Vector3.Scale(paperPivot.localScale,
+                new Vector3(Mathf.Lerp(1.04f, 1f, rise), Mathf.Lerp(.78f, 1f, rise), 1));
+            paperPivot.localPosition += Vector3.down * (.12f * (1 - rise));
         }
         Camera camera = Camera.main;
         if (spriteRenderer != null)
@@ -132,6 +161,22 @@ public class PaperCharacterVisual : MonoBehaviour
             if (spriteRenderer != null && Mathf.Abs(horizontal) > 0.025f)
                 spriteRenderer.flipX = horizontal < 0f;
         }
+    }
+
+    private void UpdateWalkFrame(bool walking, float distance)
+    {
+        IsPlayingWalkCycle = false;
+        if(playerController == null || spriteRenderer == null || summoningPose || restingSprite == null) return;
+        Sprite[] frames = restingSprite.name == "Prince-Mantle" ? mantleWalk
+            : restingSprite.name == "Prince-Room" ? roomWalk
+            : restingSprite.name == "Prince-Mantle-NoLamp" ? mantleNoLampWalk
+            : restingSprite.name == "Prince-Room-NoLamp" ? roomNoLampWalk : null;
+        if(!walking || frames == null || frames.Length == 0 || wakeProgress >= 0 || outfitProgress >= 0)
+        { travelled = 0; spriteRenderer.sprite = restingSprite; return; }
+        // Distance-based steps stop at walls and do not keep running after key release.
+        travelled += Mathf.Min(distance, .5f);
+        int frame = Mathf.FloorToInt(travelled / 4.8f * frames.Length) % frames.Length;
+        spriteRenderer.sprite = frames[frame]; IsPlayingWalkCycle = true;
     }
 
     private Vector3 GetOpponentDirection()
@@ -216,6 +261,7 @@ public class PaperCharacterVisual : MonoBehaviour
 
     private void OnDisable()
     {
+        IsPlayingWalkCycle = false;
         if (paperPivot == null || !initialized) return;
         paperPivot.localPosition = restPosition;
         paperPivot.localScale = restScale;
