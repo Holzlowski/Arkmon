@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.11.0-alpha.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.11.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -996,3 +996,7 @@ Quest hints: the wardrobe uses subdued emissive contours with softly twinkling p
 Wardrobe quest contours now use a subdued continuous line with 72 softly twinkling, drifting motes per door. The particles follow the hinges, brighten with interaction focus and clear immediately when the mantle is taken.
 
 Painted room surfaces retain their source resolution and mipmaps, with trilinear filtering, 16x anisotropy and a restrained -0.25 mip bias. Windows imports explicitly use uncompressed RGBA32 for these seven surface textures. Render scale was already 1.0; this is a modest texture clarity adjustment, not an upscale or invented image detail. Reapply via Arkmon > Refine painted texture clarity after regenerating texture imports.
+
+## Fixed demo milestone
+
+Demo **0.11.0** is preserved by Git tag `demo-v0.11.0` before the next design iteration. See [demo playtest and rebuild instructions](docs/demo-playtest.md). The Windows demo ZIP is a separate local artifact under `Builds`; the tag preserves all source and assets.
