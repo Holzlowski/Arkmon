@@ -1,0 +1,110 @@
+{
+  "music_preview": {
+    "file": "Builds/courtyard-sampled-preview.wav",
+    "composition": "Original eight-bar Arkmon courtyard preview",
+    "soundfont": "GeneralUser GS 2.0.3 by S. Christian Collins",
+    "source": "https://github.com/mrbumpy409/GeneralUser-GS",
+    "license": "https://github.com/mrbumpy409/GeneralUser-GS/blob/main/documentation/LICENSE.txt",
+    "renderer": "tinysoundfont 0.3.7",
+    "instruments": [
+      "Flute",
+      "Orchestral harp",
+      "Strings",
+      "Cello"
+    ],
+    "note": "Eight-bar sampled arrangement provides the courtyard loop.",
+    "runtime_file": "Assets/Resources/Audio/courtyard.wav"
+  },
+  "recorded_effects": [
+    {
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "files": [
+        "knifeSlice.ogg",
+        "chop.ogg",
+        "cloth2.ogg",
+        "cloth4.ogg",
+        "knifeSlice2.ogg",
+        "creak1.ogg",
+        "doorClose_1.ogg"
+      ]
+    },
+    {
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0-1.0",
+      "files": [
+        "impactPunch_heavy_000.ogg",
+        "impactPunch_medium_001.ogg",
+        "impactWood_heavy_000.ogg",
+        "footstep_grass_001.ogg",
+        "footstep_grass_002.ogg"
+      ]
+    },
+    {
+      "author": "Julien Matthey",
+      "source": "https://opengameart.org/content/fireball-1",
+      "license": "CC0-1.0",
+      "file": "105016__julien-matthey__jm-fx-fireball-01.wav"
+    },
+    {
+      "author": "AntumDeluge",
+      "source": "https://opengameart.org/content/fire-crackling/",
+      "license": "CC0-1.0",
+      "file": "fire-1.wav"
+    }
+  ],
+  "processing": "Trim, resample, layer, fade and peak-normalize to 0.82. No oscillator layers in recorded attack cues.",
+  "battle_music": {
+    "runtime_file": "Assets/Resources/Audio/battle.wav",
+    "preview_file": "Builds/battle-orchestral-preview.wav",
+    "composition": "Original 32-bar Arkmon battle theme in D minor, 160 BPM; horn theme, bowed figures, contrasting flute section and full reprise",
+    "soundfont": "GeneralUser GS 2.0.3 by S. Christian Collins",
+    "source": "https://github.com/mrbumpy409/GeneralUser-GS",
+    "license": "https://github.com/mrbumpy409/GeneralUser-GS/blob/main/documentation/LICENSE.txt",
+    "renderer": "tinysoundfont 0.3.7",
+    "instruments": [
+      "French horn",
+      "Violin",
+      "Cello",
+      "Strings",
+      "Trombone",
+      "Trumpet",
+      "Flute",
+      "Pizzicato strings",
+      "Timpani",
+      "Orchestral drum kit"
+    ],
+    "reference_direction": "User-supplied Pokemon Hype Mix title as an energy/mood reference. Original melody; linked video was not available for listening."
+  },
+  "summoning_cues": {
+    "files": [
+      "Assets/Resources/Audio/summon.wav",
+      "Assets/Resources/Audio/summon-arrive.wav",
+      "Assets/Resources/Audio/recall.wav"
+    ],
+    "preview": "Builds/summon-astral-preview.wav",
+    "layers": [
+      "Reversed/softened Kenney knifeSlice2.ogg",
+      "Softened Kenney cloth4.ogg",
+      "Blurred GeneralUser GS sampled glockenspiel"
+    ],
+    "peak_levels": {
+      "summon": 0.27,
+      "arrival": 0.42,
+      "recall": 0.22
+    },
+    "processing": "Spectral rolloff, stretching, shaped envelopes and short stereo reflections; no oscillators or two-note melody. Arrival cue triggers at materialization completion only."
+  },
+  "fantasy_battle_preview": {
+    "file": "Builds/battle-fantasy-preview.wav",
+    "composition": "Original Arkmon E-minor fantasy battle sketch, 36 bars in 6/8 at quarter-note 108 BPM, plus decay",
+    "generator": "tools/render_battle_fantasy_preview.py",
+    "soundfont": "GeneralUser GS 2.0.3 by S. Christian Collins",
+    "source": "https://github.com/mrbumpy409/GeneralUser-GS",
+    "license": "https://github.com/mrbumpy409/GeneralUser-GS/blob/main/documentation/LICENSE.txt",
+    "reference": "Theophany Colgera arrangement: mood reference only; no source audio or melody copied",
+    "runtime_installed": false
+  }
+}
