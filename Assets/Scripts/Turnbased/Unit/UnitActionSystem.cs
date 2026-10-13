@@ -65,7 +65,7 @@ public class UnitActionSystem : MonoBehaviour
 
     void Update()
     {
-        if (isBusy || BaseAction.IsAnyActionActive || !unitManager.IsBattleRunning
+        if (SceneLoadManager.IsTransitioning || isBusy || BaseAction.IsAnyActionActive || !unitManager.IsBattleRunning
             || (BattleDeployment.Instance != null && BattleDeployment.Instance.IsRecalling))
         {
             return;

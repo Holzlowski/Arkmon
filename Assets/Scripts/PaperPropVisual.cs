@@ -6,6 +6,11 @@ public class PaperPropVisual : MonoBehaviour
 {
     [SerializeField] private Transform paperPivot;
 
+    private void OnEnable()
+    {
+        if (paperPivot != null) PaperGroundShadow.Attach(gameObject, paperPivot.GetComponent<Renderer>());
+    }
+
     private void LateUpdate()
     {
         Camera camera = Camera.main;

@@ -24,7 +24,7 @@ public class BattleDeployment : MonoBehaviour
     private readonly HashSet<Unit> recallingUnits = new HashSet<Unit>();
     private List<GridPosition> enemyCells;
     private CameraController cameraController;
-    private readonly Dictionary<GridPosition, bool> trainerWalkability = new Dictionary<GridPosition, bool>();
+    private BattlePresentationCamera presentation;
     private BattleConfiguration configuration;
     private readonly List<Unit> templates = new List<Unit>();
     private readonly List<GridPosition> available = new List<GridPosition>();
@@ -97,8 +97,6 @@ public class BattleDeployment : MonoBehaviour
         Debug.LogError(message, this);
         // Keep the existing scene battle usable when a configuration is invalid.
         foreach (Unit template in templates) if (template != null) template.gameObject.SetActive(true);
-        foreach (var cell in trainerWalkability)
-            Pathfinding.Instance.SetIsWalkableGridPosition(cell.Key, cell.Value);
         if (Trainer != null) Destroy(Trainer.gameObject);
         if (OpponentTrainer != null) Destroy(OpponentTrainer.gameObject);
         IsReady = true;
@@ -169,7 +167,7 @@ public class BattleDeployment : MonoBehaviour
             placementLabel.font = uiStyle.font;
             placementPanel = ImagePrompt(canvasObject.transform, label.transform, uiStyle);
         }
-        rect.sizeDelta = new Vector2(-40, 55);
+        if (uiStyle == null) rect.sizeDelta = new Vector2(-40, 55);
     }
 
     private void CreateTrainer()
@@ -180,7 +178,8 @@ public class BattleDeployment : MonoBehaviour
         OpponentTrainer = CreateActor(opponentTrainerPrefab != null ? opponentTrainerPrefab : trainerPrefab,
             "Opponent Trainer", configuration.GetOpponentTrainerPosition(grid.GetWidth(), grid.GetHeight()));
         cameraController = FindFirstObjectByType<CameraController>();
-        if (cameraController != null) cameraController.transform.position = GetCameraFocus(Trainer);
+        if (cameraController != null) cameraController.PrepareBattleOverview(GetCameraFocus(Trainer));
+        presentation = gameObject.AddComponent<BattlePresentationCamera>();
     }
 
     private Transform CreateActor(GameObject prefab, string actorName, GridPosition cell)
@@ -188,18 +187,32 @@ public class BattleDeployment : MonoBehaviour
         LevelGrid grid = LevelGrid.Instance;
         Vector3 center = grid.GetWorldPosition(new GridPosition(grid.GetWidth() / 2, grid.GetHeight() / 2));
         Vector3 position = grid.GetWorldPosition(cell);
+        // The outside grid cell can still lie inside the decorative stone ring.
+        Bounds ring = new Bounds(center, Vector3.zero);
+        bool hasRing = false;
+        foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+        {
+            if (!renderer.name.EndsWith("parapet", System.StringComparison.OrdinalIgnoreCase)) continue;
+            if (!hasRing) { ring = renderer.bounds; hasRing = true; }
+            else ring.Encapsulate(renderer.bounds);
+        }
+        const float clearance = 1.4f;
+        if (cell.x < 0) position.x = hasRing ? ring.min.x - clearance : position.x - clearance;
+        else if (cell.x >= grid.GetWidth()) position.x = hasRing ? ring.max.x + clearance : position.x + clearance;
+        else if (cell.z < 0) position.z = hasRing ? ring.min.z - clearance : position.z - clearance;
+        else position.z = hasRing ? ring.max.z + clearance : position.z + clearance;
         Vector3 facing = center - position;
         GameObject trainer = Instantiate(prefab, position, facing.sqrMagnitude > 0.001f
             ? Quaternion.LookRotation(facing) : Quaternion.identity);
         trainer.name = actorName;
         foreach (MonoBehaviour behaviour in trainer.GetComponentsInChildren<MonoBehaviour>())
-            if (!(behaviour is PaperCharacterVisual)) behaviour.enabled = false;
+            if (!(behaviour is PaperCharacterVisual) && !(behaviour is NPCSummoningFocus)
+                && !(behaviour is PaperGroundShadow)) behaviour.enabled = false;
+        if (actorName == "Opponent Trainer" && trainer.GetComponent<NPCSummoningFocus>() == null)
+            trainer.AddComponent<NPCSummoningFocus>();
         foreach (Collider collider in trainer.GetComponentsInChildren<Collider>()) collider.enabled = false;
         foreach (Rigidbody body in trainer.GetComponentsInChildren<Rigidbody>()) body.isKinematic = true;
         trainer.tag = "Untagged";
-        if (!trainerWalkability.ContainsKey(cell))
-            trainerWalkability.Add(cell, Pathfinding.Instance.IsWalkableGridPosition(cell));
-        Pathfinding.Instance.SetIsWalkableGridPosition(cell, false);
         PaperCharacterVisual paper = trainer.GetComponent<PaperCharacterVisual>();
         if (paper != null) paper.FaceWorldDirection(center - position);
         return trainer.transform;
@@ -214,24 +227,9 @@ public class BattleDeployment : MonoBehaviour
         return actor.position + (center - actor.position).normalized * size;
     }
 
-    private IEnumerator PanCamera(Vector3 destination)
-    {
-        if (cameraController == null) yield break;
-        Vector3 start = cameraController.transform.position;
-        float elapsed = 0f;
-        while (elapsed < 0.4f)
-        {
-            cameraController.transform.position = Vector3.Lerp(start, destination,
-                Mathf.SmoothStep(0f, 1f, elapsed / 0.4f));
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        cameraController.transform.position = destination;
-    }
-
     private void Update()
     {
-        if (!initialized || IsReady || IsSummoning) return;
+        if (!initialized || IsReady || IsSummoning || SceneLoadManager.IsTransitioning) return;
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
         if (InputManager.Instance.IsMouseButtonDownThisFrame())
             TryPlace(LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition()));
@@ -243,6 +241,7 @@ public class BattleDeployment : MonoBehaviour
         if (LevelGrid.Instance.HasAnyUnitOnGridPosition(position)
             || !Pathfinding.Instance.IsWalkableGridPosition(position)) return false;
         IsSummoning = true; // Lock before the coroutine's first yield.
+        if (cameraController != null) cameraController.IsPresentationLocked = true;
         placementLabel.text = "Dein Monster erscheint …";
         StartCoroutine(Summon(position));
         return true;
@@ -253,13 +252,19 @@ public class BattleDeployment : MonoBehaviour
         Vector3 destination = LevelGrid.Instance.GetWorldPosition(position);
         Trainer.rotation = Quaternion.LookRotation(new Vector3(destination.x, Trainer.position.y, destination.z) - Trainer.position);
         PaperCharacterVisual visual = Trainer.GetComponent<PaperCharacterVisual>();
-        if (visual != null) visual.FaceWorldDirection(destination - Trainer.position);
+        if (visual != null) { visual.FaceWorldDirection(destination - Trainer.position); visual.SetSummoningPose(true); }
+        yield return presentation.FocusTrainer(Trainer);
         Vector3 origin = visual != null ? visual.GetSummonOrigin() : Trainer.position + Vector3.up * 1.2f;
-        yield return summonEffect.Play(origin, destination,
-            configuration.playerTeam[nextMonster].GetSummonColor());
+        try
+        {
+            summonEffect.OnPulseMoved += presentation.FollowPulse;
+            yield return summonEffect.Play(origin, destination,
+                configuration.playerTeam[nextMonster].GetSummonColor());
+        }
+        finally { summonEffect.OnPulseMoved -= presentation.FollowPulse; if (visual != null) visual.SetSummoningPose(false); }
         Instantiate(configuration.playerTeam[nextMonster++], destination, Quaternion.identity);
-        // Let Unit.Start register the new unit before beginning combat.
-        yield return null;
+        // Hold the arrival shot while the new unit registers.
+        yield return new WaitForSeconds(.2f);
         if (nextMonster == configuration.playerTeam.Length)
         {
             GridSystemVisual.Instance.HideAllGridPositions();
@@ -269,37 +274,40 @@ public class BattleDeployment : MonoBehaviour
             placementLabel.gameObject.SetActive(false);
             if (placementPanel != null) placementPanel.SetActive(false);
         }
-        else { IsSummoning = false; RefreshAvailable(); ShowCells(); }
+        else { yield return presentation.ReturnToOverview(GetCameraFocus(Trainer)); IsSummoning = false; RefreshAvailable(); ShowCells(); }
     }
 
     private IEnumerator SummonOpponentTeam()
     {
         IsOpponentSummoning = true;
-        Vector3 previousCamera = cameraController != null ? cameraController.transform.position : Vector3.zero;
-        if (cameraController != null) cameraController.IsPresentationLocked = true;
+
         try
         {
             placementLabel.text = "Der Gegner beschwört sein Team …";
-            yield return PanCamera(GetCameraFocus(OpponentTrainer));
-            yield return new WaitForSeconds(0.2f);
+
             for (int i = 0; i < configuration.enemyTeam.Length; i++)
             {
                 placementLabel.text = $"Gegner beschwört Monster {i + 1}/{configuration.enemyTeam.Length} …";
                 int index = (i + 1) * enemyCells.Count / (configuration.enemyTeam.Length + 1);
                 Vector3 destination = LevelGrid.Instance.GetWorldPosition(enemyCells[index]);
+                yield return presentation.FocusTrainer(OpponentTrainer);
                 PaperCharacterVisual visual = OpponentTrainer.GetComponent<PaperCharacterVisual>();
-                if (visual != null) visual.FaceWorldDirection(destination - OpponentTrainer.position);
-                Vector3 origin = visual != null ? visual.GetSummonOrigin() : OpponentTrainer.position + Vector3.up;
-                yield return summonEffect.Play(origin, destination, configuration.enemyTeam[i].GetSummonColor());
+                if (visual != null) { visual.FaceWorldDirection(destination - OpponentTrainer.position); visual.SetSummoningPose(true); }
+                NPCSummoningFocus focus = OpponentTrainer.GetComponent<NPCSummoningFocus>();
+                Vector3 origin = focus != null ? focus.SummonOrigin : visual != null ? visual.GetSummonOrigin() : OpponentTrainer.position + Vector3.up;
+                summonEffect.OnPulseMoved += presentation.FollowPulse;
+                try { yield return summonEffect.Play(origin, destination, configuration.enemyTeam[i].GetSummonColor()); }
+                finally { summonEffect.OnPulseMoved -= presentation.FollowPulse; if (visual != null) visual.SetSummoningPose(false); }
                 Instantiate(configuration.enemyTeam[i], destination, Quaternion.identity);
-                yield return null; // Register the opponent before spawning the next one.
+                yield return new WaitForSeconds(.2f); // Hold the opponent arrival shot.
             }
-            yield return PanCamera(previousCamera);
+            LevelGrid grid = LevelGrid.Instance;
+            yield return presentation.ReturnToOverview(grid.GetWorldPosition(new GridPosition(grid.GetWidth() / 2, grid.GetHeight() / 2)));
         }
         finally
         {
             IsOpponentSummoning = false;
-            if (cameraController != null) cameraController.IsPresentationLocked = false;
+            if (presentation != null) presentation.Release();
         }
     }
 
@@ -324,7 +332,8 @@ public class BattleDeployment : MonoBehaviour
             yield return new WaitForSeconds(defeatHoldDuration);
             if (unit == null || visual == null || actor == null) yield break;
             PaperCharacterVisual trainerVisual = actor.GetComponent<PaperCharacterVisual>();
-            Vector3 vessel = trainerVisual != null ? trainerVisual.GetSummonOrigin() : actor.position + Vector3.up;
+            NPCSummoningFocus focus = actor.GetComponent<NPCSummoningFocus>();
+            Vector3 vessel = focus != null ? focus.SummonOrigin : trainerVisual != null ? trainerVisual.GetSummonOrigin() : actor.position + Vector3.up;
             yield return summonEffect.PlayRecall(visual.GetRecallOrigin(), vessel, tint,
                 progress => { if (visual != null) visual.SetRecallProgress(progress); },
                 () => { if (unit != null) unit.gameObject.SetActive(false); });
@@ -344,7 +353,8 @@ public class BattleDeployment : MonoBehaviour
             if (unit != null) Destroy(unit.gameObject);
         recallingUnits.Clear();
         recallingCount = 0;
-        if (summonEffect != null) summonEffect.CancelAll();
+        if (summonEffect != null) { if (presentation != null) summonEffect.OnPulseMoved -= presentation.FollowPulse; summonEffect.CancelAll(); }
+        if (presentation != null) presentation.Release();
         if (cameraController != null) cameraController.IsPresentationLocked = false;
     }
 

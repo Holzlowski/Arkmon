@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 22d3cb3bf2174fbc9531dee022e06d27, type: 3}
-  m_Name: Flaca
+  m_Name: Kafla
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDefinition
   maxHealth: 100
   maxActionPoints: 3
@@ -20,3 +20,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7a036af0bea63ad44888f8a3539ca2dd, type: 2}
   - {fileID: 11400000, guid: 3dd1079263d4b194c951eb94aceba6ec, type: 2}
   - {fileID: 11400000, guid: 910311b0f1f8b7045971491326b76959, type: 2}
+  - {fileID: 11400000, guid: ec7183aadd5d966439d7e3bad91a3213, type: 2}

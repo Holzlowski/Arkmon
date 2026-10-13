@@ -30,6 +30,7 @@ public class GridSystemVisual : MonoBehaviour
     private UnitActionSystem actionSystem;
     private LevelGrid levelGrid;
     private GridSystemVisualSingle[,] gridSystemVisualSingleArray;
+    private GridPosition? hoveredFan;
 
     private void Awake()
     {
@@ -138,6 +139,7 @@ public class GridSystemVisual : MonoBehaviour
 
     private void UpdateGridVisual()
     {
+        hoveredFan = null;
         if (UnitManager.Instance != null && !UnitManager.Instance.IsBattleRunning) return;
         HideAllGridPositions();
 
@@ -163,6 +165,13 @@ public class GridSystemVisual : MonoBehaviour
             case MeleeAttackAction meleeAction:
                 gridVisualType = GridVisualType.Red;
                 ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), meleeAction.Range, GridVisualType.RedSoft);
+                break;
+            case EmberAction ember:
+                gridVisualType = GridVisualType.Red;
+                ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), ember.Range, GridVisualType.RedSoft);
+                break;
+            case GuardAction guard:
+                gridVisualType = GridVisualType.Blue;
                 break;
             case RamAction ramAction:
                 gridVisualType = GridVisualType.Red;
@@ -210,5 +219,22 @@ public class GridSystemVisual : MonoBehaviour
         if (actionSystem != null) actionSystem.OnSelectedActionChanged -= UnityActionSystem_OnSelectedActionChanged;
         if (levelGrid != null) levelGrid.OnAnyUnitMoveGridPosition -= LevelGrid_OnAnyUnitMoveGridPosition;
         if (Instance == this) Instance = null;
+    }
+    private void LateUpdate()
+    {
+        if (gridSystemVisualSingleArray == null || actionSystem == null) return;
+        EmberAction fan = actionSystem.GetSelectedAction() as EmberAction;
+        bool allowed = fan != null && UnityEngine.InputSystem.Mouse.current != null && !actionSystem.IsBusy
+            && !BaseAction.IsAnyActionActive && TurnSystem.Instance.IsPlayerTurn()
+            && UnitManager.Instance.IsBattleRunning && !SceneLoadManager.IsTransitioning
+            && !(UnityEngine.EventSystems.EventSystem.current != null
+                && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject());
+        if (!allowed) { if (hoveredFan.HasValue) UpdateGridVisual(); return; }
+        GridPosition centre = levelGrid.GetGridPosition(MouseWorld.GetPosition());
+        if (hoveredFan.HasValue && hoveredFan.Value == centre) return;
+        UpdateGridVisual(); hoveredFan = centre;
+        if (!fan.IsValidActionGridPosition(centre)) return;
+        ShowGridPositionList(fan.GetAffectedGridPositionList(centre), GridVisualType.RedSoft);
+        ShowGridPositionList(fan.GetImpactGridPositionList(centre), GridVisualType.Yellow);
     }
 }

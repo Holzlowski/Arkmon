@@ -87,8 +87,13 @@ public class UnitManager : MonoBehaviour
     {
         while (BaseAction.IsAnyActionActive || (BattleDeployment.Instance != null && BattleDeployment.Instance.IsRecalling))
             yield return null;
-        yield return new WaitForSeconds(1f);
-        if (SceneLoadManager.instance != null) SceneLoadManager.instance.LoadSceneBeforeBattle();
+        yield return new WaitForSeconds(.35f);
+        yield return BattleResultPanel.Show(State);
+        if (SceneLoadManager.instance != null)
+        {
+            SceneLoadManager.instance.RecordBattleResult(State);
+            SceneLoadManager.instance.LoadSceneBeforeBattle();
+        }
         else SceneManager.LoadScene(0);
     }
 

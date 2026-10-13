@@ -20,10 +20,13 @@ public class PaperCharacterVisual : MonoBehaviour
     private float idleWeight;
     private bool initialized;
     private SpriteRenderer spriteRenderer;
+    private Sprite restingSprite;
+    private bool summoningPose;
     private Unit unit;
     private ShootAction shootAction;
     private SwordAction swordAction;
     private RamAction ramAction;
+    private EmberAction emberAction;
     private MeleeAttackAction[] meleeActions;
     private float walkPhase;
     private float walkWeight;
@@ -32,6 +35,10 @@ public class PaperCharacterVisual : MonoBehaviour
     private float knockdownProgress;
     private float recallProgress;
     private Color restColor;
+    private float hitRemaining;
+    private float outfitProgress = -1;
+    public void SetOutfitChangeProgress(float progress) => outfitProgress = progress;
+    public void PlayHitReaction() => hitRemaining = .22f;
 
     private void OnEnable()
     {
@@ -42,15 +49,18 @@ public class PaperCharacterVisual : MonoBehaviour
         previousPosition = transform.position;
         actions = GetComponents<BaseAction>();
         spriteRenderer = paperPivot.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null) restColor = spriteRenderer.color;
+        PaperGroundShadow.Attach(gameObject, spriteRenderer);
+        if (spriteRenderer != null) { restColor = spriteRenderer.color; restingSprite = spriteRenderer.sprite; }
         IsDefeated = false;
         defeatProgress = 0f;
         knockdownProgress = 0f;
         recallProgress = 0f;
+        hitRemaining = 0f;
         unit = GetComponent<Unit>();
         shootAction = GetComponent<ShootAction>();
         swordAction = GetComponent<SwordAction>();
         ramAction = GetComponent<RamAction>();
+        emberAction = GetComponent<EmberAction>();
         meleeActions = GetComponents<MeleeAttackAction>();
         phase = Random.value * Mathf.PI * 2f;
         idleWeight = 0f;
@@ -98,7 +108,21 @@ public class PaperCharacterVisual : MonoBehaviour
         paperPivot.localScale = Vector3.Scale(paperPivot.localScale,
             new Vector3(Mathf.Lerp(1f, 1.15f, knockdownProgress),
                 Mathf.Lerp(1f, 0.35f, knockdownProgress), 1f));
+        if (outfitProgress >= 0)
+        {
+            float motion = Mathf.Sin(Mathf.Clamp01(outfitProgress) * Mathf.PI);
+            paperPivot.localScale = Vector3.Scale(paperPivot.localScale, new Vector3(1 + motion * .035f, 1 - motion * .07f, 1));
+            paperPivot.localPosition += Vector3.up * -.025f * motion;
+        }
         Camera camera = Camera.main;
+        if (spriteRenderer != null)
+        {
+            hitRemaining = Mathf.Max(0, hitRemaining - Time.deltaTime);
+            float hit = Mathf.Clamp01(hitRemaining / .22f);
+            spriteRenderer.color = Color.Lerp(restColor, new Color(1.7f, 1.4f, 1.05f, restColor.a), hit);
+            if (camera != null) paperPivot.localPosition += transform.InverseTransformDirection(camera.transform.right)
+                * (Mathf.Sin(hit * Mathf.PI) * .07f);
+        }
         if (camera != null)
         {
             // Match the camera's image plane: no yaw toward targets and no rocking.
@@ -112,6 +136,8 @@ public class PaperCharacterVisual : MonoBehaviour
 
     private Vector3 GetOpponentDirection()
     {
+        if (emberAction != null && emberAction.TargetPosition.HasValue)
+            return emberAction.TargetPosition.Value - transform.position;
         Unit target = shootAction != null ? shootAction.TargetUnit : null;
         if (target == null && swordAction != null) target = swordAction.TargetUnit;
         if (target == null && ramAction != null) target = ramAction.TargetUnit;
@@ -132,8 +158,31 @@ public class PaperCharacterVisual : MonoBehaviour
         return target != null && !target.IsDead ? target.transform.position - transform.position : Vector3.zero;
     }
 
+    public void SetSummoningPose(bool active)
+    {
+        if (spriteRenderer == null) return;
+        Sprite pose = active ? Resources.Load<Sprite>(GetComponent<NPCSummoningFocus>() != null
+            ? "John-Summoning" : "Player-Summoning") : restingSprite;
+        if (pose != null) spriteRenderer.sprite = pose;
+        summoningPose = active && pose != null;
+    }
+
+    public void SetRestingSprite(Sprite sprite)
+    {
+        if (sprite == null || spriteRenderer == null) return;
+        restingSprite = sprite;
+        if (!summoningPose) spriteRenderer.sprite = sprite;
+    }
+
+    public bool IsSummoningPose => summoningPose;
+
     public Vector3 GetSummonOrigin()
     {
+        if (summoningPose && spriteRenderer != null && Camera.main != null)
+            return spriteRenderer.bounds.center + Camera.main.transform.right
+                * (spriteRenderer.flipX ? -1f : 1f) * spriteRenderer.bounds.size.x
+                * (GetComponent<NPCSummoningFocus>() != null ? -.29f : .34f)
+                + Camera.main.transform.up * spriteRenderer.bounds.size.y * .14f;
         Vector3 offset = summonOffset;
         if (spriteRenderer != null && spriteRenderer.flipX) offset.x = -offset.x;
         return paperPivot != null ? paperPivot.TransformPoint(offset) : transform.position + Vector3.up * 1.2f;
@@ -171,6 +220,6 @@ public class PaperCharacterVisual : MonoBehaviour
         paperPivot.localPosition = restPosition;
         paperPivot.localScale = restScale;
         paperPivot.localRotation = restRotation;
-        if (spriteRenderer != null) spriteRenderer.color = restColor;
+        if (spriteRenderer != null) { spriteRenderer.color = restColor; SetSummoningPose(false); }
     }
 }

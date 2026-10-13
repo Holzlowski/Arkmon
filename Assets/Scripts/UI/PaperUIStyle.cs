@@ -6,7 +6,10 @@ public class PaperUIStyle : ScriptableObject
 {
     public Sprite panel, card, sageButton, selectedCard;
     public Sprite moveIcon, clawIcon, swordIcon, escapeIcon, fireIcon, downIcon;
-    public Sprite flacaPortrait, sheepPortrait, hunterPortrait;
+    public Sprite flacaPortrait, sheepPortrait, hunterPortrait, playerPortrait, playerRoomPortrait;
+    public Sprite PortraitFor(string speaker)
+        => speaker == "Der Junge" ? (DemoOpening.Started && !DemoOpening.HasMantle
+            ? playerRoomPortrait : playerPortrait) : speaker == "John" ? hunterPortrait : null;
     public TMP_FontAsset font;
     public Color ink = new Color(0.22f, 0.14f, 0.09f);
     public Color sage = new Color(0.37f, 0.44f, 0.27f);
@@ -18,9 +21,11 @@ public class PaperUIStyle : ScriptableObject
     {
         if (action is MoveAction) return moveIcon;
         if (action is FlameSwordAction) return swordIcon;
+        if (action is EmberAction) return fireIcon;
         if (action is ClawAction) return clawIcon;
         if (action is EscapeAction) return escapeIcon;
         if (action is StandUpAction || action is RamAction) return downIcon;
+        if (action is GuardAction) return moveIcon;
         return clawIcon;
     }
 

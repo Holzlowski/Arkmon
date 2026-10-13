@@ -93,6 +93,8 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (ui == null) return;
         string message = baseAction is FlameSwordAction ? "Feuerschaden. Kann Monster und Pflanzen entzünden."
             : baseAction is ClawAction ? "Ein schneller Krallenhieb ohne Elementarschaden."
+            : baseAction is EmberAction ? "Funken treffen 3 Nachbarfelder um Kafla (2 AP, 18 Feuerschaden). Diagonal läuft die Fläche um die Ecke. Auch Verbündete werden getroffen; Holz und Pflanzen entzünden sich."
+            : baseAction is GuardAction ? "Wähle dein eigenes Feld: 50 % weniger direkter Schaden bis zum nächsten eigenen Zug. Weitere Aktionen beenden Abwehr."
             : baseAction is StandUpAction ? "Richte dein Monster auf: Wähle sein eigenes Feld."
             : baseAction is MoveAction ? "Wähle ein erreichbares Feld, um dein Monster zu bewegen."
             : baseAction is EscapeAction ? "Rufe dein Team zurück und verlasse den Kampf."

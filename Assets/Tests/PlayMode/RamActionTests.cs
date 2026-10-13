@@ -437,7 +437,7 @@ public class RamActionTests
     }
 
     [UnityTest]
-    public IEnumerator Recall_HoldsUprightDefeatPoseThenReturnsLilacPulseToOpponent()
+    public IEnumerator Recall_HoldsUprightDefeatPoseThenReturnsWhitePulseToOpponent()
     {
         object deployment = TypeOf("BattleDeployment").GetProperty("Instance").GetValue(null);
         Transform actor = (Transform)deployment.GetType().GetProperty("OpponentTrainer").GetValue(deployment);
@@ -463,14 +463,16 @@ public class RamActionTests
         Assert.That(effect, Is.Not.Null);
         Renderer pulse = effect.GetComponentInChildren<Renderer>();
         Color tint = pulse.sharedMaterial.color;
-        Assert.That(tint.r, Is.EqualTo(0.65f).Within(0.001f));
-        Assert.That(tint.g, Is.EqualTo(0.48f).Within(0.001f));
-        Assert.That(tint.b, Is.EqualTo(0.78f).Within(0.001f));
+        Assert.That(tint.r, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(tint.g, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(tint.b, Is.EqualTo(1f).Within(0.001f));
         while (attacker != null && attacker.gameObject.activeSelf && Time.realtimeSinceStartup < deadline)
             yield return null;
         Assert.That(attacker, Is.Not.Null, "The root survives until the pulse reaches the trainer.");
         Assert.That(attacker.gameObject.activeSelf, Is.False);
-        Vector3 vessel = (Vector3)Call(trainerVisual, "GetSummonOrigin");
+        Component focus = actor.GetComponent(TypeOf("NPCSummoningFocus"));
+        Vector3 vessel = focus != null ? (Vector3)focus.GetType().GetProperty("SummonOrigin").GetValue(focus)
+            : (Vector3)Call(trainerVisual, "GetSummonOrigin");
         float closest = float.PositiveInfinity, largestStep = 0f;
         Vector3 previousPulse = pulse.transform.position;
         while (pulse != null && Time.realtimeSinceStartup < deadline)

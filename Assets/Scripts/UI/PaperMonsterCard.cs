@@ -6,12 +6,14 @@ public class PaperMonsterCard : MonoBehaviour
 {
     public bool enemy;
     private Unit current;
+    public Unit Current => current;
     private TextMeshProUGUI nameLabel, healthLabel, pointsLabel, statusLabel;
     private Image portrait, healthFill;
     private int shownHealth = -1, shownPoints = -1, shownRounds = -1;
     private bool shownDown;
     private RectTransform pointsRoot;
     private Image[] diamonds;
+    private TextMeshProUGUI guardLabel;
 
     public void Build(bool isEnemy)
     {
@@ -38,6 +40,16 @@ public class PaperMonsterCard : MonoBehaviour
         statusLabel = PaperUIFactory.Text("Monster status", transform, "", 15,
             new Vector2(0.1f, 0.025f), new Vector2(0.95f, 0.2f), Vector2.zero, Vector2.zero,
             TextAlignmentOptions.Center);
+        statusLabel.gameObject.SetActive(false);
+        guardLabel = PaperUIFactory.Text("Guard status", transform, "Abwehr · 50 %", 15,
+            new Vector2(.35f, .35f), new Vector2(1, .54f), Vector2.zero, new Vector2(-24, 0), TextAlignmentOptions.MidlineRight);
+        guardLabel.color = style.sage;
+        for (int i = 0; i < 2; i++)
+        {
+            Image badge = PaperUIFactory.Image(i == 0 ? "Burning badge" : "Knockdown badge", transform, style.card,
+                new Vector2(.06f + i * .46f, .015f), new Vector2(.49f + i * .46f, .19f), Vector2.zero, Vector2.zero);
+            badge.gameObject.AddComponent<PaperStatusBadge>().Build(this, i == 0);
+        }
     }
 
     private void LateUpdate()
@@ -45,8 +57,9 @@ public class PaperMonsterCard : MonoBehaviour
         Unit next = enemy ? (UnitManager.Instance != null
             ? UnitManager.Instance.GetEnemyUnitList().Find(u => u != null && !u.IsDead) : null)
             : (UnitActionSystem.Instance != null ? UnitActionSystem.Instance.GetSelectedUnit() : null);
+        guardLabel.gameObject.SetActive(next != null && !next.IsDead && next.IsGuarding);
         if (next == null || next.IsDead)
-        { if (nameLabel.text != "") { nameLabel.text = ""; healthLabel.text = ""; pointsLabel.text = ""; statusLabel.text = ""; portrait.enabled = false; PaperUIFactory.SetHealthFill(healthFill, 0); pointsRoot.gameObject.SetActive(false); } current = null; return; }
+        { nameLabel.text = ""; healthLabel.text = ""; pointsLabel.text = ""; statusLabel.text = ""; portrait.enabled = false; PaperUIFactory.SetHealthFill(healthFill, 0); pointsRoot.gameObject.SetActive(false); current = null; return; }
         if (next != current)
         {
             current = next; shownHealth = shownPoints = shownRounds = -1;

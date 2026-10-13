@@ -7,6 +7,16 @@ public class PaperSwordAnimation : MonoBehaviour
     [SerializeField] private Sprite armSprite;
     [SerializeField] private Sprite forearmSprite;
     [SerializeField] private Sprite swordSprite;
+    [SerializeField] private Sprite sparkBodySprite;
+    public const float SparkReleaseTime = .7f;
+    public const float SparkDuration = 1.3f;
+    public bool IsScraping { get; private set; }
+    private Sprite previousBody;
+    private SpriteRenderer clawHand;
+    private ParticleSystem scrapeSparks;
+    private Material clawMaterial;
+    private float scrapeTime;
+    private Vector3 restingShoulder;
     public bool IsSwinging { get; private set; }
     public const float HitTime = 0.42f;
     public const float Duration = 0.85f;
@@ -29,6 +39,7 @@ public class PaperSwordAnimation : MonoBehaviour
         shoulder = new GameObject("Sword shoulder").transform;
         shoulder.SetParent(mirrorRoot, false);
         shoulder.localPosition = new Vector3(-bodyRenderer.sprite.bounds.size.x * 0.27f, height * 0.44f, 0.005f);
+        restingShoulder = shoulder.localPosition;
         // Tuck the shoulder cap beneath the cloak instead of drawing a joint on the chest.
         armRenderer = Part("Sword arm", armSprite, shoulder, bodyRenderer.sortingOrder - 1);
         float armScale = height * 0.13f / armSprite.bounds.size.y;
@@ -61,7 +72,7 @@ public class PaperSwordAnimation : MonoBehaviour
         fireTrail.sharedMaterial = trailMaterial;
         fireTrail.sortingLayerID = bodyRenderer.sortingLayerID;
         fireTrail.sortingOrder = bodyRenderer.sortingOrder + 3;
-        fireTrail.time = 0.18f; fireTrail.startWidth = 0.065f; fireTrail.endWidth = 0f;
+        fireTrail.time = 0.26f; fireTrail.startWidth = 0.22f; fireTrail.endWidth = 0.015f;
         fireTrail.minVertexDistance = 0.008f;
         fireTrail.numCornerVertices = 4; fireTrail.numCapVertices = 4;
         fireTrail.colorGradient = new Gradient
@@ -98,6 +109,13 @@ public class PaperSwordAnimation : MonoBehaviour
         armRenderer.color = bodyRenderer.color;
         if (forearmRenderer != null) forearmRenderer.color = bodyRenderer.color;
         if (visual.IsDefeated) { CancelSwing(); SetSwordColor(bodyRenderer.color); return; }
+        if (IsScraping)
+        {
+            scrapeTime += Time.deltaTime;
+            ScrapePose(scrapeTime);
+            if (scrapeTime >= SparkDuration) CancelSwing();
+            return;
+        }
         if (!IsSwinging) { Pose(-15, 40); SetSwordColor(bodyRenderer.color); return; }
         if (holdImpactFrame) holdImpactFrame = false; else AnimateTo(elapsed + Time.deltaTime);
         SetSwordColor(fire ? Color.Lerp(bodyRenderer.color, new Color(1.6f, 0.85f, 0.3f),
@@ -168,16 +186,87 @@ public class PaperSwordAnimation : MonoBehaviour
         sword.localRotation = Quaternion.Euler(0, 0, swordAngle);
     }
     public Vector3 GetTipPosition() => tip != null ? tip.position : transform.position;
+    public void BeginSparkScrape(Vector3 target)
+    {
+        if (shoulder == null || forearmSprite == null) return;
+        CancelSwing();
+        visual.FaceWorldDirection(target - transform.position);
+        previousBody = bodyRenderer.sprite;
+        if (sparkBodySprite != null) bodyRenderer.sprite = sparkBodySprite;
+        if (clawHand == null)
+        {
+            clawHand = Part("Scraping claw hand", forearmSprite, mirrorRoot, bodyRenderer.sortingOrder + 5);
+            clawHand.transform.localScale = forearmRenderer.transform.localScale * .85f;
+            clawMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+            clawMaterial.color = new Color(1f,.93f,.72f);
+            for (int i=0;i<3;i++)
+            {
+                var claw = new GameObject("Extended claw",typeof(LineRenderer));
+                claw.transform.SetParent(clawHand.transform,false);
+                var line=claw.GetComponent<LineRenderer>();line.useWorldSpace=false;
+                line.sharedMaterial=clawMaterial;line.sortingOrder=bodyRenderer.sortingOrder+6;
+                line.sortingLayerID=bodyRenderer.sortingLayerID;line.positionCount=3;
+                line.startWidth=.022f;line.endWidth=.003f;
+                float x=forearmSprite.bounds.min.x;
+                float y=(i-1)*.08f;
+                line.SetPositions(new[]{new Vector3(x+.08f,y,-.04f),new Vector3(x-.10f,y+.08f,-.04f),new Vector3(x-.18f,y+.04f,-.04f)});
+            }
+            var root=new GameObject("Blade scrape sparks",typeof(ParticleSystem));root.transform.SetParent(mirrorRoot,false);
+            scrapeSparks=root.GetComponent<ParticleSystem>();scrapeSparks.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main=scrapeSparks.main;main.loop=false;main.startLifetime=.22f;main.startSpeed=1.7f;
+            main.startSize=new ParticleSystem.MinMaxCurve(.04f,.10f);main.startColor=new Color(1f,.64f,.12f);
+            main.simulationSpace=ParticleSystemSimulationSpace.World;
+            var emission=scrapeSparks.emission;emission.rateOverTime=0;
+            root.GetComponent<ParticleSystemRenderer>().sharedMaterial=Resources.Load<Material>("Magic Sparks");
+        }
+        clawHand.gameObject.SetActive(true);scrapeTime=0;IsScraping=true;ScrapePose(0);
+    }
+    private void ScrapePose(float time)
+    {
+        float raise=Mathf.SmoothStep(0,1,time/.2f);
+        float recover=Mathf.SmoothStep(0,1,(time-.95f)/(SparkDuration-.95f));
+        shoulder.localPosition = restingShoulder - Vector3.up * .27f * raise * (1f - recover);
+        Pose(Mathf.Lerp(Mathf.Lerp(-15,-130,raise),-15,recover),Mathf.Lerp(Mathf.Lerp(40,65,raise),40,recover));
+        float progress=Mathf.Clamp01((time-.2f)/(SparkReleaseTime-.2f));
+        Vector3 contact=sword.TransformPoint(tip.localPosition*Mathf.Lerp(.15f,.85f,progress));
+        Vector3 local=mirrorRoot.InverseTransformPoint(contact);
+        float width=forearmSprite.bounds.size.x*clawHand.transform.localScale.x;
+        clawHand.transform.localPosition=local+new Vector3(width*.85f,0,-.08f);
+        clawHand.color=bodyRenderer.color;
+        clawHand.gameObject.SetActive(time<.95f);
+        if(time>=.2f && time<SparkReleaseTime)
+        {
+            scrapeSparks.transform.position=contact;
+            scrapeSparks.Play();scrapeSparks.Emit(Mathf.Max(1,Mathf.CeilToInt(Time.deltaTime*90)));
+        }
+        SetSwordColor(Color.Lerp(bodyRenderer.color,new Color(1.5f,.8f,.25f),Mathf.Sin(progress*Mathf.PI)));
+    }
+    public void MarkSparkRelease()
+    {
+        if (!IsScraping) return;
+        // Keep the scrape readable even when a slow frame jumps directly to release.
+        for (int i = 0; i < 12; i++)
+        {
+            ScrapePose(Mathf.Lerp(.2f, SparkReleaseTime - .001f, i / 11f));
+        }
+        ScrapePose(SparkReleaseTime);
+    }
     public void CancelSwing()
     {
+        IsScraping = false;
+        if(previousBody!=null && bodyRenderer!=null){bodyRenderer.sprite=previousBody;previousBody=null;}
+        if(clawHand!=null)clawHand.gameObject.SetActive(false);
+        if(scrapeSparks!=null)scrapeSparks.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         IsSwinging = false; holdImpactFrame = false;
         if (shoulder == null) return;
+        shoulder.localPosition = restingShoulder;
         Pose(-15, 40); SetSwordColor(bodyRenderer.color);
         fireTrail.emitting = false; fireTrail.Clear();
     }
     private void OnDisable() => CancelSwing();
     private void OnDestroy()
     {
+        if (clawMaterial != null) Destroy(clawMaterial);
         if (trailMaterial != null) Destroy(trailMaterial);
         if (swordMaterial != null) Destroy(swordMaterial);
     }

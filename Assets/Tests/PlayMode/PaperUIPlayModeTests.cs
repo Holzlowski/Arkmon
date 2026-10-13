@@ -86,14 +86,14 @@ public class PaperUIPlayModeTests
         Component unit = (Component)Call(Instance("UnitActionSystem"), "GetSelectedUnit");
         var ui = (Component)UnityEngine.Object.FindFirstObjectByType(T("UnitActionSystemUI"));
         Component[] cards = ui.GetComponentsInChildren(T("ActionButtonUI")).Cast<Component>().ToArray();
-        Assert.That(cards.Length, Is.EqualTo(2));
+        Assert.That(cards.Length, Is.EqualTo(3));
         string[] labels = cards.Select(c => ((TextMeshProUGUI)Field(c, "textMeshProUGUI")).text).ToArray();
-        CollectionAssert.AreEquivalent(new[] { "Bewegen", "Fliehen" }, labels);
+        CollectionAssert.AreEquivalent(new[] { "Bewegen", "Fliehen", "Abwehr" }, labels);
         Call(ui, "ShowCommandCategory", true);
         yield return null;
         cards = ui.GetComponentsInChildren(T("ActionButtonUI")).Cast<Component>().ToArray();
         labels = cards.Select(c => ((TextMeshProUGUI)Field(c, "textMeshProUGUI")).text).ToArray();
-        CollectionAssert.AreEquivalent(new[] { "Krallenhieb", "Flammenschwert" }, labels);
+        CollectionAssert.AreEquivalent(new[] { "Krallenhieb", "Flammenschwert", "Glutfunke" }, labels);
         object selection = Instance("UnitActionSystem");
         Component clawCard = cards.First(c => Field(c, "baseAction") is Component action && action.GetType() == T("ClawAction"));
         clawCard.GetComponent<Button>().onClick.Invoke();
@@ -139,7 +139,7 @@ public class PaperUIPlayModeTests
         Assert.That(Call(Instance("UnitActionSystem"), "GetSelectedAction"), Is.SameAs(attacks.GetValue(4)));
         Call(ui, "ShowCommandCategory", false);
         yield return null;
-        Assert.That(ui.GetComponentsInChildren(T("ActionButtonUI")).Length, Is.EqualTo(2));
+        Assert.That(ui.GetComponentsInChildren(T("ActionButtonUI")).Length, Is.EqualTo(3));
         Assert.That(Call(Instance("UnitActionSystem"), "GetSelectedAction"), Is.SameAs(unit.GetComponent(T("MoveAction"))));
         unit.GetType().GetField("attacks", Flags).SetValue(unit, null);
         Call(ui, "ShowCommandCategory", true);

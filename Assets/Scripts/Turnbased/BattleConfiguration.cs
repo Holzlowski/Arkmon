@@ -23,10 +23,10 @@ public class BattleConfiguration : ScriptableObject
     {
         switch (side)
         {
-            case DeploymentSide.Right: return new GridPosition(Mathf.Max(0, width - 2), height / 2);
-            case DeploymentSide.Bottom: return new GridPosition(width / 2, Mathf.Min(1, height - 1));
-            case DeploymentSide.Top: return new GridPosition(width / 2, Mathf.Max(0, height - 2));
-            default: return new GridPosition(Mathf.Min(1, width - 1), height / 2);
+            case DeploymentSide.Right: return new GridPosition(width, height / 2);
+            case DeploymentSide.Bottom: return new GridPosition(width / 2, -1);
+            case DeploymentSide.Top: return new GridPosition(width / 2, height);
+            default: return new GridPosition(-1, height / 2);
         }
     }
 

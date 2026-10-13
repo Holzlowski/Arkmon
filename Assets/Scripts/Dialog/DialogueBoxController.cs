@@ -28,6 +28,15 @@ public class DialogueBoxController : MonoBehaviour
     private bool typing;
     private bool revealLine;
     private int answerCount;
+    private DialogueTree temporaryDialogue;
+
+    public void ShowMessage(string message, string speaker)
+    {
+        DialogueTree tree = ScriptableObject.CreateInstance<DialogueTree>();
+        tree.sections = new[] { new DialogueSection { dialogue = new[] { message }, endAfterDialogue = true } };
+        StartDialogue(tree, 0, speaker, "");
+        temporaryDialogue = tree;
+    }
 
     float charactersPerSecond = 90;
 
@@ -63,7 +72,11 @@ public class DialogueBoxController : MonoBehaviour
         this.battleSceneName = battleSceneName;
         battleConfiguration = configuration;
         nameText.text = name;
-        if (portraitImage != null) { portraitImage.sprite = portrait != null ? portrait : PaperUIStyle.Load().hunterPortrait; }
+        if (portraitImage != null)
+        {
+            portraitImage.sprite = portrait != null ? portrait : PaperUIStyle.Load()?.PortraitFor(name);
+            portraitImage.enabled = portraitImage.sprite != null;
+        }
         dialogueBox.SetActive(true);
         OnDialogueStarted?.Invoke();
         StartCoroutine(RunDialogue(dialogueTree, startSection));
@@ -114,9 +127,10 @@ public class DialogueBoxController : MonoBehaviour
             Vector3 playerTransform = GameObject.FindWithTag("Player").gameObject.transform.position;
             SceneLoadManager.instance.SavePlayerTransform(playerTransform);
             SceneLoadManager.instance.SetPendingBattle(battleConfiguration);
+            SceneLoadManager.instance.SetBattleSpeaker(nameText.text);
 
             // Lade die Kampfszene
-            SceneManager.LoadScene(battleSceneName);
+            SceneLoadManager.instance.LoadBattleScene(battleSceneName);
             //SoundManager.instance.PlayMusic(1);
             yield break;
         }
@@ -125,6 +139,7 @@ public class DialogueBoxController : MonoBehaviour
         {
             OnDialogueEnded?.Invoke();
             dialogueBox.SetActive(false);
+            if (temporaryDialogue != null) { Destroy(temporaryDialogue); temporaryDialogue = null; }
             yield break;
         }
 
@@ -181,6 +196,7 @@ public class DialogueBoxController : MonoBehaviour
     void ResetBox()
     {
         StopAllCoroutines();
+        if (temporaryDialogue != null) { Destroy(temporaryDialogue); temporaryDialogue = null; }
         dialogueBox.SetActive(false);
         answerBox.SetActive(false);
         skipLineTriggered = false;
@@ -204,6 +220,7 @@ public class DialogueBoxController : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (temporaryDialogue != null) Destroy(temporaryDialogue);
         if (instance != this) return;
         if (IsOpen) OnDialogueEnded?.Invoke();
         instance = null;

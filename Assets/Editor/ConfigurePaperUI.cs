@@ -31,7 +31,8 @@ public static class ConfigurePaperUI
         style.flacaPortrait = SpriteAsset("Flaca portrait", cat, UV(cat, .09f, .44f, .7f, .54f), Vector4.zero);
         style.sheepPortrait = SpriteAsset("Distelwolle portrait", sheep, UV(sheep, .02f, .14f, .96f, .82f), Vector4.zero);
         style.hunterPortrait = SpriteAsset("Hunter portrait", hunter, UV(hunter, .12f, .48f, .76f, .5f), Vector4.zero);
-        style.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+        style.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Art/Fonts/Alegreya SDF.asset")
+            ?? AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
         EditorUtility.SetDirty(style); AssetDatabase.SaveAssets();
         foreach (string path in new[] { "Assets/Art/UI/Paper-Panels.png", "Assets/Art/UI/Action-Icons.png" })
         { var importer = (TextureImporter)AssetImporter.GetAtPath(path); importer.isReadable = false; importer.SaveAndReimport(); }

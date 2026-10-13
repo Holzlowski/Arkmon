@@ -14,6 +14,21 @@ public class CameraController : MonoBehaviour
     float zoomSpeed = 5f;
     public bool IsPresentationLocked { get; set; }
 
+    public CameraState PrepareBattleOverview(Vector3 center)
+    {
+        transform.position = center;
+        if (cinemachineTransposer == null)
+            cinemachineTransposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        targetFollowOffset = new Vector3(0, 12, -18);
+        cinemachineTransposer.m_FollowOffset = targetFollowOffset;
+        cinemachineVirtualCamera.m_Lens.FieldOfView = 55;
+        CinemachineComposer composer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineComposer>();
+        if (composer != null) composer.m_ScreenY = .32f;
+        cinemachineVirtualCamera.PreviousStateIsValid = false;
+        cinemachineVirtualCamera.UpdateCameraState(Vector3.up, -1);
+        return cinemachineVirtualCamera.State;
+    }
+
     void Start()
     {
         cinemachineTransposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();
@@ -23,7 +38,7 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (IsPresentationLocked) return;
+        if (IsPresentationLocked || SceneLoadManager.IsTransitioning) return;
         HandleMovement();
         HandleRotation();
         HandleZoom();

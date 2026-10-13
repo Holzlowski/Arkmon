@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (SceneLoadManager.IsTransitioning || DemoOpening.IsPresenting) return;
         if (Input.GetKeyUp(KeyCode.E))
         {
             TryInteract();
@@ -33,7 +34,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (inConversation) return;
+        if (inConversation || SceneLoadManager.IsTransitioning || DemoOpening.IsPresenting)
+        {
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            return;
+        }
         HandleMovement();
         HandleJump();
         ApplyFallMultiplier();

@@ -115,11 +115,17 @@ public class Pathfinding : MonoBehaviour
                     continue;
                 }
 
-                if (!neighbourNode.IsWalkable())
+                GridPosition next = neighbourNode.GetGridPosition();
+                if (!CanEnter(next, startGridPosition))
                 {
                     closedList.Add(neighbourNode);
                     continue;
                 }
+
+                GridPosition current = currentNode.GetGridPosition();
+                if (next.x != current.x && next.z != current.z
+                    && (!CanEnter(new GridPosition(next.x, current.z), startGridPosition)
+                        || !CanEnter(new GridPosition(current.x, next.z), startGridPosition))) continue;
 
                 //Berechnung der Kosten vom Startnode zu diesem Node
                 int tentativeGCost =
@@ -154,6 +160,10 @@ public class Pathfinding : MonoBehaviour
         int remaining = Mathf.Abs(xDistance - zDistance);
         return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, zDistance) + MOVE_STRAIGHT_COST * remaining;
     }
+
+    private bool CanEnter(GridPosition position, GridPosition start)
+        => IsWalkableGridPosition(position)
+            && (position == start || !LevelGrid.Instance.HasAnyUnitOnGridPosition(position));
 
     private PathNode GetLowestFCostPathNode(List<PathNode> pathNodeList)
     {

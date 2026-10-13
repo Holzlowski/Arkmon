@@ -117,7 +117,7 @@ public class UnityMigrationSceneTests
             object trainerPosition = gridType.GetMethod("GetGridPosition").Invoke(grid, new object[] { trainer.position });
             var pathType = RuntimeType("Pathfinding");
             object pathfinding = pathType.GetProperty("Instance").GetValue(null);
-            Assert.That(pathType.GetMethod("IsWalkableGridPosition").Invoke(pathfinding, new[] { trainerPosition }), Is.False);
+            Assert.That(gridType.GetMethod("IsValidGridPosition").Invoke(grid, new[] { trainerPosition }), Is.False);
             object invalidCell = Activator.CreateInstance(RuntimeType("GridPosition"), -1, -1);
             Assert.That(deploymentType.GetMethod("TryPlace").Invoke(deployment, new[] { invalidCell }), Is.EqualTo(false));
             // Markings must actually sit above the rendered paving, not underneath it.
@@ -142,8 +142,10 @@ public class UnityMigrationSceneTests
                 Assert.That(managerBefore.GetProperty("IsBattleRunning").GetValue(managerInstance), Is.False);
                 Assert.That(((ICollection)managerBefore.GetMethod("GetFriendlyUnitList").Invoke(managerInstance, null)).Count,
                     Is.EqualTo(countBefore), "The monster must wait for the summon effect to arrive.");
-                yield return null;
-                GameObject effectObject = GameObject.Find("Monster summon effect");
+                float effectDeadline = Time.realtimeSinceStartup + 2f;
+                GameObject effectObject = null;
+                while (effectObject == null && Time.realtimeSinceStartup < effectDeadline)
+                { yield return null; effectObject = GameObject.Find("Monster summon effect"); }
                 Assert.That(effectObject, Is.Not.Null);
                 Material material = effectObject.GetComponentInChildren<Renderer>().sharedMaterial;
                 Assert.That(material.color.r, Is.EqualTo(1f).Within(0.0001f));

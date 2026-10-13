@@ -223,7 +223,8 @@ public class BattleRegressionTests
             object ownTrainer = Call(configuration, "GetTrainerPosition", 8, 8);
             object otherTrainer = Call(configuration, "GetOpponentTrainerPosition", 8, 8);
             Assert.That(otherTrainer, Is.Not.EqualTo(ownTrainer));
-            Assert.That(Call(configuration, "Contains", otherTrainer, 8, 8, true), Is.True);
+            Assert.That(Call(configuration, "Contains", otherTrainer, 8, 8, true), Is.False);
+            Assert.That(Call(configuration, "Contains", ownTrainer, 8, 8, false), Is.False);
             Assert.That(Call(configuration, "Contains", otherTrainer, 8, 8, false), Is.False);
             int friendlyCount = 0;
             for (int x = 0; x < 8; x++)
@@ -235,21 +236,45 @@ public class BattleRegressionTests
                     Assert.That(player && enemy, Is.False);
                     if (player) friendlyCount++;
                 }
-            Assert.That(friendlyCount, Is.EqualTo(11));
+            Assert.That(friendlyCount, Is.EqualTo(4));
             object outside = Activator.CreateInstance(positionType, -1, 0);
             Assert.That(Call(configuration, "Contains", outside, 8, 8, false), Is.False);
         }
         Set(configuration, "playerSide", Enum.Parse(sideType, "Left"));
-        object boundary = Activator.CreateInstance(positionType, 3, 4);
+        object boundary = Activator.CreateInstance(positionType, 1, 4);
         object diagonalOutside = Activator.CreateInstance(positionType, 3, 6);
         Assert.That(Call(configuration, "Contains", boundary, 8, 8, false), Is.True);
         Assert.That(Call(configuration, "Contains", diagonalOutside, 8, 8, false), Is.False);
-        object trainerCell = Activator.CreateInstance(positionType, 1, 4);
+        object trainerCell = Call(configuration, "GetTrainerPosition", 8, 8);
         Assert.That(Call(configuration, "Contains", trainerCell, 8, 8, false), Is.False);
         Set(configuration, "deploymentRadius", 100);
         object enemyCell = Activator.CreateInstance(positionType, 7, 4);
         Assert.That(Call(configuration, "Contains", enemyCell, 8, 8, false), Is.False);
     }
+    [TestCase(false)] [TestCase(true)]
+    public void Pathfinding_RoutesAroundOccupiedMonsters(bool ally)
+    {
+        SetUpRam(out Component attacker, out Component target);
+        Set(target, "isEnemy", ally);
+        object pathfinder = RuntimeType("Pathfinding").GetProperty("Instance").GetValue(null);
+        object[] arguments = { RamCell(4, 4), RamCell(8, 4), 0 };
+        var path = (System.Collections.IEnumerable)RuntimeType("Pathfinding").GetMethod("FindPath").Invoke(pathfinder, arguments);
+        Assert.That(path, Is.Not.Null);
+        foreach (object cell in path) Assert.That(cell, Is.Not.EqualTo(RamCell(7, 4)));
+        arguments[1] = RamCell(7, 4);
+        Assert.That(RuntimeType("Pathfinding").GetMethod("FindPath").Invoke(pathfinder, arguments), Is.Null);
+    }
+
+    [Test]
+    public void Pathfinding_CannotCutDiagonalThroughBlockedCorners()
+    {
+        SetUpRam(out _, out _);
+        object pathfinder = RuntimeType("Pathfinding").GetProperty("Instance").GetValue(null);
+        foreach (var cell in new[] { RamCell(0, 1), RamCell(1, 0) }) Call(pathfinder, "SetIsWalkableGridPosition", cell, false);
+        object[] arguments = { RamCell(0, 0), RamCell(1, 1), 0 };
+        Assert.That(RuntimeType("Pathfinding").GetMethod("FindPath").Invoke(pathfinder, arguments), Is.Null);
+    }
+
     private readonly List<GameObject> objects = new List<GameObject>();
     private readonly List<ScriptableObject> assets = new List<ScriptableObject>();
     private const BindingFlags Fields = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;

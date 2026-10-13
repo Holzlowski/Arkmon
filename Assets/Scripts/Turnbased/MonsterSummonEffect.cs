@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class MonsterSummonEffect : MonoBehaviour
 {
+    public event Action<Vector3> OnPulseMoved;
     [SerializeField, Min(0.1f)] private float travelDuration = 0.65f;
     [SerializeField, Min(0.1f)] private float arrivalDuration = 0.3f;
     [SerializeField] private Color color = new Color(0.2f, 0.85f, 1f, 1f);
@@ -27,6 +28,7 @@ public class MonsterSummonEffect : MonoBehaviour
             : new Material(Shader.Find("Universal Render Pipeline/Unlit"));
         material.color = tint;
         activeEffects.Add(root, material);
+        SoundManager.instance?.PlayEffect(reverse ? "recall" : "summon");
         try
         {
             GameObject pulse = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -42,6 +44,25 @@ public class MonsterSummonEffect : MonoBehaviour
             trail.startColor = Color.white; trail.endColor = Color.white;
             trail.emitting = !reverse;
             trail.Clear();
+            var sparks = new GameObject("Colored summon sparks", typeof(ParticleSystem));
+            sparks.transform.SetParent(pulse.transform, false);
+            ParticleSystem particles = sparks.GetComponent<ParticleSystem>();
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = particles.main;
+            main.loop = true; main.startLifetime = .85f; main.startSpeed = new ParticleSystem.MinMaxCurve(2.8f, 4.2f);
+            main.scalingMode = ParticleSystemScalingMode.Shape;
+            main.startSize = new ParticleSystem.MinMaxCurve(.12f, .25f); main.startColor = tint;
+            main.startRotation = Mathf.PI * .25f;
+            main.simulationSpace = ParticleSystemSimulationSpace.World; main.maxParticles = 180;
+            var emission = particles.emission; emission.rateOverTime = 85;
+            var shape = particles.shape; shape.shapeType = ParticleSystemShapeType.Sphere; shape.radius = .6f;
+            var size = particles.sizeOverLifetime; size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0, 1, 1, 0));
+            var renderer = particles.GetComponent<ParticleSystemRenderer>();
+            renderer.sharedMaterial = Resources.Load<Material>("Magic Sparks") ?? material;
+            renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            particles.Play();
+            particles.Emit(24);
             if (reverse)
             {
                 float elapsed = 0f;
@@ -65,20 +86,25 @@ public class MonsterSummonEffect : MonoBehaviour
                 float t = Mathf.Clamp01(travel / travelDuration);
                 pulse.transform.position = Vector3.Lerp(origin, destination, t)
                     + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 1.5f);
+                OnPulseMoved?.Invoke(pulse.transform.position);
                 travel += Time.deltaTime;
                 yield return null;
             }
             pulse.transform.position = destination;
+            OnPulseMoved?.Invoke(destination);
+            particles.Emit(42);
             trail.emitting = false;
             if (!reverse)
             {
                 float elapsed = 0f;
                 while (elapsed < arrivalDuration)
                 {
+                    OnPulseMoved?.Invoke(destination);
                     pulse.transform.localScale = Vector3.one * Mathf.Lerp(0.3f, 1.3f, elapsed / arrivalDuration);
                     elapsed += Time.deltaTime;
                     yield return null;
                 }
+                SoundManager.instance?.PlayEffect("summon-arrive");
             }
         }
         finally { Clear(root, material); }

@@ -47,6 +47,7 @@ public abstract class BaseAction : MonoBehaviour
 
     protected void ActionStart(Action onActionComplete)
     {
+        if (unit != null && !(this is GuardAction)) unit.SetGuarding(false);
         isActive = true;
         activeActions.Add(this);
         this.onActionComplete = onActionComplete;

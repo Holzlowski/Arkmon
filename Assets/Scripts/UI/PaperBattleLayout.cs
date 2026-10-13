@@ -13,6 +13,8 @@ public static class PaperBattleLayout
         PaperUIFactory.Scale(controller.GetComponentInParent<Canvas>());
         Image band = PaperUIFactory.Image("Paper battle command bar", controller.transform, style.panel,
             Vector2.zero, new Vector2(1, 0), new Vector2(12, 12), new Vector2(-12, 224));
+        band.gameObject.AddComponent<BattlePhaseVisibility>();
+        band.raycastTarget = true;
         Image card = PaperUIFactory.Image("Selected monster card", band.transform, style.card,
             Vector2.zero, new Vector2(0.23f, 1), new Vector2(12, 10), new Vector2(-6, -10));
         card.gameObject.AddComponent<PaperMonsterCard>().Build(false);
@@ -39,12 +41,16 @@ public static class PaperBattleLayout
         Image enemy = PaperUIFactory.Image("Opponent monster card", controller.transform, style.card,
             new Vector2(1, 1), Vector2.one, new Vector2(-345, -166), new Vector2(-18, -18));
         enemy.gameObject.AddComponent<PaperMonsterCard>().Build(true);
+        enemy.gameObject.AddComponent<BattlePhaseVisibility>();
+        enemy.raycastTarget = true;
         var tooltip = PaperUIFactory.Image("Action explanation", controller.transform, style.panel,
             new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(-290, 234), new Vector2(290, 308));
         var text = PaperUIFactory.Text("Explanation", tooltip.transform, "", 18,
             Vector2.zero, Vector2.one, new Vector2(24, 12), new Vector2(-24, -12), TextAlignmentOptions.Center);
         controller.SetTooltip(tooltip.gameObject, text);
+        tooltip.gameObject.AddComponent<BattlePhaseVisibility>();
         tooltip.gameObject.SetActive(false);
+        controller.gameObject.AddComponent<AttackPreview>().Build(controller.transform);
         return true;
     }
 
@@ -65,10 +71,12 @@ public static class PaperBattleLayout
         PaperUIFactory.HideChildren(controller.transform);
         Image tab = PaperUIFactory.Image("Turn paper tab", controller.transform, style.panel,
             new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(-225, -74), new Vector2(225, -10));
+        tab.gameObject.AddComponent<BattlePhaseVisibility>();
         turn = PaperUIFactory.Text("Turn label", tab.transform, "", 24, Vector2.zero, Vector2.one,
             new Vector2(18, 8), new Vector2(-18, -8), TextAlignmentOptions.Center);
         end = PaperUIFactory.Button("End turn paper button", controller.transform, style.sageButton,
             new Vector2(0.82f, 0), new Vector2(1, 0), new Vector2(2, 66), new Vector2(-28, 158));
+        end.gameObject.AddComponent<BattlePhaseVisibility>();
         var text = PaperUIFactory.Text("End turn label", end.transform, "Zug beenden", 24,
             Vector2.zero, Vector2.one, new Vector2(18, 16), new Vector2(-18, -16), TextAlignmentOptions.Center);
         text.color = style.cream;

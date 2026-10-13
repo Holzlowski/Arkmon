@@ -13,16 +13,21 @@ public class Unit : MonoBehaviour
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyKnockdownChanged;
     public bool IsKnockedDown { get; private set; }
+    public bool IsGuarding { get; private set; }
+    public void SetGuarding(bool guarding) { IsGuarding = guarding && !IsDead && !IsKnockedDown; }
+    public int PreviewDamage(int damage, bool direct) => Mathf.Max(0,
+        IsGuarding && direct ? Mathf.CeilToInt(damage * .5f) : damage);
 
     public bool CanPerformAction(BaseAction action) => !IsDead && enabled
         && action != null && action.enabled
+        && !(action is GuardAction && IsGuarding)
         && (IsKnockedDown ? action is StandUpAction : !(action is StandUpAction));
 
     public void SetKnockedDown(bool knockedDown)
     {
         if (IsDead || IsKnockedDown == knockedDown) return;
         IsKnockedDown = knockedDown;
-        if (knockedDown) isInAttackSelection = false;
+        if (knockedDown) { isInAttackSelection = false; SetGuarding(false); }
         OnAnyKnockdownChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -49,12 +54,14 @@ public class Unit : MonoBehaviour
         if (GetComponent<BurningStatus>() == null) gameObject.AddComponent<BurningStatus>();
         actionPoints = MaxActionPoints;
         if (GetComponent<StandUpAction>() == null) gameObject.AddComponent<StandUpAction>();
+        if (GetComponent<GuardAction>() == null) gameObject.AddComponent<GuardAction>();
         //findet alle BaseAction Komponenten
         baseActionArray = GetComponents<BaseAction>();
     }
 
     void Start()
     {
+        if (GetComponent<PaperHitFeedback>() == null) gameObject.AddComponent<PaperHitFeedback>();
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
 
@@ -128,7 +135,10 @@ public class Unit : MonoBehaviour
         }
         else
         {
-            return basicActionArray ?? Array.Empty<BaseAction>();
+            var basic = basicActionArray ?? Array.Empty<BaseAction>();
+            var result = new BaseAction[basic.Length + 1];
+            Array.Copy(basic, result, basic.Length); result[basic.Length] = GetAction<GuardAction>();
+            return result;
         }
 
     }
@@ -195,6 +205,7 @@ public class Unit : MonoBehaviour
                 (!IsEnemy() && TurnSystem.Instance.IsPlayerTurn()))
         {
             actionPoints = MaxActionPoints;
+            SetGuarding(false);
 
             OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -205,6 +216,7 @@ public class Unit : MonoBehaviour
     {
         LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
         actionPoints = 0;
+        SetGuarding(false);
         foreach (BaseAction action in baseActionArray) action.enabled = false;
         foreach (Collider collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
         foreach (Rigidbody body in GetComponentsInChildren<Rigidbody>()) body.isKinematic = true;
@@ -223,7 +235,7 @@ public class Unit : MonoBehaviour
 
     public void Damage(int damage, Transform damageSource = null)
     {
-        healthSystem.Damage(damage, damageSource);
+        healthSystem.Damage(PreviewDamage(damage, damageSource != null), damageSource);
     }
 
     private void OnDestroy()

@@ -61,7 +61,8 @@ public class MoveAction : BaseAction
     /// </summary>
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        if (!unit.CanPerformAction(this))
+        if (isActive) return;
+        if (!IsValidActionGridPosition(gridPosition))
         {
             onActionComplete?.Invoke();
             return;
@@ -165,11 +166,14 @@ public class MoveAction : BaseAction
         ShootAction shootAction = unit.GetAction<ShootAction>();
         SwordAction swordAction = unit.GetAction<SwordAction>();
         RamAction ramAction = unit.GetAction<RamAction>();
+        EmberAction emberAction = unit.GetAction<EmberAction>();
         int targetCount = shootAction != null ? shootAction.GetTargetCountAtPosition(gridPosition) : 0;
         if (swordAction != null) targetCount += swordAction.GetValidActionGridPositionList(gridPosition).Count;
         if (ramAction != null) targetCount += ramAction.GetValidActionGridPositionList(gridPosition).Count;
+        if (emberAction != null) targetCount += emberAction.GetTargetCountAtPosition(gridPosition);
         MeleeAttackAction[] meleeActions = unit.GetComponents<MeleeAttackAction>();
-        foreach (MeleeAttackAction melee in meleeActions) targetCount += melee.GetValidActionGridPositionList(gridPosition).Count;
+        foreach (MeleeAttackAction melee in meleeActions) targetCount += melee.GetValidActionGridPositionList(gridPosition)
+            .FindAll(cell => LevelGrid.Instance.GetUnitOnGridPosition(cell) != null).Count;
         int approachValue = 0;
         if (shootAction == null && (swordAction != null || ramAction != null || meleeActions.Length > 0))
         {
@@ -189,10 +193,19 @@ public class MoveAction : BaseAction
             }
             if (candidateDistance < currentDistance) approachValue = 1;
         }
+        int coverValue = 0;
+        if (targetCount > 0)
+            foreach (Unit opponent in UnitManager.Instance.GetUnitList())
+                if (!opponent.IsDead && opponent.IsEnemy() != unit.IsEnemy()
+                    && (opponent.GetAction<EmberAction>() != null || opponent.GetAction<ShootAction>() != null))
+                {
+                    var plan = CoverSystem.Preview(opponent.GetGridPosition(), gridPosition, 10, unit);
+                    if (plan.cover != null) coverValue = 3;
+                }
         return new EnemyAIAction()
         {
             gridPosition = gridPosition,
-            actionValue = targetCount * 10 + approachValue,
+            actionValue = targetCount * 10 + approachValue + coverValue,
         };
     }
 }

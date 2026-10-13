@@ -31,6 +31,7 @@ public class ShootAction : BaseAction
     private bool canShootBullet;
     private Unit targetUnit;
     public Unit TargetUnit => IsActive ? targetUnit : null;
+    public int DamageAmount => Definition != null ? Definition.damage : 40;
 
     private void Update()
     {
@@ -107,7 +108,7 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        targetUnit.Damage(Definition != null ? Definition.damage : 40, unit.transform);
+        CoverSystem.Apply(unit.GetGridPosition(), targetUnit, DamageAmount, unit.transform);
     }
 
     public override string GetActionName()
@@ -153,21 +154,13 @@ public class ShootAction : BaseAction
                 //ohne Unit setzt er Unit als Targetunit, obwohl die Gridposition nicht erlaubt ist
                 Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(testGridPosition);
 
-                if (targetUnit.IsEnemy() == unit.IsEnemy())
+                if (targetUnit.IsDead || targetUnit.IsEnemy() == unit.IsEnemy())
                 {
                     //wenn beide Units im selben Team sind
                     continue;
                 }
 
-                Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(unitGridPosition);
-                Vector3 shootDirection = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
-
-
-                float unitShoulderHeight = 0.5f;
-                if (Physics.Raycast(unitWorldPosition + Vector3.up * unitShoulderHeight,
-                    shootDirection,
-                    Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition()),
-                    obstaclesLayerMask))
+                if (CoverSystem.Preview(unitGridPosition, testGridPosition, DamageAmount, targetUnit).blocked)
                 {
                     //wenn ein Hindernis die Sichtlinie blockiert, kann nicht geschossen werden
                     continue;
@@ -181,6 +174,8 @@ public class ShootAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        if (isActive) return;
+        if (!IsValidActionGridPosition(gridPosition)) { onActionComplete?.Invoke(); return; }
         targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(gridPosition);
 
         state = State.Aiming;
@@ -212,7 +207,8 @@ public class ShootAction : BaseAction
             gridPosition = gridPosition,
 
             //das umgehkehrte von der normalized Health z.B.(1-0,2) und das mal 100
-            actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f),
+            actionValue = 100 + CoverSystem.Preview(unit.GetGridPosition(), gridPosition, DamageAmount, targetUnit).unitDamage
+                + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f),
         };
     }
 

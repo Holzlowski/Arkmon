@@ -61,9 +61,13 @@ public class FireCombatTests
         var root = new GameObject("Test burnable bush"); root.SetActive(false); root.layer = LayerMask.NameToLayer("Obstacles");
         root.transform.position = (Vector3)Call(grid, "GetWorldPosition", Cell(3, 2));
         root.AddComponent<BoxCollider>(); Component obstacle = root.AddComponent(T("BurningObstacle")); root.SetActive(true);
+        Call(obstacle, "Configure", Enum.Parse(T("BurningObstacle+MaterialKind"), "Vegetation"), 40, false, false);
         for (int i = 0; i < 3; i++) yield return null;
         object path = Instance("Pathfinding"); Assert.That(Call(path, "IsWalkableGridPosition", Cell(3, 2)), Is.EqualTo(false));
         yield return Attack("FlameSwordAction", Cell(3, 2));
+        object audio = T("SoundManager").GetField("instance").GetValue(null);
+        Assert.That(P(audio, "LastEffectName"), Is.EqualTo("fire-hit"));
+        Assert.That(GameObject.Find("Flame sword impact"), Is.Not.Null);
         Component status = root.GetComponent(T("BurningStatus"));
         Assert.That(P(status, "IsBurning"), Is.EqualTo(true)); Assert.That(P(obstacle, "Health"), Is.EqualTo(15));
         Assert.That(Call(cat, "GetActionPoints"), Is.EqualTo(1));
@@ -176,7 +180,13 @@ public class FireCombatTests
 
     [UnityTest] public IEnumerator LethalBurnDamage_UsesRecallAndVictoryWaitsForBothMonsters()
     {
+        // Explicit two-monster fixture: the introductory NPC encounter now uses only one.
+        object configuration = deployment.GetType().GetField("configuration", Flags).GetValue(deployment);
+        Component prefab = (Component)((Array)T("BattleConfiguration").GetField("enemyTeam").GetValue(configuration)).GetValue(0);
+        UnityEngine.Object.Instantiate(prefab.gameObject, (Vector3)Call(grid, "GetWorldPosition", Cell(6, 2)), Quaternion.identity);
+        yield return null;
         Component[] enemies = ((IEnumerable)Call(manager, "GetEnemyUnitList")).Cast<Component>().ToArray();
+        Assert.That(enemies.Length, Is.EqualTo(2));
         foreach (Component unit in enemies)
         {
             LogAssert.Expect(LogType.Log, "5"); Call(unit, "Damage", 45, null);

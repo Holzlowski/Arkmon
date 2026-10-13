@@ -11,36 +11,37 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e89743281d320348811183e39d21313, type: 3}
   m_Name: John 2
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   sections:
   - dialogue:
-    - "Wie ich sehe, seid ihr ein Arktr\xE4ger mein Herr."
-    - "Dank der Sphere w\xE4re es mir eine Ehre euch auf eurem Weg zu pr\xFCfen."
+    - "Da bist du ja! Mit deinem grünen Mantel siehst du schon bereit für den großen Tag aus."
+    - "Bevor die Arkanmeisterin an den Hof kommt, prüfen wir, wie gut du und Kafla zusammenarbeiten. Mit meinem Kristall rufe ich Distelwolle."
+    - "Achte auf deine Stellung: Steine und Zäune schützen vor Fernangriffen, solange sie halten. Von der Seite kannst du Deckung umgehen. Spare einen Aktionspunkt für Abwehr, wenn du einen Gegenangriff erwartest."
     battleAfterDialogue: 0
     endAfterDialogue: 0
     branchPoint:
-      question: "W\xE4rt ihr bereit gegen mich anzutreten?"
+      question: "Bist du bereit für deine Prüfung?"
       answers:
       - answerLabel: Ja
         nextElement: 1
       - answerLabel: Nein
         nextElement: 2
   - dialogue:
-    - Macht euch bereit!
+    - "Dann zeig mir, was in euch steckt!"
     battleAfterDialogue: 1
     endAfterDialogue: 0
     branchPoint:
-      question: 
+      question:
       answers:
-      - answerLabel: 
+      - answerLabel:
         nextElement: 0
   - dialogue:
-    - Verliert nicht den Mut.
-    - Ich werde hier geduldig auf euch warten.
+    - "Lass dir Zeit. Ich warte hier beim Übungsplatz."
+    - "Wenn du bereit bist, können wir jederzeit üben."
     battleAfterDialogue: 0
     endAfterDialogue: 1
     branchPoint:
-      question: 
+      question:
       answers:
-      - answerLabel: 
+      - answerLabel:
         nextElement: 0

@@ -26,13 +26,26 @@ public class NPC : MonoBehaviour, IInteractableAsPlayer
         }
     }
 
-    void Update()
-    {
+    private void Awake()
+    { if (GetComponent<NPCSummoningFocus>() == null) gameObject.AddComponent<NPCSummoningFocus>(); }
 
+    public void FacePlayer()
+    {
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null) return;
+        PaperCharacterVisual visual = GetComponent<PaperCharacterVisual>();
+        if (visual != null) visual.FaceWorldDirection(player.transform.position - transform.position);
+    }
+
+    private void Update()
+    {
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null && (player.transform.position - transform.position).sqrMagnitude <= 9f) FacePlayer();
     }
 
     public void InteractWithPlayer()
     {
+        FacePlayer();
         DialogueBoxController.instance.StartDialogue(dialogueTree, startSection, npcName, battleSceneName, battleConfiguration);
     }
 

@@ -15,10 +15,12 @@ public class UnitWorldUI : MonoBehaviour
     private GameObject statusPanel;
     private int shownRounds = -1;
     private bool shownDown;
+    private CanvasGroup phase;
 
     private void Start()
     {
         BuildPaperView();
+        phase = gameObject.AddComponent<CanvasGroup>();
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
         healthSystem.OnDamage += HealthSystem_OnDamaged;
         UpdateActionPoints();
@@ -76,6 +78,8 @@ public class UnitWorldUI : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (phase != null) phase.alpha = unit != null && !unit.IsDead && UnitManager.Instance != null
+            && UnitManager.Instance.IsBattleRunning ? 1 : 0;
         if (statusText == null || unit == null || unit.IsDead) return;
         Camera camera = Camera.main;
         PaperCharacterVisual paper = unit.GetComponent<PaperCharacterVisual>();

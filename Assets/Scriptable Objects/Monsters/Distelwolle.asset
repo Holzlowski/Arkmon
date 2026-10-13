@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDefinition
   maxHealth: 50
   maxActionPoints: 3
-  summonColor: {r: 0.65, g: 0.48, b: 0.78, a: 1}
+  summonColor: {r: 1, g: 1, b: 1, a: 1}
   abilities:
   - {fileID: 11400000, guid: 1e80f40e31b26434b9126e99327dcbb6, type: 2}
   - {fileID: 11400000, guid: 08d8a41ad94571347bf0f3e555796071, type: 2}

@@ -18,6 +18,12 @@ public class RamAction : BaseAction
     private bool hitApplied;
     private bool blockedPush;
     private int MaxRange => Definition != null ? Definition.range : 3;
+    public int DamageAmount => Definition != null ? Definition.damage : 30;
+    public bool PreviewPush(GridPosition destination, out GridPosition pushed, out bool knockdown)
+    {
+        bool valid = TryGetPlan(unit.GetGridPosition(), destination, out _, out _, out pushed);
+        knockdown = valid && !IsFree(pushed); return valid;
+    }
 
     public override string GetActionName() => "Rammstoß";
     public override int GetActionPointCost() => Definition != null ? Definition.actionPointCost : 2;
@@ -130,7 +136,7 @@ public class RamAction : BaseAction
                 if (!Advance(unit, approachCell, chargeSpeed)) break;
                 blockedPush = !IsFree(pushCell);
                 hitApplied = true;
-                targetUnit.Damage(Definition != null ? Definition.damage : 30, unit.transform);
+                targetUnit.Damage(DamageAmount, unit.transform);
                 OnAnyRamHit?.Invoke(this, EventArgs.Empty);
                 if (blockedPush && targetUnit != null && !targetUnit.IsDead)
                 {

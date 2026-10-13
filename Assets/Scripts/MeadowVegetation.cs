@@ -10,6 +10,8 @@ public class MeadowVegetation : MonoBehaviour
     [SerializeField, Min(0.5f)] private float nearSpacing = .85f;
     [SerializeField, Min(1f)] private float farSpacing = 2.8f;
     [SerializeField] private int seed = 721;
+    [SerializeField] private Rect clearWorldArea;
+    public void SetClearArea(Rect area) { clearWorldArea = area; rebuild = true; }
     private GameObject generated;
     private readonly List<Mesh> meshes = new List<Mesh>();
     private bool rebuild;
@@ -98,6 +100,8 @@ public class MeadowVegetation : MonoBehaviour
             for (float x = x0; x < x0 + 40; x += step)
             {
                 float wx = x + Sample(random) * step, wz = z + Sample(random) * step;
+                Vector3 world = transform.TransformPoint(new Vector3(wx, 0, wz));
+                if (clearWorldArea.width > 0 && clearWorldArea.Contains(new Vector2(world.x, world.z))) continue;
                 // The entire board, its walls and a small margin remain clear.
                 if (wx > 4.8f && wx < 32.4f && wz > -2 && wz < 25) continue;
                 float gold = Gold(wx, wz), y = Height(wx, wz) + .01f;
