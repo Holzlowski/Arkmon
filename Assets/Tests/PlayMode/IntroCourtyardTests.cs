@@ -31,6 +31,32 @@ public class IntroCourtyardTests
         body.position=new Vector3(40,1,5);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
         for(int i=0;i<80;i++){body.linearVelocity=new Vector3(7,body.linearVelocity.y,0);yield return new WaitForFixedUpdate();}
         Assert.That(body.position.x,Is.LessThan(42.7f),"The outer wall stops the player.");Assert.That(body.position.y,Is.GreaterThan(-.5f));body.linearVelocity=Vector3.zero;
+        var gardenType=T("CourtyardGarden");
+        var can=GameObject.Find("Courtyard watering can").GetComponent(gardenType);
+        var closeDialogue=T("DialogueBoxController").GetMethod("CloseDialogue");
+        var dialogueController=T("DialogueBoxController").GetField("instance").GetValue(null);
+        closeDialogue.Invoke(dialogueController,null);
+        gardenType.GetMethod("InteractWithPlayer").Invoke(can,null);
+        closeDialogue.Invoke(dialogueController,null);
+        var beds=UnityEngine.Object.FindObjectsByType(gardenType,FindObjectsSortMode.None)
+            .Cast<Component>().Where(point=>point.name=="Garden watering point").ToArray();
+        Assert.That(beds.Length,Is.EqualTo(3));
+        foreach(var bed in beds)
+        {
+            gardenType.GetMethod("InteractWithPlayer").Invoke(bed,null);
+            closeDialogue.Invoke(dialogueController,null);
+        }
+        Assert.That(gardenType.GetProperty("Completed").GetValue(null),Is.True);
+        body.position=new Vector3(9,1,1);Physics.SyncTransforms();
+        yield return new WaitForSeconds(.8f);Capture("intro-courtyard-watered");
+        body.position=new Vector3(47,1,-1);Physics.SyncTransforms();
+        yield return new WaitForSeconds(.8f);Capture("intro-courtyard-bridge");
+        body.position=new Vector3(54,1,-1);Physics.SyncTransforms();
+        yield return new WaitForSeconds(.8f);Capture("intro-courtyard-far-bank");
+        var stream=GameObject.Find("Spatial stream ambience").GetComponent<AudioSource>();
+        Assert.That(stream.clip,Is.Not.Null);
+        Assert.That(stream.loop,Is.True);
+        Assert.That(stream.spatialBlend,Is.EqualTo(1f));
         var tower=entrances.First(e=>e.GetType().GetField("destination").GetValue(e).ToString()=="Tower");
         var dialogue=T("DialogueBoxController").GetField("instance").GetValue(null);dialogue.GetType().GetMethod("CloseDialogue").Invoke(dialogue,null);
         tower.GetType().GetMethod("InteractWithPlayer").Invoke(tower,null);
