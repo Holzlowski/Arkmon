@@ -43,6 +43,10 @@ public class CourtyardPolishTests
         Assert.That(Physics.Raycast(new Vector3(0,5,-11),Vector3.down,out var hill,10),Is.True);
         Assert.That(hill.point.y,Is.GreaterThan(1.4f),"The meadow relief has real walkable height.");
         Assert.That(hill.collider.name,Is.EqualTo("Rolling courtyard meadow"));
+        var footsteps=GameObject.FindWithTag("Player").GetComponent(T("ExplorationFootsteps"));
+        var surface=T("ExplorationFootsteps").GetMethod("SurfaceAt",BindingFlags.NonPublic|BindingFlags.Instance)
+            .Invoke(footsteps,new object[]{hill});
+        Assert.That(surface.ToString(),Is.EqualTo("Grass"));
         Assert.That(Physics.BoxCast(new Vector3(2,1,1),new Vector3(.3f,.75f,.3f),Vector3.forward,
             out var blocked,Quaternion.identity,5,~0,QueryTriggerInteraction.Ignore),Is.False,
             "The cottage approach must stay clear of benches: "+blocked.collider?.name);

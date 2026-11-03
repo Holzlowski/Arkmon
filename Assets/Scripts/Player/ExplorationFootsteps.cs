@@ -79,6 +79,7 @@ public sealed class ExplorationFootsteps : MonoBehaviour
         var material = hit.collider.GetComponent<Renderer>()?.sharedMaterial;
         if (material != null && material.name.IndexOf("oak", System.StringComparison.OrdinalIgnoreCase) >= 0)
             return Surface.Wood;
-        return courtyard && hit.collider.name == "Courtyard walkable ground" ? Surface.Grass : Surface.Stone;
+        return courtyard && (hit.collider.name == "Courtyard walkable ground"
+            || hit.collider.name == "Rolling courtyard meadow") ? Surface.Grass : Surface.Stone;
     }
 }
