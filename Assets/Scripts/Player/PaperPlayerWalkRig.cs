@@ -148,7 +148,7 @@ public sealed class PaperPlayerWalkRig
     {
         float stride = Mathf.Sin(phase);
         leg.transform.localPosition = new Vector3(hipX, .75f + Mathf.Abs(stride) * .085f + Mathf.Max(0, Mathf.Cos(phase)) * .035f, depth);
-        leg.transform.localRotation = Quaternion.Euler(0, 0, stride * (stride < 0 ? 40 : 27));
+        leg.transform.localRotation = Quaternion.Euler(0, 0, stride * (stride < 0 ? 52 : 27));
     }
 
     public void Hide() { if (root != null) root.SetActive(false); if (original != null) original.forceRenderingOff = false; }
