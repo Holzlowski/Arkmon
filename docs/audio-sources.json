@@ -17,6 +17,13 @@
   },
   "recorded_effects": [
     {
+      "author": "DRAGON-STUDIO",
+      "title": "Door Closed",
+      "source": "https://pixabay.com/sound-effects/household-door-closed-382707/",
+      "license": "Pixabay Content License",
+      "runtime_file": "Assets/Resources/Audio/wardrobe-close.wav"
+    },
+    {
       "author": "Kenney",
       "source": "https://kenney.nl/assets/rpg-audio",
       "license": "CC0-1.0",

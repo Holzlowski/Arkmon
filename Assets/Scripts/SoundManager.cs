@@ -78,11 +78,13 @@ public class SoundManager : MonoBehaviour
     }
     public void PlayMusic(int index)
     { if (index >= 0 && index < sceneMusicClips.Count) { music.clip = sceneMusicClips[index]; music.volume = musicVolume; music.Play(); } }
-    public void PlayEffect(string name)
+    public void PlayEffect(string name) => PlayEffect(name, 1f);
+
+    public void PlayEffect(string name, float gain)
     {
         AudioClip clip = Clip(name);
         if (clip != null && effects.enabled && FindFirstObjectByType<AudioListener>() != null)
-        { LastEffectName = name; effects.PlayOneShot(clip, effectsVolume); }
+        { LastEffectName = name; effects.PlayOneShot(clip, effectsVolume * Mathf.Clamp01(gain)); }
     }
     private void ActionStarted(object sender, EventArgs args)
     {

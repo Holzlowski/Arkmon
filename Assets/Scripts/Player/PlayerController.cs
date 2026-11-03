@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        if ((gameObject.scene.name == "TowerRoom" || gameObject.scene.name == "StartScene") &&
+            GetComponent<ExplorationFootsteps>() == null)
+            gameObject.AddComponent<ExplorationFootsteps>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         GetComponent<PaperCharacterVisual>()?.SetRestingSprite(PlayerEquipmentAppearance.RestingSprite);

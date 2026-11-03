@@ -6,9 +6,9 @@ from pathlib import Path
 import soundfile as sf
 root = Path(__file__).resolve().parents[1]
 source = root / 'Builds/sample-audio/kenney/kenney_rpg-audio/Audio'
+# wardrobe-close.wav is imported separately from the credited Pixabay recording.
 for name, original, gain in [
-    ('wardrobe-open', 'creak1.ogg', .28),
-    ('wardrobe-close', 'doorClose_1.ogg', .22),
+    ('wardrobe-open', 'creak1.ogg', .68),
     ('mantle-rustle', 'cloth2.ogg', .38),
 ]:
     data, rate = sf.read(source / original)

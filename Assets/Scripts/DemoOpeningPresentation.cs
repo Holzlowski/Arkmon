@@ -66,6 +66,8 @@ public class DemoOpeningPresentation : MonoBehaviour
         {
             yield return Fade(1, 0, .65f);
             yield return new WaitForSecondsRealtime(1.2f);
+            if (paintedBed != null)
+                SoundManager.instance?.PlayEffect("IntroFoley/bed-cloth");
             yield return Fade(0, 1, .18f);
             RestoreVisuals(false, false);
             if (paintedBed != null)
@@ -83,7 +85,6 @@ public class DemoOpeningPresentation : MonoBehaviour
                 if (paintedBed != null)
                     wakingVisual.FaceWorldDirection(paintedBed.StandingPosition - paintedBed.BedsidePosition);
             }
-            SoundManager.instance?.PlayEffect("mantle-rustle");
             Vector3 bedsideFocus = framing != null ? framing.m_TrackedObjectOffset : Vector3.zero;
             float bedsideDistance = framing != null ? framing.m_CameraDistance : 0;
             Quaternion bedsideRotation = openingCamera != null ? openingCamera.transform.rotation : Quaternion.identity;
@@ -155,7 +156,6 @@ public class DemoOpeningPresentation : MonoBehaviour
             framing = camera != null ? camera.GetCinemachineComponent<CinemachineFramingTransposer>() : null;
             if (framing != null) { focus = framing.m_TrackedObjectOffset; distance = framing.m_CameraDistance; }
             if (dressingWardrobe != null) dressingWardrobe.SetInteractionOpen(true);
-            SoundManager.instance?.PlayEffect("wardrobe-open");
             // Let the doors finish opening, then give the hanging mantle a readable beat.
             if (framing != null && player != null && dressingWardrobe != null)
             {
@@ -176,7 +176,6 @@ public class DemoOpeningPresentation : MonoBehaviour
             DemoOpening.FinishTakingMantle();
             yield return new WaitForSecondsRealtime(.25f);
             if (dressingWardrobe != null) dressingWardrobe.SetInteractionOpen(false);
-            SoundManager.instance?.PlayEffect("wardrobe-close");
             if (framing != null) yield return EaseCamera(focus, distance, .6f);
             else yield return new WaitForSecondsRealtime(.6f);
         }

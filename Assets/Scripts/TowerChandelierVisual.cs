@@ -12,6 +12,24 @@ public class TowerChandelierVisual : MonoBehaviour
         style=Resources.Load<FireVisualStyle>("Paper Fire");
         if(candleLight!=null)baseIntensity=candleLight.intensity;
     }
+    private void Start()
+    {
+        // The same flame component is used on other candles; only this fixture emits the loop.
+        if (gameObject.name != "Tower candle chandelier") return;
+        var clip = Resources.Load<AudioClip>("Audio/IntroFoley/chandelier-crackle");
+        if (clip == null) return;
+        var source = gameObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.clip = clip;
+        source.loop = true;
+        source.spatialBlend = 1f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = 4f;
+        source.maxDistance = 20f;
+        source.dopplerLevel = 0;
+        source.volume = .16f;
+        source.Play();
+    }
     private void LateUpdate()
     {
         float time=Time.time;

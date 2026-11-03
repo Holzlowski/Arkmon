@@ -23,7 +23,12 @@ public class PaintedWardrobe : MonoBehaviour
     private void LateUpdate()
     {
         bool open=previewOpen || interactionOpen;
+        float previous=openness;
         openness=Mathf.MoveTowards(openness,open?65f:0f,Time.unscaledDeltaTime*120f);
+        if(open && previous==0 && openness>0)
+            SoundManager.instance?.PlayEffect("wardrobe-open");
+        if(!open && previous>0 && openness==0)
+            SoundManager.instance?.PlayEffect("wardrobe-close");
         if(leftDoor!=null)leftDoor.localRotation=Quaternion.Euler(0,openness,0);
         if(rightDoor!=null)rightDoor.localRotation=Quaternion.Euler(0,-openness,0);
         if(mantle!=null)mantle.SetActive(!DemoOpening.HasWardrobeOutfit);
