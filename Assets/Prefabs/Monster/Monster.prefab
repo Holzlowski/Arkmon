@@ -240,7 +240,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1136913014808128921, guid: 934b311bbd86f3d4ebc5ed97d178802b,
+  m_Sprite: {fileID: 6530668853560543224, guid: 840a56c7a956538459e7f9bc43b53c18,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -776,12 +776,17 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PaperSwordAnimation
   bodyRenderer: {fileID: 1741849533225269556}
-  armSprite: {fileID: -2694272684299125209, guid: 934b311bbd86f3d4ebc5ed97d178802b,
+  armSprite: {fileID: 21300000, guid: 1a31345b06df13746a36de6f57878c78, type: 2}
+  forearmSprite: {fileID: 21300000, guid: b28576dca4bc4ab4683999425bfc09fb, type: 2}
+  swordSprite: {fileID: -6530949970913450097, guid: 840a56c7a956538459e7f9bc43b53c18,
     type: 3}
-  forearmSprite: {fileID: 21300000, guid: fc163410f9a782247bba2574d2cf655b, type: 2}
-  swordSprite: {fileID: -6681553718673941482, guid: 934b311bbd86f3d4ebc5ed97d178802b,
-    type: 3}
-  sparkBodySprite: {fileID: 21300000, guid: 6e2061a4237a93a4388a09a8da70fac9, type: 3}
+  sparkBodySprite: {fileID: 21300000, guid: 359cf844dccf1f94b8fe391424f817ae, type: 2}
+  gripHandSprite: {fileID: 21300000, guid: 377e55bb13d35c44ab8bb88301d5ec60, type: 2}
+  scrapeHandSprite: {fileID: 21300000, guid: 5d51e02149db5c944b0ecb6b803d927b, type: 2}
+  wristReach: 1.2
+  shoulderAnchor: {x: 0.025, y: 0.47}
+  scrapeArmAngle: -160
+  scrapeShoulderDrop: 0
 --- !u!114 &176143648393970999
 MonoBehaviour:
   m_ObjectHideFlags: 0

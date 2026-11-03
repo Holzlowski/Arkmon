@@ -8,6 +8,12 @@ public class PaperSwordAnimation : MonoBehaviour
     [SerializeField] private Sprite forearmSprite;
     [SerializeField] private Sprite swordSprite;
     [SerializeField] private Sprite sparkBodySprite;
+    [SerializeField] private Sprite gripHandSprite;
+    [SerializeField] private Sprite scrapeHandSprite;
+    [SerializeField] private float wristReach = .82f;
+    [SerializeField] private Vector2 shoulderAnchor = new Vector2(-.27f,.44f);
+    [SerializeField] private float scrapeArmAngle = -130f;
+    [SerializeField] private float scrapeShoulderDrop = .27f;
     public const float SparkReleaseTime = .7f;
     public const float SparkDuration = 1.3f;
     public bool IsScraping { get; private set; }
@@ -21,7 +27,7 @@ public class PaperSwordAnimation : MonoBehaviour
     public const float HitTime = 0.42f;
     public const float Duration = 0.85f;
     private Transform mirrorRoot, shoulder, sword, tip;
-    private SpriteRenderer armRenderer, forearmRenderer, swordRenderer;
+    private SpriteRenderer armRenderer, forearmRenderer, swordRenderer, gripRenderer;
     private TrailRenderer fireTrail;
     private Material trailMaterial, swordMaterial;
     private float elapsed;
@@ -38,7 +44,7 @@ public class PaperSwordAnimation : MonoBehaviour
         mirrorRoot.SetParent(bodyRenderer.transform, false);
         shoulder = new GameObject("Sword shoulder").transform;
         shoulder.SetParent(mirrorRoot, false);
-        shoulder.localPosition = new Vector3(-bodyRenderer.sprite.bounds.size.x * 0.27f, height * 0.44f, 0.005f);
+        shoulder.localPosition = new Vector3(bodyRenderer.sprite.bounds.size.x * shoulderAnchor.x, height * shoulderAnchor.y, 0.005f);
         restingShoulder = shoulder.localPosition;
         // Tuck the shoulder cap beneath the cloak instead of drawing a joint on the chest.
         armRenderer = Part("Sword arm", armSprite, shoulder, bodyRenderer.sortingOrder - 1);
@@ -54,12 +60,19 @@ public class PaperSwordAnimation : MonoBehaviour
         }
         sword = new GameObject("Sword wrist").transform;
         sword.SetParent(shoulder, false);
-        sword.localPosition = new Vector3(-armSprite.bounds.size.x * armScale * 0.82f, 0, -0.002f);
+        sword.localPosition = new Vector3(-armSprite.bounds.size.x * armScale * wristReach, 0, -0.002f);
         swordRenderer = Part("Wooden sword", swordSprite, sword, bodyRenderer.sortingOrder + 1);
         swordMaterial = new Material(bodyRenderer.sharedMaterial);
         swordRenderer.sharedMaterial = swordMaterial;
         float swordScale = height * 0.45f / swordSprite.bounds.size.y;
         swordRenderer.transform.localScale = Vector3.one * swordScale;
+        if(gripHandSprite != null)
+        {
+            // Fingers rotate with the handle; the forearm keeps its own shoulder rotation.
+            gripRenderer = Part("Sword gripping paw",gripHandSprite,sword,bodyRenderer.sortingOrder+4);
+            gripRenderer.transform.localScale = Vector3.one*armScale;
+            gripRenderer.transform.localPosition = new Vector3(0,0,-.04f);
+        }
         tip = new GameObject("Sword tip").transform;
         tip.SetParent(sword, false);
         tip.localPosition = Vector3.up * swordSprite.bounds.max.y * swordScale;
@@ -108,6 +121,7 @@ public class PaperSwordAnimation : MonoBehaviour
         mirrorRoot.localScale = new Vector3(bodyRenderer.flipX ? -1 : 1, 1, 1);
         armRenderer.color = bodyRenderer.color;
         if (forearmRenderer != null) forearmRenderer.color = bodyRenderer.color;
+        if(gripRenderer != null) gripRenderer.color = bodyRenderer.color;
         if (visual.IsDefeated) { CancelSwing(); SetSwordColor(bodyRenderer.color); return; }
         if (IsScraping)
         {
@@ -195,7 +209,7 @@ public class PaperSwordAnimation : MonoBehaviour
         if (sparkBodySprite != null) bodyRenderer.sprite = sparkBodySprite;
         if (clawHand == null)
         {
-            clawHand = Part("Scraping claw hand", forearmSprite, mirrorRoot, bodyRenderer.sortingOrder + 5);
+            clawHand = Part("Scraping claw hand", scrapeHandSprite != null ? scrapeHandSprite : forearmSprite, mirrorRoot, bodyRenderer.sortingOrder + 5);
             clawHand.transform.localScale = forearmRenderer.transform.localScale * .85f;
             clawMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
             clawMaterial.color = new Color(1f,.93f,.72f);
@@ -207,7 +221,7 @@ public class PaperSwordAnimation : MonoBehaviour
                 line.sharedMaterial=clawMaterial;line.sortingOrder=bodyRenderer.sortingOrder+6;
                 line.sortingLayerID=bodyRenderer.sortingLayerID;line.positionCount=3;
                 line.startWidth=.022f;line.endWidth=.003f;
-                float x=forearmSprite.bounds.min.x;
+                float x=clawHand.sprite.bounds.min.x;
                 float y=(i-1)*.08f;
                 line.SetPositions(new[]{new Vector3(x+.08f,y,-.04f),new Vector3(x-.10f,y+.08f,-.04f),new Vector3(x-.18f,y+.04f,-.04f)});
             }
@@ -225,12 +239,12 @@ public class PaperSwordAnimation : MonoBehaviour
     {
         float raise=Mathf.SmoothStep(0,1,time/.2f);
         float recover=Mathf.SmoothStep(0,1,(time-.95f)/(SparkDuration-.95f));
-        shoulder.localPosition = restingShoulder - Vector3.up * .27f * raise * (1f - recover);
-        Pose(Mathf.Lerp(Mathf.Lerp(-15,-130,raise),-15,recover),Mathf.Lerp(Mathf.Lerp(40,65,raise),40,recover));
+        shoulder.localPosition = restingShoulder - Vector3.up * scrapeShoulderDrop * raise * (1f - recover);
+        Pose(Mathf.Lerp(Mathf.Lerp(-15,scrapeArmAngle,raise),-15,recover),Mathf.Lerp(Mathf.Lerp(40,65,raise),40,recover));
         float progress=Mathf.Clamp01((time-.2f)/(SparkReleaseTime-.2f));
         Vector3 contact=sword.TransformPoint(tip.localPosition*Mathf.Lerp(.15f,.85f,progress));
         Vector3 local=mirrorRoot.InverseTransformPoint(contact);
-        float width=forearmSprite.bounds.size.x*clawHand.transform.localScale.x;
+        float width=clawHand.sprite.bounds.size.x*clawHand.transform.localScale.x;
         clawHand.transform.localPosition=local+new Vector3(width*.85f,0,-.08f);
         clawHand.color=bodyRenderer.color;
         clawHand.gameObject.SetActive(time<.95f);
