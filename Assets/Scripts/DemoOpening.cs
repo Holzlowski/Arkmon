@@ -12,6 +12,7 @@ public class DemoOpening : MonoBehaviour
     public static bool HasMantle { get; private set; }
     public static bool HasLamp { get; private set; }
     public static bool IsEquipped => HasMantle && HasLamp;
+    public static bool HasWardrobeOutfit => IntroChapter.Active ? IntroChapter.HasFamilyOutfit : HasMantle;
     public static bool EnteredCourtyard { get; private set; }
     public static bool HasAwakened { get; private set; }
     public static bool PassedFirstTrial { get; private set; }
@@ -31,7 +32,7 @@ public class DemoOpening : MonoBehaviour
     private static DemoOpeningPresentation presentation;
     public static void RecordTrialVictory() => PassedFirstTrial = true;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetSession() { Started = HasMantle = HasLamp = EnteredCourtyard = HasAwakened = PassedFirstTrial = TrialIntroductionSeen = firstTrialPending = false; presentation = null; }
+    private static void ResetSession() { Started = HasMantle = HasLamp = EnteredCourtyard = HasAwakened = PassedFirstTrial = TrialIntroductionSeen = firstTrialPending = false; presentation = null; IntroChapter.ResetProgress(); }
     [SerializeField] private bool towerRoom;
     [SerializeField] private Vector3 courtyardArrival = new Vector3(-17, 1, 0);
     private TextMeshProUGUI objective;
@@ -49,11 +50,35 @@ public class DemoOpening : MonoBehaviour
         yield return null;
         GameObject player = GameObject.FindWithTag("Player");
         ApplyOutfit(player);
+        if(towerRoom && IntroChapter.Active && IntroChapter.ConsumeRoomReturn() && player!=null)
+        {
+            foreach(var door in FindObjectsByType<DemoInteractable>(FindObjectsSortMode.None))if(door.kind==DemoInteractable.Kind.RoomDoor)
+            {
+                var roomDoor = FindFirstObjectByType<TowerRoomDoor>();
+                Vector3 position=roomDoor != null ? roomDoor.ApproachPosition : door.transform.position+new Vector3(-1.4f,1,-.5f);
+                player.transform.position=position;var body=player.GetComponent<Rigidbody>();if(body!=null){body.position=position;body.linearVelocity=Vector3.zero;}
+                Physics.SyncTransforms();break;
+            }
+        }
         if (towerRoom)
         {
             presentation = gameObject.AddComponent<DemoOpeningPresentation>();
-            if (!HasAwakened && !HasMantle)
+            if (!HasAwakened && !HasWardrobeOutfit)
             { yield return presentation.StartCoroutine(presentation.WakeUp(player)); HasAwakened = true; }
+        }
+        if (!towerRoom && IntroChapter.Active && Started)
+        {
+            bool firstVisit = !EnteredCourtyard;
+            EnteredCourtyard = true;
+            var entrance = GameObject.Find("Tower entrance")?.transform;
+            presentation = gameObject.AddComponent<DemoOpeningPresentation>();
+            yield return presentation.StartCoroutine(presentation.ArriveInCourtyard(player, entrance, firstVisit));
+            yield break;
+        }
+        if (towerRoom && IntroChapter.Active)
+        {
+            if(!IntroChapter.HasFamilyOutfit) DialogueBoxController.instance.ShowMessage("Heute kommt die Arkanmeisterin an den Hof. Ob mein Gefäß dieses Jahr auf mich antwortet? Erst ziehe ich mein Familiengewand an. Es hängt im Schrank.", IntroChapter.PlayerName);
+            yield break;
         }
         if (towerRoom && !IsEquipped)
         {
@@ -101,6 +126,11 @@ public class DemoOpening : MonoBehaviour
     {
         while (SceneLoadManager.IsTransitioning) yield return null;
         yield return new WaitForSecondsRealtime(.3f);
+        if(IntroChapter.Active)
+        {
+            DialogueBoxController.instance?.ShowMessage("Ein neuer Morgen im Hof von Aurenfeld. Ich sollte die Leute begrüßen. Die Arkanmeisterin wird am Burgtor erwartet.",IntroChapter.PlayerName);
+            yield break;
+        }
         var john=FindObjectsByType<NPC>(FindObjectsSortMode.None);
         NPC examiner=System.Array.Find(john,n=>n.npcName=="John");
         var player=GameObject.FindWithTag("Player");
@@ -112,6 +142,14 @@ public class DemoOpening : MonoBehaviour
     private void Update()
     {
         if (objective == null) return;
+        if(IntroChapter.Active)
+        {
+            objective.text = towerRoom ? !HasAwakened ? "Elian von Aurenfeld · Ein neuer Morgen"
+                : !IntroChapter.HasFamilyOutfit ? "Vorbereitung · Hol dein Familiengewand aus dem Schrank"
+                : "Bereit · Geh durch die Tür in den Burghof"
+                : "Aurenfeld · Erkunde den Hof und begrüße seine Bewohner";
+            return;
+        }
         if (IsPresenting)
         { objective.text = !towerRoom ? PassedFirstTrial ? "Prüfung bestanden · Du und Kafla seid bereit!" : "Ankunft im Hof · John wartet am Übungsplatz"
             : IsEquipped ? "Bereit für deine Prüfung" : HasAwakened ? "Vorbereitung · Lampe und Mantel für deine Prüfung" : "Der Morgen deiner Prüfung"; return; }
@@ -122,13 +160,14 @@ public class DemoOpening : MonoBehaviour
     }
     public static void TakeMantle()
     {
-        if (HasMantle || IsPresenting) return;
+        if (HasWardrobeOutfit || IsPresenting) return;
         if (presentation != null) presentation.StartCoroutine(presentation.Dress(GameObject.FindWithTag("Player")));
         else FinishTakingMantle();
     }
-    public static void FinishTakingMantle() { HasMantle = true; ApplyOutfit(GameObject.FindWithTag("Player")); }
+    public static void FinishTakingMantle() { if(IntroChapter.Active) IntroChapter.EquipFamilyOutfit(); else HasMantle = true; ApplyOutfit(GameObject.FindWithTag("Player")); }
     public static void TakeLamp()
     {
+        if(IntroChapter.Active) return; // The Arkanmeisterin will award the vessel later.
         if (HasLamp || IsPresenting) return;
         HasLamp = true;
         ApplyOutfit(GameObject.FindWithTag("Player"));
@@ -146,6 +185,15 @@ public class DemoOpening : MonoBehaviour
     public static void LeaveRoom()
     {
         if (IsPresenting) return;
+        if(IntroChapter.Active)
+        {
+            if(!IntroChapter.HasFamilyOutfit) { DialogueBoxController.instance.ShowMessage("Ich sollte mich erst umziehen. Mein Familiengewand hängt im Schrank.",IntroChapter.PlayerName); return; }
+            var door = FindFirstObjectByType<TowerRoomDoor>();
+            if (door != null && presentation != null)
+                presentation.StartCoroutine(presentation.LeaveThroughDoor(GameObject.FindWithTag("Player"), door));
+            else SceneLoadManager.instance.LoadExplorationScene("StartScene");
+            return;
+        }
         if (!IsEquipped) { DialogueBoxController.instance.ShowMessage(!HasMantle && !HasLamp
             ? "Für die Prüfung brauche ich meinen Mantel aus dem Schrank und meine Lampe vom Tisch."
             : !HasLamp ? "Meine Lampe steht noch auf dem Tisch. Ohne sie kann ich Kafla nicht rufen."

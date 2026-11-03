@@ -8,7 +8,7 @@ public class PaperUIStyle : ScriptableObject
     public Sprite moveIcon, clawIcon, swordIcon, escapeIcon, fireIcon, downIcon;
     public Sprite flacaPortrait, sheepPortrait, hunterPortrait, playerPortrait, playerRoomPortrait;
     public Sprite PortraitFor(string speaker)
-        => speaker == "Der Junge" ? PlayerEquipmentAppearance.Portrait
+        => speaker == "Der Junge" || speaker == IntroChapter.PlayerName ? PlayerEquipmentAppearance.Portrait
             ?? (DemoOpening.Started && !DemoOpening.HasMantle ? playerRoomPortrait : playerPortrait)
             : speaker == "John" ? hunterPortrait : null;
     public TMP_FontAsset font;

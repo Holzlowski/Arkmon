@@ -39,8 +39,10 @@ public class PaperCharacterVisual : MonoBehaviour
     private float outfitProgress = -1;
     private float wakeProgress = -1;
     private PlayerController playerController;
-    private Sprite[] roomWalk, mantleWalk, roomNoLampWalk, mantleNoLampWalk;
+    private Sprite[] roomWalk, mantleWalk, roomNoLampWalk, mantleNoLampWalk, familyWalk;
     private float travelled;
+    [SerializeField, Min(.2f)] private float walkStrideLength = 2.4f;
+    private PaperPlayerWalkRig playerWalkRig;
     public bool IsPlayingWalkCycle { get; private set; }
     public void SetWakeUpProgress(float progress) => wakeProgress = progress;
     public void SetOutfitChangeProgress(float progress) => outfitProgress = progress;
@@ -66,10 +68,14 @@ public class PaperCharacterVisual : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         if(playerController != null)
         {
+            playerWalkRig?.Dispose();
+            playerWalkRig = new PaperPlayerWalkRig(paperPivot, spriteRenderer);
             roomWalk = Resources.LoadAll<Sprite>("Prince-Room-Walk");
             mantleWalk = Resources.LoadAll<Sprite>("Prince-Mantle-Walk");
             roomNoLampWalk = Resources.LoadAll<Sprite>("Prince-Room-NoLamp-Walk");
             mantleNoLampWalk = Resources.LoadAll<Sprite>("Prince-Mantle-NoLamp-Walk");
+            familyWalk = System.Array.FindAll(Resources.LoadAll<Sprite>("Elian-Family-Star-Sheet"),s=>s.name.StartsWith("Family-Walk-"));
+            System.Array.Sort(familyWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
             System.Array.Sort(roomWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
             System.Array.Sort(mantleWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
             System.Array.Sort(roomNoLampWalk,(a,b)=>string.CompareOrdinal(a.name,b.name));
@@ -92,6 +98,7 @@ public class PaperCharacterVisual : MonoBehaviour
         if (paperPivot == null || !paperPivot.gameObject.activeInHierarchy) return;
         if (IsDefeated)
         {
+            playerWalkRig?.Hide();
             defeatProgress = Mathf.MoveTowards(defeatProgress, 1f, Time.deltaTime / 0.35f);
             paperPivot.localPosition = restPosition;
             paperPivot.localScale = Vector3.Scale(restScale * visualScale * (1f - recallProgress),
@@ -158,24 +165,34 @@ public class PaperCharacterVisual : MonoBehaviour
             paperPivot.rotation = camera.transform.rotation;
             Vector3 direction = unit != null ? GetOpponentDirection() : movement;
             float horizontal = Vector3.Dot(direction, camera.transform.right);
-            if (spriteRenderer != null && Mathf.Abs(horizontal) > 0.025f)
+            if (spriteRenderer != null && wakeProgress < 0 && Mathf.Abs(horizontal) > 0.025f)
                 spriteRenderer.flipX = horizontal < 0f;
         }
+        bool rigOutfit = restingSprite != null && (restingSprite.name == "Prince-Family" || restingSprite.name == "Prince-Room-NoLamp");
+        playerWalkRig?.Present(IsPlayingWalkCycle && rigOutfit && !summoningPose,
+            restingSprite != null && restingSprite.name == "Prince-Family", spriteRenderer != null && spriteRenderer.flipX,
+            travelled / walkStrideLength * Mathf.PI * 2);
     }
 
     private void UpdateWalkFrame(bool walking, float distance)
     {
         IsPlayingWalkCycle = false;
         if(playerController == null || spriteRenderer == null || summoningPose || restingSprite == null) return;
-        Sprite[] frames = restingSprite.name == "Prince-Mantle" ? mantleWalk
+        bool rigAvailable = playerWalkRig != null && playerWalkRig.Available
+            && (restingSprite.name == "Prince-Family" || restingSprite.name == "Prince-Room-NoLamp");
+        Sprite[] frames = restingSprite.name == "Prince-Family" ? familyWalk
+            : restingSprite.name == "Prince-Mantle" ? mantleWalk
             : restingSprite.name == "Prince-Room" ? roomWalk
             : restingSprite.name == "Prince-Mantle-NoLamp" ? mantleNoLampWalk
             : restingSprite.name == "Prince-Room-NoLamp" ? roomNoLampWalk : null;
-        if(!walking || frames == null || frames.Length == 0 || wakeProgress >= 0 || outfitProgress >= 0)
+        if(!walking || (!rigAvailable && (frames == null || frames.Length == 0)) || wakeProgress >= 0 || outfitProgress >= 0)
         { travelled = 0; spriteRenderer.sprite = restingSprite; return; }
         // Distance-based steps stop at walls and do not keep running after key release.
-        travelled += Mathf.Min(distance, .5f);
-        int frame = Mathf.FloorToInt(travelled / 4.8f * frames.Length) % frames.Length;
+        // Reject scene/spawn teleports; the phase follows real distance, not fixed-tick cadence.
+        if(distance < .5f) travelled += distance;
+        travelled = Mathf.Repeat(travelled, walkStrideLength);
+        if(rigAvailable) { spriteRenderer.sprite = restingSprite; IsPlayingWalkCycle = true; return; }
+        int frame = Mathf.FloorToInt(travelled / walkStrideLength * frames.Length) % frames.Length;
         spriteRenderer.sprite = frames[frame]; IsPlayingWalkCycle = true;
     }
 
@@ -205,6 +222,7 @@ public class PaperCharacterVisual : MonoBehaviour
 
     public void SetSummoningPose(bool active)
     {
+        playerWalkRig?.Hide();
         if (spriteRenderer == null) return;
         Sprite pose = active ? Resources.Load<Sprite>(GetComponent<NPCSummoningFocus>() != null
             ? "John-Summoning" : "Player-Summoning") : restingSprite;
@@ -261,6 +279,7 @@ public class PaperCharacterVisual : MonoBehaviour
 
     private void OnDisable()
     {
+        playerWalkRig?.Hide();
         IsPlayingWalkCycle = false;
         if (paperPivot == null || !initialized) return;
         paperPivot.localPosition = restPosition;
@@ -268,4 +287,5 @@ public class PaperCharacterVisual : MonoBehaviour
         paperPivot.localRotation = restRotation;
         if (spriteRenderer != null) { spriteRenderer.color = restColor; SetSummoningPose(false); }
     }
+    private void OnDestroy() => playerWalkRig?.Dispose();
 }

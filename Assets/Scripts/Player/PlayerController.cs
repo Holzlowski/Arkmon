@@ -19,7 +19,9 @@ public class PlayerController : MonoBehaviour
     private PlayerInteractionFocus interactionFocus;
     private Vector2 moveInput;
     private bool jumpRequested;
-    public bool IsMoving => rb != null && moveInput.sqrMagnitude > .01f
+    public bool IsScriptedMoving { get; private set; }
+    public void SetScriptedMovement(bool value) => IsScriptedMoving = value;
+    public bool IsMoving => IsScriptedMoving || rb != null && moveInput.sqrMagnitude > .01f
         && new Vector2(rb.linearVelocity.x, rb.linearVelocity.z).sqrMagnitude > .02f
         && !inConversation && !SceneLoadManager.IsTransitioning && !DemoOpening.IsPresenting;
     private void Awake() => interactionFocus = GetComponent<PlayerInteractionFocus>() ?? gameObject.AddComponent<PlayerInteractionFocus>();
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
         GetComponent<PaperCharacterVisual>()?.SetRestingSprite(PlayerEquipmentAppearance.RestingSprite);
     }
 

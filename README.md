@@ -1000,3 +1000,118 @@ Painted room surfaces retain their source resolution and mipmaps, with trilinear
 ## Fixed demo milestone
 
 Demo **0.11.0** is preserved by Git tag `demo-v0.11.0` before the next design iteration. See [demo playtest and rebuild instructions](docs/demo-playtest.md). The Windows demo ZIP is a separate local artifact under `Builds`; the tag preserves all source and assets.
+
+## New game intro (work in progress)
+
+On `feature/game-intro`, the tower opening introduces Elian of House Aurenfeld. The wardrobe supplies a brown-and-cream family outfit; it does not award the green summoner mantle. There is no collectible vessel in the bedroom. The family outfit alone unlocks the courtyard door, survives scene changes and updates world/walk/dialogue visuals. John offers a greeting rather than the old pre-vessel trial. The Arkanmeisterin arrival, vessel/mantle awards, starter encounters and cellar story are not yet implemented; the gate currently offers a waiting-for-arrival line.
+
+`IntroChapter` marks the new exploration scene profile; the archived demo remains available at tag `demo-v0.11.0`. `TowerRoomCamera` keeps a 25-degree pitch, zero yaw, 40-degree field of view and 12-unit distance, with small bounded tracking. The cutaway hides ceiling meshes without changing wall collisions. `ConfigureGameIntro.Run` imports family sprites and creates the Aurenfeld wall crest. This is the first functional room pass; furniture/art polish towards the concept images remains in progress.
+
+Validation: `GameIntroTests` exercises waking, blocked early exit, dressing, separate outfit/mantle/vessel state, fixed camera angle/zoom, courtyard arrival and John greeting. Earlier demo-flow/equipment tests document the archived demo and need adaptation for the new chapter before they can be used as its acceptance suite. Current metadata remains 0.11.0; proposed next feature version is 0.12.0.
+
+PlayMode tests mute output through the test-only `SilentPlayModeTests` assembly fixture and restore the previous listener volume afterwards. Audio sources still run normally, preserving scene and music timing. Automated Unity test launches additionally use `-noaudio` to suppress output from process startup through shutdown. Normal Play Mode and game builds retain audio.
+
+### Intro visual refinement
+
+`PolishIntroRoom.Run` reapplies the intro profile, then sets a fixed 28-degree pitch, -7-degree yaw, 43-degree field of view and 12.4-unit distance with bounded tracking. It repositions the chandelier away from the wardrobe, enlarges the rug, adds turned bed posts, crown moldings, a scalloped valance, bedside chest collision and dressed window arch stones. Painted oak and limestone materials are scoped to the room; morning light and neutral grading retain surface details. The Aurenfeld wall emblem uses a shield-shaped mesh rather than a rectangular parchment card. Elian uses the silver eight-point star directly on the family tunic in idle/walk/portrait art.
+
+`ConfigureKaflaRefinement.Run` binds a slimmer, amber-eyed paper kitten based on the starter reference on page 7 of the local design PDF. New body, arm, forearm, wooden sword, portrait and alternate Glutfunke body share the existing 1.67-unit body height and attack timings. The PDF remains excluded from Git. These are refinements of the playable prototype, not a claim of matching the concept illustrations exactly. Focused intro and Kafla tests cover dressing/courtyard state, camera stability, sword swing, scrape body restoration and defeated pose; native captures are in Builds.
+
+Kafla's sword rig uses a sprite-specific shoulder anchor inside the cape/torso silhouette. Glutfunke keeps this joint fixed and changes the arm rotation instead of translating the shoulder away from the body. The refinement test checks the anchor and unchanged joint position during scraping.
+
+The refined shoulder anchor overlaps the torso beneath the cape rather than merely touching its outer paper edge. The native idle capture was checked for a continuous arm/cape silhouette after the initial offset proved insufficient.
+
+Kafla uses a separately illustrated gripping paw and forearm. The short shoulder cap remains behind the cape; the forearm draws in front, and the paw is parented to the sword wrist so its handle opening follows blade rotation. Glutfunke retains its separate claw sprite. The focused test verifies hand parenting and forearm draw order as well as sword/scrape/defeat restoration.
+
+
+### Playable intro courtyard layout
+
+`StartScene` now contains an 88-by-40-unit courtyard floor, high enclosing castle walls and a clear east-west crossing path. The left side houses the residence tower and workshop; the centre holds the stable, fountain, bench and John; the right side contains three vegetable beds, a wheelbarrow, cellar entrance and outer gate. Buildings use coarse painted geometry for a first playable spatial pass. Decorative grass does not block movement. The near wall is cut down visually while retaining full-height collision.
+
+`CourtyardCamera` keeps a fixed 32-degree pitch and 45-degree field of view, smoothly following within explicit horizontal/depth bounds. `CourtyardEntrance` provides four labelled interaction points. The tower door returns to `TowerRoom`, where Elian appears beside the room door with his existing outfit and awakening state. Throne hall, cellar and outer gate currently offer short story dialogue; their interiors and Arkanmeisterin arrival are not implemented yet. Play from `TowerRoom`, collect the family outfit, leave and explore the courtyard with the usual movement and interaction controls.
+
+The reproducible editor entry point is `Arkmon > Build intro courtyard layout` (`ConfigureIntroCourtyard.Run`). Focused PlayMode checks cover the unobstructed crossing route, courtyard size, four entrances, fixed camera rotation/zoom, outer-wall collision, tower return and the existing dressing/arrival flow. Automated runs remain silent. This change is uncommitted; proposed next feature version remains 0.12.0.
+
+Validation: both focused cases passed in `Builds/intro-courtyard-tests.xml`; after correcting the visible tower-door placement and adding the outer-gate face, the courtyard integration case passed again in `Builds/intro-courtyard-final-tests.xml`. Native captures show west, centre and east views under `Builds/intro-courtyard-*.png`.
+
+
+### Room seams, heraldry and continuous walking
+
+`RefineIntroRoomDetails.Run` refines the existing intro room without rebuilding the courtyard. Window light is reduced from 38 to 31 and room grading exposure from +0.18 to -0.05. The illustrated courtyard door is tinted down. A curved stone backing closes the former door opening, window seam stones bridge the flat arch and round wall, and the floor extends into the wall thickness. The cutaway remains open for the camera. The family shield is reused on the bed footboard and room door. A newly illustrated rug bears only the silver eight-point star.
+
+The rug is now a lit, alpha-tested floor mesh at y=0.012 rather than a transparent SpriteRenderer competing with the character's sorting. Contact shadows include its surface. `PaperPlayerWalkRig` uses two independently animated paper legs, half a cycle apart, plus a stable upper body for both the cream room outfit and brown family outfit. Step phase follows distance over a 2.4-unit stride, stops on release/walls and ignores teleports. A foot-plane constraint keeps rotated boots above the floor; facing remains left/right. Rigidbody interpolation smooths the rendered position between physics ticks. Original idle, dialogue, dressing and summoning poses remain in use; older outfits retain their sprite-sheet fallback. This is a continuous cut-paper gait, not a full hand-drawn animation set.
+
+`ImportElianWalkRig.Run` imports four alpha-bounded rig parts with hip pivots from `Elian-Walk-Rig.png`. New raster assets were produced with the built-in image generator; exact prompts are recorded in `docs/paper-art-generation.json`. No commits or version bumps have been made; the next proposed feature version remains 0.12.0.
+
+Validation: the intro and courtyard flow cases passed in `Builds/intro-room-details-final-tests.xml`. The room/walk case passed after the final boot-clearance and rig-size correction in `Builds/intro-room-walk-final-tests.xml`, checking opposite leg phases, sixteen foot-clearance samples, room/family outfit switching and mirrored facing. Native room and door captures are `Builds/intro-room-heraldry.png` and `Builds/intro-door-heraldry.png`. Tests ran with audio disabled.
+
+Interaction markers: wardrobe and tower-room door halos now use prop-relative presentation positions, separate from their reachable interaction points. The wardrobe marker sits 0.28 units in front of the cabinet collider; the door marker sits 0.35 units inward from its wall-mounted art. Both use a smaller 0.35-unit radius. Interaction range and prompt selection remain unchanged. Suggested commit: `fix(ui): anchor interaction halos beside room props`; proposed next feature version remains 0.12.0.
+
+Tower door/window follow-up: `FixTowerDoorAndWindow.Run` replaces the door sprite display with an alpha-tested URP Lit mesh using the same artwork and UVs, so it receives the room lighting. The source sprite stays disabled as reproducible import data. An approach collider in the door plane stops the full paper silhouette before the illustration. Window mullions now share the arch plane at z=5.91; the vertical member overlaps sill and arch, and the horizontal member reaches both jambs. `RefineIntroRoomDetails.Run` also reapplies this fix. Suggested commit: `fix(room): align door collision and attach window mullions`. Next proposed version remains 0.12.0; no commit or push has been made.
+
+The door uses a restrained texture-matched emission floor to retain painted details in deep shadow while still receiving scene light. Door collision validation pushes the actual Rigidbody into the door for 70 physics ticks and checks the whole rendered silhouette against the door plane. Window checks cover sill/arch overlap and matching frame depth.
+
+Validation: the existing intro flow passed in `Builds/tower-door-window-tests.xml`; the corrected complete silhouette/frame test passed in `Builds/tower-door-ambient-tests.xml`. Native renders confirm the final readable door brightness and connected window cross. All Unity checks ran with `-noaudio`.
+
+
+### Complete tower opening and first-town vista
+
+`FinishTowerIntro.Run` assembles the current playable room pass without changing the courtyard layout. The courtyard door is now real geometry: eight arched green oak planks on a hinge, separate bronze straps/rivets/handle, an Aurenfeld shield, stone threshold and a recessed stone arch whose back follows the round tower wall. Curved masonry closes the former rectangular opening outside the arch. The old sprite remains inactive as source/reference data. `BuildPaintedTowerDoor` rebuilds the model; `FixTowerDoorAndWindow` preserves it instead of recreating the old flat surface.
+
+The fixed exploration camera uses 28-degree pitch, -7-degree yaw, 45-degree field of view and 13.8-unit distance, focused at (0.25, 1, 1.2), with small bounded tracking. Upper masonry closes the backdrop above the cutaway walls. Foreground/side cutaway collision keeps the walkable area within the composition. Wardrobe focus is a small smoothed offset; it never changes angle or zoom and eases back without reversing the offset.
+
+Elian wakes beside the actual bed, rises and takes a short paper-animated step away from its edge. The bed stays 3D in sleeping, seated and standing states. Waking temporarily suspends collisions/gravity to prevent the bed from pushing the hidden player away; normal physics is restored afterwards or on cancellation. Family-outfit preparation retains the opening wardrobe, removable hanging outfit, star clothing/portrait and disappearing quest cue. Its closing dialogue explicitly directs Elian towards the courtyard.
+
+The room door sequence positions Elian beside the hinge swing, opens the wooden leaf, then walks him through during a short black fade. Before the vessel is awarded, tower/courtyard transitions use black fades rather than a lamp-shaped iris. Battle transitions retain their existing iris. On arrival, Elian starts at the tower entrance and walks 1.15 units out onto its path before the first greeting. Returning to the room places him beside the new door without replaying waking or losing his outfit.
+
+`ExplorationPresentationMotion` owns short scripted steps, synchronizes Transform/Rigidbody positions and restores gravity, collisions, interpolation and movement state. `TowerRoomDoor` exposes the hinge and authored approach/passage positions. Regular input remains blocked during these sequences.
+
+The window uses the countryside framing from before the town pass: field layer at (0, 3.4, 6.9), foreground hills at (0, 4.65, 6.581), and the original SceneStyle materials. The extra town overlay is absent. The user will adjust these scene layers to reveal the small painted village; no runtime town-framing override is added.
+
+Native intro captures now use URP `SubmitRenderRequest`, not the legacy direct camera render, which produced misleading visual artifacts in the automated captures. Output defaults to the tested project's Builds directory; set `ARKMON_REVIEW_OUTPUT` to choose a separate review folder. All capture targets/canvas modes are restored after rendering.
+
+Suggested commits: `feat(room): build painted arched tower door`, `feat(intro): polish waking and courtyard arrival`, and `feat(world): reveal first town in tower vista`. These are uncommitted changes; the next proposed feature version remains 0.12.0.
+
+Acceptance validation: all five focused PlayMode cases pass in `Builds/tower-intro-acceptance-tests.xml`, covering wake/bedside physics, outfit and quest-cue completion, fixed camera/frustum limits with real boundary movement, full paper silhouette against the 3D door, preserved room/courtyard state, animated door opening, black transition and completed entrance step. Captures include `Builds/tower-intro-finished-morning.png`, `tower-intro-3d-door.png` and `tower-intro-courtyard-arrival.png`. All runs used `-noaudio`; normal gameplay audio is unchanged.
+
+
+Original window vista correction: the existing painted village is visible by shifting the field layer and lowering the nearest hills slightly. Explicit queue offsets keep fields in front of mountains and foreground hills in front of fields. The focused tower opening test passed in `Builds/original-vista-tests.xml`; the native capture confirms the village is visible. Suggested commit: `fix(visuals): reveal town in original tower vista`. Next proposed version remains 0.12.0; changes are not committed or pushed.
+
+
+### Personal tower-room furnishing
+
+`FurnishTowerRoom.Run` rebuilds the named `Elian personal room details` group using the existing painted oak, linen, velvet, parchment and brass materials. A small round bedside table holds an open water jug, cup and bedtime book; slippers and a folded fringed throw complete the bed corner. The study adds a wall shelf with bound books and a framed pressed flower, an open handwritten book, ink pot, quill and sealed family letters. A deeper stone window sill has a green cushion with piping, an herb pot and pleated side curtains. Props are real lit geometry; vessels have open rims and curtains use a persisted pleated mesh. The table has a solid collider; small surface decorations do not introduce movement obstacles. The waking side of the bed, wardrobe approach, central rug and door route remain clear.
+
+This furnishing pass also restores the original vista via `FinishTowerIntro.RestoreOriginalVista`. The earlier town-framing experiment described above is superseded: no extra town image or forced field/hill render queue is used in the current scene. Existing parallax remains available for manual layer alignment in the editor. No new art generation, gameplay interaction or quest requirement is introduced by these props.
+
+Suggested coherent commits: `fix(visuals): restore original tower window composition` (vista editor setup and scene materials/positions), then `feat(room): furnish Elian's bed study and window corners` (furnishing editor, generated meshes and scene details). Changes remain uncommitted; the next proposed feature version remains 0.12.0. Validation: silent focused intro flow and native room capture in `Builds/furnished-tower-tests.xml` and `Builds/tower-intro-finished-morning.png`.
+
+
+### Covered sleeping pose and warmer room lighting
+
+`PolishTowerWakeAndLight.Run` updates the current tower scene without rebuilding furniture or changing the vista. Sleeping uses a sprite sub-rectangle of the existing head/collar artwork and a separate lit, gently domed quilt over the covered body. The flat daytime cover/border is hidden only during sleeping; pillows lift slightly, and the ordinary cover returns for sitting and exploration. No new character bitmap is generated. `PaintedCanopyBed` positions the seated pose along the free right side (local 1.42, 0.18, 0.3), away from the front post, and keeps the subsequent player rise and short step close to that side. Bed geometry remains 3D throughout.
+
+The tower uses a warmer trilight ambient palette, a softer golden window spotlight, stronger local chandelier/desk candle pools, and a modest animated bedside candle using the existing paper fire frames. Exposure is slightly reduced and contrast softened. The existing window layers and manually editable parallax composition are unchanged. The extended focused intro check captures covered sleeping and sitting as well as validating the complete waking, outfit and courtyard transition (`Builds/cozy-wake-tests.xml`). All checks use `-noaudio`.
+
+Suggested commits: `fix(intro): tuck sleeping Elian beneath quilt and align bedside poses` (bed controller, sleeping head sprite, quilt mesh, scene pose references and focused checks) and `feat(visuals): warm tower room candle lighting` (lighting editor setup, bedside candle, scene light settings and volume profile). No commit or push has been made; next proposed feature version remains 0.12.0.
+
+
+### Paper silhouette clearance and walking arms
+
+The tower-room player overrides the prefab's thin box with a 1.30 × 1.93 × 1.25 collision volume offset (-0.06, 0, 0.40). The camera-facing illustration leans back in world space: its head extends behind its feet, beyond the old 0.31-unit-deep collider. The new depth encloses that visible silhouette while preserving the original floor-contact height. The adjustment is scoped to the tower scene; it does not enlarge the battle units or alter the grid. `FixTowerSilhouetteCollision.Run` reapplies the authored collider settings. The latest manual room changes are preserved; only the four size/centre prefab overrides were merged into the scene.
+
+`PaperPlayerWalkRig` renders the existing room/family upper-body artwork as complementary body and arm surfaces with explicit UVs. Shoulder pivots give the arms a restrained nine-degree swing opposite the corresponding leg; the shared distance-based phase, mirrored left/right facing, stable head and torso, and existing idle/dressing/summoning poses remain. No bitmap replacement or new image generation is needed. Six small outfit/part meshes are cached per rig and destroyed with its shared material on disposal. Lower-body sprites retain their existing presentation.
+
+`PlayerSilhouetteTests` physically pushes the player into the rotated wardrobe and curved wall, checks visible sprite vertices against the furniture plane/tower radius, and checks opposite arm angles, half-cycle reversal and mirrored presentation for both outfits. `TowerChapterFinishTests` verifies waking, outfit selection and the door/courtyard transition. Its quilt check respects the optional quilt reference in the currently authored scene. Tests run silently with `-noaudio`; results are in `Builds/silhouette-tests.xml`.
+
+Suggested commits: `fix(room): fit collision to camera-facing player silhouette` and `feat(animation): add shoulder-driven walking arm swing`. No commit or push has been made. The next proposed feature version remains 0.12.0.
+
+The tower-room camera uses an 11-degree pitch with no sideways yaw. Elian's paper gait keeps the forward swing at 27 degrees and extends the rear swing to 40 degrees. The waking seat moves toward the mattress, and the bed shares a rounded rectangular linen cushion mesh between its two pillows.
+
+The tower camera uses high-quality SMAA at native render scale. Oak, linen and velvet use stronger anisotropic texture filtering for oblique surfaces. The room balances soft window light with warmer chandelier, desk and bedside candle pools.
+
+The tower lighting uses a dimmer ambient fill and lower exposure, with stronger window shadows and soft shadows from the desk candle.
+
+The tower room uses closer framing with a slightly wider field of view to keep the doorway visible. Aurenfeld furniture details add oak and brass molding, wardrobe hardware and a velvet chair back. The chandelier chain continues above the visible cutaway.
+
+Version 0.12.0 adds the playable Elian tower and courtyard introduction. The wardrobe keeps its interaction prompt and quest highlight without a floor ring.

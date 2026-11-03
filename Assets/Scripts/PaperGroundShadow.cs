@@ -32,7 +32,7 @@ public class PaperGroundShadow : MonoBehaviour
         foreach (GameObject root in scene.GetRootGameObjects())
             foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>())
             {
-                if (renderer.name.IndexOf("paving", System.StringComparison.OrdinalIgnoreCase) >= 0
+                if ((renderer.name.IndexOf("paving", System.StringComparison.OrdinalIgnoreCase) >= 0 || renderer.name == "Heirloom rug")
                     && renderer.bounds.size.y < .2f) paving.Add(renderer);
                 Material paper = renderer.sharedMaterial;
                 if (!renderer.enabled || paper == null || !paper.name.Contains("-Paper")

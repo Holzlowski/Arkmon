@@ -7,7 +7,7 @@ public class CollectiblePlayerLamp : MonoBehaviour
     private void Start() => Refresh();
     public void Refresh()
     {
-        bool available = !DemoOpening.HasLamp;
+        bool available = !IntroChapter.Active && !DemoOpening.HasLamp;
         if (appearance != null) appearance.SetActive(available);
         foreach (var collider in GetComponents<Collider>()) collider.enabled = available;
         GetComponent<QuestHint>()?.SetObjectiveActive(available);

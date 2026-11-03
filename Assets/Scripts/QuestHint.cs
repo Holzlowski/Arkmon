@@ -112,6 +112,7 @@ public class QuestHint : MonoBehaviour
         float time = Time.unscaledTime;
         foreach (var door in sparkles)
         {
+            door.system.GetComponent<ParticleSystemRenderer>().enabled = true;
             float width = door.bounds.size.x, height = door.bounds.size.y, perimeter = 2*(width+height);
             for (int i = 0; i < door.particles.Length; i++)
             {
@@ -133,7 +134,7 @@ public class QuestHint : MonoBehaviour
             door.system.SetParticles(door.particles,door.particles.Length);
         }
     }
-    private void ClearSparkles() { foreach(var door in sparkles) if(door.system != null) door.system.Clear(); }
+    private void ClearSparkles() { foreach(var door in sparkles) if(door.system != null) { door.system.Clear(); door.system.GetComponent<ParticleSystemRenderer>().enabled = false; } }
     private void OnDisable() { IsBright = false; Strength = 0; ClearSparkles(); foreach(var surface in surfaces) if(surface != null) surface.enabled = false; foreach(var line in outlines) if(line != null) line.enabled = false; }
     private void OnDestroy()
     {

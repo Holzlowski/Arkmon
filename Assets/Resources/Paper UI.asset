@@ -22,7 +22,7 @@ MonoBehaviour:
   escapeIcon: {fileID: 21300000, guid: 111214b004cac3845bd7320d9227931f, type: 2}
   fireIcon: {fileID: 21300000, guid: fcd1e4f2dc049c043b8ff862f542c275, type: 2}
   downIcon: {fileID: 21300000, guid: fc66f7e168125694b882098717a4ceed, type: 2}
-  flacaPortrait: {fileID: 21300000, guid: 9cbf71574a0f7094f8b684b342c49c55, type: 2}
+  flacaPortrait: {fileID: 21300000, guid: c62525cb5e030b642b014196395072d2, type: 2}
   sheepPortrait: {fileID: 21300000, guid: 92c8536ec6568114c997568874853cac, type: 2}
   hunterPortrait: {fileID: 21300000, guid: d11694f504cb7a2499222cb29e1a0ff1, type: 2}
   playerPortrait: {fileID: 21300000, guid: 16988c3aa7ca7404395463ba6654e775, type: 2}

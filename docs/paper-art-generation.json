@@ -4,6 +4,15 @@
   "transparentBackground": true,
   "assets": [
     {
+      "output": "Assets/Art/Intro/Aurenfeld-First-Town.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Art/SceneStyle/TowerVista-Fields.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Painted fantasy game parallax scenery layer. Match the warm illustrated golden countryside in the reference. A welcoming substantial FIRST TOWN in a golden plain seen from a distant castle tower ABOVE the town, 3/4 elevated panoramic view. Only the town and its immediate low hill/trees, transparent sky/background, isolated silhouette. Cream plaster and honey stone houses, warm russet tiled roofs, narrow winding streets, a modest bell tower, arched market buildings, low town wall and gate, a road trailing down toward the viewer. Peaceful inhabited human town, no enormous castle, no modern structures, no text. Main cluster in central 70 percent, many clustered roofs with clear readable skyline, one taller tower on right. Building mass occupies middle to bottom 65 percent image, generous transparent space above, bottom softened with olive trees and golden grass so blends into fields. Warm hazy morning light, soft watercolor/gouache storybook landscape brushwork matching reference, atmospheric depth, not pixel art or photorealistic. Wide 1536x1024 RGBA with genuine transparency; no clouds, no mountains, no solid sky, no frame."
+    },
+    {
       "output": "Assets/Sprites/Monster/Flaca-Paper.png",
       "references": [
         "GDD page 12 render",
@@ -202,6 +211,78 @@
       ],
       "transparentBackground": true,
       "prompt": "Edit this exact production Unity sprite sheet. Keep EXACTLY the same 8 green-cloaked boy walking frames in a precisely aligned 4 COLUMN x 2 ROW grid, same image dimensions, grid cells, feet baselines, face, hair, green mantle and gold clasp, tunic, trousers, boots, walking leg poses, paper outlines and parchment illustration style. Remove the golden lantern from EVERY frame. Replace each lamp-holding arm with a natural empty-handed walking arm swing beneath the cloak. All eight characters wear the green mantle but have NO lantern. No items, no glow, no particles. True transparent background outside all eight figures including between cells. Preserve framing. No labels/gridlines."
+    },
+    {
+      "output": "Assets/Art/Intro/Aurenfeld-Crest.png",
+      "mode": "built-in image_gen",
+      "transparentBackground": false,
+      "prompt": "Single medieval heater shield, hand-painted gouache and ink on ivory parchment. Forest-green field, three golden wheat ears tied at the base, central ear taller, one silver eight-point star above. Thin antique-gold border. No crown, helmet, text or watermark. New fictional crest of House Aurenfeld."
+    },
+    {
+      "output": "Assets/Resources/Elian-Family-Sheet.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Resources/Prince-Room-NoLamp.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Preserve exact boy identity and paper illustration style. Cream tunic, short sleeveless warm-brown family over-tunic with small green Aurenfeld shield patch, three golden ears and silver star. No cloak, lamp or weapons. Uniform 3x3 sheet: upper-left idle, remaining eight cells successive walking poses. Full-body figures at consistent size, centered, feet baseline, transparent background, no grid or text."
+    },
+    {
+      "output": "Assets/Resources/Elian-Family-Star-Sheet.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Resources/Elian-Family-Sheet.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Change only the emblem in all nine frames: remove green shield and wheat, replace with a small silver eight-point star embroidered directly on the upper left chest. Preserve exact dimensions, cell layout, identity, poses, colors and transparency."
+    },
+    {
+      "output": "Assets/Sprites/Monster/Kafla-Refined-Rig.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Sprites/Monster/Flaca-SwordRig.png",
+        "local design PDF page 7 starter illustration"
+      ],
+      "transparentBackground": true,
+      "prompt": "Preserve three-piece landscape rig layout: body left, forearm middle, wooden sword right. Refine toward the starter: slender youthful orange kitten, amber eyes, pointed muzzle, ear tufts, cream forehead/chest/paws, burgundy cape, bronze clasp and flame tail. Keep paper style. Compatibility pass removes body left paw and retains right waist paw for the separate left animated sword arm."
+    },
+    {
+      "output": "Assets/Sprites/Monster/Kafla-Refined-Spark-Rig.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Sprites/Monster/Kafla-Refined-Rig.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Remove only the attached right paw and forearm on the body for two separately animated arms. Preserve exact canvas, identity, cape, feet, tail and other rig pieces."
+    },
+    {
+      "output": "Assets/Sprites/Monster/Kafla-Grip-Arm.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Sprites/Monster/Kafla-Refined-Rig.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Replacement detached horizontal orange kitten forearm, shoulder on right and naturally closed gripping paw on left. Cream curled fingers and opposing thumb surround a vertical transparent handle channel. Neutral continuous wrist, painted orange fur and thin paper outline. No character, weapon, text or background. Unity slices forearm and gripping hand separately."
+    },
+    {
+      "output": "Assets/Resources/Elian-Walk-Rig.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Resources/Elian-Family-Star-Sheet.png",
+        "Assets/Resources/Prince-Room-NoLamp.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Edit target reference 1 is Elian's character identity and family outfit, reference 2 is room outfit. Make an ANIMATION RIG PARTS atlas, transparent RGBA, square, four isolated parts only in a 2x2 layout with wide transparent gutters. NOT a walking sprite sheet. TOP LEFT: Elian upper body family outfit from hair to bottom of brown tunic at hips, include BOTH arms/hands hanging loosely, tiny silver 8-point chest star. ABSOLUTELY NO legs or boots attached. TOP RIGHT: same upper body in cream shirt and belt only, NO brown vest, NO star, NO legs/boots. BOTTOM LEFT: just ONE isolated near/right leg from the tan trouser thigh at hip to brown boot, relaxed almost vertical leg, boot toe pointing RIGHT, clear continuous tan thigh, tan calf, boot. BOTTOM RIGHT: matching isolated far/left leg from hip to brown boot, same pose toe RIGHT, slightly darker shading. No heads/torso near bottom legs, no legs attached to upper bodies. Character face same friendly wavy brown-haired child, paper cream outline, painted flat illustration. All upper bodies face right in 3/4 view. Side by side same head scale. Leg height around half upper body height; top upper bodies within top 60 percent image height, legs only within bottom 35 percent. Each leg has its hip at top and boot sole baseline at bottom. Transparent background, NO extra pieces, NO ground shadow, NO labels. This will be animated by rotating independent legs at their hips. Do not show complete walking figures."
+    },
+    {
+      "output": "Assets/Art/Intro/Aurenfeld-Star-Rug.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "Assets/Art/Intro/Aurenfeld-Crest.png"
+      ],
+      "transparentBackground": true,
+      "prompt": "Game asset: a hand-painted illustrated oval royal heirloom rug for a cozy fantasy castle bedroom. TRUE DIRECT TOP-DOWN orthographic flat texture, NOT perspective, no floor, no room, no cast shadow. Transparent RGBA outside silhouette. Wide horizontal oval, forest green wool, elegant cream and muted warm gold border with subtle red floral woven ornament and short individually illustrated gold/red tassels around perimeter. In centre ONE silver/ivory eight-point star matching the star in the reference family crest. ONLY star in centre, no shield, no wheat, no lamp, no fleur-de-lis. Texture woven and softly painterly, quiet elegant old family craftsmanship, subdued colours rather than glowing. Reference is for exact star shape and family palette. Oval fills 90 percent image width, height 75 percent image height, centered. 1536x1024. Seamless solid cloth inside, crisp painted edges.",
+      "refinementPrompt": "Edit this exact rug asset. Preserve the rug, woven star, floral border, tassels and colours exactly. Remove ALL brown cloudy glow, ALL brown floor/background, ALL drop shadow outside the actual rug and individual tassels. True crisp TRANSPARENT alpha outside rug+tassels, zero background haze. Keep direct overhead view and dimensions. This is a flat ground decal texture."
     }
   ]
 }

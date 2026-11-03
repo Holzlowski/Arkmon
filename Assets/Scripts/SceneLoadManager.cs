@@ -38,18 +38,29 @@ public class SceneLoadManager : MonoBehaviour
         Canvas canvas = overlay.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32000;
         RectTransform rect = PaperUIFactory.Rect("Lamp iris", overlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-        LampIrisGraphic iris = rect.gameObject.AddComponent<LampIrisGraphic>();
-        iris.color = Color.black; iris.raycastTarget = true;
+        bool roomPassage = IntroChapter.Active && !DemoOpening.HasLamp
+            && (destination == "StartScene" || destination == "TowerRoom")
+            && (SceneManager.GetActiveScene().name == "TowerRoom" || SceneManager.GetActiveScene().name == "StartScene");
+        LampIrisGraphic iris = roomPassage ? null : rect.gameObject.AddComponent<LampIrisGraphic>();
+        Image black = roomPassage ? rect.gameObject.AddComponent<Image>() : null;
+        if(iris != null){iris.color = Color.black; iris.raycastTarget = true;}
+        if(black != null){black.color = new Color(0,0,0,0);black.raycastTarget=true;}
         try
         {
-            yield return AnimateIris(iris, 1f, 0f);
+            if(roomPassage)yield return AnimateBlack(black,0,1);else yield return AnimateIris(iris, 1f, 0f);
             yield return SceneManager.LoadSceneAsync(destination);
             if (returning) OnSceneLoaded(null);
             yield return null;
-            yield return AnimateIris(iris, 0f, 1f);
+            if(roomPassage)yield return AnimateBlack(black,1,0);else yield return AnimateIris(iris, 0f, 1f);
         }
         finally { Destroy(overlay); transitioning = false; }
         if (returning) ShowReturnDialogue();
+    }
+    private static IEnumerator AnimateBlack(Image image,float from,float to)
+    {
+        for(float t=0;t<.4f;t+=Time.unscaledDeltaTime)
+        {image.color=new Color(0,0,0,Mathf.Lerp(from,to,Mathf.SmoothStep(0,1,t/.4f)));yield return null;}
+        image.color=new Color(0,0,0,to);
     }
 
     private void ShowReturnDialogue()

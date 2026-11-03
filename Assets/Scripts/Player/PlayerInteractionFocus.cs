@@ -50,12 +50,13 @@ public class PlayerInteractionFocus : MonoBehaviour
     public static string LabelFor(IInteractableAsPlayer item)
     {
         if (item is NPC npc) return "Mit " + npc.npcName + " sprechen";
+        if (item is CourtyardEntrance entrance) return entrance.Label;
         if (item is DemoInteractable target)
             switch (target.kind)
             {
-                case DemoInteractable.Kind.Wardrobe: return DemoOpening.HasMantle ? "Schrank ansehen" : "Mantel holen";
+                case DemoInteractable.Kind.Wardrobe: return DemoOpening.HasWardrobeOutfit ? "Schrank ansehen" : IntroChapter.Active ? "Familiengewand holen" : "Mantel holen";
                 case DemoInteractable.Kind.Lamp: return "Lampe mitnehmen";
-                case DemoInteractable.Kind.RoomDoor: return DemoOpening.HasMantle ? "In den Hof" : "Tür ansehen";
+                case DemoInteractable.Kind.RoomDoor: return DemoOpening.HasWardrobeOutfit ? "In den Hof" : "Tür ansehen";
                 case DemoInteractable.Kind.Window: return "Aussicht ansehen";
                 case DemoInteractable.Kind.CourtyardGate: return "Tor ansehen";
             }
@@ -68,14 +69,19 @@ public class PlayerInteractionFocus : MonoBehaviour
         Vector3 point = Current.GetTransform();
         Vector3 screen = Camera.main.WorldToScreenPoint(point + Vector3.up * 1.65f);
         if (screen.z <= 0) { Hide(); return; }
-        canvas.enabled = true; ring.enabled = true; label.text = "[E]  " + LabelFor(Current);
+        canvas.enabled = true; label.text = "[E]  " + LabelFor(Current);
         var canvasRect = (RectTransform)canvas.transform;
         Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screen, uiCamera, out Vector2 local);
         panel.anchoredPosition = local;
+        var prop = Current as DemoInteractable;
+        ring.enabled = prop == null || prop.kind != DemoInteractable.Kind.Wardrobe;
+        if (!ring.enabled) return;
+        Vector3 markerPoint = prop != null ? prop.GetMarkerPosition() : point;
+        float radius = prop != null && prop.kind == DemoInteractable.Kind.RoomDoor ? .35f : .55f;
         float pulse = 1 + .035f * Mathf.Sin(Time.unscaledTime * 3);
         for (int i = 0; i < ring.positionCount; i++)
-        { float angle = i * Mathf.PI * 2 / ring.positionCount; ring.SetPosition(i, new Vector3(point.x + Mathf.Cos(angle)*.55f*pulse, .035f, point.z + Mathf.Sin(angle)*.55f*pulse)); }
+        { float angle = i * Mathf.PI * 2 / ring.positionCount; ring.SetPosition(i, new Vector3(markerPoint.x + Mathf.Cos(angle)*radius*pulse, .035f, markerPoint.z + Mathf.Sin(angle)*radius*pulse)); }
     }
     private void Hide() { if (canvas != null) canvas.enabled = false; if (ring != null) ring.enabled = false; }
     private void OnDisable() { Current = null; Hide(); }

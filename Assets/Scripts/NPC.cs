@@ -46,6 +46,13 @@ public class NPC : MonoBehaviour, IInteractableAsPlayer
     public void InteractWithPlayer()
     {
         FacePlayer();
+        if(IntroChapter.Active)
+        {
+            DialogueBoxController.instance.ShowMessage(npcName == "John"
+                ? "Guten Morgen, Elian! Schön, Euch zu sehen. Heute erwarten wir die Arkanmeisterin. Für eine Prüfung ist noch Zeit, sobald Ihr Euer Gefäß erhalten habt."
+                : "Guten Morgen, Prinz Elian. Es ist schön, Euch im Hof zu sehen!",npcName);
+            return;
+        }
         if (npcName == "John" && !DemoOpening.TrialIntroductionSeen)
         {
             DialogueBoxController.instance.ShowConversation(new[] {

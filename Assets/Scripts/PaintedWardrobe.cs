@@ -26,7 +26,7 @@ public class PaintedWardrobe : MonoBehaviour
         openness=Mathf.MoveTowards(openness,open?65f:0f,Time.unscaledDeltaTime*120f);
         if(leftDoor!=null)leftDoor.localRotation=Quaternion.Euler(0,openness,0);
         if(rightDoor!=null)rightDoor.localRotation=Quaternion.Euler(0,-openness,0);
-        if(mantle!=null)mantle.SetActive(!DemoOpening.HasMantle);
-        GetComponent<QuestHint>()?.SetObjectiveActive(!DemoOpening.HasMantle);
+        if(mantle!=null)mantle.SetActive(!DemoOpening.HasWardrobeOutfit);
+        GetComponent<QuestHint>()?.SetObjectiveActive(!DemoOpening.HasWardrobeOutfit);
     }
 }

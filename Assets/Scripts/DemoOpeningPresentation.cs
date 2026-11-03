@@ -19,6 +19,8 @@ public class DemoOpeningPresentation : MonoBehaviour
     private PaintedCanopyBed paintedBed;
     private CinemachineVirtualCamera openingCamera;
     private Quaternion cameraRotation;
+    private Rigidbody wakingBody;
+    private bool wakingGravity, wakingCollisions, wakePhysicsSaved;
     private void CreateFade()
     {
         var canvas = new GameObject("Wake-up fade", typeof(Canvas)); canvas.transform.SetParent(transform, false);
@@ -36,12 +38,17 @@ public class DemoOpeningPresentation : MonoBehaviour
     public IEnumerator WakeUp(GameObject player)
     {
         IsBusy = true; CreateFade();
+        var playerBody = player != null ? player.GetComponent<Rigidbody>() : null;
+        bool gravityBefore = playerBody != null && playerBody.useGravity;
+        bool collisionsBefore = playerBody != null && playerBody.detectCollisions;
+        wakingBody=playerBody;wakingGravity=gravityBefore;wakingCollisions=collisionsBefore;wakePhysicsSaved=playerBody!=null;
+        if (playerBody != null) { playerBody.useGravity = false; playerBody.detectCollisions = false; playerBody.linearVelocity = Vector3.zero; }
         var bedObject = GameObject.Find("Canopy bed");
         paintedBed = bedObject != null ? bedObject.GetComponent<PaintedCanopyBed>() : null;
         if (paintedBed != null)
         {
             paintedBed.SetSleeping(true);
-            if (player != null) player.transform.position = paintedBed.BedsidePosition;
+            if (player != null) ExplorationPresentationMotion.Place(player, player.GetComponent<Rigidbody>(), paintedBed.BedsidePosition);
         }
         hidden = player != null ? player.GetComponentsInChildren<Renderer>() : new Renderer[0];
         enabledBefore = new bool[hidden.Length];
@@ -70,7 +77,12 @@ public class DemoOpeningPresentation : MonoBehaviour
             }
             RestoreVisuals(false);
             wakingVisual = player != null ? player.GetComponent<PaperCharacterVisual>() : null;
-            if (wakingVisual != null) wakingVisual.SetWakeUpProgress(0);
+            if (wakingVisual != null)
+            {
+                wakingVisual.SetWakeUpProgress(0);
+                if (paintedBed != null)
+                    wakingVisual.FaceWorldDirection(paintedBed.StandingPosition - paintedBed.BedsidePosition);
+            }
             SoundManager.instance?.PlayEffect("mantle-rustle");
             Vector3 bedsideFocus = framing != null ? framing.m_TrackedObjectOffset : Vector3.zero;
             float bedsideDistance = framing != null ? framing.m_CameraDistance : 0;
@@ -90,8 +102,43 @@ public class DemoOpeningPresentation : MonoBehaviour
                 }
                 yield return null;
             }
+            if (wakingVisual != null) wakingVisual.SetWakeUpProgress(-1);
+            if (paintedBed != null && player != null)
+                yield return ExplorationPresentationMotion.Walk(player, paintedBed.StandingPosition, .45f);
         }
-        finally { if (wakingVisual != null) wakingVisual.SetWakeUpProgress(-1); wakingVisual = null; RestoreVisuals(); if (fade != null) Destroy(fade.GetComponentInParent<Canvas>().gameObject); IsBusy = false; }
+        finally { if (wakingVisual != null) wakingVisual.SetWakeUpProgress(-1); wakingVisual = null; RestoreVisuals(); RestoreWakePhysics(); if (fade != null) Destroy(fade.GetComponentInParent<Canvas>().gameObject); IsBusy = false; }
+    }
+    public IEnumerator LeaveThroughDoor(GameObject player, TowerRoomDoor door)
+    {
+        if (IsBusy || player == null || door == null) yield break;
+        IsBusy = true;
+        try
+        {
+            yield return ExplorationPresentationMotion.Walk(player, door.OpeningStandPosition, .45f);
+            SoundManager.instance?.PlayEffect("wardrobe-open");
+            for (float t = 0; t < .4f; t += Time.unscaledDeltaTime)
+            { door.SetOpenness(Mathf.SmoothStep(0, 1, t / .4f)); yield return null; }
+            door.SetOpenness(1);
+            SceneLoadManager.instance.LoadExplorationScene("StartScene");
+            yield return ExplorationPresentationMotion.Walk(player, door.PassagePosition, .45f);
+        }
+        finally { IsBusy = false; }
+    }
+
+    public IEnumerator ArriveInCourtyard(GameObject player, Transform entrance, bool firstVisit)
+    {
+        if (player == null || entrance == null) yield break;
+        IsBusy = true;
+        try
+        {
+            Vector3 start = entrance.position + new Vector3(0, 1, -.6f);
+            ExplorationPresentationMotion.Place(player, player.GetComponent<Rigidbody>(), start);
+            while (SceneLoadManager.IsTransitioning) yield return null;
+            yield return ExplorationPresentationMotion.Walk(player, start + Vector3.back * 1.15f, .65f);
+        }
+        finally { IsBusy = false; }
+        if (firstVisit)
+            DialogueBoxController.instance?.ShowMessage("Ein neuer Morgen im Hof von Aurenfeld. Ich sollte die Leute begrüßen. Die Arkanmeisterin wird am Burgtor erwartet.", IntroChapter.PlayerName);
     }
     public IEnumerator Dress(GameObject player)
     {
@@ -100,6 +147,8 @@ public class DemoOpeningPresentation : MonoBehaviour
         PaperCharacterVisual visual = player != null ? player.GetComponent<PaperCharacterVisual>() : null;
         dressingVisual = visual;
         dressingWardrobe = GameObject.Find("Wardrobe")?.GetComponent<PaintedWardrobe>();
+        var roomView = FindFirstObjectByType<TowerRoomCamera>();
+        if(roomView != null && dressingWardrobe != null) roomView.SetPresentationFocus(dressingWardrobe.transform.position,.5f);
         try
         {
             var camera = FindFirstObjectByType<CinemachineVirtualCamera>();
@@ -131,7 +180,8 @@ public class DemoOpeningPresentation : MonoBehaviour
             if (framing != null) yield return EaseCamera(focus, distance, .6f);
             else yield return new WaitForSecondsRealtime(.6f);
         }
-        finally { if (visual != null) visual.SetOutfitChangeProgress(-1); if (dressingWardrobe != null) dressingWardrobe.SetInteractionOpen(false); dressingWardrobe = null; dressingVisual = null; RestoreVisuals(); IsBusy = false; }
+        finally { if(roomView != null)roomView.SetPresentationFocus(Vector3.zero,0); if (visual != null) visual.SetOutfitChangeProgress(-1); if (dressingWardrobe != null) dressingWardrobe.SetInteractionOpen(false); dressingWardrobe = null; dressingVisual = null; RestoreVisuals(); IsBusy = false; }
+        if(IntroChapter.Active) { DialogueBoxController.instance.ShowMessage("Der Stern von Aurenfeld. Jetzt bin ich bereit, die Arkanmeisterin zu empfangen. Mal sehen, wer schon im Hof unterwegs ist.",IntroChapter.PlayerName); yield break; }
         DialogueBoxController.instance.ShowMessage("Den grünen Mantel haben mir meine Eltern geschenkt. Ich trage ihn immer, wenn die Arkanmeisterin kommt. "
             + (DemoOpening.HasLamp ? "Jetzt bin ich bereit für John!" : "Jetzt noch meine Lampe vom Tisch holen."), "Der Junge");
     }
@@ -160,10 +210,17 @@ public class DemoOpeningPresentation : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines(); if (wakingVisual != null) wakingVisual.SetWakeUpProgress(-1); wakingVisual = null;
+        RestoreWakePhysics();
+        var roomView=FindFirstObjectByType<TowerRoomCamera>();if(roomView!=null)roomView.SetPresentationFocus(Vector3.zero,0);
         RestoreVisuals(); if (dressingVisual != null) dressingVisual.SetOutfitChangeProgress(-1);
         if (dressingWardrobe != null) dressingWardrobe.SetInteractionOpen(false); dressingWardrobe = null; IsBusy = false;
         var canvas = fade != null ? fade.GetComponentInParent<Canvas>() : null;
         if (canvas != null) Destroy(canvas.gameObject);
         fade = null;
+    }
+    private void RestoreWakePhysics()
+    {
+        if(wakePhysicsSaved && wakingBody!=null){wakingBody.useGravity=wakingGravity;wakingBody.detectCollisions=wakingCollisions;}
+        wakePhysicsSaved=false;wakingBody=null;
     }
 }
