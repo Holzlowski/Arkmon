@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        if ((gameObject.scene.name == "TowerRoom" || gameObject.scene.name == "StartScene") &&
+        if ((gameObject.scene.name == "TowerRoom" || gameObject.scene.name == "TowerRoomPaper" || gameObject.scene.name == "StartScene") &&
             GetComponent<ExplorationFootsteps>() == null)
             gameObject.AddComponent<ExplorationFootsteps>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;

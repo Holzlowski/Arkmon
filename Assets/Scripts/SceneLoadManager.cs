@@ -39,8 +39,8 @@ public class SceneLoadManager : MonoBehaviour
         canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32000;
         RectTransform rect = PaperUIFactory.Rect("Lamp iris", overlay.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
         bool roomPassage = IntroChapter.Active && !DemoOpening.HasLamp
-            && (destination == "StartScene" || destination == "TowerRoom")
-            && (SceneManager.GetActiveScene().name == "TowerRoom" || SceneManager.GetActiveScene().name == "StartScene");
+            && (destination == "StartScene" || destination == IntroChapter.TowerScene)
+            && (SceneManager.GetActiveScene().name == IntroChapter.TowerScene || SceneManager.GetActiveScene().name == "StartScene");
         LampIrisGraphic iris = roomPassage ? null : rect.gameObject.AddComponent<LampIrisGraphic>();
         Image black = roomPassage ? rect.gameObject.AddComponent<Image>() : null;
         if(iris != null){iris.color = Color.black; iris.raycastTarget = true;}

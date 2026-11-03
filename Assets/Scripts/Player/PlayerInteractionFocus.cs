@@ -51,6 +51,8 @@ public class PlayerInteractionFocus : MonoBehaviour
     {
         if (item is NPC npc) return "Mit " + npc.npcName + " sprechen";
         if (item is CourtyardEntrance entrance) return entrance.Label;
+        if (item is CourtyardGarden garden) return garden.Label;
+        if (item is CourtyardLife life) return life.Label;
         if (item is DemoInteractable target)
             switch (target.kind)
             {

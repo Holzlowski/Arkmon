@@ -95,6 +95,23 @@ public class TowerChapterFinishTests
         Assert.That(entrance.position.z-player.transform.position.z,Is.InRange(1.5f,2.0f));
         Assert.That(body.useGravity&&body.detectCollisions,Is.True,"The arrival restores normal collisions and gravity.");
         Assert.That(player.GetComponent(T("PlayerController")).GetType().GetProperty("IsScriptedMoving").GetValue(player.GetComponent(T("PlayerController"))),Is.False);
-        Capture("tower-intro-courtyard-arrival");LogAssert.NoUnexpectedReceived();
+        Capture("tower-intro-courtyard-arrival");
+        var gardenType=T("CourtyardGarden");
+        var points=UnityEngine.Object.FindObjectsByType(gardenType,FindObjectsSortMode.None).Cast<Component>().ToArray();
+        var can=points.Single(point=>point.name=="Courtyard watering can");
+        var beds=points.Where(point=>point.name=="Garden watering point").ToArray();
+        Assert.That(beds.Length,Is.EqualTo(3));
+        var label=gardenType.GetProperty("Label");
+        var interact=gardenType.GetMethod("InteractWithPlayer");
+        interact.Invoke(beds[0],null);Close();
+        Assert.That(label.GetValue(beds[0]),Is.EqualTo("Trockenes Beet ansehen"));
+        interact.Invoke(can,null);Close();
+        foreach(var gardenBed in beds)
+        {
+            Assert.That(label.GetValue(gardenBed),Is.EqualTo("Beet gieﬂen"));
+            interact.Invoke(gardenBed,null);Close();
+            Assert.That(label.GetValue(gardenBed),Is.EqualTo("Beet ansehen"));
+        }
+        LogAssert.NoUnexpectedReceived();
     }
 }

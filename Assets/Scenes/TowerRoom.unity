@@ -526,7 +526,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 549763404}
 --- !u!1 &10601070
@@ -572,7 +572,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 587876108}
 --- !u!1 &11060125
@@ -618,7 +618,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 288199287}
 --- !u!1 &11557558
@@ -664,10 +664,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1069dad719f74f4382138f76df4c682, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DemoInteractable
   kind: 1
-  description:
+  description: 
 --- !u!135 &11557561
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -732,7 +732,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 42060369}
 --- !u!1 &18343902
@@ -868,7 +868,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.70000005
   halfWidth: 120
@@ -1145,7 +1145,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df239b3b1ba21e14191c276dad0ae8fa, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DemoOpening
   towerRoom: 1
   courtyardArrival: {x: -17, y: 1, z: 0}
@@ -1193,7 +1193,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0df982a864f76db40b9871c1cfedbf05, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerRoomCamera
   focus: {x: 0.85, y: 1.55, z: 1.7}
   angles: {x: 11, y: 0, z: 0}
@@ -1212,7 +1212,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 116ae946fa69c76409eea33047feea09, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IntroChapter
 --- !u!1 &27058583
 GameObject:
@@ -1437,7 +1437,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 389032010}
 --- !u!1 &38510831
@@ -1483,7 +1483,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1872616529}
 --- !u!1 &42060368
@@ -1985,7 +1985,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1319823334}
 --- !u!1 &51841684
@@ -2213,7 +2213,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2006653671}
 --- !u!1 &55324395
@@ -2259,7 +2259,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1455868457}
 --- !u!1 &57181693
@@ -2486,7 +2486,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2080693299}
 --- !u!1 &62442252
@@ -2714,10 +2714,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1069dad719f74f4382138f76df4c682, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DemoInteractable
   kind: 2
-  description:
+  description: 
 --- !u!135 &75046265
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2965,7 +2965,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 299aeff208c61374c9e7abe111c6ed4b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerChandelierVisual
   flames:
   - {fileID: 77437695}
@@ -3252,7 +3252,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1589416414}
 --- !u!1 &87051420
@@ -3298,7 +3298,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1128343156}
 --- !u!1 &90329278
@@ -3526,7 +3526,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1826150470}
 --- !u!1 &101240055
@@ -3572,7 +3572,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2066406893}
 --- !u!1 &102837842
@@ -3618,10 +3618,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1069dad719f74f4382138f76df4c682, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DemoInteractable
   kind: 0
-  description:
+  description: 
 --- !u!135 &102837845
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3776,7 +3776,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 894458052}
 --- !u!1 &110327902
@@ -4184,7 +4184,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1543325087}
 --- !u!1 &117157221
@@ -4230,7 +4230,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1250222395}
 --- !u!1 &119536500
@@ -5404,7 +5404,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.70000005
   halfWidth: 120
@@ -6254,7 +6254,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1232700074}
 --- !u!1 &168503303
@@ -6392,7 +6392,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1895455631}
 --- !u!1 &178441786
@@ -6528,7 +6528,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 76976865}
 --- !u!1 &179880690
@@ -6574,7 +6574,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1109416998}
 --- !u!1 &182074847
@@ -6712,7 +6712,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1473143462}
 --- !u!1 &186810188
@@ -7484,7 +7484,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 412750223}
 --- !u!1 &202586428
@@ -7712,7 +7712,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1518493489}
 --- !u!1 &206419386
@@ -8169,7 +8169,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 402045003}
 --- !u!1 &212542905
@@ -9033,7 +9033,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 591335635}
 --- !u!1 &229456585
@@ -9169,7 +9169,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1618742137}
 --- !u!1 &235121684
@@ -9215,7 +9215,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1453567537}
 --- !u!1 &236243693
@@ -9261,7 +9261,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1998328460}
 --- !u!1 &238309561
@@ -9579,7 +9579,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1102273471}
 --- !u!1 &247225819
@@ -9717,7 +9717,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 713961029}
 --- !u!1 &257184805
@@ -9763,7 +9763,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 483929506}
 --- !u!1 &259297463
@@ -9989,7 +9989,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 934871378}
 --- !u!1 &264411400
@@ -10035,7 +10035,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 866088876}
 --- !u!1 &264723458
@@ -10375,7 +10375,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1958165730}
 --- !u!1 &272777634
@@ -10421,7 +10421,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 23099197}
 --- !u!1 &274660825
@@ -11054,7 +11054,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1356293088}
 --- !u!1 &287045311
@@ -11502,8 +11502,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -11912,7 +11912,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1843056967}
 --- !u!1 &307292080
@@ -12124,7 +12124,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1287917990}
 --- !u!1 &314094111
@@ -12440,7 +12440,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1401314185}
 --- !u!1 &320039019
@@ -12801,7 +12801,7 @@ PrefabInstance:
     - target: {fileID: 7201445393444921185, guid: a9e7be339c20b8f4da606d1049827f51,
         type: 3}
       propertyPath: sharedProfile
-      value:
+      value: 
       objectReference: {fileID: 11400000, guid: 20a9eb2b62a35dd48bf7c8f4032d0dc2,
         type: 2}
     m_RemovedComponents: []
@@ -13003,8 +13003,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
@@ -13047,8 +13047,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_ShowDebugText: 0
   m_ShowCameraFrustum: 1
   m_IgnoreTimeScale: 0
@@ -13204,7 +13204,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 408300861}
 --- !u!1 &338535762
@@ -13415,7 +13415,7 @@ Transform:
   m_GameObject: {fileID: 342817610}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.24, z: 0}
+  m_LocalPosition: {x: 0, y: 0.134, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13524,7 +13524,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 931245245}
 --- !u!1 &349001246
@@ -13660,7 +13660,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1980496713}
 --- !u!1 &351799614
@@ -13706,7 +13706,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 389627827}
 --- !u!1 &353791771
@@ -13842,7 +13842,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1731123400}
 --- !u!1 &354699075
@@ -14160,7 +14160,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1437334231}
 --- !u!1 &361379831
@@ -14724,8 +14724,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
@@ -14744,8 +14744,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
@@ -15078,7 +15078,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1312474423}
 --- !u!1 &380675562
@@ -15124,7 +15124,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1673268696}
 --- !u!1 &383934094
@@ -15170,7 +15170,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1405859674}
 --- !u!1 &384068213
@@ -15216,7 +15216,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 707261385}
 --- !u!1 &385596063
@@ -15626,7 +15626,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2133388556}
 --- !u!1 &392418131
@@ -15852,7 +15852,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1251706485}
 --- !u!1 &396972668
@@ -15988,7 +15988,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 702406506}
 --- !u!1 &400767157
@@ -16217,7 +16217,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1631146155}
 --- !u!1 &406660883
@@ -16450,7 +16450,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1534768110}
 --- !u!1 &408300860
@@ -16833,8 +16833,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
@@ -17257,7 +17257,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1714416495}
 --- !u!1 &420002699
@@ -17302,7 +17302,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6328dbb2472c4247bc2a7f497a525743, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeadowVegetation
   material: {fileID: 2100000, guid: 949941304d529bf4d8125254408aa3c1, type: 2}
   nearSpacing: 0.85
@@ -17754,7 +17754,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.55
   halfWidth: 120
@@ -18892,7 +18892,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52c847ef0cde6104a8179abad8823902, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaintedWardrobe
   leftDoor: {fileID: 307892648}
   rightDoor: {fileID: 620114682}
@@ -18940,7 +18940,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.85
   halfWidth: 120
@@ -19229,7 +19229,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1644835524}
 --- !u!1 &460824878
@@ -19365,7 +19365,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1983201518}
 --- !u!1 &462641064
@@ -19411,7 +19411,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1991513921}
 --- !u!1 &463009997
@@ -19639,7 +19639,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 830814543}
 --- !u!1 &466026700
@@ -25249,7 +25249,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 530035046}
 --- !u!4 &486353941 stripped
@@ -25301,7 +25301,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 247225820}
 --- !u!1 &490281759
@@ -25347,7 +25347,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.55
   halfWidth: 120
@@ -25906,7 +25906,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1908768613}
 --- !u!1 &499525682
@@ -26134,7 +26134,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 463009998}
 --- !u!1 &503222161
@@ -26180,7 +26180,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1221235829}
 --- !u!1 &506286512
@@ -26316,7 +26316,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 951530181}
 --- !u!1 &510147027
@@ -26362,7 +26362,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1527083662}
 --- !u!1 &510418523
@@ -26793,7 +26793,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 784876163}
 --- !u!1 &530035045
@@ -27486,7 +27486,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2131049621}
 --- !u!1 &549484017
@@ -27897,7 +27897,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1318212369}
 --- !u!1 &561744459
@@ -28033,7 +28033,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 119536501}
 --- !u!1 &566233707
@@ -28079,7 +28079,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.55
   halfWidth: 120
@@ -28278,7 +28278,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 742077970}
 --- !u!1 &572862580
@@ -28324,7 +28324,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 827672903}
 --- !u!1 &576590061
@@ -28675,7 +28675,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1783941780}
 --- !u!1 &587876107
@@ -29087,7 +29087,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2002708484}
 --- !u!1 &602701772
@@ -29345,7 +29345,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1421641166}
 --- !u!1 &608212899
@@ -29761,7 +29761,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1710294960}
 --- !u!1 &611835312
@@ -29807,7 +29807,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1086021948}
 --- !u!1 &612263246
@@ -30158,7 +30158,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1684868104}
 --- !u!1 &627595162
@@ -30386,7 +30386,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1440156378}
 --- !u!1 &639141069
@@ -30794,7 +30794,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 168503304}
 --- !u!1 &656138432
@@ -30867,7 +30867,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9649e275606f7b34dbc275442df29c0c, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaintedCanopyBed
   model: {fileID: 691589335}
   sleepingIllustration: {fileID: 1486501991}
@@ -30921,7 +30921,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1858569434}
 --- !u!1 &657340957
@@ -30967,7 +30967,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1943129745}
 --- !u!1 &658989742
@@ -31103,7 +31103,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1833883586}
 --- !u!1 &660250629
@@ -31149,7 +31149,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 834603098}
 --- !u!1 &660493347
@@ -31195,7 +31195,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 443461610}
 --- !u!1 &660566374
@@ -31513,7 +31513,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1523589143}
 --- !u!1 &669075401
@@ -31745,7 +31745,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069fa851d06aae94a80c9be9a2f871ae, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WindowVistaParallax
   layers:
   - target: {fileID: 1653079070}
@@ -32909,7 +32909,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 188800958}
 --- !u!1 &707261384
@@ -33170,7 +33170,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.85
   halfWidth: 120
@@ -33557,8 +33557,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
     m_WrapAround: 0
@@ -33600,7 +33600,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 2
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &722058483
@@ -33613,8 +33613,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -33774,7 +33774,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.85
   halfWidth: 120
@@ -35158,7 +35158,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1178634295}
 --- !u!1 &756324241
@@ -35838,7 +35838,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 596160631}
 --- !u!1 &774010338
@@ -35884,7 +35884,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 24552463}
 --- !u!1 &779367659
@@ -35930,7 +35930,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1165380834}
 --- !u!1 &784876162
@@ -36250,7 +36250,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 130645298}
 --- !u!1 &794688497
@@ -36296,7 +36296,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 903690920}
 --- !u!1 &797480976
@@ -36342,7 +36342,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 132344228}
 --- !u!1 &797656844
@@ -36658,7 +36658,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1754084017}
 --- !u!1 &807603983
@@ -36800,8 +36800,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -37025,7 +37025,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 90329279}
 --- !u!1 &825046642
@@ -37071,7 +37071,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 717021429}
 --- !u!1 &827672902
@@ -37209,7 +37209,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1143660454}
 --- !u!1 &830363459
@@ -38432,7 +38432,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1231323329}
 --- !u!1 &861480902
@@ -39517,7 +39517,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1632229131}
 --- !u!1 &878951315
@@ -39563,7 +39563,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 182074848}
 --- !u!1 &880375469
@@ -39609,7 +39609,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1019463877}
 --- !u!1 &882482536
@@ -39910,8 +39910,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b76fb5c637cd8be4eb498b9a2f4fa0b5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   sceneMusicClips:
   - {fileID: 8300000, guid: 0c50ff87e9b505246a463db801578320, type: 3}
   - {fileID: 8300000, guid: c6ab3f9f7ec84444d884cf478961c939, type: 3}
@@ -40072,7 +40072,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1807660295}
 --- !u!1 &885866399
@@ -40118,7 +40118,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1439615428}
 --- !u!1 &886089530
@@ -40164,7 +40164,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 499525683}
 --- !u!1 &887390913
@@ -40642,7 +40642,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2100811047}
 --- !u!1 &897291534
@@ -41086,7 +41086,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 355362652}
 --- !u!1 &918293439
@@ -41222,7 +41222,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1354319358}
 --- !u!1 &921820824
@@ -41268,7 +41268,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1667549984}
 --- !u!1 &924100382
@@ -41678,7 +41678,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1412190626}
 --- !u!1 &931245244
@@ -41816,7 +41816,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1168000180}
 --- !u!1 &934871377
@@ -41954,7 +41954,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 57181694}
 --- !u!1 &938739828
@@ -42053,7 +42053,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.70000005
   halfWidth: 120
@@ -42342,7 +42342,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 866639629}
 --- !u!1 &948995470
@@ -42931,7 +42931,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 212542906}
 --- !u!1 &959486345
@@ -42977,7 +42977,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1601817059}
 --- !u!1 &960677473
@@ -43293,7 +43293,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 927461322}
 --- !u!1 &978742101
@@ -43792,7 +43792,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 62442253}
 --- !u!1 &993051739
@@ -43838,7 +43838,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 567651448}
 --- !u!1 &994783617
@@ -44064,7 +44064,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 627595163}
 --- !u!1 &1001035801
@@ -44200,7 +44200,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1235218838}
 --- !u!1 &1011339529
@@ -44246,7 +44246,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1471021212}
 --- !u!1 &1011625504
@@ -44746,7 +44746,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1489270284}
 --- !u!1 &1022751514
@@ -44828,7 +44828,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2145275688}
 --- !u!1 &1027584097
@@ -45362,7 +45362,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1510679436}
 --- !u!1 &1033170033
@@ -45498,7 +45498,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 466026701}
 --- !u!1 &1037030826
@@ -45544,7 +45544,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1785459649}
 --- !u!1 &1037380718
@@ -46042,7 +46042,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 361835084}
 --- !u!1 &1044311513
@@ -46131,7 +46131,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1186100827}
 --- !u!1 &1048377708
@@ -46740,7 +46740,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1878720572}
 --- !u!1 &1067882085
@@ -46876,7 +46876,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1176011730}
 --- !u!1 &1071612205
@@ -46922,7 +46922,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.55
   halfWidth: 120
@@ -47663,7 +47663,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2026726680}
 --- !u!1 &1090676165
@@ -48095,7 +48095,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.4
   halfWidth: 120
@@ -48840,7 +48840,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 77317216}
 --- !u!1 &1122603318
@@ -48886,7 +48886,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 369937201}
 --- !u!1 &1123008985
@@ -48932,7 +48932,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2134950007}
 --- !u!1 &1123257813
@@ -49069,7 +49069,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 670069209}
 --- !u!1 &1124787816
@@ -49354,8 +49354,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1130458792
 GameObject:
   m_ObjectHideFlags: 0
@@ -49579,7 +49579,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2047281079}
 --- !u!1 &1134033832
@@ -49987,7 +49987,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 400767158}
 --- !u!1 &1158826126
@@ -50123,7 +50123,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1267446161}
 --- !u!1 &1160088163
@@ -50169,7 +50169,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1647822560}
 --- !u!1 &1163010165
@@ -50215,7 +50215,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1497093594}
 --- !u!1 &1165131331
@@ -50897,7 +50897,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1794959507}
 --- !u!1 &1172451339
@@ -51490,7 +51490,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 479807331}
 --- !u!1 &1178634294
@@ -51628,7 +51628,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1842184546}
 --- !u!1 &1186100826
@@ -51766,7 +51766,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1796819139}
 --- !u!1 &1187530024
@@ -52033,7 +52033,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 760932580}
 --- !u!1 &1190908798
@@ -52263,7 +52263,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 482838428}
 --- !u!1 &1201438335
@@ -52399,7 +52399,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1284460100}
 --- !u!1 &1207271077
@@ -52628,7 +52628,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1242076749}
 --- !u!1 &1214562523
@@ -52764,7 +52764,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2135594045}
 --- !u!1 &1217837375
@@ -52810,7 +52810,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1112499882}
 --- !u!1 &1221235828
@@ -53038,7 +53038,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1260419833}
 --- !u!1 &1223395874
@@ -54087,7 +54087,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 299aeff208c61374c9e7abe111c6ed4b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerChandelierVisual
   flames:
   - {fileID: 1353985599}
@@ -54140,7 +54140,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1523828887}
 --- !u!1 &1241875207
@@ -54823,7 +54823,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1788671485}
 --- !u!1 &1253042267
@@ -54905,7 +54905,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1604345183}
 --- !u!1 &1254123322
@@ -55493,7 +55493,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 187895671}
 --- !u!1 &1267446160
@@ -55631,7 +55631,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1850233460}
 --- !u!1 &1273365820
@@ -56222,7 +56222,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 206419387}
 --- !u!1 &1292058992
@@ -56818,7 +56818,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 149302119}
 --- !u!1 &1306216583
@@ -57028,7 +57028,7 @@ Transform:
   m_GameObject: {fileID: 1310762452}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.006, z: 0}
   m_LocalScale: {x: 0.07, y: 0.1, z: 0.07}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -57408,7 +57408,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1418331135}
 --- !u!1 &1318212368
@@ -57638,7 +57638,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.4
   halfWidth: 120
@@ -58107,7 +58107,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 942409269}
 --- !u!1 &1339235315
@@ -58243,7 +58243,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 985285131}
 --- !u!1 &1340130229
@@ -58494,11 +58494,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_ExcludedPropertiesInInspector:
   - m_Script
-  m_LockStageInInspector:
+  m_LockStageInInspector: 
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
@@ -59001,7 +59001,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 491669034}
 --- !u!1 &1366756297
@@ -59591,7 +59591,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 215257286}
 --- !u!1 &1374724630
@@ -59727,7 +59727,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1663012297}
 --- !u!1 &1376642065
@@ -59773,8 +59773,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ad980451443d70438faac0bc6c235a0, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_TrackedObjectOffset: {x: 1.6, y: 0.45, z: 2.1}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
@@ -59816,8 +59816,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1377135020
 GameObject:
   m_ObjectHideFlags: 0
@@ -59861,7 +59861,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 452706312}
 --- !u!1 &1377394881
@@ -59997,7 +59997,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1974636897}
 --- !u!1 &1387114222
@@ -60067,7 +60067,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 122420fa24805814ea28f370f5d6dbf4, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerRoomDoor
   hinge: {fileID: 749981673}
 --- !u!1 &1389488410
@@ -61170,7 +61170,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 195216014}
 --- !u!1 &1412564270
@@ -61486,7 +61486,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 281609614}
 --- !u!1 &1418331134
@@ -61715,7 +61715,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1410181619}
 --- !u!1 &1431532069
@@ -61761,7 +61761,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1581995778}
 --- !u!1 &1434555533
@@ -62302,7 +62302,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 20c0b424985d1664f851e51b8d287eb0, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerMorningAtmosphere
 --- !u!1 &1453567536
 GameObject:
@@ -62711,7 +62711,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 8046005}
 --- !u!1 &1462354358
@@ -63063,7 +63063,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1208518064}
 --- !u!1 &1471021211
@@ -63382,7 +63382,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1488694208}
 --- !u!1 &1475458386
@@ -63474,7 +63474,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 951886123}
 --- !u!1 &1477012397
@@ -63653,7 +63653,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1867955158}
 --- !u!1 &1484297002
@@ -63699,7 +63699,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 111782663}
 --- !u!1 &1484762068
@@ -63835,7 +63835,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1997462235}
 --- !u!1 &1486457376
@@ -64857,7 +64857,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 746830501}
 --- !u!1 &1507681201
@@ -64903,7 +64903,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1165131332}
 --- !u!1 &1509288381
@@ -65130,7 +65130,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1759893782}
 --- !u!1 &1512315300
@@ -65266,7 +65266,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 3793128}
 --- !u!1 &1513937424
@@ -65494,7 +65494,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1351627300}
 --- !u!1 &1516803530
@@ -65724,7 +65724,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 431291258}
 --- !u!1 &1520205409
@@ -66224,7 +66224,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 137950739}
 --- !u!1 &1527083661
@@ -66912,8 +66912,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
     m_WrapAround: 0
@@ -66955,7 +66955,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1544450118
@@ -66968,8 +66968,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -67423,7 +67423,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2111569310}
 --- !u!1 &1564939123
@@ -67559,7 +67559,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1558239987}
 --- !u!1 &1568304171
@@ -67967,7 +67967,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1241875208}
 --- !u!1 &1577017100
@@ -68013,7 +68013,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1090676166}
 --- !u!1 &1577202700
@@ -68329,7 +68329,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2092419022}
 --- !u!1 &1580105571
@@ -68557,7 +68557,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 980176702}
 --- !u!1 &1589099131
@@ -69055,7 +69055,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1653565013}
 --- !u!1 &1600477409
@@ -69101,7 +69101,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 47381946}
 --- !u!1 &1601004010
@@ -69147,7 +69147,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1516803531}
 --- !u!1 &1601817058
@@ -69285,7 +69285,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1489111291}
 --- !u!1 &1604345182
@@ -69423,7 +69423,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 759073438}
 --- !u!1 &1606436036
@@ -69469,7 +69469,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 203205085}
 --- !u!1 &1608419218
@@ -69519,8 +69519,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -69652,7 +69652,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1737834409}
 --- !u!1 &1618424728
@@ -70697,7 +70697,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1187530025}
 --- !u!1 &1641543403
@@ -70743,7 +70743,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1040091248}
 --- !u!1 &1643020526
@@ -70789,7 +70789,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 140325373}
 --- !u!1 &1644835523
@@ -71023,8 +71023,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
     m_WrapAround: 0
@@ -71066,7 +71066,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1645159730
@@ -71079,8 +71079,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -71150,7 +71150,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1897117143}
 --- !u!1 &1647154611
@@ -71378,7 +71378,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 374872519}
 --- !u!1 &1649865018
@@ -71424,7 +71424,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 50114074}
 --- !u!1 &1652525726
@@ -71887,7 +71887,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.70000005
   halfWidth: 120
@@ -72266,7 +72266,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1725866540}
 --- !u!1 &1665538072
@@ -72492,7 +72492,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.4
   halfWidth: 120
@@ -72691,7 +72691,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 788830956}
 --- !u!1 &1673268695
@@ -73196,7 +73196,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 365109707}
 --- !u!1 &1692522038
@@ -73422,7 +73422,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 124264307}
 --- !u!1 &1701940968
@@ -73468,7 +73468,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 270954078}
 --- !u!1 &1702030348
@@ -73694,7 +73694,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 53661486}
 --- !u!1 &1710294959
@@ -73965,7 +73965,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 299aeff208c61374c9e7abe111c6ed4b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerChandelierVisual
   flames:
   - {fileID: 342817612}
@@ -74013,7 +74013,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1568304172}
 --- !u!1 &1723196303
@@ -74059,7 +74059,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1174532477}
 --- !u!1 &1725866539
@@ -75103,7 +75103,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 928597495}
 --- !u!1 &1765797230
@@ -75330,7 +75330,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 220425384}
 --- !u!1 &1769547225
@@ -75466,7 +75466,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2055882022}
 --- !u!1 &1775222819
@@ -75512,7 +75512,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1223395875}
 --- !u!1 &1778074034
@@ -75617,7 +75617,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1654936726}
 --- !u!1 &1779922237
@@ -75753,7 +75753,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1283881573}
 --- !u!1 &1783569517
@@ -75799,7 +75799,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 544996160}
 --- !u!1 &1783941779
@@ -76392,7 +76392,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 340339087}
 --- !u!1 &1794959506
@@ -76895,7 +76895,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 307292081}
 --- !u!1 &1805734665
@@ -77123,7 +77123,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1193716078}
 --- !u!1 &1810730791
@@ -77349,7 +77349,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1513937425}
 --- !u!1 &1824898212
@@ -77395,7 +77395,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1110657087}
 --- !u!1 &1825534018
@@ -77658,7 +77658,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1618424729}
 --- !u!1 &1833681261
@@ -77976,7 +77976,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 510418524}
 --- !u!1 &1840647953
@@ -78022,7 +78022,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2012140776}
 --- !u!1 &1842184545
@@ -78344,7 +78344,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 538967364}
 --- !u!1 &1850233459
@@ -78662,7 +78662,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1968374423}
 --- !u!1 &1858212912
@@ -78708,7 +78708,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 123596843}
 --- !u!1 &1858569433
@@ -79300,7 +79300,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1072990834}
 --- !u!1 &1871973465
@@ -79692,7 +79692,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 660566375}
 --- !u!1 &1882957571
@@ -79828,7 +79828,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1868743275}
 --- !u!1 &1886135003
@@ -80544,7 +80544,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2015370843}
 --- !u!1 &1902911257
@@ -80590,7 +80590,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1979595015}
 --- !u!1 &1904747662
@@ -80996,7 +80996,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1789531498}
 --- !u!1 &1907824515
@@ -81314,7 +81314,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1464922007}
 --- !u!1 &1913922424
@@ -81360,7 +81360,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 861480903}
 --- !u!1 &1914876733
@@ -81531,7 +81531,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1684275043}
 --- !u!1 &1921254128
@@ -81612,7 +81612,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 2066894269}
 --- !u!1 &1925781443
@@ -81838,7 +81838,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 449272949}
 --- !u!1 &1933542179
@@ -81974,7 +81974,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.85
   halfWidth: 120
@@ -82207,7 +82207,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1950344423}
 --- !u!1 &1945791594
@@ -82253,7 +82253,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 807603984}
 --- !u!1 &1945950212
@@ -82663,7 +82663,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1843044744}
 --- !u!1 &1960830215
@@ -82799,7 +82799,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1803757569}
 --- !u!1 &1964561210
@@ -83716,7 +83716,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1249534501}
 --- !u!1 &1980496712
@@ -84252,7 +84252,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 842547328}
 --- !u!1 &1997462234
@@ -84664,7 +84664,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1176597855}
 --- !u!1 &2006653670
@@ -84892,7 +84892,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 859078845}
 --- !u!1 &2009346047
@@ -85520,7 +85520,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1991103054}
 --- !u!1 &2020764789
@@ -85656,7 +85656,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 640803676}
 --- !u!1 &2025992991
@@ -86196,7 +86196,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
@@ -86258,7 +86258,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 290577328}
 --- !u!1 &2046239619
@@ -86304,7 +86304,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1123257814}
 --- !u!1 &2046714239
@@ -86532,7 +86532,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1114722786}
 --- !u!1 &2051848721
@@ -86578,7 +86578,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1873850106}
 --- !u!1 &2054915761
@@ -86624,7 +86624,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1312484798}
 --- !u!1 &2055699667
@@ -86942,7 +86942,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1190908799}
 --- !u!1 &2058560080
@@ -86988,7 +86988,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 238309562}
 --- !u!1 &2060576023
@@ -87034,7 +87034,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1298607486}
 --- !u!1 &2061662802
@@ -87298,7 +87298,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 224465854}
 --- !u!1 &2072062032
@@ -87344,7 +87344,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1765797231}
 --- !u!1 &2074856534
@@ -87752,7 +87752,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 554035101}
 --- !u!1 &2089154762
@@ -87888,7 +87888,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1372171912}
 --- !u!1 &2092419021
@@ -88657,7 +88657,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1914876734}
 --- !u!1 &2111569309
@@ -88908,7 +88908,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 207211726}
 --- !u!1 &2117227877
@@ -88954,7 +88954,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1176306529}
 --- !u!1 &2121096656
@@ -89818,7 +89818,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84880fe25dc44bdb699108a30ff0e57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PaperPropVisual
   paperPivot: {fileID: 1393019820}
 --- !u!1 &2141796848
@@ -89954,7 +89954,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68facd4fc941491ba29b5de8c7ce4f57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloudDrift
   speed: 0.4
   halfWidth: 120
@@ -90402,7 +90402,7 @@ PrefabInstance:
     - target: {fileID: 1855090959211580582, guid: d8f5c6134b9f43c4384d70631b8a35d0,
         type: 3}
       propertyPath: nameText
-      value:
+      value: 
       objectReference: {fileID: 1130372126}
     - target: {fileID: 1855090959211580582, guid: d8f5c6134b9f43c4384d70631b8a35d0,
         type: 3}
@@ -90412,17 +90412,17 @@ PrefabInstance:
     - target: {fileID: 1855090959211580582, guid: d8f5c6134b9f43c4384d70631b8a35d0,
         type: 3}
       propertyPath: 'answerObjects.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 1645159729}
     - target: {fileID: 1855090959211580582, guid: d8f5c6134b9f43c4384d70631b8a35d0,
         type: 3}
       propertyPath: 'answerObjects.Array.data[1]'
-      value:
+      value: 
       objectReference: {fileID: 1544450117}
     - target: {fileID: 1855090959211580582, guid: d8f5c6134b9f43c4384d70631b8a35d0,
         type: 3}
       propertyPath: 'answerObjects.Array.data[2]'
-      value:
+      value: 
       objectReference: {fileID: 722058482}
     - target: {fileID: 2040644510332948750, guid: d8f5c6134b9f43c4384d70631b8a35d0,
         type: 3}
@@ -90646,8 +90646,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81857ff2f893f47428a8f130c67322a6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

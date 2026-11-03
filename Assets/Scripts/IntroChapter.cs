@@ -11,8 +11,21 @@ public class IntroChapter : MonoBehaviour
     public static bool ConsumeRoomReturn(){bool result=roomReturn;roomReturn=false;return result;}
     public const string PlayerName = "Elian";
     public const string FamilyName = "Aurenfeld";
-    private void Awake() => Active = true;
+    public static string TowerScene { get; private set; } = "TowerRoom";
+    private void Awake()
+    {
+        Active = true;
+        if (gameObject.scene.name == "TowerRoomPaper") TowerScene = "TowerRoomPaper";
+    }
+    private void Start()
+    {
+        if (gameObject.scene.name == "StartScene")
+        {
+            CourtyardGarden.Install();
+            CourtyardLife.Install();
+        }
+    }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    public static void ResetProgress() { Active = false; HasFamilyOutfit = false;roomReturn=false; }
+    public static void ResetProgress() { Active = false; HasFamilyOutfit = false;roomReturn=false; TowerScene="TowerRoom"; CourtyardGarden.ResetProgress(); CourtyardLife.ResetProgress(); }
     public static void EquipFamilyOutfit() => HasFamilyOutfit = true;
 }
