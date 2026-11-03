@@ -1,47 +1,34 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
+using System.Linq;
 
 public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
 {
-    private enum Role { Gardener, Stablekeeper, Carpenter, Barrow }
+    private enum Role { Gardener, Stablekeeper, Carpenter }
     private Role role;
-    private Transform barrow;
-    private Vector3 originalBarrow;
-    private static bool parked;
-    private bool moving;
-
-    public static void ResetProgress() => parked = false;
     public Vector3 GetTransform() => transform.position;
     public string Label => role switch
     {
         Role.Gardener => "Mit Marta sprechen",
         Role.Stablekeeper => "Mit Hannes sprechen",
-        Role.Carpenter => "Mit Ida sprechen",
-        _ => parked ? "Schubkarre ansehen" : "Schubkarre beiseitestellen"
+        _ => "Mit Ida sprechen"
     };
 
     internal static void Install()
     {
-        Sign("Werkstatt", new Vector3(-21,0,3));
-        Sign("Stall", new Vector3(-9,0,3));
+        Sign("Werkstatt", new Vector3(-21,0,1.7f));
+        Sign("Stall", new Vector3(-14,0,3));
         Sign("Garten", new Vector3(20,0,2.4f));
         Sign("Burgtor", new Vector3(37,0,4));
-        Person(Role.Gardener, new Vector3(19.1f,0,6), new Color(.28f,.44f,.25f));
-        Person(Role.Stablekeeper, new Vector3(-10,0,10), new Color(.44f,.31f,.20f));
-        Person(Role.Carpenter, new Vector3(-22.8f,0,10), new Color(.48f,.25f,.24f));
-        var cart = GameObject.Find("Wheelbarrow");
-        if (cart == null) return;
-        var point = Add(Role.Barrow, cart.transform.position + Vector3.back * 1.35f);
-        point.barrow = cart.transform;
-        point.originalBarrow = cart.transform.position;
-        if (parked) point.PlaceBarrow(1);
+        Person(Role.Gardener, new Vector3(4.9f,0,5.8f), new Color(.28f,.44f,.25f));
+        Person(Role.Stablekeeper, new Vector3(-10.7f,0,8.1f), new Color(.44f,.31f,.20f));
+        Person(Role.Carpenter, new Vector3(-24.2f,0,5.5f), new Color(.48f,.25f,.24f));
     }
 
     private static CourtyardLife Add(Role kind, Vector3 position)
     {
         var obj = new GameObject("Courtyard " + kind, typeof(SphereCollider), typeof(CourtyardLife));
-        obj.transform.position = position;
+        obj.transform.position = OnGround(position);
         var trigger = obj.GetComponent<SphereCollider>();
         trigger.isTrigger = true;
         trigger.radius = .5f;
@@ -68,7 +55,7 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
     private static void Sign(string label, Vector3 position)
     {
         var root = new GameObject("Wayfinding - " + label).transform;
-        root.position = position;
+        root.position = OnGround(position);
         var wood = new Color(.26f,.14f,.07f);
         Shape(root, PrimitiveType.Cube, new Vector3(0,.75f,0), new Vector3(.12f,1.5f,.12f), wood);
         Shape(root, PrimitiveType.Cube, new Vector3(0,1.32f,0), new Vector3(1.65f,.48f,.12f), wood);
@@ -80,6 +67,14 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
         text.alignment = TextAlignmentOptions.Center;
         text.color = new Color(1,.87f,.61f);
         text.text = label;
+    }
+
+    private static Vector3 OnGround(Vector3 position)
+    {
+        var ground=Physics.RaycastAll(position+Vector3.up*20,Vector3.down,40,~0,QueryTriggerInteraction.Ignore)
+            .Where(hit=>hit.collider.CompareTag("Ground")).OrderByDescending(hit=>hit.point.y).ToArray();
+        if(ground.Length>0)position.y+=ground[0].point.y;
+        return position;
     }
 
     private static void Shape(Transform parent, PrimitiveType shape, Vector3 position, Vector3 size, Color tint)
@@ -98,7 +93,7 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
     public void InteractWithPlayer()
     {
         var dialogue = DialogueBoxController.instance;
-        if (dialogue == null || dialogue.IsOpen || DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning || moving) return;
+        if (dialogue == null || dialogue.IsOpen || DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning) return;
         switch (role)
         {
             case Role.Gardener:
@@ -110,33 +105,8 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
                 dialogue.ShowMessage("Die Pferde sind versorgt. Heute Morgen sind sie ruhiger als die Leute am Tor.", "Hannes");
                 break;
             case Role.Carpenter:
-                dialogue.ShowMessage("Ich habe die Werkstatt schon geöffnet. Wenn du am Garten vorbeikommst, stell die Schubkarre gern an den Rand.", "Ida");
-                break;
-            case Role.Barrow:
-                if (parked) dialogue.ShowMessage("Die Schubkarre steht jetzt am Rand.", IntroChapter.PlayerName);
-                else if (barrow != null) StartCoroutine(ParkBarrow());
+                dialogue.ShowMessage("Guten Morgen, Elian. Ich habe die Werkstatt schon geöffnet. Auf der Werkbank liegt noch der Griff für Martas neue Gartenschaufel.", "Ida");
                 break;
         }
-    }
-
-    private IEnumerator ParkBarrow()
-    {
-        moving = true;
-        SoundManager.instance?.PlayEffect("IntroFoley/footstep_wood_001", .6f);
-        const float duration = .7f;
-        for (float t = 0; t < duration; t += Time.deltaTime)
-        {
-            PlaceBarrow(Mathf.SmoothStep(0, 1, t / duration));
-            yield return null;
-        }
-        PlaceBarrow(1);
-        parked = true;
-        moving = false;
-    }
-
-    private void PlaceBarrow(float progress)
-    {
-        barrow.position = originalBarrow + Vector3.left * (1.4f * progress);
-        transform.position = barrow.position + Vector3.back * 1.35f;
     }
 }

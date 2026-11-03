@@ -27,6 +27,12 @@ public class IntroCourtyardTests
         body.position=new Vector3(-34,2.4f,8);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-west");
         body.position=new Vector3(9,1,1);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-centre");
         body.position=new Vector3(41,1,-1);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-east");
+        // Review the complete architecture and terrain without changing the gameplay camera setup.
+        var savedPosition=camera.transform.position;
+        camera.transform.position=new Vector3(-3,20,-59);
+        camera.transform.LookAt(new Vector3(-3,6,9));camera.fieldOfView=64;
+        Capture("intro-courtyard-architecture-overview");
+        camera.transform.SetPositionAndRotation(savedPosition,angle);camera.fieldOfView=fov;
         Assert.That(Quaternion.Angle(angle,camera.transform.rotation),Is.LessThan(.01));Assert.That(camera.fieldOfView,Is.EqualTo(fov));
         body.position=new Vector3(40,1,5);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
         for(int i=0;i<80;i++){body.linearVelocity=new Vector3(7,body.linearVelocity.y,0);yield return new WaitForFixedUpdate();}

@@ -22,45 +22,63 @@ public static class ConfigureIntroCourtyard
         root.name="Intro courtyard layout";
         var opening=legacy.GetComponent<DemoOpening>();if(opening.GetComponent<CourtyardCamera>()==null)opening.gameObject.AddComponent<CourtyardCamera>();
         stone=Clone("Courtyard stone architecture","Assets/Art/SceneStyle/Courtyard painted limestone.mat");
+        stone.shader=Shader.Find("Arkmon/Tower Painted Light");
+        stone.SetFloat("_DetailStrength",1);
+        stone.SetFloat("_Illustration",.35f);
+        stone.SetFloat("_TextureScale",.36f);
         oak=Clone("Courtyard oak architecture","Assets/Art/SceneStyle/Courtyard painted oak.mat");
         roof=Clone("Courtyard roof architecture","Assets/Art/SceneStyle/Courtyard painted roof.mat");
         grass=Mat("Courtyard grass floor",new Color(.32f,.43f,.16f));
+        grass.shader=Shader.Find("Arkmon/Tower Painted Light");
+        grass.SetTexture("_BaseMap",BuildEarthTexture());
+        grass.SetFloat("_TextureScale",.65f);
+        grass.SetFloat("_DetailStrength",.18f);
         path=Mat("Courtyard warm earth",new Color(.54f,.39f,.24f));
         path.SetTexture("_BaseMap",BuildEarthTexture());
         soil=Mat("Courtyard garden soil",new Color(.25f,.15f,.07f));
         Box(root,"Courtyard walkable ground",new Vector3(0,-.15f,1),new Vector3(88,.3f,40),grass,true).gameObject.tag="Ground";
-        BuildPath(root, new Vector2(-34,5.35f), new Vector2(-34,3.8f), new Vector2(-30,1.3f), new Vector2(-18,-2.8f),
-            new Vector2(-5,-3.5f), new Vector2(7,-1.8f), new Vector2(19,-.4f),
-            new Vector2(32,-1.6f), new Vector2(43,-1));
-        BuildPath(root, new Vector2(-14,-3), new Vector2(-15,4), new Vector2(-12,10));
+        BuildPath(root, new Vector2(-34,5.35f), new Vector2(-34,3.8f), new Vector2(-30,1.3f), new Vector2(-18,-5.8f),
+            new Vector2(-5,-6.2f), new Vector2(7,-1.8f), new Vector2(21,-2.9f),
+            new Vector2(32,-4.1f), new Vector2(43,-1));
+        BuildPath(root, new Vector2(-16,-6), new Vector2(-17,1), new Vector2(-14,7.8f));
         BuildPath(root, new Vector2(11,-1), new Vector2(13,3), new Vector2(12,8));
         Box(root,"Meadow beyond the west breach",new Vector3(-74,-.24f,21),new Vector3(65,.38f,105),grass);
         Walls(root);
+        BuildMeadowRelief(root);
         Move(retained,"Player residence tower",new Vector3(-34,1.4f,13),1.3f);
         Move(retained,"Tower entrance",new Vector3(-34,1.4f,9.4f),1.1f);
-        Move(retained,"Stable",new Vector3(-9,0,14),1.45f);
-        Move(retained,"Workbench",new Vector3(-21,0,8.8f),1);
-        Move(retained,"Wheelbarrow",new Vector3(20.6f,0,7.4f),1);
-        Move(retained,"Bench seat",new Vector3(0,0,8),1);
-        Move(retained,"Fountain basin",new Vector3(1.3f,0,13.3f),1.15f);
+        Move(retained,"Stable",new Vector3(-11.5f,0,12.2f),1.45f);
+        UnifyTowerMaterials(retained["Player residence tower"]);
+        Move(retained,"Workbench",new Vector3(-23,0,7.3f),1);
+        Move(retained,"Wheelbarrow",new Vector3(22.2f,0,7.9f),1);
+        Move(retained,"Bench seat",new Vector3(-1.6f,0,3.4f),1);
+        Move(retained,"Fountain basin",new Vector3(-2.8f,0,5.7f),1.15f);
         if(retained.TryGetValue("Outside gate",out var oldGate))Object.DestroyImmediate(oldGate.gameObject);
         TowerApproach(root);
+        int detailStart=root.childCount;
         CourtyardDetails(root);
+        ShiftGardenDetails(root,detailStart);
         DressBreach(root);
         House(root,"Castle west wing",new Vector3(-24,0,15),15,8,7,true);
-        House(root,"Garden cottage",new Vector3(5,0,13),5,3.2f,5,roofPitch:34,roofFinish:TintedRoof("Courtyard terracotta roof",new Color(.76f,.58f,.47f)));
-        House(root,"East cottage",new Vector3(33,0,13),5.5f,3.8f,5,roofPitch:42,roofFinish:SlateRoof());
+        House(root,"Garden cottage",new Vector3(2,0,10),5,3.2f,5,roofPitch:34,roofFinish:TintedRoof("Courtyard terracotta roof",new Color(.76f,.58f,.47f)));
+        House(root,"East cottage",new Vector3(35,0,13),5.5f,3.8f,5,roofPitch:42,roofFinish:SlateRoof());
+        House(root,"Castle upper keep",new Vector3(12,0,20.5f),18,14,5,true);
+        House(root,"Castle keep west tower",new Vector3(2.4f,0,19.8f),4,16.5f,4,true);
+        House(root,"Castle keep east tower",new Vector3(21.6f,0,19.8f),4,16.5f,4,true);
         House(root,"Castle hall",new Vector3(12,0,16),13,9,5.5f,true);
-        House(root,"Cellar storehouse",new Vector3(25,0,15.5f),7,4.2f,4.5f);
+        House(root,"Cellar storehouse",new Vector3(27.3f,0,15.5f),5,4.2f,4.5f);
         Entrance(root,retained["Tower entrance"].position+new Vector3(0,0,-.45f),CourtyardEntrance.Destination.Tower);
         Door(root,new Vector3(12,0,12.95f),3.5f,4.5f);Entrance(root,new Vector3(12,0,12.2f),CourtyardEntrance.Destination.ThroneHall);
-        Door(root,new Vector3(25,0,13),2.3f,2.9f);Entrance(root,new Vector3(25,0,12.2f),CourtyardEntrance.Destination.Cellar);
+        Door(root,new Vector3(27.3f,0,13),2.3f,2.9f);Entrance(root,new Vector3(27.3f,0,12.2f),CourtyardEntrance.Destination.Cellar);
         EastCrossing(root);Entrance(root,new Vector3(41,0,-1),CourtyardEntrance.Destination.OuterGate);
         Garden(root);GrassTufts(root);Horizon();
+        int finishStart=root.childCount;
         FinishCourtyard(root);
+        ShiftGardenDetails(root,finishStart);
+        ValidateBuildingClearances(root);
         AddCourtyardAmbience(root);
         DressGardenVerge(root);
-        foreach(var npc in Object.FindObjectsByType<NPC>(FindObjectsSortMode.None))if(npc.npcName=="John")npc.transform.position=new Vector3(7,1,1.7f);
+        foreach(var npc in Object.FindObjectsByType<NPC>(FindObjectsSortMode.None))if(npc.npcName=="John")npc.transform.position=new Vector3(10.3f,1,10.4f);
         var player=GameObject.FindWithTag("Player");player.transform.position=new Vector3(-34,2.4f,8);
         EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
     }
@@ -69,6 +87,95 @@ public static class ConfigureIntroCourtyard
     static Transform Box(Transform root,string name,Vector3 position,Vector3 size,Material material,bool collision=false)
     {var obj=GameObject.CreatePrimitive(PrimitiveType.Cube);obj.name=name;obj.transform.SetParent(root,false);obj.transform.localPosition=position;obj.transform.localScale=size;obj.GetComponent<Renderer>().sharedMaterial=material;if(!collision)Object.DestroyImmediate(obj.GetComponent<Collider>());return obj.transform;}
     static void Move(Dictionary<string,Transform> objects,string name,Vector3 position,float scale){if(objects.TryGetValue(name,out var obj)){obj.position=position;obj.localScale=Vector3.one*scale;}}
+    static void UnifyTowerMaterials(Transform tower)
+    {
+        var slate=SlateRoof();
+        slate.shader=Shader.Find("Arkmon/Tower Painted Light");
+        slate.SetFloat("_TextureScale",.55f);
+        slate.SetFloat("_DetailStrength",1);
+        EditorUtility.SetDirty(slate);
+        foreach(var renderer in tower.GetComponentsInChildren<MeshRenderer>())
+        {
+            string part=renderer.name.ToLowerInvariant();
+            if(part.Contains("roof"))renderer.sharedMaterial=slate;
+            else if(!part.Contains("window") || part.Contains("sill") || part.Contains("lintel") || part.Contains("jamb"))
+                renderer.sharedMaterial=stone;
+        }
+    }
+
+    static void ShiftGardenDetails(Transform root,int start)
+    {
+        // Move the porch, windows and gardening furniture with their cottage.
+        for(int i=start;i<root.childCount;i++)
+        {
+            var part=root.GetChild(i);
+            if(part.position.x>2 && part.position.x<8 && part.position.z>7 && part.position.z<12)
+                part.position+=new Vector3(-3,0,-3);
+            else if(part.name.StartsWith("East cottage") || (part.name.StartsWith("Cottage") && part.position.x>30))
+                part.position+=Vector3.right*2;
+        }
+    }
+
+    static void ValidateBuildingClearances(Transform root)
+    {
+        string[] homes={"Stable","West cottage","Garden cottage","East cottage","Cellar storehouse"};
+        string[] castles={"Castle west wing","Castle hall","Castle upper keep","Castle keep west tower","Castle keep east tower"};
+        Bounds BoundsOf(string name)
+        {
+            var renderers=root.Find(name).GetComponentsInChildren<MeshRenderer>();
+            var bounds=renderers[0].bounds;
+            foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
+            return bounds;
+        }
+        for(int i=0;i<homes.Length;i++)
+        foreach(string other in homes.Skip(i+1).Concat(castles))
+            if(BoundsOf(homes[i]).Intersects(BoundsOf(other)))
+                throw new System.InvalidOperationException("Building overlap: "+homes[i]+" / "+other);
+    }
+
+    // Compact hills leave flat building pads and accessible entrance landings.
+    static float GroundHeight(float x,float z)
+    {
+        float Hill(float cx,float cz,float rx,float rz,float height)
+        {
+            float r=Mathf.Pow((x-cx)/rx,2)+Mathf.Pow((z-cz)/rz,2);
+            return height*Mathf.Pow(Mathf.Max(0,1-r),2);
+        }
+        return Hill(-39,10,5.8f,8,1.35f)+Hill(-28,4,5.5f,5,1.15f)
+            +Hill(-18,3,7,3.5f,1.1f)
+            +Hill(-20,-11,10,5,1.2f)+Hill(0,-11,8,5,1.55f)
+            +Hill(26,-10,10,6,1.25f)+Hill(37,5,4,4,.75f);
+    }
+
+    static void BuildMeadowRelief(Transform root)
+    {
+        const int columns=172, rows=68;
+        var vertices=new List<Vector3>();
+        var triangles=new List<int>();
+        for(int row=0;row<=rows;row++)
+        for(int column=0;column<=columns;column++)
+        {
+            float u=column/(float)columns, v=row/(float)rows;
+            float x=Mathf.Lerp(-43,43,u), z=Mathf.Lerp(-17,17,v);
+            vertices.Add(new Vector3(x,GroundHeight(x,z)+.005f,z));
+            if(row==0 || column==0)continue;
+            int index=vertices.Count-1;
+            int lower=index-columns-1;
+            triangles.AddRange(new[]{lower-1,index-1,lower,lower,index-1,index});
+        }
+        const string asset=Art+"Courtyard meadow relief.asset";
+        var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(asset);
+        if(mesh==null){mesh=new Mesh();AssetDatabase.CreateAsset(mesh,asset);}
+        mesh.Clear();mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);
+        mesh.RecalculateNormals();mesh.RecalculateBounds();EditorUtility.SetDirty(mesh);
+        var meadow=new GameObject("Rolling courtyard meadow",typeof(MeshFilter),typeof(MeshRenderer),typeof(MeshCollider));
+        meadow.transform.SetParent(root,false);
+        meadow.tag="Ground";
+        meadow.GetComponent<MeshFilter>().sharedMesh=mesh;
+        meadow.GetComponent<MeshRenderer>().sharedMaterial=grass;
+        meadow.GetComponent<MeshCollider>().sharedMesh=mesh;
+    }
+
     static void Walls(Transform root)
     {
         Box(root,"North castle wall",new Vector3(0,4,19),new Vector3(86,8,1.2f),stone,true);
@@ -96,11 +203,11 @@ public static class ConfigureIntroCourtyard
     {
         // The low connecting wing leaves the tower entrance and terrace clear.
         House(root,"Tower connecting wing",new Vector3(-30,1.4f,16),7,5.5f,4.4f,true);
-        House(root,"West cottage",new Vector3(-1.5f,0,14),4.3f,2.7f,4.1f,roofPitch:16);
-        BuildPath(root,new Vector2(4,-2),new Vector2(5.4f,.7f),new Vector2(5.2f,9.5f));
-        Box(root,"Garden bench seat",new Vector3(6,.55f,7.4f),new Vector3(2.1f,.15f,.48f),oak,true);
-        foreach(float x in new[]{5.25f,6.75f})
-            Box(root,"Garden bench stone foot",new Vector3(x,.23f,7.4f),new Vector3(.24f,.46f,.35f),stone,true);
+        House(root,"West cottage",new Vector3(-3.8f,0,15.7f),4.3f,2.7f,4.1f,roofPitch:16);
+        BuildPath(root,new Vector2(4,-2),new Vector2(2.4f,.7f),new Vector2(2,6.8f));
+        Box(root,"Garden bench seat",new Vector3(4.9f,.55f,3.4f),new Vector3(2.1f,.15f,.48f),oak,true);
+        foreach(float x in new[]{4.15f,5.65f})
+            Box(root,"Garden bench stone foot",new Vector3(x,.23f,3.4f),new Vector3(.24f,.46f,.35f),stone,true);
         for(int i=0;i<5;i++)
             Box(root,"Stacked firewood",new Vector3(2.8f+i*.21f,.21f,10.25f),new Vector3(.18f,.42f,.67f),oak);
         var worktop=new Vector3(7.1f,.83f,9.9f);
@@ -251,15 +358,23 @@ public static class ConfigureIntroCourtyard
                 Box(root,"Tower stair baluster",new Vector3(x,(7-step)*.2f+.37f,7.65f-step*.42f),
                     new Vector3(.12f,.74f,.12f),oak);
         }
+        var windowShade=Mat("Courtyard window shadow",new Color(.105f,.15f,.155f));
         var shutters=Mat("Courtyard painted shutters",new Color(.24f,.36f,.28f));
-        foreach(var facade in new[]{new Vector3(-1.5f,0,11.9f),new Vector3(5,0,10.43f),new Vector3(33,0,10.43f)})
+        foreach(var facade in new[]{new Vector3(-3.8f,0,13.6f),new Vector3(5,0,10.43f),new Vector3(33,0,10.43f)})
         {
             Box(root,"Cottage recessed door",facade+Vector3.up*.95f,new Vector3(.8f,1.9f,.13f),oak);
             foreach(float side in new[]{-.52f,.52f})
                 Box(root,"Cottage window shutter",facade+new Vector3(1.35f+side,1.65f,0),
                     new Vector3(.25f,.67f,.12f),shutters);
-            Box(root,"Cottage window",facade+new Vector3(1.35f,1.65f,.02f),new Vector3(.75f,.65f,.12f),oak);
+            var window=facade+new Vector3(1.35f,1.65f,-.065f);
+            Box(root,"Cottage window shadow",window,new Vector3(.74f,.65f,.11f),windowShade);
+            foreach(float side in new[]{-.37f,.37f})
+                Box(root,"Cottage window jamb",window+new Vector3(side,0,-.04f),new Vector3(.085f,.72f,.17f),oak);
+            Box(root,"Cottage window head",window+new Vector3(0,.34f,-.04f),new Vector3(.82f,.09f,.17f),oak);
+            Box(root,"Cottage window sill",window+new Vector3(0,-.34f,-.085f),new Vector3(.91f,.12f,.26f),stone);
+            Box(root,"Cottage window mullion",window+new Vector3(0,0,-.075f),new Vector3(.065f,.63f,.08f),oak);
         }
+        Box(root,"Garden cottage eaves lining",new Vector3(5,3.18f,10.43f),new Vector3(5.1f,.15f,.24f),windowShade);
         Box(root,"Garden cottage awning",new Vector3(5,2.42f,9.8f),new Vector3(3.2f,.16f,1.55f),roof)
             .localRotation=Quaternion.Euler(-12,0,0);
         Box(root,"East cottage chimney",new Vector3(34.4f,4.4f,13.5f),new Vector3(.63f,1.7f,.67f),stone);
@@ -347,7 +462,7 @@ public static class ConfigureIntroCourtyard
         var leaf=GameObject.CreatePrimitive(PrimitiveType.Sphere);
         leaf.name=name;
         leaf.transform.SetParent(root,false);
-        leaf.transform.localPosition=position;
+        leaf.transform.localPosition=position+Vector3.up*GroundHeight(position.x,position.z);
         leaf.transform.localScale=scale;
         leaf.GetComponent<Renderer>().sharedMaterial=material;
         Object.DestroyImmediate(leaf.GetComponent<Collider>());
@@ -371,11 +486,14 @@ public static class ConfigureIntroCourtyard
         var triangles=new List<int>();
         float distance=0;
         Vector2 previous=points[0];
+        const int acrossSegments=16;
         for(int i=0;i<points.Length-1;i++)
-        for(int sample=0;sample<=8;sample++)
+        {
+        int samples=Mathf.Max(8,Mathf.CeilToInt(Vector2.Distance(points[i],points[i+1])/.2f));
+        for(int sample=0;sample<=samples;sample++)
         {
             if(i>0 && sample==0)continue;
-            float t=sample/8f;
+            float t=sample/(float)samples;
             Vector2 a=points[Mathf.Max(0,i-1)], b=points[i], c=points[i+1], d=points[Mathf.Min(points.Length-1,i+2)];
             Vector2 q=2*a-5*b+4*c-d, r=-a+3*b-3*c+d;
             Vector2 center=.5f*(2*b+(c-a)*t+q*t*t+r*t*t*t);
@@ -385,13 +503,19 @@ public static class ConfigureIntroCourtyard
             previous=center;
             float halfWidth=(points.Length>3?2.05f:1.12f)+.24f*Mathf.Sin(distance*.34f)+.12f*Mathf.Sin(distance*1.13f);
             int index=vertices.Count;
-            for(int side=-1;side<=1;side+=2)
+            for(int side=0;side<=acrossSegments;side++)
             {
-                Vector2 edge=center+across*(halfWidth*side);
-                vertices.Add(new Vector3(edge.x,.025f,edge.y));
+                Vector2 edge=center+across*(halfWidth*Mathf.Lerp(-1,1,side/(float)acrossSegments));
+                vertices.Add(new Vector3(edge.x,GroundHeight(edge.x,edge.y)+.03f,edge.y));
                 uvs.Add(edge*.25f);
             }
-            if(index>0)triangles.AddRange(new[]{index-2,index-1,index,index,index-1,index+1});
+            if(index>0)
+            for(int side=0;side<acrossSegments;side++)
+            {
+                int a0=index-acrossSegments-1+side,b0=index+side;
+                triangles.AddRange(new[]{a0,a0+1,b0,b0,a0+1,b0+1});
+            }
+        }
         }
         string asset=Art+"Courtyard curved path "+points[0].x+".asset";
         var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(asset);
@@ -489,7 +613,9 @@ public static class ConfigureIntroCourtyard
         Box(house,name+" structure",new Vector3(0,height/2,0),new Vector3(width,height,depth),stone,true);
         if(castle)
         {
-            for(int i=0;i<7;i++)Box(house,"Hall battlement",new Vector3(-width/2+.7f+i*1.95f,height+.6f,-depth/2),new Vector3(.9f,1.2f,.9f),stone);
+            CastleFacade(house,width,height,depth);
+            int count=Mathf.Max(2,Mathf.FloorToInt(width/1.65f));
+            for(int i=0;i<count;i++)Box(house,"Hall battlement",new Vector3(-width/2+(i+.5f)*width/count,height+.6f,-depth/2),new Vector3(.9f,1.2f,.9f),stone);
         }
         else
         {
@@ -503,17 +629,54 @@ public static class ConfigureIntroCourtyard
                 slope.localRotation=Quaternion.Euler(side*roofPitch,0,0);
             }
             Box(house,"Roof ridge beam",new Vector3(0,height+rise,0),new Vector3(width+.64f,.18f,.19f),oak);
-            var gable=GameObject.CreatePrimitive(PrimitiveType.Cube);
-            gable.name="Timber roof core";
-            gable.transform.SetParent(house,false);
-            gable.transform.localPosition=new Vector3(0,height+rise*.24f,0);
-            gable.transform.localScale=new Vector3(width,.48f*rise,depth*.5f);
-            gable.GetComponent<Renderer>().sharedMaterial=oak;
-            Object.DestroyImmediate(gable.GetComponent<Collider>());
+            BuildGable(house,width,depth,height,rise);
         }
+        if(castle)return;
         foreach(float x in new[]{-width/2+.15f,width/2-.15f})Box(house,"Facade oak beam",new Vector3(x,height/2,-depth/2-.08f),new Vector3(.2f,height,.2f),oak);
         Box(house,"Facade cross beam",new Vector3(0,height*.68f,-depth/2-.08f),new Vector3(width,.2f,.2f),oak);
     }
+    static void BuildGable(Transform house,float width,float depth,float height,float rise)
+    {
+        string asset=Art+house.name+" gable.asset";
+        var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(asset);
+        if(mesh==null){mesh=new Mesh();AssetDatabase.CreateAsset(mesh,asset);}
+        mesh.Clear();
+        mesh.vertices=new[]{new Vector3(-width/2,height,-depth/2),new Vector3(-width/2,height,depth/2),new Vector3(-width/2,height+rise,0),
+            new Vector3(width/2,height,-depth/2),new Vector3(width/2,height,depth/2),new Vector3(width/2,height+rise,0)};
+        mesh.triangles=new[]{0,1,2,3,5,4,0,2,5,0,5,3,1,4,5,1,5,2};
+        mesh.RecalculateNormals();mesh.RecalculateBounds();EditorUtility.SetDirty(mesh);
+        var gable=new GameObject("Painted solid gable",typeof(MeshFilter),typeof(MeshRenderer));
+        gable.transform.SetParent(house,false);
+        gable.GetComponent<MeshFilter>().sharedMesh=mesh;
+        gable.GetComponent<MeshRenderer>().sharedMaterial=stone;
+    }
+
+    static void CastleFacade(Transform house,float width,float height,float depth)
+    {
+        float front=-depth/2;
+        var shadow=Mat("Courtyard window shadow",new Color(.105f,.15f,.155f));
+        Box(house,"Stone foundation course",new Vector3(0,.25f,0),new Vector3(width+.35f,.5f,depth+.35f),stone);
+        foreach(float y in new[]{height*.47f,height-.2f})
+            Box(house,"Projecting stone cornice",new Vector3(0,y,0),new Vector3(width+.45f,.24f,depth+.45f),stone);
+        foreach(float x in new[]{-width/2+.18f,width/2-.18f})
+        {
+            Box(house,"Castle corner buttress",new Vector3(x,height*.45f,front-.24f),new Vector3(.62f,height*.9f,.66f),stone);
+            Box(house,"Buttress foot",new Vector3(x,.42f,front-.4f),new Vector3(.94f,.84f,.92f),stone);
+        }
+        int bays=Mathf.Max(1,Mathf.FloorToInt(width/3));
+        foreach(float y in new[]{height*.63f,height*.84f})
+        for(int i=0;i<bays;i++)
+        {
+            float x=-width/2+(i+.5f)*width/bays;
+            Box(house,"Deep castle window",new Vector3(x,y,front-.035f),new Vector3(.82f,1.38f,.075f),shadow);
+            foreach(float side in new[]{-.5f,.5f})
+                Box(house,"Window stone reveal",new Vector3(x+side,y,front-.16f),new Vector3(.18f,1.65f,.36f),stone);
+            foreach(float side in new[]{-.79f,.79f})
+                Box(house,"Window stone sill",new Vector3(x,y+side,front-.19f),new Vector3(1.15f,.18f,.42f),stone);
+            Box(house,"Slender stone mullion",new Vector3(x,y,front-.12f),new Vector3(.09f,1.4f,.16f),stone);
+        }
+    }
+
     static void Door(Transform root,Vector3 at,float width,float height)
     {
         Box(root,"Closed oak entrance",at+Vector3.up*(height/2),new Vector3(width,height,.2f),oak,true);
@@ -558,6 +721,7 @@ public static class ConfigureIntroCourtyard
             if(z>-6f&&z<2.5f || z>4.5f || new[]{-34f,-21,12,25,37}.Any(p=>Mathf.Abs(x-p)<1.7f))continue;
             float h=.18f+(float)rng.NextDouble()*.28f;int n=v.Count;v.AddRange(new[]{new Vector3(x-.1f,.015f,z),new Vector3(x,h,z+.06f),new Vector3(x+.1f,.015f,z),new Vector3(x,.015f,z-.1f),new Vector3(x+.06f,h,z),new Vector3(x,.015f,z+.1f)});t.AddRange(new[]{n,n+1,n+2,n+3,n+4,n+5});
         }
+        for(int i=0;i<v.Count;i++){var point=v[i];point.y+=GroundHeight(point.x,point.z);v[i]=point;}
         var mesh=new Mesh{name="Courtyard grass tufts"};mesh.SetVertices(v);mesh.SetTriangles(t,0);mesh.RecalculateNormals();mesh.RecalculateBounds();
         string file=Art+mesh.name+".asset";var old=AssetDatabase.LoadAssetAtPath<Mesh>(file);if(old==null){AssetDatabase.CreateAsset(mesh,file);old=mesh;}else{EditorUtility.CopySerialized(mesh,old);Object.DestroyImmediate(mesh);}
         var obj=new GameObject("Courtyard decorative grass",typeof(MeshFilter),typeof(MeshRenderer));obj.transform.SetParent(root,false);obj.GetComponent<MeshFilter>().sharedMesh=old;obj.GetComponent<Renderer>().sharedMaterial=grass;

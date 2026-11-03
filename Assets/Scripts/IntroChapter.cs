@@ -26,6 +26,6 @@ public class IntroChapter : MonoBehaviour
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    public static void ResetProgress() { Active = false; HasFamilyOutfit = false;roomReturn=false; TowerScene="TowerRoom"; CourtyardGarden.ResetProgress(); CourtyardLife.ResetProgress(); }
+    public static void ResetProgress() { Active = false; HasFamilyOutfit = false;roomReturn=false; TowerScene="TowerRoom"; CourtyardGarden.ResetProgress(); }
     public static void EquipFamilyOutfit() => HasFamilyOutfit = true;
 }
