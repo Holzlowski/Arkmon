@@ -35,15 +35,17 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
             bed.soil = beds[i];
             bed.RefreshAppearance();
         }
-        var station = Spawn("Courtyard watering can", beds[0].transform.position + new Vector3(-1.8f, 0, -2.4f));
+        var station = Spawn("Courtyard watering can", beds[0].transform.position + new Vector3(-2.65f, 0, -2.15f));
         station.canModel = new GameObject("Watering can model");
         station.canModel.transform.SetParent(station.transform, false);
 
-        // Reuse courtyard material; the can is a prop, not another obstacle in the path.
-        var metal = GameObject.Find("Garden border")?.GetComponent<Renderer>()?.sharedMaterial;
+        // Use the pale stream accent so the can reads against the soil and grass.
+        var metal = GameObject.Find("Stream surface glint")?.GetComponent<Renderer>()?.sharedMaterial;
         Part(station.canModel.transform, PrimitiveType.Cylinder, new Vector3(0,.22f,0), new Vector3(.31f,.20f,.31f), Quaternion.identity, metal);
         Part(station.canModel.transform, PrimitiveType.Cylinder, new Vector3(.22f,.30f,0), new Vector3(.075f,.16f,.075f), Quaternion.Euler(0,0,-58), metal);
-        Part(station.canModel.transform, PrimitiveType.Cube, new Vector3(-.18f,.27f,0), new Vector3(.045f,.22f,.07f), Quaternion.identity, metal);
+        Part(station.canModel.transform, PrimitiveType.Cube, new Vector3(-.23f,.27f,0), new Vector3(.045f,.18f,.07f), Quaternion.identity, metal);
+        Part(station.canModel.transform, PrimitiveType.Cube, new Vector3(-.17f,.35f,0), new Vector3(.15f,.045f,.07f), Quaternion.identity, metal);
+        Part(station.canModel.transform, PrimitiveType.Cube, new Vector3(-.17f,.19f,0), new Vector3(.15f,.045f,.07f), Quaternion.identity, metal);
         station.RefreshAppearance();
     }
 

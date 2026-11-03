@@ -48,8 +48,8 @@ public static class ConfigureIntroCourtyard
         CourtyardDetails(root);
         DressBreach(root);
         House(root,"Castle west wing",new Vector3(-24,0,15),15,8,7,true);
-        House(root,"Garden cottage",new Vector3(5,0,13),5,3.2f,5,roofPitch:34);
-        House(root,"East cottage",new Vector3(33,0,13),5.5f,3.8f,5,roofPitch:42);
+        House(root,"Garden cottage",new Vector3(5,0,13),5,3.2f,5,roofPitch:34,roofFinish:TintedRoof("Courtyard terracotta roof",new Color(.76f,.58f,.47f)));
+        House(root,"East cottage",new Vector3(33,0,13),5.5f,3.8f,5,roofPitch:42,roofFinish:SlateRoof());
         House(root,"Castle hall",new Vector3(12,0,16),13,9,5.5f,true);
         House(root,"Cellar storehouse",new Vector3(25,0,15.5f),7,4.2f,4.5f);
         Entrance(root,retained["Tower entrance"].position+new Vector3(0,0,-.45f),CourtyardEntrance.Destination.Tower);
@@ -310,10 +310,29 @@ public static class ConfigureIntroCourtyard
             Leaf(root,"Breach foliage",new Vector3(i<24?x:-42.32f,y,z),new Vector3(.32f,.2f,.39f),foliage);
             if(i%4==0)Leaf(root,"Breach wildflower",new Vector3(x,.43f,z),Vector3.one*.15f,flowers);
         }
+        for(int cluster=0;cluster<14;cluster++)
+        {
+            float x=-42.3f+(float)rng.NextDouble()*5.5f;
+            float z=3.6f+(float)rng.NextDouble()*7f;
+            for(int blade=0;blade<5;blade++)
+            {
+                float height=.18f+(float)rng.NextDouble()*.36f;
+                var stalk=Box(root,"Breach grass blade",new Vector3(x+blade*.065f,height*.46f,z),
+                    new Vector3(.046f,height,.065f),blade%2==0?grass:foliage);
+                stalk.localRotation=Quaternion.Euler(blade*7,cluster*23,blade*8-16);
+            }
+        }
+        for(int i=0;i<27;i++)
+        {
+            float z=4.25f+i*.18f;
+            float y=.78f+Mathf.Sin(i*.52f)*.22f;
+            Leaf(root,"Ivy along broken masonry",new Vector3(-42.25f,y,z),
+                new Vector3(.18f,.15f,.24f),foliage);
+        }
         var sun=new GameObject("Warm light through the breach",typeof(Light));
         sun.transform.SetParent(root,false);
         sun.transform.localPosition=new Vector3(-47,5.5f,7);
-        sun.transform.rotation=Quaternion.LookRotation(new Vector3(13,-5,-2));
+        sun.transform.rotation=Quaternion.LookRotation(new Vector3(13,-5,-1.1f));
         var light=sun.GetComponent<Light>();
         light.type=LightType.Spot;
         light.color=new Color(1f,.79f,.48f);
@@ -428,7 +447,43 @@ public static class ConfigureIntroCourtyard
         BuildPath(root,new Vector2(50.8f,-1),new Vector2(54,-1),new Vector2(58,-1),new Vector2(62,-1));
     }
 
-    static void House(Transform root,string name,Vector3 at,float width,float height,float depth,bool castle=false,float roofPitch=26f)
+    static Material SlateRoof()
+    {
+        const string asset=Art+"Courtyard slate courses.asset";
+        var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(asset);
+        if(texture==null)
+        {
+            const int size=128;
+            texture=new Texture2D(size,size,TextureFormat.RGBA32,true);
+            texture.wrapMode=TextureWrapMode.Repeat;
+            texture.filterMode=FilterMode.Trilinear;
+            var pixels=new Color32[size*size];
+            for(int y=0;y<size;y++)
+            for(int x=0;x<size;x++)
+            {
+                int row=y/16, shifted=(x+row%2*8)%size;
+                float shade=.82f+.055f*Mathf.Sin(shifted/16*17+row*13);
+                if(y%16<2 || shifted%16==0)shade*=.66f;
+                else if(y%16==2)shade*=1.12f;
+                pixels[y*size+x]=new Color(shade,shade,shade);
+            }
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            AssetDatabase.CreateAsset(texture,asset);
+        }
+        var material=Mat("Courtyard slate roof",new Color(.36f,.45f,.52f));
+        material.SetTexture("_BaseMap",texture);
+        return material;
+    }
+
+    static Material TintedRoof(string name,Color tint)
+    {
+        var material=Clone(name,"Assets/Art/SceneStyle/Courtyard painted roof.mat");
+        material.SetColor("_BaseColor",tint);
+        return material;
+    }
+
+    static void House(Transform root,string name,Vector3 at,float width,float height,float depth,bool castle=false,float roofPitch=26f,Material roofFinish=null)
     {
         var house=new GameObject(name).transform;house.SetParent(root,false);house.localPosition=at;
         Box(house,name+" structure",new Vector3(0,height/2,0),new Vector3(width,height,depth),stone,true);
@@ -444,7 +499,7 @@ public static class ConfigureIntroCourtyard
             foreach(float side in new[]{-1f,1f})
             {
                 var slope=Box(house,"Painted roof slope",new Vector3(0,height+rise*.5f,side*run*.5f),
-                    new Vector3(width+.6f,.18f,run/Mathf.Cos(radians)),roof);
+                    new Vector3(width+.6f,.18f,run/Mathf.Cos(radians)),roofFinish!=null?roofFinish:roof);
                 slope.localRotation=Quaternion.Euler(side*roofPitch,0,0);
             }
             Box(house,"Roof ridge beam",new Vector3(0,height+rise,0),new Vector3(width+.64f,.18f,.19f),oak);
