@@ -22,6 +22,12 @@ public class DemoInteractable : MonoBehaviour, IInteractableAsPlayer
             return new Vector3(collider.bounds.center.x, 0, collider.bounds.min.z - .28f);
         return presentationTarget.position + Vector3.back * .7f;
     }
+    private void ViewWindow(string message, string speaker)
+    {
+        DialogueBoxController.instance.ShowMessage(message, speaker);
+        FindFirstObjectByType<TowerRoomCamera>()?.ShowWindowView();
+    }
+
     public void InteractWithPlayer()
     {
         if (DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning || DialogueBoxController.instance == null || DialogueBoxController.instance.IsOpen) return;
@@ -35,7 +41,7 @@ public class DemoInteractable : MonoBehaviour, IInteractableAsPlayer
                     return;
                 case Kind.RoomDoor: DemoOpening.LeaveRoom(); return;
                 case Kind.Lamp: return;
-                case Kind.Window: DialogueBoxController.instance.ShowMessage("Hinter den goldenen Feldern liegen die Dächer der Stadt. Von hier oben wirkt alles so friedlich. Ob mein Weg bald dorthin führt?",IntroChapter.PlayerName); return;
+                case Kind.Window: ViewWindow("Hinter den goldenen Feldern liegen die Dächer der Stadt. Von hier oben wirkt alles so friedlich. Ob mein Weg bald dorthin führt?",IntroChapter.PlayerName); return;
                 case Kind.CourtyardGate: DialogueBoxController.instance.ShowMessage("Hier erwarten wir die Arkanmeisterin. Bis sie eintrifft, kann ich mich noch ein wenig im Hof umsehen.",IntroChapter.PlayerName); return;
                 default: DialogueBoxController.instance.ShowMessage(description,IntroChapter.PlayerName); return;
             }
@@ -48,7 +54,7 @@ public class DemoInteractable : MonoBehaviour, IInteractableAsPlayer
                 break;
             case Kind.RoomDoor: DemoOpening.LeaveRoom(); break;
             case Kind.Lamp: DemoOpening.TakeLamp(); break;
-            case Kind.Window: DialogueBoxController.instance.ShowMessage("Goldene Felder bis zum Horizont … Irgendwann werde ich all das erkunden. Heute wartet erst einmal meine Prüfung.", "Der Junge"); break;
+            case Kind.Window: ViewWindow("Goldene Felder bis zum Horizont … Irgendwann werde ich all das erkunden. Heute wartet erst einmal meine Prüfung.", "Der Junge"); break;
             case Kind.CourtyardGate: DialogueBoxController.instance.ShowMessage(DemoOpening.PassedFirstTrial
                 ? "Kafla und ich haben die Prüfung bestanden. Bevor wir die goldenen Felder erkunden, erwarten wir noch die Arkanmeisterin am Hof."
                 : "Bevor ich hinausziehe, wartet John mit meiner Prüfung auf mich.", "Der Junge"); break;

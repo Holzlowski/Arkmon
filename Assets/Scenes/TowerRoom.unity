@@ -31751,18 +31751,28 @@ MonoBehaviour:
   - target: {fileID: 1653079070}
     cameraFollow: {x: 0.92, y: 0.65}
     driftAmplitude: 0
+    closeUpLift: 0
+    closeUpOrder: 1
   - target: {fileID: 837687342}
     cameraFollow: {x: 0.84, y: 0.5}
     driftAmplitude: 0
+    closeUpLift: 0.46
+    closeUpOrder: 3
   - target: {fileID: 1967774418}
     cameraFollow: {x: 0.58, y: 0.32}
     driftAmplitude: 0
+    closeUpLift: 0.36
+    closeUpOrder: 4
   - target: {fileID: 1039069850}
     cameraFollow: {x: 0.28, y: 0.12}
     driftAmplitude: 0
+    closeUpLift: 0.14
+    closeUpOrder: 5
   - target: {fileID: 280518726}
     cameraFollow: {x: 0.9, y: 0.58}
     driftAmplitude: 0.35
+    closeUpLift: 0
+    closeUpOrder: 2
   windowCentre: {x: 0, y: 3.2, z: 6}
   referenceView: {x: 0, y: 2.4, z: -4}
   layeredVista: 1

@@ -48,6 +48,17 @@ public class TowerChapterFinishTests
         yield return new WaitForSeconds(.3f);
         Capture("tower-intro-finished-morning");
         var camera=Camera.main;Quaternion rotation=camera.transform.rotation;float fov=camera.fieldOfView;
+        var window=UnityEngine.Object.FindObjectsByType(T("DemoInteractable"),FindObjectsSortMode.None)
+            .Single(item=>item.GetType().GetField("kind").GetValue(item).ToString()=="Window");
+        Vector3 roomPosition=camera.transform.position;
+        window.GetType().GetMethod("InteractWithPlayer").Invoke(window,null);
+        yield return new WaitForSecondsRealtime(1.2f);
+        Assert.That(Quaternion.Angle(camera.transform.rotation, Quaternion.identity), Is.LessThan(.2f));
+        Assert.That(camera.transform.position.z,Is.GreaterThan(roomPosition.z+4));
+        Capture("tower-window-closeup");
+        Close();yield return new WaitForSecondsRealtime(1.2f);
+        Assert.That(camera.fieldOfView,Is.EqualTo(fov).Within(.15f));
+        Assert.That(Vector3.Distance(roomPosition,camera.transform.position),Is.LessThan(.15f));
         foreach(var position in new[]{new Vector3(-4,1,-4),new Vector3(4,1,-4),new Vector3(1,1,1),(Vector3)door.GetType().GetProperty("ApproachPosition").GetValue(door)})
         {
             body.position=position;body.linearVelocity=Vector3.zero;Physics.SyncTransforms();yield return new WaitForSeconds(.35f);
