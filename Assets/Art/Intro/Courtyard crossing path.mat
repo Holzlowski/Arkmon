@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties:
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -32,6 +32,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailStrength: 0.24
+    - _Illustration: 0
     - _MorningStrength: 1
     - _TextureScale: 0.27
     - _WarmLight: 0.8

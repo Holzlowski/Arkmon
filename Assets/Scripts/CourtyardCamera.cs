@@ -4,7 +4,7 @@ using UnityEngine;
 [DefaultExecutionOrder(9000)]
 public class CourtyardCamera : MonoBehaviour
 {
-    [SerializeField] private Vector2 horizontalBounds=new Vector2(-30,30);
+    [SerializeField] private Vector2 horizontalBounds=new Vector2(-34,52);
     [SerializeField] private Vector2 depthBounds=new Vector2(-9,11);
     [SerializeField] private float distance=21, pitch=32, fieldOfView=45, damping=.28f;
     private Camera view;private Transform player;private Vector3 focus,velocity;

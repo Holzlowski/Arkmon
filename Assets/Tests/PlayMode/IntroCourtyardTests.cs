@@ -24,11 +24,11 @@ public class IntroCourtyardTests
         Assert.That(entrances.Length,Is.EqualTo(4));
         Assert.That(Physics.BoxCast(new Vector3(-38,1,-1),new Vector3(.35f,.8f,.35f),Vector3.right,out var hit,Quaternion.identity,76,~0,QueryTriggerInteraction.Ignore),Is.False,"The cross-courtyard route must stay open: "+hit.collider?.name);
         var camera=Camera.main;Quaternion angle=camera.transform.rotation;float fov=camera.fieldOfView;
-        body.position=new Vector3(-32,1,7);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-west");
-        body.position=new Vector3(0,1,-1);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-centre");
-        body.position=new Vector3(34,1,4);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-east");
+        body.position=new Vector3(-34,2.4f,8);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-west");
+        body.position=new Vector3(9,1,1);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-centre");
+        body.position=new Vector3(41,1,-1);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-east");
         Assert.That(Quaternion.Angle(angle,camera.transform.rotation),Is.LessThan(.01));Assert.That(camera.fieldOfView,Is.EqualTo(fov));
-        body.position=new Vector3(40,1,-1);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
+        body.position=new Vector3(40,1,5);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
         for(int i=0;i<80;i++){body.linearVelocity=new Vector3(7,body.linearVelocity.y,0);yield return new WaitForFixedUpdate();}
         Assert.That(body.position.x,Is.LessThan(42.7f),"The outer wall stops the player.");Assert.That(body.position.y,Is.GreaterThan(-.5f));body.linearVelocity=Vector3.zero;
         var tower=entrances.First(e=>e.GetType().GetField("destination").GetValue(e).ToString()=="Tower");

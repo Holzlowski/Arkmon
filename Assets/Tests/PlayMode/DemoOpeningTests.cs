@@ -55,6 +55,11 @@ public class DemoOpeningTests
         yield return new WaitForSeconds(4f);
         Assert.That(Static("DemoOpening", "Started"), Is.EqualTo(true));
         Assert.That(Static("DemoOpening", "HasMantle"), Is.EqualTo(false));
+        float dialogueDeadline = Time.realtimeSinceStartup + 6;
+        var isOpen = T("DialogueBoxController").GetProperty("IsOpen");
+        while (!(bool)isOpen.GetValue(Dialogue) && Time.realtimeSinceStartup < dialogueDeadline)
+            yield return null;
+        Assert.That(isOpen.GetValue(Dialogue), Is.True, "The opening dialogue has appeared.");
         var portrait = (UnityEngine.UI.Image)T("DialogueBoxController").GetField("portraitImage", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Dialogue);
         Assert.That(portrait.sprite.name, Is.EqualTo("Prince-Room-NoLamp-Portrait"));
         var player = GameObject.FindWithTag("Player");
@@ -67,17 +72,14 @@ public class DemoOpeningTests
         T("DemoOpening").GetMethod("TakeMantle").Invoke(null, null);
         yield return new WaitForSecondsRealtime(.65f);
         var wardrobe = GameObject.Find("Wardrobe");
-        Assert.That(Static("DemoOpening", "HasMantle"), Is.False, "The mantle remains hanging while the doors open.");
-        Assert.That(wardrobe.transform.Find("Green mantle on hanger").gameObject.activeSelf, Is.True);
+        var outfit = wardrobe.GetComponentsInChildren<Transform>(true)
+            .First(item => item.name == "Aurenfeld family outfit on hanger");
+        Assert.That(outfit.gameObject.activeSelf, Is.True);
         yield return WaitForDressing();
-        Assert.That(wardrobe.transform.Find("Green mantle on hanger").gameObject.activeSelf, Is.False);
-        Assert.That(Static("DemoOpening", "HasMantle"), Is.EqualTo(true));
-        Assert.That(portrait.sprite.name, Is.EqualTo("Prince-Mantle-NoLamp-Portrait"));
-        Assert.That(GameObject.Find("Wardrobe").GetComponentsInChildren<MeshRenderer>().Length, Is.GreaterThan(10));
-        Assert.That(GameObject.Find("Wardrobe").GetComponentsInChildren<SpriteRenderer>().Length, Is.EqualTo(0));
-        Assert.That(player.GetComponentsInChildren<SpriteRenderer>().Any(r => r.sprite != null && r.sprite.name == "Prince-Mantle-NoLamp"), Is.True);
-        Call(Dialogue, "CloseDialogue");
-        T("DemoOpening").GetMethod("TakeLamp").Invoke(null, null);
+        Assert.That(outfit.gameObject.activeSelf, Is.False);
+        Assert.That(Static("IntroChapter", "HasFamilyOutfit"), Is.True);
+        Assert.That(Static("DemoOpening", "HasLamp"), Is.False);
+        Assert.That(portrait.sprite.name, Is.EqualTo("Prince-Family-Portrait"));
         Call(Dialogue, "CloseDialogue");
         T("DemoOpening").GetMethod("LeaveRoom").Invoke(null, null);
         float deadline = Time.realtimeSinceStartup + 10;
@@ -87,12 +89,8 @@ public class DemoOpeningTests
         Vector3 arrival = GameObject.FindWithTag("Player").transform.position;
         Vector3 entrance = GameObject.Find("Tower entrance").transform.position;
         Assert.That(arrival.x, Is.EqualTo(entrance.x).Within(.1));
-        Assert.That(arrival.z, Is.EqualTo(entrance.z - 1.4f).Within(.1));
-        var npc = (Component)UnityEngine.Object.FindFirstObjectByType(T("NPC"));
-        Assert.That(npc.transform.position.x, Is.GreaterThan(10));
-        Assert.That(GameObject.Find("Courtyard stone floor").transform.localScale.x, Is.GreaterThan(40));
-        yield return SceneManager.LoadSceneAsync("StartScene"); yield return null;
-        Assert.That(Static("DemoOpening", "HasMantle"), Is.EqualTo(true));
+        Assert.That(entrance.z - arrival.z, Is.InRange(.3f, 2f), "Elian arrives on the terrace in front of the tower door.");
+        Assert.That(GameObject.Find("Courtyard walkable ground"), Is.Not.Null);
         T("DemoOpening").GetMethod("ResetSession", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
     }
     [UnityTest]

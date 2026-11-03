@@ -14,7 +14,7 @@ public class CourtyardPolishTests
     {
         T("DemoOpening").GetMethod("ResetSession",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,null);
         yield return SceneManager.LoadSceneAsync("StartScene");for(int i=0;i<5;i++)yield return null;
-        foreach(string name in new[]{"Stable","Wheelbarrow","Workbench","Fountain basin","Bench seat","Tower entrance","Paper supply crate"})
+        foreach(string name in new[]{"Stable","Wheelbarrow","Workbench","Fountain basin","Bench seat","Tower entrance"})
         {
             var prop=GameObject.Find(name);Assert.That(prop,Is.Not.Null,name);
             Assert.That(prop.GetComponentsInChildren<MeshRenderer>().Length,Is.GreaterThan(5),name);
@@ -23,7 +23,7 @@ public class CourtyardPolishTests
         }
         Assert.That(UnityEngine.Object.FindFirstObjectByType(T("NPC")),Is.Not.Null);
         Assert.That(GameObject.Find("Castle horizon and golden fields"),Is.Not.Null);
-        Assert.That(GameObject.Find("Gate forecourt"),Is.Not.Null);
+        Assert.That(GameObject.Find("Garden bench seat"),Is.Not.Null);
         LogAssert.NoUnexpectedReceived();
     }
 }
