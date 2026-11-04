@@ -18,6 +18,7 @@ public class DialogueBoxController : MonoBehaviour
 
     public static event Action OnDialogueStarted;
     public static event Action OnDialogueEnded;
+    public static event Action<string, DialogueEmotion> OnLinePresented;
 
     bool skipLineTriggered;
     bool answerTriggered;
@@ -29,6 +30,42 @@ public class DialogueBoxController : MonoBehaviour
     private bool revealLine;
     private int answerCount;
     private DialogueTree temporaryDialogue;
+    private string conversationSpeaker;
+    private Sprite conversationPortrait;
+    private DialoguePortraitMotion portraitMotion;
+    public string ActiveSpeaker { get; private set; } = "";
+    public DialogueEmotion ActiveEmotion { get; private set; }
+    public Sprite ActivePortrait => portraitImage != null ? portraitImage.sprite : null;
+
+    private void PresentLine(DialogueLinePresentation presentation)
+    {
+        ActiveSpeaker=string.IsNullOrEmpty(presentation.speaker)?conversationSpeaker:presentation.speaker;
+        ActiveEmotion=presentation.emotion;
+        nameText.text=ActiveSpeaker;
+        if(portraitImage!=null)
+        {
+            Sprite explicitPortrait=presentation.portrait!=null?presentation.portrait:
+                ActiveSpeaker==conversationSpeaker?conversationPortrait:null;
+            portraitImage.sprite=explicitPortrait!=null?explicitPortrait:
+                DialoguePortraitSet.Resolve(ActiveSpeaker,ActiveEmotion) ?? PaperUIStyle.Load()?.PortraitFor(ActiveSpeaker);
+            portraitImage.enabled=portraitImage.sprite!=null;
+            if(portraitMotion==null)portraitMotion=portraitImage.GetComponent<DialoguePortraitMotion>()
+                ?? portraitImage.gameObject.AddComponent<DialoguePortraitMotion>();
+            portraitMotion.Play(ActiveEmotion);
+        }
+        OnLinePresented?.Invoke(ActiveSpeaker,ActiveEmotion);
+    }
+    private void ClearPresentation()
+    {
+        ActiveSpeaker="";ActiveEmotion=DialogueEmotion.Neutral;
+        if(portraitImage!=null){portraitImage.sprite=null;portraitImage.enabled=false;}
+    }
+    private void EndPresentation()
+    {
+        dialogueBox.SetActive(false);answerBox.SetActive(false);
+        ClearPresentation();
+        OnDialogueEnded?.Invoke();
+    }
 
     public void ShowMessage(string message, string speaker)
     {
@@ -81,12 +118,7 @@ public class DialogueBoxController : MonoBehaviour
         ResetBox();
         this.battleSceneName = battleSceneName;
         battleConfiguration = configuration;
-        nameText.text = name;
-        if (portraitImage != null)
-        {
-            portraitImage.sprite = portrait != null ? portrait : PaperUIStyle.Load()?.PortraitFor(name);
-            portraitImage.enabled = portraitImage.sprite != null;
-        }
+        conversationSpeaker=name;conversationPortrait=portrait;
         dialogueBox.SetActive(true);
         OnDialogueStarted?.Invoke();
         StartCoroutine(RunDialogue(dialogueTree, startSection));
@@ -97,6 +129,9 @@ public class DialogueBoxController : MonoBehaviour
     {
         for (int i = 0; i < dialogueTree.sections[section].dialogue.Length; i++)
         {
+            var presentations=dialogueTree.sections[section].presentations;
+            PresentLine(presentations!=null && i<presentations.Length?presentations[i]:default);
+            dialogueText.text="";
             typing = true;
             revealLine = false;
             float timer = 0;
@@ -130,15 +165,14 @@ public class DialogueBoxController : MonoBehaviour
 
         if (dialogueTree.sections[section].battleAfterDialogue)
         {
-            OnDialogueEnded?.Invoke();
-            dialogueBox.SetActive(false);
+            EndPresentation();
 
 
             Vector3 playerTransform = GameObject.FindWithTag("Player").gameObject.transform.position;
             SceneLoadManager.instance.SavePlayerTransform(playerTransform);
             SceneLoadManager.instance.SetPendingBattle(battleConfiguration);
-            SceneLoadManager.instance.SetBattleSpeaker(nameText.text);
-            DemoOpening.BeginTrial(nameText.text);
+            SceneLoadManager.instance.SetBattleSpeaker(conversationSpeaker);
+            DemoOpening.BeginTrial(conversationSpeaker);
 
             // Lade die Kampfszene
             SceneLoadManager.instance.LoadBattleScene(battleSceneName);
@@ -149,12 +183,12 @@ public class DialogueBoxController : MonoBehaviour
 
         if (dialogueTree.sections[section].endAfterDialogue)
         {
-            OnDialogueEnded?.Invoke();
-            dialogueBox.SetActive(false);
+            EndPresentation();
             if (temporaryDialogue != null) { Destroy(temporaryDialogue); temporaryDialogue = null; }
             yield break;
         }
 
+        PresentLine(dialogueTree.sections[section].branchPoint.presentation);
         dialogueText.text = dialogueTree.sections[section].branchPoint.question;
         ShowAnswers(dialogueTree.sections[section].branchPoint);
         while (answerTriggered == false)
@@ -208,6 +242,7 @@ public class DialogueBoxController : MonoBehaviour
     void ResetBox()
     {
         StopAllCoroutines();
+        ClearPresentation();
         if (temporaryDialogue != null) { Destroy(temporaryDialogue); temporaryDialogue = null; }
         dialogueBox.SetActive(false);
         answerBox.SetActive(false);
