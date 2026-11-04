@@ -105,11 +105,11 @@ public class TowerChapterFinishTests
         var interact=gardenType.GetMethod("InteractWithPlayer");
         interact.Invoke(beds[0],null);Close();
         Assert.That(label.GetValue(beds[0]),Is.EqualTo("Trockenes Beet ansehen"));
-        interact.Invoke(can,null);Close();
+        CourtyardGardenTaskTests.MoveTo(can);interact.Invoke(can,null);yield return CourtyardGardenTaskTests.WaitForPour();Close();
         foreach(var gardenBed in beds)
         {
-            Assert.That(label.GetValue(gardenBed),Is.EqualTo("Beet gieﬂen"));
-            interact.Invoke(gardenBed,null);Close();
+            Assert.That(label.GetValue(gardenBed),Is.EqualTo("Beet gie√üen"));
+            CourtyardGardenTaskTests.MoveTo(gardenBed);interact.Invoke(gardenBed,null);yield return CourtyardGardenTaskTests.WaitForPour();
             Assert.That(label.GetValue(gardenBed),Is.EqualTo("Beet ansehen"));
         }
         LogAssert.NoUnexpectedReceived();

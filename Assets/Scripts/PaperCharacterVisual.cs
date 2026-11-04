@@ -43,6 +43,19 @@ public class PaperCharacterVisual : MonoBehaviour
     private float travelled;
     [SerializeField, Min(.2f)] private float walkStrideLength = 2.4f;
     private PaperPlayerWalkRig playerWalkRig;
+    private PaperPlayerGardenRig gardenRig;
+    private SpriteRenderer gardenCan;
+    private float gardenBend, gardenTilt, gardenReach;
+    private bool gardenAttached;
+    public Vector3 GardenHandPosition => gardenRig != null ? gardenRig.HandPosition : transform.position;
+    public void SetGardenPose(SpriteRenderer can, bool attached, float bend = 0, float tilt = 0, float reach = 1)
+    {
+        gardenCan = can; gardenAttached = attached;
+        gardenBend = bend; gardenTilt = tilt; gardenReach = reach;
+        if (can != null && gardenRig == null && spriteRenderer != null)
+            gardenRig = new PaperPlayerGardenRig(paperPivot, spriteRenderer);
+        if (can == null) { gardenRig?.Hide(); if(spriteRenderer != null) spriteRenderer.forceRenderingOff = false; }
+    }
     public bool IsPlayingWalkCycle { get; private set; }
     public void SetWakeUpProgress(float progress) => wakeProgress = progress;
     public void SetOutfitChangeProgress(float progress) => outfitProgress = progress;
@@ -169,9 +182,14 @@ public class PaperCharacterVisual : MonoBehaviour
                 spriteRenderer.flipX = horizontal < 0f;
         }
         bool rigOutfit = restingSprite != null && (restingSprite.name == "Prince-Family" || restingSprite.name == "Prince-Room-NoLamp");
-        playerWalkRig?.Present(IsPlayingWalkCycle && rigOutfit && !summoningPose,
+        playerWalkRig?.Present(gardenCan == null && IsPlayingWalkCycle && rigOutfit && !summoningPose,
             restingSprite != null && restingSprite.name == "Prince-Family", spriteRenderer != null && spriteRenderer.flipX,
             travelled / walkStrideLength * Mathf.PI * 2);
+        if (gardenCan != null && !summoningPose && gardenRig != null)
+            gardenRig.Present(restingSprite != null && restingSprite.name == "Prince-Family",
+                spriteRenderer.flipX, walking, travelled / walkStrideLength * Mathf.PI * 2,
+                gardenBend, gardenTilt, gardenReach, gardenCan, gardenAttached);
+        else gardenRig?.Hide();
     }
 
     private void UpdateWalkFrame(bool walking, float distance)
@@ -280,6 +298,7 @@ public class PaperCharacterVisual : MonoBehaviour
     private void OnDisable()
     {
         playerWalkRig?.Hide();
+        SetGardenPose(null, false);
         IsPlayingWalkCycle = false;
         if (paperPivot == null || !initialized) return;
         paperPivot.localPosition = restPosition;
@@ -287,5 +306,5 @@ public class PaperCharacterVisual : MonoBehaviour
         paperPivot.localRotation = restRotation;
         if (spriteRenderer != null) { spriteRenderer.color = restColor; SetSummoningPose(false); }
     }
-    private void OnDestroy() => playerWalkRig?.Dispose();
+    private void OnDestroy() { playerWalkRig?.Dispose(); gardenRig?.Dispose(); }
 }

@@ -42,15 +42,18 @@ public class IntroCourtyardTests
         var closeDialogue=T("DialogueBoxController").GetMethod("CloseDialogue");
         var dialogueController=T("DialogueBoxController").GetField("instance").GetValue(null);
         closeDialogue.Invoke(dialogueController,null);
+        CourtyardGardenTaskTests.MoveTo(can);
         gardenType.GetMethod("InteractWithPlayer").Invoke(can,null);
+        yield return CourtyardGardenTaskTests.WaitForPour();
         closeDialogue.Invoke(dialogueController,null);
         var beds=UnityEngine.Object.FindObjectsByType(gardenType,FindObjectsSortMode.None)
             .Cast<Component>().Where(point=>point.name=="Garden watering point").ToArray();
         Assert.That(beds.Length,Is.EqualTo(3));
         foreach(var bed in beds)
         {
+            CourtyardGardenTaskTests.MoveTo(bed);
             gardenType.GetMethod("InteractWithPlayer").Invoke(bed,null);
-            closeDialogue.Invoke(dialogueController,null);
+            yield return CourtyardGardenTaskTests.WaitForPour();
         }
         Assert.That(gardenType.GetProperty("Completed").GetValue(null),Is.True);
         body.position=new Vector3(9,1,1);Physics.SyncTransforms();

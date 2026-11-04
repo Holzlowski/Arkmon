@@ -6,7 +6,13 @@ public static class MartaConversation
     {
         string[] lines;
         DialogueLinePresentation[] presentations;
-        if(CourtyardGarden.Completed)
+        if(CourtyardGarden.Completed && CourtyardGarden.ThanksReceived)
+        {
+            lines=new[]{"Die Beete sehen schon viel besser aus. Danke noch einmal, Elian!",
+                CourtyardGarden.HasCan?"Stell die Kanne bitte wieder ans erste Beet. Dann finde ich sie später gleich.":"Du hast sogar die Kanne zurückgestellt. Nun genieß deinen Morgen!"};
+            presentations=new[]{Mood(DialogueEmotion.Friendly),Mood(DialogueEmotion.Friendly)};
+        }
+        else if(CourtyardGarden.Completed)
         {
             lines=new[]{
                 "Oh! Du hast die Beete schon alle gegossen?",
@@ -16,6 +22,15 @@ public static class MartaConversation
             };
             presentations=new[]{Mood(DialogueEmotion.Surprised),Mood(DialogueEmotion.Friendly),
                 Mood(DialogueEmotion.Neutral),Mood(DialogueEmotion.Friendly)};
+        }
+        else if(CourtyardGarden.HasCan)
+        {
+            lines=new[]{
+                $"Danke, dass du mir hilfst, Elian. {CourtyardGarden.WateredCount} von den drei Beeten haben schon Wasser bekommen.",
+                "Geh mit der Kanne an ein trockenes Beet und gieße es mit [E].",
+                "Danach stell die Kanne bitte wieder an ihren Platz."
+            };
+            presentations=new[]{Mood(DialogueEmotion.Friendly),Mood(DialogueEmotion.Neutral),Mood(DialogueEmotion.Friendly)};
         }
         else
         {
@@ -32,6 +47,8 @@ public static class MartaConversation
                 Mood(DialogueEmotion.Surprised),Mood(DialogueEmotion.Neutral),
                 Mood(DialogueEmotion.Worried),Mood(DialogueEmotion.Friendly)};
         }
+        CourtyardGarden.OfferHelp();
+        if(CourtyardGarden.Completed && !CourtyardGarden.ThanksReceived)CourtyardGarden.BeginThanks();
         dialogue.ShowConversation(new[]{new DialogueSection{
             dialogue=lines,presentations=presentations,endAfterDialogue=true
         }},"Marta","",null);

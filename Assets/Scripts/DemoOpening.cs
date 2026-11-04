@@ -28,7 +28,7 @@ public class DemoOpening : MonoBehaviour
         bool pending = firstTrialPending; firstTrialPending = false; return pending;
     }
     public static bool IsPresenting => presentation != null && presentation.IsBusy
-        || CourtyardArrivalPresentation.IsPresenting || DemoCompletionPanel.IsOpen;
+        || CourtyardArrivalPresentation.IsPresenting || DemoCompletionPanel.IsOpen || CourtyardGarden.IsBusy;
     private static DemoOpeningPresentation presentation;
     public static void RecordTrialVictory() => PassedFirstTrial = true;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -147,7 +147,7 @@ public class DemoOpening : MonoBehaviour
             objective.text = towerRoom ? !HasAwakened ? "Elian von Aurenfeld · Ein neuer Morgen"
                 : !IntroChapter.HasFamilyOutfit ? "Vorbereitung · Hol dein Familiengewand aus dem Schrank"
                 : "Bereit · Geh durch die Tür in den Burghof"
-                : "Aurenfeld · Erkunde den Hof und begrüße seine Bewohner";
+                : CourtyardGarden.ObjectiveText ?? "Aurenfeld · Erkunde den Hof und begrüße seine Bewohner";
             return;
         }
         if (IsPresenting)

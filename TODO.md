@@ -21,8 +21,9 @@ Die Aufgaben umfassen neue Arbeiten und Feinschliff an vorhandenen Funktionen. E
 - [ ] Bewegte Bewohner bei Dialogen und späteren Inszenierungen so anhalten oder umleiten, dass sie keine Wege oder Kamerabilder blockieren.
 - [ ] Idas Arbeitsplatz mit Werkzeugen, Holzresten und angefangenen Arbeiten abrunden.
 - [ ] Martas Platz mit Saatgut und Gartengeräten personalisieren; Beet und Wege sichtbar halten.
-- [ ] Martas Gießaufgabe vollständig ausarbeiten: Gießkanne aufnehmen, Gemüse gießen, sichtbare Rückmeldung und Dankesreaktion.
-- [ ] Wiederholtes Ansprechen, Dialogabbruch und Antworten nach erledigter Hilfe sinnvoll gestalten.
+- [x] Martas Gießablauf umgesetzt: sichtbare tragbare Kanne, abbrechbare Gießanimation, Wassertropfen und Geräusch, nasse Erde, Fortschritt (0–3), persönlicher Dank und Kanne zurückstellen. Abbruch, Szenenwechsel und Abschluss automatisch geprüft; Fortschritt gilt innerhalb einer Spielsitzung.
+- [ ] Wiederholtes Ansprechen, Dialogabbruch und Antworten nach erledigter Hilfe sinnvoll gestalten. Für Marta umgesetzt und geprüft; weitere Bewohner noch prüfen.
+- [ ] Martas Gartenaufgabe gemeinsam im Spiel abnehmen: Kanne an der Hand, Wasserstrahl, Lautstärke und Verständlichkeit. Gezeichnete 2D-Kanne und bewegliche Armteile mit Halte-, Aufnahme-, Gieß- und Abstellanimation sind umgesetzt. Griffverbindung nach links/rechts, blockiertes Herantreten und Abbrüche sind geprüft; Bewegungswirkung noch gemeinsam ansehen.
 
 Fertig, wenn Figuren, Arbeitsobjekte und Dialoge zusammenpassen und die Gartenaufgabe ohne Erklärung außerhalb des Spiels verständlich ist.
 

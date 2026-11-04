@@ -97,10 +97,10 @@ public class DialogueEmotionTests
         try
         {
             var can=GameObject.Find("Courtyard watering can").GetComponent(T("CourtyardGarden"));
-            Call(can,"InteractWithPlayer");Close();
+            CourtyardGardenTaskTests.MoveTo(can);Call(can,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();Close();
             var beds=UnityEngine.Object.FindObjectsByType(T("CourtyardGarden"),FindObjectsSortMode.None)
                 .Cast<Component>().Where(c=>c.name=="Garden watering point").ToArray();
-            foreach(var bed in beds){Call(bed,"InteractWithPlayer");Close();}
+            foreach(var bed in beds){CourtyardGardenTaskTests.MoveTo(bed);Call(bed,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();}
             Assert.That(completions,Is.EqualTo(1));
             Assert.That(P(Visual,"CurrentEmotion").ToString(),Is.EqualTo("Friendly"));
             Call(beds[0],"InteractWithPlayer");Close();
