@@ -94,7 +94,7 @@ public static class ConfigureIntroCourtyard
         ValidateBuildingClearances(root);
         AddCourtyardAmbience(root);
         DressGardenVerge(root);
-        foreach(var npc in Object.FindObjectsByType<NPC>(FindObjectsSortMode.None))if(npc.npcName=="John")npc.transform.position=new Vector3(10.3f,1,10.4f);
+        foreach(var npc in Object.FindObjectsByType<NPC>(FindObjectsSortMode.None))if(npc.npcName=="John")npc.transform.position=new Vector3(10.3f,GroundHeight(10.3f,10.4f)+.005f,10.4f);
         var player=GameObject.FindWithTag("Player");player.transform.position=new Vector3(-34,2.4f,8);
         EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
     }
