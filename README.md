@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.20.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.21.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1360,3 +1360,17 @@ The arrival sequence, starter introductions/selection, new castle interiors and 
 ### Active courtyard checklist
 
 The maintained checklist for courtyard polish and the surrounding landscape is [TODO.md](TODO.md). It expands the planning note above and is the current place to track open tasks and reviewed completion.
+
+### Hannes' horses and local stable sounds
+
+The stable now has two open bays with low gates: a feeding chestnut by a small hay rack and an alert dun horse with a dark mane. The front roof overhang is reduced for visibility. The existing solid stable boundary and free approach to Hannes remain; the horses are ambient residents, not rideable or independently roaming animals.
+
+`ConfigureStableHorses.Run` imports the two source images in `Assets/Art/Intro/StableHorses`, creates native sprite assets in `Assets/Resources/StableHorses`, configures mono audio imports and updates only the stable in StartScene. The full courtyard builder also includes the horses on later rebuilds. Generation used the built-in image tool; exact prompts and saved paths are in `docs/paper-art-generation.json`.
+
+`CourtyardHorse` animates a subdivided illustration mesh for continuous breathing, small neck nods, ear twitches and occasional tail movement. Hoof-height vertices and world anchors stay fixed. The two horses have different timing; runtime meshes and materials are released on destruction.
+
+`StableLocalFoley` attenuates sounds using the player's distance (fully faded at 14 units), supplies subtle stereo placement, ducks during conversations and mutes during scene transitions. Batch-mode tests never play these sources. The short natural snort is DenisChardonnet's CC0 recording from BigSoundBank; gentle brushing and straw rustling reuse Kenney CC0 cloth foley. Sources are documented in `docs/audio-sources.json`. No music was replaced.
+
+Hannes uses an eased three-pose brushing rhythm with a longer rest, timed quiet brush cues, immediate silence when speaking and a short settling pause before resuming. This remains a three-pose sprite animation, not a full skeletal arm rig.
+
+Focused validation: six stable/courtyard PlayMode tests passed in `Library/stable-horses-tests.xml`, including fixed hoof vertices, distinct work poses, conversation cancellation/reload, free approaches and player-distance audio attenuation. Unity captures: `Builds/stable-horses-detail.png` and `Builds/intro-courtyard-hannes.png`. The detail capture uses a closer inspection camera. After switching to the focused stable-only scene update, the three stable tests passed again in Library/stable-horses-final-tests.xml. Final in-game sound balance and visual preference remain for user review.

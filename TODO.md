@@ -6,14 +6,15 @@ Die Aufgaben umfassen neue Arbeiten und Feinschliff an vorhandenen Funktionen. E
 
 ## 1. Als Nächstes: Bewohner und ihr Alltag
 
-- [ ] Hannes' Bürstenbewegung verfeinern: Kontakt zum Sattel über den gesamten Ablauf, natürliche Pausen, Kopfbewegungen und leise Arbeitsgeräusche.
+- [ ] Hannes' Bürstenbewegung abschließend verfeinern. Umgesetzt: ruhigerer Dreiposenrhythmus, längere Ruhepause, leises Bürstengeräusch und verzögerter Wiederbeginn nach dem Gespräch. Bewegungswirkung und weiterer Kopf-/Armfeinschliff bleiben zur gemeinsamen Prüfung offen.
 - [ ] Idas Hobelbewegung verfeinern: nachvollziehbarer Vor- und Rückhub, Kontakt zum Werkstück, Pausen und Holzgeräusche.
 - [ ] Gesprächsübergänge verbessern: Arbeit unterbrechen, Elian ansehen und danach sinnvoll weiterarbeiten.
 - [ ] Neutrale, freundliche, überraschte und besorgte Gesichtsausdrücke auf die Dialogzeilen abstimmen; Übergänge im Dialogfenster prüfen.
 - [ ] Hannes' Arbeitsplatz mit wenigen Lederpflege- und Zaumzeugdetails ergänzen; Zugänge freihalten.
-- [ ] Sichtbare Tiere bei Hannes einplanen, vorzugsweise Pferde. Vorschlag: zunächst zwei Pferde mit unterschiedlichen Fellfarben, eines am Heu und eines am offenen Stallbereich.
-- [ ] Pferde im gezeichneten Figurenstil gestalten; ruhiges Atmen, Ohrenspiel, Schweifbewegung und gelegentliches Kopfsenken mit passenden leisen Geräuschen ergänzen.
-- [ ] Stallöffnungen, Futterstelle und Pferdeplätze gemeinsam anordnen, damit Tiere aus der Spielkamera sichtbar sind und weder Wege noch Hannes' Arbeitsplatz blockieren.
+- [x] Zwei Pferde eingebaut: ein braunes an der Heuraufe und ein helles mit dunkler Mähne in der zweiten offenen Box.
+- [x] Gezeichnete Pferde mit kontinuierlicher Atem-, Kopf-, Ohren- und Schweifbewegung sowie leisem Schnauben und Rascheln ergänzt; feste Hufe und örtliche Hörbarkeit automatisch geprüft.
+- [x] Zwei niedrige Boxentore, Heuraufe und kleinerer Dachüberstand eingerichtet; Sichtbarkeit aus der Spielkamera und freier Zugang zu Hannes geprüft.
+- [ ] Pferdestall gemeinsam im Spiel abnehmen: Größe, Stil, Bewegungswirkung und Lautstärke nach Nutzerfeedback feinjustieren.
 - [ ] Eine Burgwache als ersten wandernden NPC gestalten: ruhiger Rundgang mit kurzen Aufenthalten, passend zum gezeichneten Figurenstil. Diese Rolle ist ausgewählt.
 - [ ] Weitere wandernde Bewohner erst nach den Ideen des Nutzers festlegen. Küchenhilfe und Bote sind vorerst zurückgestellt und nicht zur Umsetzung ausgewählt.
 - [ ] Für wandernde Bewohner sinnvolle Ziele, kurze Aufenthalte und freie Laufwege planen; beim Ansprechen stehen bleiben, Elian ansehen und danach den Weg fortsetzen.

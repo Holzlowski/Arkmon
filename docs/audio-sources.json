@@ -121,5 +121,27 @@
     "runtime_file": "Assets/Resources/Audio/tower-courtyard-ambience.wav",
     "recipe": "tools/render_tower_ambience.py",
     "note": "Quiet distant grass footsteps, wood creaks and cloth breeze, mixed from the Kenney CC0 sources above."
+  },
+  "stable_ambience": {
+    "horse": {
+      "author": "DenisChardonnet",
+      "title": "Breath of a horse #2",
+      "source": "https://bigsoundbank.com/breath-of-a-horse-2-s0286.html",
+      "download": "https://bigsoundbank.com/UPLOAD/bwf-en/0286.wav",
+      "license": "CC0",
+      "runtime_file": "Assets/Resources/Audio/Stable/horse-snort.wav",
+      "processing": "Original recording; force-to-mono import. Quiet occasional playback with mild pitch variation."
+    },
+    "foley": {
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "files": {
+        "Assets/Resources/Audio/Stable/saddle-brush.ogg": "cloth2.ogg",
+        "Assets/Resources/Audio/Stable/straw-rustle.ogg": "cloth4.ogg"
+      },
+      "note": "Recorded cloth foley reused as gentle brushing and rustling; these are not horse vocal recordings."
+    },
+    "runtime": "StableLocalFoley uses player distance rather than the high camera, fades out at 14 units, ducks during dialogue, mutes at transitions and never plays in batch mode."
   }
 }

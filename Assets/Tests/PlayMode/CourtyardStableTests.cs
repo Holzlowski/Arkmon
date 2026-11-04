@@ -101,4 +101,44 @@ public class CourtyardStableTests
         }
         LogAssert.NoUnexpectedReceived();
     }
-}
+
+    [UnityTest] public IEnumerator HorsesStayInTheirStalls_AnimateWithPlantedFeet_AndSoundFadesWithPlayerDistance()
+    {
+        yield return Load();
+        var stable=GameObject.Find("Stable").transform;
+        var horses=stable.GetComponentsInChildren(T("CourtyardHorse"));
+        Assert.That(horses.Length,Is.EqualTo(2));
+        Assert.That(horses.Count(h=>(bool)P(h,"IsFeeding")),Is.EqualTo(1));
+        var meshList=horses.Select(h=>h.GetComponentsInChildren<MeshFilter>()
+            .First(f=>f.sharedMesh.name=="Stable horse breathing mesh").sharedMesh).ToArray();
+        var anchors=horses.Select(h=>h.transform.position).ToArray();
+        var before=meshList.Select(m=>m.vertices).ToArray();
+        foreach(var horse in horses)
+        {
+            var foley=horse.GetComponent(T("StableLocalFoley"));
+            Assert.That((float)P(foley,"Audibility"),Is.GreaterThan(.4f),"Sounds should be audible near the stalls despite the distant camera.");
+        }
+        yield return new WaitForSeconds(.55f);
+        for(int h=0;h<horses.Length;h++)
+        {
+            Assert.That(Vector3.Distance(anchors[h],horses[h].transform.position),Is.LessThan(.001f));
+            var after=meshList[h].vertices;
+            Assert.That(after.Where((v,i)=>Vector3.Distance(v,before[h][i])>.001f).Any(),Is.True,"The horse should breathe without sprite-frame popping.");
+            for(int i=0;i<after.Length;i++)
+                if(before[h][i].y<.08f)
+                    Assert.That(Vector3.Distance(before[h][i],after[i]),Is.LessThan(.0001f),"Hoof-level vertices must stay planted.");
+        }
+        foreach(string resource in new[]{"horse-snort","saddle-brush","straw-rustle"})
+            Assert.That(Resources.Load<AudioClip>("Audio/Stable/"+resource),Is.Not.Null);
+        var camera=Camera.main;var position=camera.transform.position;var rotation=camera.transform.rotation;
+        camera.transform.position=stable.position+new Vector3(0,6.6f,-12.8f);
+        camera.transform.LookAt(stable.position+new Vector3(0,2,-.8f));
+        Capture("stable-horses-detail");
+        camera.transform.SetPositionAndRotation(position,rotation);
+        var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
+        player.transform.position=stable.position+new Vector3(0,1,-24);body.position=player.transform.position;
+        yield return null;yield return null;
+        foreach(var horse in horses)
+            Assert.That((float)P(horse.GetComponent(T("StableLocalFoley")),"Audibility"),Is.EqualTo(0));
+        LogAssert.NoUnexpectedReceived();
+    }}

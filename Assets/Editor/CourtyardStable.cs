@@ -22,7 +22,7 @@ public static class CourtyardStable
         water=Paint("Hannes trough water",new Color(.25f,.40f,.43f),null,0);
         var collider=root.GetComponent<BoxCollider>()??root.gameObject.AddComponent<BoxCollider>();
         collider.center=new Vector3(0,1.65f,.15f);collider.size=new Vector3(7,3.3f,3.7f);
-        Box(root,"Stable stone footing",new Vector3(0,.17f,0),new Vector3(7.15f,.34f,4),stone);
+        Box(root,"Stable stone footing",new Vector3(0,.17f,0),new Vector3(7.15f,.34f,4),stone).gameObject.AddComponent<BoxCollider>();
         Box(root,"Stable limewashed rear",new Vector3(0,1.8f,1.8f),new Vector3(7,3.25f,.20f),plaster);
         foreach(float x in new[]{-3.4f,3.4f})
         {
@@ -33,14 +33,30 @@ public static class CourtyardStable
         Box(root,"Stable central post",new Vector3(.2f,1.7f,-1.9f),new Vector3(.24f,3.4f,.24f),wood);
         foreach(float x in new[]{-3.4f,.2f,3.4f})
             Beam(root,"Stable corner brace",new Vector3(x,2.75f,-1.9f),new Vector3(x+(x<1?.65f:-.65f),3.45f,-1.9f),.16f,wood);
-        // Left bay is a closed feed store; the right bay remains visibly open behind a gate.
-        for(int i=0;i<12;i++)Box(root,"Feed store door board",new Vector3(-3.15f+i*.27f,1.55f,-1.96f),new Vector3(.25f,2.9f,.12f),wood);
-        foreach(float y in new[]{.5f,2.5f})Box(root,"Feed store strap",new Vector3(-1.65f,y,-2.05f),new Vector3(3.1f,.10f,.08f),iron);
-        Beam(root,"Feed door diagonal",new Vector3(-3,.35f,-2.06f),new Vector3(-.25f,2.8f,-2.06f),.13f,wood);
-        for(int i=0;i<3;i++)Box(root,"Half height stall gate",new Vector3(1.8f,.45f+i*.35f,-1.93f),new Vector3(2.9f,.16f,.15f),wood);
-        foreach(float x in new[]{.45f,3.12f})Box(root,"Gate upright",new Vector3(x,.85f,-1.95f),new Vector3(.14f,1.35f,.18f),wood);
-        Beam(root,"Gate diagonal",new Vector3(.45f,.4f,-2.04f),new Vector3(3.1f,1.35f,-2.04f),.12f,wood);
-        const float half=2.4f,rise=1.45f;
+        // Two low gates reveal both horses from the gameplay camera.
+        foreach(float center in new[]{-1.65f,1.8f})
+        {
+            for(int i=0;i<2;i++)Box(root,"Low horse stall gate",new Vector3(center,.48f+i*.30f,-2.17f),new Vector3(2.9f,.14f,.15f),wood);
+            foreach(float side in new[]{-1f,1f})
+                Box(root,"Stall gate upright",new Vector3(center+side*1.34f,.68f,-2.17f),new Vector3(.12f,1.05f,.18f),wood);
+            Box(root,"Stall gate latch",new Vector3(center+1.20f,.85f,-2.28f),new Vector3(.22f,.07f,.07f),iron);
+        }
+        Box(root,"Stable stall divider",new Vector3(.2f,.72f,.05f),new Vector3(.16f,.95f,3.4f),wood);
+        var chestnut=Anchor(root,"Chestnut horse",new Vector3(-1.65f,.35f,-2.03f));
+        chestnut.gameObject.AddComponent<CourtyardHorse>().Configure(Resources.Load<Sprite>("StableHorses/Chestnut"),true,.7f);
+        var dun=Anchor(root,"Dun horse",new Vector3(1.72f,.35f,-2.03f));
+        dun.gameObject.AddComponent<CourtyardHorse>().Configure(Resources.Load<Sprite>("StableHorses/Dun"),false,4.1f);
+        // A small rack sits beneath the chestnut's lowered muzzle.
+        var rack=Anchor(root,"Chestnut hay rack",new Vector3(-.55f,.85f,-2.1f));
+        Box(rack,"Rack straw",Vector3.zero,new Vector3(.64f,.16f,.32f),hay);
+        foreach(float x in new[]{-.28f,-.14f,0,.14f,.28f})
+        {
+            Beam(rack,"Hay rack upright",new Vector3(x,-.24f,-.20f),new Vector3(x,.08f,-.20f),.035f,wood);
+            var strand=Box(rack,"Feeding hay strands",new Vector3(x,.11f,0),new Vector3(.025f,.025f,.36f),hay);
+            strand.localRotation=Quaternion.Euler(0,x*90,0);
+        }
+        Box(rack,"Hay rack lower rail",new Vector3(0,-.18f,-.20f),new Vector3(.70f,.06f,.07f),wood);
+        const float half=2.15f,rise=1.45f;
         float angle=Mathf.Atan2(rise,half)*Mathf.Rad2Deg;
         foreach(float sign in new[]{-1f,1f})
         {
