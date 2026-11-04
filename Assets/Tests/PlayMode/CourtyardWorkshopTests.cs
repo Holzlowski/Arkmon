@@ -101,4 +101,42 @@ public class CourtyardWorkshopTests
         }
         LogAssert.NoUnexpectedReceived();
     }
+    [UnityTest] public IEnumerator PlaningSoundIsLocal_AndWorkSettlesAfterInterruption()
+    {
+        yield return Load();
+        foreach(string name in new[]{"plane-stroke-1","plane-stroke-2"})
+        {
+            var clip=Resources.Load<AudioClip>("Audio/Workshop/"+name);
+            Assert.That(clip,Is.Not.Null);
+            Assert.That(clip.length,Is.InRange(.45f,.55f));
+            Assert.That(clip.channels,Is.EqualTo(1));
+        }
+        var foley=Ida.GetComponent(T("StableLocalFoley"));
+        Assert.That(foley,Is.Not.Null);
+        Assert.That((float)P(foley,"Audibility"),Is.GreaterThan(.5f));
+        var clock=Visual.GetType().GetField("workTime",Hidden);
+        float deadline=Time.time+5;
+        while(!(bool)P(Visual,"IsCutting") && Time.time<deadline)yield return null;
+        Assert.That((bool)P(Visual,"IsCutting"),Is.True);
+        Call(Ida,"InteractWithPlayer");
+        Assert.That((bool)P(Visual,"IsCutting"),Is.False,"Speaking must stop the cut immediately.");
+        yield return new WaitForSeconds(.2f);
+        Assert.That((float)clock.GetValue(Visual),Is.Zero);
+        Assert.That(Ida.GetComponents<AudioSource>().All(source=>!source.isPlaying),Is.True);
+        Call(Dialogue,"CloseDialogue");
+        yield return new WaitForSeconds(.2f);
+        Assert.That((float)clock.GetValue(Visual),Is.Zero,"Resume only after a settling pause.");
+        Assert.That((bool)P(Visual,"IsCutting"),Is.False);
+        yield return new WaitForSeconds(.4f);
+        Assert.That((float)clock.GetValue(Visual),Is.GreaterThan(0));
+        Assert.That((bool)P(Visual,"IsCutting"),Is.True);
+        ((Behaviour)Visual).enabled=false;
+        Assert.That((bool)P(Visual,"IsCutting"),Is.False);
+        Assert.That((bool)P(Visual,"IsWorking"),Is.False);
+        ((Behaviour)Visual).enabled=true;
+        yield return new WaitForSeconds(.6f);
+        Assert.That((bool)P(Visual,"IsWorking"),Is.True);
+        Assert.That(Ida.GetComponents(T("StableLocalFoley")).Length,Is.EqualTo(1));
+        LogAssert.NoUnexpectedReceived();
+    }
 }

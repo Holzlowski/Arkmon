@@ -143,5 +143,19 @@
       "note": "Recorded cloth foley reused as gentle brushing and rustling; these are not horse vocal recordings."
     },
     "runtime": "StableLocalFoley uses player distance rather than the high camera, fades out at 14 units, ducks during dialogue, mutes at transitions and never plays in batch mode."
+  },
+  "workshop_planing": {
+    "author": "DeqstersLab",
+    "title": "Stanley No. 3 Hand Plane, Fine Set Face Planing, Doug Fir",
+    "source": "https://freesound.org/people/DeqstersLab/sounds/847372/",
+    "download": "https://cdn.freesound.org/previews/847/847372_189858-hq.mp3",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "recipe": "tools/render_workshop_audio.py",
+    "runtime_files": [
+      "Assets/Resources/Audio/Workshop/plane-stroke-1.wav",
+      "Assets/Resources/Audio/Workshop/plane-stroke-2.wav"
+    ],
+    "processing": "Two 0.5-second excerpts from the public HQ preview at 5.2s and 5.9s; DC removal, 35ms fade-in, 85ms fade-out, peak 0.65, mono PCM16 at 32kHz. Alternated on forward cuts only; player-distance attenuation and dialogue interruption. No synthesis."
   }
 }

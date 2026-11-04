@@ -7,7 +7,7 @@ Die Aufgaben umfassen neue Arbeiten und Feinschliff an vorhandenen Funktionen. E
 ## 1. Als Nächstes: Bewohner und ihr Alltag
 
 - [ ] Hannes' Bürstenbewegung abschließend verfeinern. Umgesetzt: ruhigerer Dreiposenrhythmus, längere Ruhepause, leises Bürstengeräusch und verzögerter Wiederbeginn nach dem Gespräch. Bewegungswirkung und weiterer Kopf-/Armfeinschliff bleiben zur gemeinsamen Prüfung offen.
-- [ ] Idas Hobelbewegung verfeinern: nachvollziehbarer Vor- und Rückhub, Kontakt zum Werkstück, Pausen und Holzgeräusche.
+- [ ] Idas Hobelbewegung gemeinsam abnehmen. Umgesetzt: schnellerer Vorhub, langsamerer Rückhub, Ruhepause nach zwei Zügen, zwei echte örtliche Hobelgeräusche sowie sofortiger Gesprächsstopp und kurzer verzögerter Wiederbeginn. Die Animation verwendet weiterhin drei Zeichnungen; Bewegungswirkung und Werkzeugkontakt im Spiel prüfen.
 - [ ] Gesprächsübergänge verbessern: Arbeit unterbrechen, Elian ansehen und danach sinnvoll weiterarbeiten.
 - [ ] Neutrale, freundliche, überraschte und besorgte Gesichtsausdrücke auf die Dialogzeilen abstimmen; Übergänge im Dialogfenster prüfen.
 - [ ] Hannes' Arbeitsplatz mit wenigen Lederpflege- und Zaumzeugdetails ergänzen; Zugänge freihalten.

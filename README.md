@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.21.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.21.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1374,3 +1374,11 @@ The stable now has two open bays with low gates: a feeding chestnut by a small h
 Hannes uses an eased three-pose brushing rhythm with a longer rest, timed quiet brush cues, immediate silence when speaking and a short settling pause before resuming. This remains a three-pose sprite animation, not a full skeletal arm rig.
 
 Focused validation: six stable/courtyard PlayMode tests passed in `Library/stable-horses-tests.xml`, including fixed hoof vertices, distinct work poses, conversation cancellation/reload, free approaches and player-distance audio attenuation. Unity captures: `Builds/stable-horses-detail.png` and `Builds/intro-courtyard-hannes.png`. The detail capture uses a closer inspection camera. After switching to the focused stable-only scene update, the three stable tests passed again in Library/stable-horses-final-tests.xml. Final in-game sound balance and visual preference remain for user review.
+
+### Ida's planing rhythm and recorded workshop foley
+
+`CourtyardCarpenterVisual` now starts with the tool drawn back, makes two deliberate cuts (0.62 seconds forward, 0.78 seconds returning plus a short settle), then rests before repeating. The resident stays fixed at her work spot. This remains an eased sequence of three illustrations, not continuous skeletal animation.
+
+Two short mono excerpts of DeqstersLab's CC0 hand-plane recording alternate on forward cuts. `StableLocalFoley` provides the same player-distance attenuation and silent batch mode used by the stable. Cues stop on return, when Ida starts speaking or when the visual is disabled. Work remains paused through Elian's replies and resumes after a 0.45-second settling delay; other residents' dialogue endings do not reset her cycle. Source and processing details are in `docs/audio-sources.json`; `tools/render_workshop_audio.py` reproduces the clips from the public HQ preview using numpy and soundfile.
+
+Validation: all three `CourtyardWorkshopTests` passed in `Library/ida-planing-polish-tests.xml` (silent PlayMode run). Checks cover work poses and fixed placement, unobstructed access, dialogue emotions and scene-reload subscriptions, mono clip availability, local audibility, interruption, settling delay and re-enabling without duplicate audio components. Updated inspection capture: `Builds/intro-courtyard-ida-detail.png`. Subjective motion and sound balance remain for in-game review. Released with the Ida polish in version 0.21.1.
