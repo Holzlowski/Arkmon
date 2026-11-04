@@ -28,8 +28,8 @@ public class CourtyardPolishTests
         var hallStone=GameObject.Find("Castle hall structure").GetComponent<MeshRenderer>().sharedMaterial;
         Assert.That(towerStone,Is.SameAs(hallStone),"Tower and castle share stone scale and lighting.");
         Assert.That(hallStone.shader.name,Is.EqualTo("Arkmon/Tower Painted Light"));
-        string[] homes={"Stable","West cottage","Garden cottage","East cottage","Cellar storehouse"};
-        string[] castles={"Castle west wing","Castle hall","Castle upper keep","Castle keep west tower","Castle keep east tower"};
+        string[] homes={"Stable","West cottage","Garden cottage","East cottage","Cellar storehouse","Ida workshop"};
+        string[] castles={"Castle west wing","Aurenfeld upper residence","Tower connecting wing","Castle hall","Castle upper keep","Castle keep west tower","Castle keep east tower"};
         Bounds BoundsOf(string name)
         {
             var renderers=GameObject.Find(name).GetComponentsInChildren<MeshRenderer>();
@@ -50,6 +50,73 @@ public class CourtyardPolishTests
         Assert.That(Physics.BoxCast(new Vector3(2,1,1),new Vector3(.3f,.75f,.3f),Vector3.forward,
             out var blocked,Quaternion.identity,5,~0,QueryTriggerInteraction.Ignore),Is.False,
             "The cottage approach must stay clear of benches: "+blocked.collider?.name);
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]public IEnumerator TowerStairs_CanBeWalkedUpAndDown()
+    {
+        T("DemoOpening").GetMethod("ResetSession",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,null);
+        yield return SceneManager.LoadSceneAsync("StartScene");yield return new WaitForSeconds(.5f);
+        var player=GameObject.FindWithTag("Player");
+        ((Behaviour)player.GetComponent(T("PlayerController"))).enabled=false;
+        var body=player.GetComponent<Rigidbody>();
+        body.position=new Vector3(-34,1.1f,4.2f);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
+        for(int i=0;i<150 && body.position.z<8.1f;i++)
+        {body.linearVelocity=new Vector3(0,body.linearVelocity.y,3);yield return new WaitForFixedUpdate();}
+        Assert.That(body.position.z,Is.GreaterThan(7.95f),"Elian must reach the tower terrace without catching on stair risers.");
+        Assert.That(body.position.y,Is.GreaterThan(2),"The approach must reach the raised terrace.");
+        for(int i=0;i<150 && body.position.z>4.2f;i++)
+        {body.linearVelocity=new Vector3(0,body.linearVelocity.y,-3);yield return new WaitForFixedUpdate();}
+        body.linearVelocity=Vector3.zero;
+        Assert.That(body.position.z,Is.LessThan(4.4f),"Elian must return to the courtyard.");
+        Assert.That(body.position.y,Is.GreaterThan(-.1f));LogAssert.NoUnexpectedReceived();
+    }
+
+    [UnityTest]public IEnumerator MartaCottage_ResidentAndApproachRemainUsable()
+    {
+        T("DemoOpening").GetMethod("ResetSession",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,null);
+        T("IntroChapter").GetMethod("EquipFamilyOutfit").Invoke(null,null);
+        T("DemoOpening").GetField("<HasAwakened>k__BackingField",BindingFlags.NonPublic|BindingFlags.Static).SetValue(null,true);
+        yield return SceneManager.LoadSceneAsync("StartScene");yield return new WaitForSeconds(.7f);
+        var house=GameObject.Find("Garden cottage").transform;
+        var anchor=house.Find("Marta work spot");
+        var marta=GameObject.Find("Courtyard Gardener");
+        Assert.That(Vector3.Distance(marta.transform.position,anchor.position),Is.LessThan(.05f),
+            "Marta must spawn at the house's work spot, including after layout changes.");
+        Assert.That(marta.GetComponentInChildren<SpriteRenderer>()?.sprite,Is.Not.Null);
+        Assert.That(marta.GetComponentInChildren<SpriteRenderer>().sprite.name,Is.EqualTo("Marta-Gardener"));
+        Assert.That(GameObject.Find("Garden potting table").transform.IsChildOf(house),Is.True);
+        Assert.That(Physics.BoxCast(new Vector3(house.position.x,1,3),new Vector3(.32f,.75f,.32f),Vector3.forward,
+            out var blocked,Quaternion.identity,3.8f,~0,QueryTriggerInteraction.Ignore),Is.False,
+            "The door approach must remain free: "+blocked.collider?.name);
+
+        var player=GameObject.FindWithTag("Player");
+        ((Behaviour)player.GetComponent(T("PlayerController"))).enabled=false;
+        var body=player.GetComponent<Rigidbody>();
+        body.position=new Vector3(-.7f,1,1.7f);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
+        yield return new WaitForSeconds(.8f);
+        typeof(GameIntroTests).GetMethod("Capture",BindingFlags.NonPublic|BindingFlags.Static)
+            .Invoke(null,new object[]{"intro-courtyard-marta"});
+        // An additional close architectural view; gameplay camera settings are restored immediately.
+        var camera=Camera.main;var savedPosition=camera.transform.position;var savedAngle=camera.transform.rotation;
+        camera.transform.position=new Vector3(.8f,8.3f,-5.3f);
+        camera.transform.LookAt(new Vector3(.8f,2.5f,8));
+        typeof(GameIntroTests).GetMethod("Capture",BindingFlags.NonPublic|BindingFlags.Static)
+            .Invoke(null,new object[]{"intro-courtyard-marta-detail"});
+        camera.transform.SetPositionAndRotation(savedPosition,savedAngle);
+        var origin=marta.transform.position;
+        body.interpolation=RigidbodyInterpolation.None;body.isKinematic=true;
+        player.transform.position=origin+new Vector3(-1.5f,1,-1);body.position=player.transform.position;Physics.SyncTransforms();yield return new WaitForSeconds(.15f);
+        Assert.That(marta.GetComponentInChildren<SpriteRenderer>().flipX,Is.True,"Marta left-facing: player="+player.transform.position+", Marta="+origin);
+        player.transform.position=origin+new Vector3(1.5f,1,-1);body.position=player.transform.position;Physics.SyncTransforms();yield return new WaitForSeconds(.15f);
+        Assert.That(marta.GetComponentInChildren<SpriteRenderer>().flipX,Is.False,"Marta right-facing: player="+player.transform.position+", Marta="+origin);
+        Assert.That(Vector3.Distance(marta.transform.position,origin),Is.LessThan(.001f));
+        var dialogue=T("DialogueBoxController").GetField("instance").GetValue(null);
+        dialogue.GetType().GetMethod("CloseDialogue").Invoke(dialogue,null);
+        T("CourtyardLife").GetMethod("InteractWithPlayer").Invoke(marta.GetComponent(T("CourtyardLife")),null);
+        Assert.That((bool)dialogue.GetType().GetProperty("IsOpen").GetValue(dialogue),Is.True,
+            "The illustrated resident must still be interactable.");
+        dialogue.GetType().GetMethod("CloseDialogue").Invoke(dialogue,null);
         LogAssert.NoUnexpectedReceived();
     }
 }
