@@ -12,6 +12,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     private GameObject canModel;
 
     public static bool Completed => watered == AllBeds;
+    public static event Action OnCompleted;
 
     public static void ResetProgress() { hasCan = false; watered = 0; }
 
@@ -84,6 +85,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         else
         {
             watered |= 1 << bedIndex;
+            if(Completed) OnCompleted?.Invoke();
             PlayWatering();
             message = watered == AllBeds
                 ? "Alle drei Beete sind gegossen. Jetzt kann ich weiter zum Burgtor."

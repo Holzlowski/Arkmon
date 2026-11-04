@@ -16,13 +16,20 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
 
     internal static void Install()
     {
-        Sign("Werkstatt", new Vector3(-21,0,1.7f));
-        Sign("Stall", new Vector3(-14,0,3));
+        var workshop=GameObject.Find("Ida workshop")?.transform;
+        var workshopSign=workshop?.Find("Workshop sign spot");
+        Sign("Werkstatt", workshopSign!=null?workshopSign.position:new Vector3(-21.1f,0,.4f));
+        var stable=GameObject.Find("Stable")?.transform;
+        var stableSign=stable?.Find("Stable sign spot");
+        Sign("Stall",stableSign!=null?stableSign.position:new Vector3(-15.1f,0,1.9f));
         Sign("Garten", new Vector3(20,0,2.4f));
         Sign("Burgtor", new Vector3(37,0,4));
-        Person(Role.Gardener, new Vector3(4.9f,0,5.8f), new Color(.28f,.44f,.25f));
-        Person(Role.Stablekeeper, new Vector3(-10.7f,0,8.1f), new Color(.44f,.31f,.20f));
-        Person(Role.Carpenter, new Vector3(-24.2f,0,5.5f), new Color(.48f,.25f,.24f));
+        var gardenerSpot = GameObject.Find("Garden cottage")?.transform.Find("Marta work spot");
+        Person(Role.Gardener, gardenerSpot != null ? gardenerSpot.position : new Vector3(4.55f,0,5.55f), new Color(.28f,.44f,.25f));
+        var stableSpot=stable?.Find("Hannes work spot");
+        Person(Role.Stablekeeper, stableSpot!=null?stableSpot.position:new Vector3(-11,0,1.5f), new Color(.44f,.31f,.20f));
+        var workshopSpot = workshop?.Find("Ida work spot");
+        Person(Role.Carpenter, workshopSpot != null ? workshopSpot.position : new Vector3(-27.4f,0,-.1f), new Color(.48f,.25f,.24f));
     }
 
     private static CourtyardLife Add(Role kind, Vector3 position)
@@ -40,6 +47,21 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
     private static void Person(Role role, Vector3 position, Color outfit)
     {
         var root = Add(role, position).transform;
+        if (role == Role.Gardener && Resources.Load<Sprite>("Marta/Gardener") != null)
+        {
+            root.gameObject.AddComponent<CourtyardGardenerVisual>();
+            return;
+        }
+        if (role == Role.Carpenter && Resources.Load<Sprite>("Ida/Idle") != null)
+        {
+            root.gameObject.AddComponent<CourtyardCarpenterVisual>();
+            return;
+        }
+        if(role==Role.Stablekeeper && Resources.Load<Sprite>("Hannes/Idle")!=null)
+        {
+            root.gameObject.AddComponent<CourtyardStablekeeperVisual>();
+            return;
+        }
         var silhouette = new GameObject("Illustrated resident placeholder").transform;
         silhouette.SetParent(root, false);
         Shape(silhouette, PrimitiveType.Sphere, new Vector3(0,1.48f,0), new Vector3(.48f,.52f,.13f), new Color(.88f,.65f,.43f));
@@ -97,15 +119,13 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
         switch (role)
         {
             case Role.Gardener:
-                dialogue.ShowMessage(CourtyardGarden.Completed
-                    ? "Vielen Dank, Elian. Jetzt kommen die jungen Pflanzen gut durch den Morgen."
-                    : "Guten Morgen, Elian. Die Beete sind trocken. Wenn du magst, die Kanne steht am ersten Beet.", "Marta");
+                MartaConversation.Open(dialogue);
                 break;
             case Role.Stablekeeper:
-                dialogue.ShowMessage("Die Pferde sind versorgt. Heute Morgen sind sie ruhiger als die Leute am Tor.", "Hannes");
+                HannesConversation.Open(dialogue);
                 break;
             case Role.Carpenter:
-                dialogue.ShowMessage("Guten Morgen, Elian. Ich habe die Werkstatt schon geöffnet. Auf der Werkbank liegt noch der Griff für Martas neue Gartenschaufel.", "Ida");
+                IdaConversation.Open(dialogue);
                 break;
         }
     }

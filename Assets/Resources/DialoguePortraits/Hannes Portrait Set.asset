@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31cb812a97e39044aa091655a1683171, type: 3}
+  m_Name: Hannes Portrait Set
+  m_EditorClassIdentifier: Assembly-CSharp::DialoguePortraitSet
+  speaker: Hannes
+  neutral: {fileID: 21300000, guid: 2e34e31f78e3d81428f7e2af8d82b71c, type: 2}
+  friendly: {fileID: 21300000, guid: 943c0f0a2ff6da64fbde70a45d777364, type: 2}
+  surprised: {fileID: 21300000, guid: 1c9885bbb6251c649a5c3b455ca63a5b, type: 2}
+  worried: {fileID: 21300000, guid: ba64b14a71ad4174681b4fe9ca1b360f, type: 2}
