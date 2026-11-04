@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.20.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.20.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1135,3 +1135,228 @@ The courtyard has signposts for the garden, stable, workshop and gate. Marta rea
 Rebuild the saved courtyard with **Arkmon → Build intro courtyard layout**. Tower, castle wings and walls share world-projected, shadow-receiving limestone, so stone size is independent of building dimensions. Castle facades have projecting cornices, buttresses and framed windows. Standalone buildings are checked for intersecting renderer bounds, including roof overhangs, before the scene is saved. The joined castle sections deliberately share their structural junctions.
 
 The courtyard meadow has a walkable mesh with smooth slopes beside the tower and across the lawns. Paths sample the same height surface along and across their width; grass, residents and signposts follow the ground. Building entrances and vegetable plots retain level ground. `CourtyardPolishTests` checks building separation, shared stone materials and the terrain collider; `IntroCourtyardTests` and `CourtyardGateTests` cover the route, garden, tower return and bridge. The buildings and resident silhouettes remain prototype art.
+
+### Western residence and tower approach
+
+`CourtyardWestArchitecture`, invoked by **Arkmon → Build intro courtyard layout**, builds the west residence as a lower connecting wing and a taller building behind it. Blue slate roofs, dormers, arched windows, dressed stone courses and Aurenfeld banners link it to Elian's tower. A broad stair connects the raised stone terrace to the courtyard, with stone balustrades and ivy along its edges. The camera keeps a constant angle and field of view, with a configurable focus height to include more of the buildings. Warm directional sunlight and cooler ambient shadows apply to the courtyard only.
+
+The shared world-projected masonry uses `Assets/Art/Intro/Aurenfeld illustrated limestone.png`. It was generated with the built-in image tool; the rest of this pass uses existing art and authored geometry. Meshes and materials are persisted alongside the texture. The separate village houses and NPC silhouettes still need their own art pass. Courtyard PlayMode checks include walking up and down the tower steps, building clearance, the garden, bridge and return to the tower. Run with `-disableAudio` for silent validation; captures are written to `Builds/intro-courtyard-*.png`.
+
+The decorative stair treads use a continuous invisible collision wedge, because the Rigidbody walker otherwise catches on vertical risers. All five focused courtyard tests passed after this correction (`Library/courtyard-west-tests.xml`). The saved before image is `Builds/west-courtyard-before.png`; the current west view is `Builds/intro-courtyard-west.png`. These local captures use different camera framing and are review artifacts, not packaged game assets.
+
+<details>
+<summary>Limestone texture generation prompt</summary>
+
+Use case: stylized-concept. Asset type: seamless square albedo texture for 3D castle masonry in a hand-painted illustrated storybook RPG with paper characters. Create only a flat orthographic swatch filling the whole square with about 8 horizontal courses of staggered large limestone blocks, each course about 4 or 5 blocks. Warm muted oatmeal and cream stone, occasional desaturated ochre and cool grey blocks, dark brown-grey thin irregular mortar lines, restrained hand-inked outlines, broad gouache pigment patches, lightly chipped rounded corners, a few tiny moss traces. Clear simple shapes at game-camera distance, no photorealism, no photographic noise, no 3D render. Completely even diffuse lighting, no cast shadows, no directional illumination, no vignette, no perspective, no border, no text or objects. Edges must tile seamlessly on all four sides, matching rows horizontally. Final opaque square texture, 1024x1024 or larger.
+
+</details>
+
+### Marta's garden cottage
+
+The garden cottage is built by `CourtyardGardenCottage` as one local hierarchy: cream limewashed walls, painted timber framing, a front-facing gable, individually shaped terracotta roof tiles, sage shutters, a bracketed porch, a low stone plinth, shallow approach stones, herb pots and a potting table. The generator no longer relocates its separate details using coordinate ranges. `Marta work spot` belongs to the house and is the spawn anchor used by `CourtyardLife`; moving the house moves the intended work station with it.
+
+Marta uses the transparent `Assets/Resources/Marta-Gardener.png` sprite, showing a gardener with a harvest basket. `CourtyardGardenerVisual` adds restrained idle breathing, a contact shadow and horizontal facing toward nearby Elian. Her interaction anchor remains fixed. Existing garden dialogue and watering progression are preserved. The doorway is scenery; this pass does not add an enterable cottage interior. Ida is covered by the workshop pass below; Hannes is covered by the stable pass below.
+
+The focused courtyard checks cover building separation, Marta's anchor, left/right facing, dialogue and clear door approach, as well as the existing garden, tower stairs and bridge. Silent runs use `-disableAudio`; the new gameplay capture is `Builds/intro-courtyard-marta.png`.
+
+<details>
+<summary>Marta sprite generation prompt (built-in image tool)</summary>
+
+Create a single full-body 2D game sprite on a transparent background: Marta, a kindly middle-aged gardener living in a cozy fantasy castle courtyard. Hand-drawn storybook paper-cut RPG style, dark expressive ink outlines, narrow warm cream cut-paper edge, softly painted gouache shading, clean readable silhouette, charming slightly chibi proportions about 3.5 heads tall. Warm smiling face, auburn hair with grey streaks tied into a loose braid, soft straw sunhat with a sage ribbon, cream rolled-sleeve blouse, muted sage green skirt and bodice, faded ochre work apron with a little gardening pocket, practical brown boots. Standing naturally in three-quarter front view facing slightly to the viewer's right, both feet visible and flat on the same baseline. Holds a shallow wicker harvest basket of carrots and a small cabbage at waist height with both hands, elbows naturally attached. Large friendly eyes, welcoming expression. Restrained earthy green, ochre, brown and cream palette matching a hand-painted medieval fantasy world. Only ONE character, centered, generous transparent margin, entire hat and boots included, no scenery, no text, no ground, no cast shadow, no extra poses, no photorealism, no 3D rendering.
+
+</details>
+
+Validation for this pass: the five existing courtyard cases pass in Library/marta-courtyard-tests.xml; the new Marta case passes in Library/marta-focused-tests.xml after isolating its facing-only teleports from Rigidbody interpolation. The physical stairs and clearance checks remain unchanged. Builds/intro-courtyard-marta-detail.png uses a temporary closer inspection camera; Builds/intro-courtyard-marta.png uses the normal gameplay camera. No gameplay camera settings were changed by the cottage pass.
+
+### Per-line dialogue emotions
+
+`DialogueSection.presentations` optionally supplies one `DialogueLinePresentation` per text line: an empty speaker uses the conversation's speaker, emotion defaults to Neutral, and an optional portrait overrides the normal lookup. Missing entries preserve existing dialogue trees. Branch questions have their own optional presentation. Battle ownership continues to use the initiating speaker even when an individual line is spoken by Elian.
+
+Reusable `DialoguePortraitSet` assets under `Resources/DialoguePortraits` map a speaker to neutral, friendly, surprised and worried portraits. A missing expression falls back to that speaker's neutral portrait; legacy player/John portraits and explicit portrait overrides still work. Unknown speakers show no portrait instead of inheriting the previous speaker's face. Closing, replacing or ending a conversation clears the active presentation. `DialoguePortraitMotion` gives each line a short, restrained emphasis within the existing parchment frame.
+
+`MartaConversation` provides the greeting, Elian's response, garden request and a separate post-watering thank-you. `CourtyardGardenerVisual` listens to line presentation and garden completion, faces Elian and plays small upright nod/bounce motions without moving the work spot. The world sprite itself is unchanged; facial expressions currently appear in the dialogue portraits. It unsubscribes from all events when disabled. Other NPCs can adopt the same portrait-set and line-presentation data; their expression artwork is not included in this pass.
+
+`ConfigureMartaEmotions.Run` imports the expression sheet and creates four Unity sprite rectangles plus the Marta portrait set, without editing the bitmap. The generated sheet is `Assets/Art/Intro/Marta dialogue expressions.png`; it was created with the built-in image tool using the existing Marta sprite as its reference.
+
+Validation: all three focused PlayMode tests in `Library/marta-emotions-tests.xml` pass. They cover all four expressions, Elian/Marta speaker changes, natural completion, cancellation, scene reload subscriptions, one-time garden completion, thank-you dialogue, legacy branches, missing portraits and explicit overrides. Runs use `-disableAudio`. Actual UI captures are in `Builds/marta-dialogue-*.png`.
+
+<details>
+<summary>Marta expression-sheet generation prompt</summary>
+
+Using the attached Marta gardener sprite as the exact character and art-style reference, create a transparent 2 by 2 portrait expression sheet for a fantasy RPG dialogue UI. Keep exactly the SAME face, age, auburn braid, straw sunhat, sage ribbon, cream blouse and green bodice in all four portraits. Each portrait is a head-and-shoulders bust with the full hat visible, at identical scale and position inside its own quadrant. Precisely four equally sized square cells in a 2x2 grid, no drawn borders, no text labels, no extra figures. Leave generous transparent gutters and transparent margins so no portrait touches another quadrant. Top LEFT: neutral attentive, relaxed closed mouth, calm eyebrows. Top RIGHT: warmly happy and grateful, clear broad smile, cheerful softened eyes. Bottom LEFT: pleasantly surprised, raised eyebrows, open eyes and small rounded open mouth. Bottom RIGHT: gently worried about dry plants, inner eyebrows raised, slightly downturned closed mouth, compassionate expression, not angry or crying. Expressions should be distinct even at small UI size. Same three-quarter front angle facing slightly viewer-right throughout. Illustrated ink-and-gouache paper-cut aesthetic and narrow warm cream cutout contour, matching the reference. Actual transparent background, no backdrop, no drop shadows, no glow, no gradients surrounding the portraits. Square canvas.
+
+</details>
+
+
+### Ida's workshop and conversations
+
+Ida has a dedicated workshop beside the west terrace, within the widened space between the tower and the residence. `CourtyardWorkshop.Build` creates a single grouped half-timbered building with a plaster facade, brown shingled roof, sheltered retained workbench, tool rail, timber rack, offcut bin and shallow entrance stones. A short curved path connects the door to the courtyard route. The meadow is smoothly flattened only around this station. Ida's spawn anchor is a child of the workshop, so she stays assigned to her workplace.
+
+`CourtyardCarpenterVisual` uses three illustrated hand-plane working poses and a separate idle pose, with restrained breathing. Starting a conversation with Ida switches to the idle pose and turns her horizontally toward Elian. Her work stays paused during Elian's replies and resumes after normal completion or cancellation. Dialogue event subscriptions are removed on disable. This is a small frame-based ambient animation, not a full skeletal animation.
+
+`IdaConversation` adds a six-line exchange about repairing Marta's garden tool, using neutral, friendly, surprised and worried portraits. Facial expressions appear in the dialogue UI; the world figure keeps its work/idle face. The dialogue does not add a new quest. The workshop door remains scenery and has no enterable interior yet. Hannes is covered by the stable pass below.
+
+`ConfigureIdaWorkshop.Run` imports the two transparent sheets and creates native Unity Sprite assets under `Resources/Ida` and `Resources/DialoguePortraits`. Rectangles and shared foot pivots are set in sprite metadata; the generated bitmap pixels are unchanged.
+
+Validation uses silent Unity PlayMode runs (`-disableAudio`). The eight courtyard cases cover building separation, free approaches, existing stairs/garden/bridge behavior, Ida's changing work poses, all dialogue expressions, work interruption/resumption and subscriptions after scene reload. Results: `Library/ida-courtyard-tests.xml` (8/8 passed). After the final bench/sign placement refinement, the two affected workshop cases passed again in `Library/ida-workshop-tests.xml`. `Builds/intro-courtyard-ida.png` uses the gameplay camera; `Builds/intro-courtyard-ida-detail.png` is a closer inspection view. `Builds/ida-dialogue-worried.png` shows the actual dialogue UI.
+
+Generated artwork (built-in image tool):
+- `Assets/Art/Intro/Ida carpenter poses.png`, original output `exec-ccb98de0-1186-42f7-bbe0-accf1ee35b77.png`.
+- `Assets/Art/Intro/Ida dialogue expressions.png`, original output `exec-af4bf23c-d637-42a6-bf16-c3ce96ccef56.png`, with the pose sheet as character reference.
+
+<details>
+<summary>Ida working-pose generation prompt</summary>
+
+Create a production 2x2 sprite sheet for ONE original female carpenter NPC named Ida, in the hand-drawn ink and gouache paper-cut style of a cozy medieval fantasy RPG. Square transparent canvas, four equal square quadrants, no labels, borders, scenery, floor or shadows. In EVERY quadrant show the SAME complete full-body character at identical size and aligned boots, plenty of transparent margin. Ida is a capable friendly woman about 35, warm medium brown skin, dark brown curly hair in a high bun tied with an ochre scarf, expressive brown eyes, burgundy rolled-sleeve shirt, tan leather work apron, dark olive cropped trousers, solid brown boots; small brass pencil tucked behind ear. Charming proportions about 3.5 heads high, bold dark outlines, narrow cream paper edge, softly painted flat color. Three-quarter front view facing viewer-right. Top LEFT: relaxed talking pose, arms resting naturally down, gentle closed-mouth smile. Top RIGHT: working pose A, both hands on a small wooden hand plane at waist height, arms extended slightly forward to viewer-right. Bottom LEFT: working pose B, same plane held at waist height but elbows pulled back closer to torso, slight focused expression. Bottom RIGHT: working pose C, hands and plane halfway between A and B. The three working poses must differ ONLY in forearm positions and the small plane, keeping head, torso, legs and boots aligned exactly; no leaning or body rotation. The hand plane's sole stays horizontal; a separate 3D workbench will be placed below it in the game, so do NOT draw a workbench or plank. Anatomically connected arms and hands, consistent clothing and face across all four cells. Earthy warm colors, absolutely transparent background without glow or decorative noise.
+
+</details>
+
+<details>
+<summary>Ida dialogue-portrait generation prompt</summary>
+
+Using the attached Ida sprite sheet strictly as the CHARACTER REFERENCE (not as a layout to preserve), create a 2x2 dialogue PORTRAIT expression sheet, on transparent square canvas. Four equal square cells, each with one head-and-shoulders bust at identical scale. Preserve the same brown-skinned female carpenter, dark curly bun, ochre hair scarf, brass pencil behind ear, burgundy shirt, tan leather apron, face and hand-drawn ink/gouache paper-cut style. Do not draw tools or hands. Top LEFT: neutral attentive expression with closed mouth. Top RIGHT: openly friendly happy smile and warm eyes. Bottom LEFT: surprised with raised eyebrows, wide eyes and a small rounded open mouth. Bottom RIGHT: thoughtfully worried, eyebrows tilted inward/up, gently downturned mouth, not angry. Keep the SAME face and viewing angle, clothing and hair across all four. Complete hair bun and scarf in every cell. Narrow cream cut-paper edge. Transparent margins at least 8% around every bust, no crossing the cell boundaries, no captions, no frames, no background, no glow, no shadow, no surrounding flecks. Strong facial readability at small size.
+
+</details>
+
+### Workshop placement refinement
+
+The workshop group moved from (-23, 0, 4.3) to (-27, 0, -8.3): four units west and 12.6 units toward the foreground. Its work spot, bench and door approach move together. The wayfinding sign now follows a workshop child anchor instead of an independent world coordinate. A curved side path connects the tower route around the west side of the workshop to its forecourt, keeping the main crossing open. The level ground patch follows the shared workshop position; the previous patch beside the castle returns to the meadow relief.
+
+The existing courtyard checks and screenshots are reused for this layout change; workshop checks resolve their positions relative to the building. Validation: 8/8 courtyard PlayMode cases passed (Library/ida-relocation-tests.xml), and the west gameplay and workshop views were visually reviewed. The gameplay camera itself is unchanged.
+
+### Expanded west courtyard and Hannes' stable
+
+The temporary southwest workshop placement has been superseded. The west residence and upper residence now sit ten units farther east, while the tower keeps its original position, staircase and return point. A lower, longer rear connecting wing links the buildings. The terrace extension and facade ivy follow the new architecture. Ida is back in the west terrace area at (-25, 0, 4.3), with a short entrance branch from the main path. Her former foreground site returns to meadow.
+
+`CourtyardStable.Build` replaces the retained Stable's old geometry with grouped oak posts, pale plaster, a slate gable roof, feed-store doors, an open-looking gated bay, bound hay, a hollow water trough and a tack rail. The stable sits at (-11.5, 0, 5), clear of the residence behind it. The forecourt and work pad are level; their surroundings retain meadow relief. The stall remains scenery behind a collision boundary; this pass does not add horses or an accessible stable interior.
+
+`Hannes work spot` and `Stable sign spot` are child anchors. `CourtyardLife` resolves them when spawning Hannes and his sign. `CourtyardStablekeeperVisual` uses three illustrated saddle-brushing frames plus a relaxed conversation pose (see the saddle refinement below). The activity pauses throughout his conversation, including Elian's lines, turns toward Elian and resumes on completion or cancellation. Event subscriptions are removed on disable.
+
+`HannesConversation` provides a warm six-line conversation about caring for the horses and Elian's nerves before the examination. Four portraits (neutral, friendly, surprised, worried) use the existing per-line dialogue system. Expressions are shown in the UI; the world figure changes between working and relaxed poses. There is no new quest or change to examination progression.
+
+`ConfigureHannesStable.Run` imports the two transparent sheets and native Unity sprite assets under Resources/Hannes and Resources/DialoguePortraits, then rebuilds the courtyard. Artwork was generated with the built-in image tool and copied into the project without altering the bitmap:
+- `Assets/Art/Intro/Hannes stablekeeper poses.png` (source exec-563359dd-7757-46d3-910a-8b4d061f2f9f.png).
+- `Assets/Art/Intro/Hannes dialogue expressions.png` (source exec-74355af3-5725-4110-acfe-dac1bf9fedf0.png; pose sheet used as the character reference).
+
+Silent validation reuses the courtyard regression checks and adds `CourtyardStableTests` for Hannes' anchor, unobstructed approach, moving work frames, all expressions, Elian's reply, cancellation, resumption and scene-reload subscriptions. All ten courtyard cases pass in Library/hannes-courtyard-tests.xml, including the final low-gallery window adjustment. The west view, stable close-up and dialogue portrait were visually inspected. Gameplay captures: Builds/intro-courtyard-west.png and Builds/intro-courtyard-hannes.png; the closer inspection camera produces Builds/intro-courtyard-hannes-detail.png. Builds/hannes-dialogue-worried.png shows the actual dialogue UI.
+
+<details>
+<summary>Hannes working-pose generation prompt</summary>
+
+Production sprite sheet for a hand-drawn cozy medieval fantasy paper RPG. Transparent square canvas, exact 2x2 equal cells, no labels or grid. SAME character in all four: Hannes, kindly sturdy middle-aged male stablekeeper, warm light tan skin, wavy chestnut hair, short rounded beard and moustache, expressive brown eyes, soft moss-green cap, cream rolled-sleeve shirt, muted blue waistcoat, brown leather belt with small pouch, dark ochre trousers, brown work boots. Charming 3.5 heads tall, strong dark ink contours, narrow cream cut-paper edge, hand-painted gouache shading, earthy colors. Entire figure head to boots in every cell, generous transparent margins, identical scale and aligned boots/head. Three-quarter front facing viewer-right. Top LEFT relaxed friendly conversation pose, hands naturally at sides, no tools. Top RIGHT working pose: both hands hold a small horse grooming brush and a short brown leather strap at waist level, right hand brushing along the strap toward viewer-right. Bottom LEFT same working pose with brush hand pulled back. Bottom RIGHT brush midway. Only hands and forearms change, torso/head/feet stay aligned. Anatomically connected arms. No horses, scenery, tables, floor, cast shadow, captions, additional objects or glow. All cell content inside 8 percent margins. Actual alpha transparency.
+
+</details>
+
+<details>
+<summary>Hannes portrait generation prompt</summary>
+
+Use attached Hannes sprite sheet as the exact CHARACTER and ink/gouache paper-cut STYLE reference. Create a transparent square 2x2 DIALOGUE PORTRAIT sheet, four equal cells with one head-and-shoulders bust in each. Same friendly middle-aged stablekeeper, chestnut wavy hair and short beard/moustache, moss green soft cap, cream shirt, muted blue waistcoat, warm tan skin and brown eyes. Same angle and identity in all cells. No hands, brushes, straps or tools. Top LEFT neutral attentive closed-mouth expression. Top RIGHT friendly warm smile. Bottom LEFT surprised with raised eyebrows and slightly open mouth. Bottom RIGHT gently concerned, inward raised eyebrows and slightly downturned mouth, not angry. Full cap inside each cell with generous transparent margins. Narrow cream paper outline, dark expressive ink, softly painted earthy colors. No text, borders, backdrops or shadows. Actual transparent background.
+
+</details>
+
+### Hannes: readable saddle care
+
+Hannes now brushes a separate saddle on a splayed wooden stand beside him. The saddle has a curved seat, raised pommel/cantle, hanging leather flaps with edge trim, and metal stirrups. His new work poses extend the brush sideways over the seat; the ambiguous hand-held strap is gone. The greeting now explicitly mentions cleaning the saddle. Conversation pause/resume and the existing four expression portraits are preserved.
+
+The replacement transparent sheet is `Assets/Art/Intro/Hannes saddle cleaning poses.png`, generated with the built-in image tool using the previous pose sheet as character reference (source output `exec-808713f9-810a-44b3-a79f-7eda068beb04.png`). The original sheet is retained as source history. `ConfigureHannesStable` updates existing native sprite assets in place when their source texture changes, preserving their GUIDs. All poses share the same crop, foot pivot and world scale. The saddle meshes are authored in `CourtyardStable`, not baked into the character image.
+
+Both focused CourtyardStableTests pass in Library/hannes-saddle-tests.xml (silent run). All three work-frame captures were visually checked for brush/seat contact. The three work-frame views are Builds/hannes-saddle-WorkForward.png, Builds/hannes-saddle-WorkMiddle.png and Builds/hannes-saddle-WorkBack.png. The animation remains a small frame-based idle activity.
+
+<details>
+<summary>Saddle-brushing pose sheet prompt (built-in image tool)</summary>
+
+Edit the attached Hannes sprite sheet into a NEW 2x2 animation sheet. Preserve this exact kindly bearded stablekeeper identity, moss cap, blue waistcoat, cream rolled-sleeve shirt, ochre trousers, boots, ink/gouache paper cut style and transparent background. Critical change: REMOVE the separate leather strap/loop entirely. Keep his worn belt intact, but his brush must NEVER touch or overlap his belt or torso. In the three working poses he reaches SIDEWAYS to viewer RIGHT to brush a separate saddle that will be rendered as a 3D object in the game. Do NOT draw the saddle, stand, horse, floor or scenery. Layout: four equal cells on square transparent canvas, same scale and feet baseline. Entire figure in each cell with 5 percent transparent margins. Body and boot center at x=40 percent of each cell leaving open space on the right for the extended arms. Top LEFT: relaxed conversation pose, arms at sides, no brush. Top RIGHT: working pose A, torso upright, BOTH arms reaching to viewer right, elbow connected naturally to shoulder, brush held with bristles DOWN at x=80 percent and y=50 percent of cell. Brush entirely to RIGHT of the torso, clear transparent gap under forearms, belt fully visible and unobstructed. Free hand gently resting near brush at x=70 percent, as if steadying the unseen saddle. Bottom LEFT: same body/head/feet, brush moves back horizontally to x=70 percent at exactly same height, still entirely outside torso silhouette. Bottom RIGHT: brush at x=75 percent same height. Keep shoulders, torso, hat and boots EXACTLY stationary across working frames; only forearms and hands move. Thick dark outlines, cream paper edge, earthy painted color. No long leather straps, loops, harness, reins, captions, panels or shadows. Genuine transparent alpha.
+
+</details>
+
+### Shared NPC art style (Elian / John reference)
+
+The approved reference is `Assets/Art/Intro/CharacterStyle/Approved style reference.png`. Elian and John remain the visual baseline. Hannes, Ida and Marta now use bold dark brown outlines, large simple eyes, compact silhouettes and clean angular shading instead of textured, detailed painting. Their established clothes, tools and roles remain recognizable. John/Hannes being brothers is only a possible background idea; this pass adds no family lore or dialogue about it.
+
+Active generated source sheets:
+- `Assets/Art/Intro/CharacterStyle/Hannes poses.png` — relaxed pose and three sideways saddle-brushing poses.
+- `Assets/Art/Intro/CharacterStyle/Hannes expressions.png` — neutral, friendly, surprised, worried.
+- `Assets/Art/Intro/CharacterStyle/Ida poses.png` — relaxed pose and three hand-plane poses.
+- `Assets/Art/Intro/CharacterStyle/Ida expressions.png` — the same four emotions.
+- `Assets/Art/Intro/CharacterStyle/Marta gardener.png` — gardener with basket, hat and silver hair streak.
+- `Assets/Art/Intro/CharacterStyle/Marta expressions.png` — the same four emotions.
+
+All six assets were created with the built-in image tool using the approved lineup and each resident's previous design as references. Earlier source images remain available for comparison. No bitmap processing was used for slicing or recoloring.
+
+`CourtyardCharacterArt` centralizes texture import, sprite rectangle creation and portrait-set updates. Existing sprite GUIDs are preserved with serialized replacement, including when slicing or pivots change. `ConfigureCourtyardCharacterStyle.Run` imports all three residents and rebuilds the scene once. Individual Hannes/Ida menu actions remain available; Marta now resolves `Resources/Marta/Gardener` with the existing sprite name `Marta-Gardener`. Portrait names and expression lookup remain unchanged.
+
+The saddle stand is scaled to the new brush height; the workbench is lowered and its planing board extends under the full hand-plane stroke. These adjustments keep the tools visibly on their work surfaces. Sprite names are restored after initial asset creation as well as updates.
+
+Existing targeted PlayMode tests cover work pause/resume, speaker/expression changes, cancellation, subscriptions after reload, garden completion and free approaches. Verified on 2026-11-04: 10/10 targeted tests passed in Library/courtyard-character-style-tests.xml; after the final planing-board alignment, 2/2 workshop tests passed again in Library/character-style-bench-tests.xml. All runs used -disableAudio. The work-frame captures are Builds/hannes-saddle-Work*.png and Builds/ida-planing-Work*.png; dialogue captures are Builds/hannes-dialogue-*.png, Builds/ida-dialogue-*.png and Builds/marta-dialogue-*.png. These are actual Unity renders; the detail views use a closer inspection camera.
+
+<details>
+<summary>Hannes poses — final generation prompt</summary>
+
+Production transparent 2x2 sprite sheet of ONLY Hannes, the RIGHTMOST adult character in reference 1. Reference 1 is the approved character and style: rounded moss flat cap, chestnut beard grouped into simple shapes, large expressive oval brown eyes, cream rolled sleeves, blue waistcoat with gold buttons, ochre trousers, belt pouch, chunky boots, compact broad adult build. Preserve this EXACT approved Hannes design, not John. Bold clean dark brown outlines, narrow cream paper border, flat rich color with two angular shade tones, NO grain, hatching, realistic folds or painterly texture. Reference 2 is ONLY a pose/position guide; replace its old realistic face/body rendering with approved style.
+Square canvas, 4 equal cells, transparent background without glow or shadows. Full body in each cell, same head/torso/boot position and scale. Body/feet center x=40% of each cell, boot soles y=98%, head top y=3%. Top LEFT relaxed talking pose with arms down, no tools. Top RIGHT working pose A: arms extended sideways to viewer RIGHT, brush bristles pointing DOWN at x=80%, y=55% of cell. Bottom LEFT working pose B brush at x=73%, same y=55%; bottom RIGHT midpoint brush x=76%, same height. Free hand extended near the brush as if steadying a separate unseen saddle. Brush must remain ENTIRELY to the right of torso and must NOT touch belt. No leather strap or reins. The saddle is a separate 3D object so DO NOT DRAW SADDLE OR STAND. Work poses differ ONLY in forearms/hands/brush, same upright torso and planted legs. No text, gridlines or scenery. All cells cleanly separated with transparent margins.
+
+</details>
+
+<details>
+<summary>Hannes portraits — final generation prompt</summary>
+
+Create a transparent 2x2 dialogue portrait sheet of the EXACT Hannes from the attached new sprite sheet. Only head and shoulders, no hands, brush or props. Preserve moss flat cap, chunky chestnut hair, short grouped beard, large simple brown cartoon eyes, cream collar and blue waistcoat. Match the same bold clean dark brown outlines, angular flat two-tone shading and narrow cream paper edge. No painterly grain, fine hair texture, hatching or realistic rendering. Four identical-scale busts centered in four equal square cells with generous transparent margins, complete cap visible. Top LEFT neutral attentive closed-mouth expression. Top RIGHT warmly friendly smiling. Bottom LEFT surprised, raised brows and small open mouth. Bottom RIGHT concerned, raised inner brows and gently downturned mouth, not angry. Same viewing angle and identity throughout. Square transparent canvas, no labels, panels, background, shadow or glow.
+
+</details>
+
+<details>
+<summary>Ida poses — final generation prompt</summary>
+
+Create a transparent 2x2 full-body sprite sheet of female carpenter Ida. Reference 1 defines the REQUIRED shared style of Elian, John and Hannes: bold smooth dark brown outlines, narrow cream cut-paper edge, large simple expressive oval eyes, compact stylized adult body, clean flat colors and angular two-tone shadows, NO grain, hatching, realistic anatomy or fine fabric/hair detail. Reference 2 gives ONLY Ida's identity, clothing and pose layout; replace its realistic illustrative rendering entirely. Preserve warm medium-brown skin, dark curly hair in a high bun tied with ochre scarf, brass pencil behind ear, burgundy rolled-sleeve shirt, tan work apron, dark olive trousers, brown boots. A capable friendly adult woman, distinct face, rounded simple hands, around 3.3 heads tall. Same design all cells.
+Square alpha canvas, four equal cells, full figure within each cell with transparent margins, boots y=98%, top of bun y=3%, body center x=50%. Top LEFT idle conversational pose, arms down naturally, no tool. Top RIGHT both hands grasp small wooden hand plane at waist height pointing viewer RIGHT, arms pushed forward. Bottom LEFT same pose, elbows pulled back. Bottom RIGHT mid-stroke. Plane sole stays horizontal at y=55% of each cell, plane extends to RIGHT of apron, no floating arms. Head, torso, boots and stance MUST stay identical across work frames, only forearms/hands/tool move. The workbench exists as a separate 3D object so do not draw bench, plank, floor, shadows or surroundings. No labels or borders. Strongly match the graphic cartoon style of reference 1, not the painterly reference 2. Genuine transparent background.
+
+</details>
+
+<details>
+<summary>Ida portraits — final generation prompt</summary>
+
+Create a transparent 2x2 DIALOGUE PORTRAIT sheet of the EXACT illustrated Ida in the reference. Four head-and-shoulder busts at identical scale and angle, no hands or tools. Preserve warm medium brown skin, dark curly high bun, ochre tied scarf, pencil behind ear, burgundy shirt and tan apron straps. Use the exact same bold dark brown contour, narrow cream paper border, big simple oval eyes and clean angular two-tone color shading. NO grain, realistic facial detail, fine hair strands or hatching. Top LEFT neutral attentive closed mouth. Top RIGHT friendly happy smile. Bottom LEFT surprised with raised brows, wide eyes and small rounded open mouth. Bottom RIGHT worried with inner brows raised and gently downturned mouth, not angry. Same face across all cells. Entire bun/scarf inside each cell, equal generous transparent margins. Square canvas, no captions, frame, background or shadows. Actual alpha transparency.
+
+</details>
+
+<details>
+<summary>Marta world sprite — final generation prompt</summary>
+
+Redesign ONLY Marta, the female gardener in reference 2, into the exact approved cartoon paper RPG art style of reference 1. Reference 1 is the STYLE standard only: bold dark brown clean outlines, narrow cream paper edge, big simple oval brown eyes, grouped hair shapes, chunky hands/boots, compact stylized adult proportions, flat clean earthy color with angular two-tone shading. NO painterly grain, fabric weave, fine hair strands, hatching or realistic anatomy. Preserve Marta's identity from reference 2: kindly middle-aged woman, auburn braid with a clear silver streak, broad straw sunhat with sage ribbon bow, cream rolled sleeves, sage bodice and long skirt, ochre gardening apron with small trowel pocket, brown boots, holding a shallow basket with a cabbage and carrots. Simplify basket weave to a few bold strokes, simplify clothing to few large folds. Friendly adult face, slightly rounded build, about 3.3 heads tall, not a child, calm smile. Three-quarter front facing viewer-right, full figure including complete hat and boots, feet aligned flat. One standalone character centered with generous transparent margins, tall portrait canvas, no other characters, labels, environment, ground, shadow or surrounding glow. Actual alpha transparency. Strongly match Elian and John from reference 1; do NOT retain the detailed storybook rendering of reference 2.
+
+</details>
+
+<details>
+<summary>Marta portraits — final generation prompt</summary>
+
+Create a transparent square 2x2 dialogue portrait sheet of EXACTLY Marta from the attached new cartoon sprite. Four identical-scale head-and-shoulders busts with complete broad straw hat and sage ribbon, auburn braid with silver streak, cream blouse and sage bodice. No basket, hands, tools or vegetables. Match thick clean dark brown contours, narrow cream cut-paper border, large simple oval brown eyes and clean angular two-tone shading. No realistic detail, grain, hatching or fabric texture. Top LEFT neutral attentive, relaxed closed mouth. Top RIGHT warmly friendly happy smile. Bottom LEFT surprised, raised brows and small open rounded mouth. Bottom RIGHT gently worried, raised inner brows and downturned mouth, not angry. Preserve same middle-aged face, hat, hairstyle and three-quarter angle in all cells. Transparent margins around each full hat so nothing crosses cell boundaries. No labels, grid, backgrounds, shadows or glow. Actual alpha transparency.
+
+</details>
+
+### Planned courtyard work before the Arkanmeisterin arrival
+
+Planning note (2026-11-04); this is a backlog, not a statement of implemented behavior or authorization to implement every proposal.
+
+Agreed next sequence to retain:
+1. Refine Hannes' brushing and Ida's planing: consistent tool contact, pauses, small head movements and restrained work sounds.
+2. Refine conversation transitions: stop work, face Elian, use line-appropriate expressions and resume work after dialogue.
+3. Personalize the stable, workshop and garden with a few readable occupation-specific props while preserving clear approaches.
+4. Complete Marta's small watering activity: pick up the watering can, water vegetables, show feedback and acknowledge completion in dialogue.
+
+Additional proposed pass before staging the Arkanmeisterin:
+- Review the courtyard from the gameplay camera: tower/arrival on the left, castle silhouette, resident stations and gate on the right remain readable.
+- Unify tower/castle masonry scale, painted materials, roofs and architectural details; check overlap and unwanted occlusion.
+- Shape gentle terrain transitions, worn path edges, grass, soil and restrained vegetation without compromising movement.
+- Establish warm sunlight, cool sheltered areas, contact shadows and restrained atmospheric effects that preserve character readability.
+- Check camera framing, character visibility, collision, stairs, narrow approaches and spawn/return positions.
+- Make interaction prompts consistent; hide distracting markers and avoid repeated tutorial text.
+- Add localized environmental sound and balance it against dialogue, footsteps and music; keep automated tests silent.
+- Give optional resident conversations a clear purpose and warm relationship to Elian, without prematurely revealing the arrival lore.
+- Make the gate, external stream and drawbridge visually coherent; reserve an unobstructed staging area for the later arrival.
+- Review the complete tower-to-courtyard route, optional activities, dialogue cancellation and scene reloads in a focused playable test.
+
+The arrival sequence, starter introductions/selection, new castle interiors and cellar gate story follow this courtyard pass. See TODO.md for the current agreed direction, open design decisions and completion criteria. This roadmap records future work; the implemented project version is listed in Development setup.
+
+### Active courtyard checklist
+
+The maintained checklist for courtyard polish and the surrounding landscape is [TODO.md](TODO.md). It expands the planning note above and is the current place to track open tasks and reviewed completion.
