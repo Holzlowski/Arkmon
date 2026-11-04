@@ -15,9 +15,9 @@ Die Aufgaben umfassen neue Arbeiten und Feinschliff an vorhandenen Funktionen. E
 - [x] Gezeichnete Pferde mit kontinuierlicher Atem-, Kopf-, Ohren- und Schweifbewegung sowie leisem Schnauben und Rascheln ergänzt; feste Hufe und örtliche Hörbarkeit automatisch geprüft.
 - [x] Zwei niedrige Boxentore, Heuraufe und kleinerer Dachüberstand eingerichtet; Sichtbarkeit aus der Spielkamera und freier Zugang zu Hannes geprüft.
 - [ ] Pferdestall gemeinsam im Spiel abnehmen: Größe, Stil, Bewegungswirkung und Lautstärke nach Nutzerfeedback feinjustieren.
-- [ ] Eine Burgwache als ersten wandernden NPC gestalten: ruhiger Rundgang mit kurzen Aufenthalten, passend zum gezeichneten Figurenstil. Diese Rolle ist ausgewählt.
+- [x] Erste Burgwache im freigegebenen gezeichneten Stil eingebaut: grüner Wappenrock, Aurenfeld-Stern, eine kontinuierliche Papierteil-Laufanimation und eigene Dialogporträts.
 - [ ] Weitere wandernde Bewohner erst nach den Ideen des Nutzers festlegen. Küchenhilfe und Bote sind vorerst zurückgestellt und nicht zur Umsetzung ausgewählt.
-- [ ] Für wandernde Bewohner sinnvolle Ziele, kurze Aufenthalte und freie Laufwege planen; beim Ansprechen stehen bleiben, Elian ansehen und danach den Weg fortsetzen.
+- [ ] Rundgang der Burgwache gemeinsam im Spiel abnehmen: zwischen Burg und rechtem Tor außen am Garten vorbei, Wachpausen, Hindernisstopp, Elian ansehen und nach Gesprächen weitergehen sind umgesetzt. Tempo, Größe und Wirkung der Laufbewegung nach Nutzerfeedback feinjustieren. Weitere Bewohner erst nach Auswahl ihrer Rollen planen.
 - [ ] Bewegte Bewohner bei Dialogen und späteren Inszenierungen so anhalten oder umleiten, dass sie keine Wege oder Kamerabilder blockieren.
 - [ ] Idas Arbeitsplatz mit Werkzeugen, Holzresten und angefangenen Arbeiten abrunden.
 - [ ] Martas Platz mit Saatgut und Gartengeräten personalisieren; Beet und Wege sichtbar halten.

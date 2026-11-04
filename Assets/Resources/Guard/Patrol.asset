@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f3e6414610d75a4ea383f64cd6410da, type: 3}
+  m_Name: Patrol
+  m_EditorClassIdentifier: Assembly-CSharp::CourtyardGuardRoute
+  speed: 1.55
+  stops:
+  - position: {x: 14.1, y: 0, z: 9.2}
+    wait: 4
+    lookLeft: 1
+  - position: {x: 23.8, y: 0, z: 11.1}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 24.8, y: 0, z: 4.5}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 24.8, y: 0, z: -1}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 26, y: 0, z: -3.5}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 31, y: 0, z: -4}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 38, y: 0, z: -2.6}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 39.2, y: 0, z: -0.3}
+    wait: 5
+    lookLeft: 0

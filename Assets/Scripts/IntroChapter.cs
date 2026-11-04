@@ -23,6 +23,7 @@ public class IntroChapter : MonoBehaviour
         {
             CourtyardGarden.Install();
             CourtyardLife.Install();
+            CourtyardGuard.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
