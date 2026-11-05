@@ -12,6 +12,7 @@ Shader "Arkmon/Courtyard Illustrated Surface"
   _FaceAlignedMasonry("Face-aligned wall projection",Float)=0
   _FootMoss("Moss: ground height, reach, strength, variation",Vector)=(0,1,0,0)
   _MorningAccent("Local sunlight: center and radius",Vector)=(0,0,0,0)
+  _ViewCutaway("Camera cutaway: world center and radius",Vector)=(0,0,0,0)
   _MorningAccentStrength("Local sunlight emphasis",Range(0,1))=0
   _Saturation("Paint saturation",Range(0,2))=.98
   _Contrast("Paint contrast",Range(.5,1.5))=1.05
@@ -22,6 +23,23 @@ Shader "Arkmon/Courtyard Illustrated Surface"
  SubShader
  {
   Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" }
+
+  HLSLINCLUDE
+  #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+   CBUFFER_START(UnityPerMaterial)
+   float4 _BaseColor,_Tile,_ObjectScale,_FootMoss,_MorningAccent,_ViewCutaway;float _TextureScale,_Wood,_GrainAxis,_EdgeWidth;
+   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry,_MorningAccentStrength,_WorldMasonry;
+   CBUFFER_END
+  void ClipViewCutaway(float3 world)
+  {
+   if(_ViewCutaway.w<=0)return;
+   float3 ray=world-_WorldSpaceCameraPos;
+   float3 target=_ViewCutaway.xyz-_WorldSpaceCameraPos;
+   float depth=dot(target,ray)/max(.001,dot(ray,ray));
+   // Only remove foreground masonry; walls beyond Elian remain solid.
+   if(depth>1.01)clip(length(ray*depth-target)-_ViewCutaway.w);
+  }
+  ENDHLSL
   Pass
   {
    Tags { "LightMode"="UniversalForward" }
@@ -31,14 +49,10 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    #pragma multi_compile_fog
    #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
    #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
-   #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
    struct A { float4 positionOS:POSITION;float3 normalOS:NORMAL; };
    struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 local:TEXCOORD1;float3 normal:TEXCOORD2;float3 normalOS:TEXCOORD3;float fog:TEXCOORD4; };
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
-   CBUFFER_START(UnityPerMaterial)
-   float4 _BaseColor,_Tile,_ObjectScale,_FootMoss,_MorningAccent;float _TextureScale,_Wood,_GrainAxis,_EdgeWidth;
-   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry,_MorningAccentStrength,_WorldMasonry;
-   CBUFFER_END
+
    V Vert(A i)
    {
     V o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);
@@ -53,6 +67,7 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    }
    half4 Frag(V i):SV_Target
    {
+    ClipViewCutaway(i.world);
     float3 p=i.local*_ObjectScale.xyz,an=abs(normalize(i.normalOS));
     float2 uv;float edge;
     float3 edges=(.5-abs(i.local))*_ObjectScale.xyz;
@@ -103,6 +118,20 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    ENDHLSL
   }
   UsePass "Universal Render Pipeline/Lit/ShadowCaster"
-  UsePass "Universal Render Pipeline/Lit/DepthOnly"
+  Pass
+  {
+   Name "DepthOnly"
+   Tags {"LightMode"="DepthOnly"}
+   ZWrite On
+   ColorMask 0
+   HLSLPROGRAM
+   #pragma vertex DepthVert
+   #pragma fragment DepthFrag
+   struct DepthA {float4 positionOS:POSITION;};
+   struct DepthV {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;};
+   DepthV DepthVert(DepthA i){DepthV o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);return o;}
+   half4 DepthFrag(DepthV i):SV_Target {ClipViewCutaway(i.world);return 0;}
+   ENDHLSL
+  }
  }
 }

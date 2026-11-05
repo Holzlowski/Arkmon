@@ -11,6 +11,10 @@ public sealed class CourtyardGateStyle : MonoBehaviour
     private readonly List<Material> materials = new List<Material>();
     private readonly List<Transform> plants = new List<Transform>();
     private Material oak, iron, stone, bank;
+    private readonly List<(MeshRenderer renderer,Vector4 original)> cutaway=new List<(MeshRenderer,Vector4)>();
+    private MaterialPropertyBlock cutawayBlock;
+    private Transform player;
+    private static readonly int Cutaway=Shader.PropertyToID("_ViewCutaway");
     internal static void Install()
     {
         if (GameObject.Find("Illustrated east crossing") != null || GameObject.Find("East drawbridge deck") == null) return;
@@ -24,10 +28,11 @@ public sealed class CourtyardGateStyle : MonoBehaviour
     }
     private void Build()
     {
+        cutawayBlock=new MaterialPropertyBlock();
         oak = Paint("Stable oak", "Drawbridge illustrated oak", new Color(.60f, .69f, .78f));
         oak.SetFloat("_TextureScale", .24f);
         stone = Paint("Plaster", "Gate dressed limestone", new Color(.76f, .73f, .66f));
-        bank = Paint("Plaster", "Stream mossy bank", new Color(.29f, .39f, .15f));
+        bank = Paint("Plaster", "Stream mossy bank", new Color(.43f, .39f, .23f));
         iron = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "Drawbridge wrought iron" };
         iron.SetColor("_BaseColor", new Color(.22f, .19f, .13f)); iron.SetFloat("_Metallic", .25f); iron.SetFloat("_Smoothness", .24f); materials.Add(iron);
         foreach (var renderer in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
@@ -52,6 +57,15 @@ public sealed class CourtyardGateStyle : MonoBehaviour
         foreach (float x in new[] {43.45f,50.48f})
             for (int i=0;i<9;i++) Box("Drawbridge strap rivet",new Vector3(x,.08f,-2.85f+i*.46f),new Vector3(.07f,.04f,.07f),iron);
         Stream(); BankPlants();
+        player=GameObject.FindWithTag("Player")?.transform;
+        foreach(var renderer in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+        {
+            bool gatePart=renderer.transform.IsChildOf(transform) || renderer.name=="Gate stone pier"
+                || renderer.name=="East wall south of gate" || renderer.name=="East wall north of gate";
+            if(!gatePart || renderer.sharedMaterial==null || !renderer.sharedMaterial.HasProperty(Cutaway))continue;
+            renderer.GetPropertyBlock(cutawayBlock);
+            cutaway.Add((renderer,cutawayBlock.HasVector(Cutaway)?cutawayBlock.GetVector(Cutaway):Vector4.zero));
+        }
     }
     private void Arch()
     {
@@ -134,8 +148,9 @@ public sealed class CourtyardGateStyle : MonoBehaviour
         }
         Emit("Drawbridge linked chain",v,t,null,iron);
     }
-    private static float Centre(float z) => 47 + Mathf.Sin((z+1)*.11f)*.3f;
-    private static float HalfWidth(float z) => 2.5f + Mathf.Sin(z*.19f)*.18f;
+    private static float Centre(float z) => 47.0f + Mathf.Sin((z+1)*.16f)*.42f + Mathf.Sin(z*.43f)*.12f;
+    private static float HalfWidth(float z) => 1.80f + Mathf.Sin(z*.27f)*.18f + Mathf.Cos(z*.61f)*.08f;
+    private static float FarLip(float z) => 50.45f + Mathf.Sin(z*.31f)*.20f + Mathf.Cos(z*.74f)*.10f;
     private void Stream()
     {
         var water=new Material(Resources.Load<Shader>("CourtyardStream")){name="Flowing courtyard stream"};materials.Add(water);
@@ -157,13 +172,17 @@ public sealed class CourtyardGateStyle : MonoBehaviour
             for(int row=0;row<rows;row++)
             {
                 float z=-27+row*100f/(rows-1),edge=Centre(z)+side*HalfWidth(z);
-                // Stay outside the wall. The far lip meets the existing solid bank at x=50.
-                float outer=side<0?43.62f:50.30f;
-                v.Add(new Vector3(edge,-.81f,z));v.Add(new Vector3(Mathf.Lerp(edge,outer,.65f),-.2f,z));v.Add(new Vector3(outer,-.015f,z));
+                // Fold the far slope over the solid bank's straight face, then blend onto its top.
+                // The deck and bank colliders keep their established heights and footprint.
+                float outer=side<0?43.62f:FarLip(z);
+                float crest=side<0?43.72f:50.0f;
+                v.Add(new Vector3(edge,-.81f,z));
+                v.Add(new Vector3(Mathf.Lerp(edge,crest,.58f),-.26f+.035f*Mathf.Sin(z*.7f),z));
+                v.Add(new Vector3(crest,.025f,z));v.Add(new Vector3(outer,.008f,z));
                 if(row==0)continue;
-                for(int c=1;c<3;c++)
+                for(int c=1;c<4;c++)
                 {
-                    int n=row*3+c,p=n-3;
+                    int n=row*4+c,p=n-4;
                     if(side>0)t.AddRange(new[]{p-1,n-1,p,p,n-1,n});else t.AddRange(new[]{p-1,p,n-1,p,n,n-1});
                 }
             }
@@ -180,17 +199,48 @@ public sealed class CourtyardGateStyle : MonoBehaviour
     private void BankPlants()
     {
         var random=new System.Random(480);
-        for(int i=0;i<115;i++)
+        // Small, separated riparian groups; the bridge and its future arrival space stay open.
+        for(int group=0;group<17;group++)
         {
-            float z=-19+(float)random.NextDouble()*44;
-            if(z>-4.3f && z<2.3f)continue; // bridge, exit and future arrival stay open
-            bool far=i%2==0; float x=far?50.4f+(float)random.NextDouble()*.6f:43.75f+(float)random.NextDouble()*.35f;
-            var sprite=Resources.Load<Sprite>("CourtyardStyle/"+(i%8==0?"Flowers":i%3==0?"Fern":"Grass"));if(sprite==null)continue;
-            var go=new GameObject("Illustrated streamside plant",typeof(SpriteRenderer));go.transform.SetParent(transform,false);
-            go.transform.position=new Vector3(x,far?.015f:-.12f,z);go.transform.localScale=Vector3.one*((.35f+(float)random.NextDouble()*.4f)/sprite.bounds.size.y);
-            var renderer=go.GetComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.flipX=i%2==0;renderer.color=new Color(.88f,.97f,.77f);plants.Add(go.transform);
+            float z=-19+group*2.6f+(float)random.NextDouble()*.9f;
+            if(z>-5.2f && z<3.2f)continue;
+            bool far=group%3!=0;
+            for(int i=0;i<4;i++)
+            {
+                float dz=z+((float)random.NextDouble()-.5f)*1.4f;
+                float x=far?FarLip(dz)+(float)random.NextDouble()*.48f:43.67f+(float)random.NextDouble()*.07f;
+                string kind=i==0 && far?"Pebbles":i==1?"Fern":"Grass";
+                var sprite=Resources.Load<Sprite>("CourtyardStyle/"+kind);if(sprite==null)continue;
+                var go=new GameObject("Illustrated streamside plant",typeof(SpriteRenderer));go.transform.SetParent(transform,false);
+                go.transform.position=new Vector3(x,far?.025f:.015f,dz);
+                float height=kind=="Pebbles"?.23f:.30f+(float)random.NextDouble()*.25f;
+                go.transform.localScale=Vector3.one*(height/sprite.bounds.size.y);
+                var renderer=go.GetComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.flipX=i%2==0;
+                renderer.color=kind=="Pebbles"?new Color(.91f,.88f,.77f):new Color(.86f,.94f,.72f);plants.Add(go.transform);
+            }
         }
     }
-    private void LateUpdate(){if(Camera.main!=null)foreach(var plant in plants)plant.rotation=Camera.main.transform.rotation;}
+    private void LateUpdate()
+    {
+        if(Camera.main!=null)foreach(var plant in plants)plant.rotation=Camera.main.transform.rotation;
+        if(player==null)return;
+        var center=player.position+Vector3.up*.15f;
+        float blend=Mathf.SmoothStep(0,1,Mathf.InverseLerp(40,42,center.x))
+            *(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(51,54,center.x)));
+        var value=new Vector4(center.x,center.y,center.z,1.35f*blend);
+        foreach(var part in cutaway)
+        {
+            if(part.renderer==null)continue;
+            part.renderer.GetPropertyBlock(cutawayBlock);cutawayBlock.SetVector(Cutaway,value);part.renderer.SetPropertyBlock(cutawayBlock);
+        }
+    }
+    private void OnDisable()
+    {
+        foreach(var part in cutaway)
+        {
+            if(part.renderer==null)continue;
+            part.renderer.GetPropertyBlock(cutawayBlock);cutawayBlock.SetVector(Cutaway,part.original);part.renderer.SetPropertyBlock(cutawayBlock);
+        }
+    }
     private void OnDestroy(){foreach(var mesh in meshes)if(mesh!=null)Destroy(mesh);foreach(var material in materials)if(material!=null)Destroy(material);}
 }
