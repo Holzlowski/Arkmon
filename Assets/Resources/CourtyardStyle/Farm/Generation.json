@@ -1,0 +1,10 @@
+{
+  "tool": "Built-in image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: stylized-concept. Asset type: transparent 2D scenic farm sprite for Aurenfeld, a hand-drawn paper fantasy RPG. Create ONE charming medieval farmstead, strongly recognizable as a FARM even when small on screen: a welcoming cream-plaster and dark chestnut timber farmhouse with a steep irregular terracotta roof and ONE prominent stone chimney on its left roof; a larger red-brown wooden barn beside it with high hayloft, open dark doorway and big cream X-braced barn doors; a small hay wagon and two golden haystacks; low rustic fence enclosing a small yard. Asymmetric cohesive composition, buildings arranged around a yard, farmhouse left, tall barn right, gently angled three-quarter frontal view, only slightly elevated camera. Warm honey morning highlights, sage shutters, warm dark brown confident ink contours, illustrated gouache colors and restrained paper grain. Simplified readable shapes like hand-drawn paper RPG characters, not photorealistic and not a 3D render. Beautiful detailed roofs with small irregular tiles, subtle climbing greenery on farmhouse. Entire buildings and fence visible with generous transparent padding. Thin cream edge only if needed, no thick sticker outline. Genuinely transparent background including gaps, NO sky, horizon, distant landscape, broad ground slab, scenery backdrop, text, people, smoke or glow. Narrow irregular grass tufts and earth immediately at the building feet only. Smoke will be animated separately in Unity, leave clear space immediately above the visible chimney mouth. One farmstead asset, no sheet, no panels.",
+  "asset": "AurenfeldFarm.png",
+  "chimneyMouthNormalizedBottomOrigin": [
+    0.137,
+    0.861
+  ]
+}

@@ -172,7 +172,7 @@ public class MeadowVegetation : MonoBehaviour
                 float gold = Gold(wx, wz), y = Height(wx, wz) + .01f;
                 if (illustrated)
                 {
-                    if (CourtyardFieldMargins.IsBarePath(world) || CourtyardEastFieldStyle.IsBarePath(world)) continue;
+                    if (CourtyardFieldMargins.IsBarePath(world) || CourtyardEastFieldStyle.IsBarePath(world) || CourtyardFarmApproach.IsBareGround(world)) continue;
                     gold = CourtyardFieldMargins.AdjustGold(world, gold);
                 }
                 // Shared world-space masks form islands and worn gaps across chunk/LOD boundaries.
