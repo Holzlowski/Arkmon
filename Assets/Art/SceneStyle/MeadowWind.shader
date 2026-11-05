@@ -28,7 +28,8 @@ Shader "Arkmon/Meadow Wind"
             float swell=.55+.45*sin(p.x*.028-p.z*.035-_Time.y*.32);
             float flutter=sin(_Time.y*2.1+input.uv.x*6.283+p.x*.2)*.12;
             float wave=lerp(oldWave,.35+sweep*(.85+swell*.45)+flutter,_FieldStyle);
-            float bend=wave*_WindStrength*input.uv.y*input.uv.y;
+            float field=_FieldStyle*smoothstep(46,58,-p.x);
+            float bend=wave*_WindStrength*lerp(1,1.3,field)*input.uv.y*input.uv.y;
             p.x+=bend;p.z+=bend*lerp(.3,.42,_FieldStyle);
             return p;
         }
@@ -50,7 +51,12 @@ Shader "Arkmon/Meadow Wind"
                 output.positionCS=TransformWorldToHClip(position);output.positionWS=position;
                 Light sun=GetMainLight();
                 half3 morning=half3(.44,.50,.60)+sun.color*(.48*lerp(.55,1,input.uv.y));
-                output.color=half4(input.color.rgb*lerp(half3(1,1,1),morning,_SunResponse),input.color.a);
+                float field=_FieldStyle*smoothstep(46,58,-position.x);
+                half3 fieldLight=half3(.34,.40,.51)+sun.color*(.56*lerp(.45,1,input.uv.y));
+                morning=lerp(morning,fieldLight,field);
+                float sweep=sin(position.x*.075+position.z*.052-_Time.y*.85);
+                half shimmer=1+field*sweep*.055*input.uv.y;
+                output.color=half4(input.color.rgb*lerp(half3(1,1,1),morning,_SunResponse)*shimmer,input.color.a);
                 output.fog=ComputeFogFactor(output.positionCS.z);return output;
             }
             half4 Frag(Varyings input):SV_Target
@@ -59,7 +65,9 @@ Shader "Arkmon/Meadow Wind"
                 LODFadeCrossFade(input.positionCS);
                 #endif
                 half shadow=GetMainLight(TransformWorldToShadowCoord(input.positionWS)).shadowAttenuation;
-                return half4(MixFog(input.color.rgb*lerp(1,lerp(.58,1,shadow),_SunResponse),input.fog),1);
+                half field=_FieldStyle*smoothstep(46,58,-input.positionWS.x);
+                half3 shade=lerp(half3(.58,.58,.58),half3(.46,.53,.65),field);
+                return half4(MixFog(input.color.rgb*lerp(half3(1,1,1),lerp(shade,half3(1,1,1),shadow),_SunResponse),input.fog),1);
             }
             ENDHLSL
         }
