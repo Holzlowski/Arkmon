@@ -21,6 +21,16 @@ public class CourtyardCastlePaletteTests
             Assert.That(root.GetComponentsInChildren<MeshRenderer>().Any(r=>r.sharedMaterial==shared),Is.True,name+" must use the central castle stone.");
             Assert.That(root.GetComponentsInChildren<MeshRenderer>().All(r=>r.sharedMaterial.shader.isSupported),Is.True);
         }
+        var planting=GameObject.Find("Illustrated wall foot planting"); Assert.That(planting,Is.Not.Null);
+        Assert.That(planting.GetComponentsInChildren<Collider>(),Is.Empty,"Mauerbewuchs darf keine neuen Laufhindernisse erzeugen.");
+        var plants=planting.GetComponentsInChildren<SpriteRenderer>();
+        Assert.That(plants.Length,Is.GreaterThan(10),"Die freien Mauerabschnitte müssen sichtbare Pflanzengruppen erhalten.");
+        Assert.That(plants.All(r=>!(r.transform.position.x>38 && r.transform.position.z> -5 && r.transform.position.z<3.6f)),Is.True,"Der Torzugang bleibt frei.");
+        Assert.That(shared.GetVector("_FootMoss").z,Is.Zero,"Die gemeinsame Steinpalette darf nicht für alle Gebäude vermoost werden.");
+        var eastWall=GameObject.Find("East wall north of gate").GetComponent<MeshRenderer>();
+        var mossBlock=new MaterialPropertyBlock();eastWall.GetPropertyBlock(mossBlock);
+        Assert.That(mossBlock.GetVector("_FootMoss").z,Is.GreaterThan(0));
+        var preservedScale=mossBlock.GetVector("_ObjectScale");
         var tower=GameObject.Find("Player residence tower");Assert.That(tower.GetComponent<Collider>().enabled,Is.True);
         foreach(string name in new[]{"North castle wall","West wall near","West wall far","East wall north of gate","East wall south of gate","Cutaway near castle wall"})
         {
@@ -43,7 +53,12 @@ public class CourtyardCastlePaletteTests
             player.transform.position=points[i];body.position=points[i];yield return new WaitForSeconds(1.25f);
             Capture("castle-palette-"+labels[i]);
         }
+        UnityEngine.Object.Destroy(planting);yield return null;
+        eastWall.GetPropertyBlock(mossBlock);
+        Assert.That(mossBlock.GetVector("_FootMoss").z,Is.Zero,"Beim Entfernen des Bewuchses wird die lokale Moosfärbung zurückgenommen.");
+        Assert.That(mossBlock.GetVector("_ObjectScale"),Is.EqualTo(preservedScale),"Der vorhandene Texturmaßstab bleibt erhalten.");
         yield return Load();
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardWallFootStyle"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
         Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardCastleFacadeStyle"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
         Assert.That(GameObject.Find("North castle wall").GetComponent<MeshRenderer>().sharedMaterial.name,Is.EqualTo("Castle illustrated masonry"));
         LogAssert.NoUnexpectedReceived();

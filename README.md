@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.2`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.3`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1436,10 +1436,11 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 - **0.26.0** — add a reversible flight over Aurenfeld. Offer an optional lookout interaction at the western breach with a ten-second scenic flight, illustrated mountains/clouds and return controls. Block exploration input during presentation and restore camera, HUD and controls on return, cancellation or scene teardown.
 - **0.26.1** — add painted tree varieties and grove shadows. Introduce illustrated oak, birch, apple and willow variants with reproducible sprite import settings and generation provenance. Add alpha-clipped crown shadows and terrain-following tree contacts. Cover grove lifecycle, lookout cancellation/reload and ten camera-flight checkpoints.
 - **0.26.2** — connect the painted farm to the field road. Add a distant illustrated farm with chimney-anchored rising smoke, a curved access lane, a trampled forecourt, an apple tree and low fence planting. Share lane/forecourt masks with grain generation so the entrance stays clear. Include supported-material, road-visibility and reload checks; the farm remains scenic and non-colliding.
+- **0.26.3** — soften wall foundations and animate undergrowth. Ground enclosing walls with bounded moss, earth transitions and low planting while preserving the gate and patrol access. Animate illustrated plants with restrained rooted wind, retaining their colors and mirroring. Include material restoration, movement and reload checks.
 
 ### Implementation and validation notes
 
-The following development notes describe the courtyard work included through 0.26.2. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
+The following development notes describe the courtyard work included through 0.26.3. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
 
 ### Illustrated details at Marta's garden
 
