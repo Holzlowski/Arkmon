@@ -142,7 +142,8 @@ Fertig, wenn die Außenwelt aus den vorgesehenen Kamerawinkeln Weite und Tiefe z
 
 ### Partikeleffekte: gezielt und im gezeichneten Stil
 
-- [ ] Wenige windgetragene Pollen/Samen am westlichen Mauerdurchbruch und am nahen Feldrand erproben; Fernsicht und Dialoge frei halten.
+- [x] Ersten begrenzten Samen-Partikeleffekt am westlichen Mauerdurchbruch erproben: maximal 28 weiche Partikel, nur waehrend der Aussicht, mit Entfernungs-/Nahbereichsausblendung; Rueckkehr und Neuladen still geprueft.
+- [ ] Samen-Partikel beim normalen Spielen auf Sichtbarkeit und ruhige Bildwirkung gemeinsam abnehmen; weitergehende Pollen-/Feldrandeffekte erst danach abstimmen.
 - [ ] Kleine Blaetter nur gelegentlich bei Baumgruppen und am Garten bewegen; Windrichtung mit Getreide abstimmen.
 - [ ] Staub und kleine Strohpartikel bei passenden Bodenaktionen pruefen; Effekte an echte Schritte beziehungsweise Arbeit koppeln.
 - [ ] Wasserpartikel beim Giessen und am Bach auf den Papierstil, Bodenkontakt und erkennbare Spritzer abstimmen.
@@ -243,6 +244,38 @@ Die drei offenen Namen nicht eigenständig als feststehende Namen vergeben. Aus 
 - [ ] Lautstaerke und Klang des neuen Feldraschelns beim normalen Spielen gemeinsam abstimmen; bisherige Tests bewusst stumm.
 
 - [x] Unnatuerliche Fernhuegel korrigieren: flachere unregelmaessige Formen, goldene Oberflaechen, kurze dichte Halmausblendung und kein dunkler paralleler Fernstreifen; Vergleichsansicht und stiller Test geprueft.
+
+- [x] Mauerdurchbruch mit kleinen oliv-/strohfarbenen Pflanzengruppen, niedrigen aeusseren Steinsplittern und Bodenkontakten an die goldenen Felder anbinden.
+- [ ] Neue Gestaltung des Mauerdurchbruchs im normalen Spiel gemeinsam beurteilen.
+
+- [x] Westlichen Abschnitt Turm/Mauerdurchbruch/Werkstatt zusammenhaengend gestalten: primitive Bodenpflanzen ersetzen, weiche Wegraender erweitern und ausgetretene Zugaenge ergaenzen.
+- [x] Bodenkontakte an westlichen Fundamenten, Treppenfuessen und Werkstattmaterial ergaenzen; Laufwege von neuer Dekoration freihalten.
+- [x] Idas Materiallager und Arbeitsflaeche ordnen; Bretterstapel samt Kollision verkleinern und seitlich zuruecksetzen.
+- [x] Einheitlichen Weltmassstab fuer Steintexturen am Mauerdurchbruch und angrenzenden westlichen Mauerteilen verwenden.
+- [x] Westlichen Weg vom Turm bis zur Werkstatttuer mit Rigidbody ablaufen, Bodenkontakte, Werkstattinteraktion und Neuladen automatisiert pruefen; Spielkamera und Nahaufnahmen kontrolliert.
+- [ ] Westlichen Hofabschnitt im normalen Spiel gemeinsam auf gewuenschte Pflanzendichte und Stil pruefen.
+
+- [x] Stallplatz mit festgetretener Erde, begrenzten Strohzonen und weichen Kontaktschatten an Trog, Stalltoren, Pfosten und Pflegeutensilien verankern.
+- [x] Hannes' Putzzeug bei der Pflegeposition und Wassereimer am Trog anordnen; Pferde-/Arbeitsanker erhalten.
+- [x] Schmalen geschwungenen Zugang vom Stall zur Giesskanne anlegen, niedrige Wegsaeume pflanzen und verdeckenden Bewuchs am Pflegeplatz zuruecknehmen.
+- [x] Vorhandene Pferdebewegungen/Bodenhaftung, Hannes-Gespraeche, beide Pferdebegruesungen und Gartenzugaenge stumm geprueft; sieben gezielte Pruefungen bestanden.
+- [x] Stall-Garten-Verbindung mit echter Rigidbody-Bewegung bis zur Giesskanne und nach Neuladen geprueft; Nahansicht und fuenf Spielkamera-Aufnahmen kontrolliert.
+- [ ] Neue Gestaltung von Stall und Gartenverbindung im normalen Spiel gemeinsam beurteilen.
+
+
+## Verbundener Hofweg: Garten und Burgvorplatz
+
+- [x] Alte kugelige Wegsaeume stilllegen; gezeichnete Pflanzen und kleine Steine lockerer verteilen.
+- [x] Mittlere Wegkreuzung mit wechselnder Breite und unregelmaessigen Raendern gestalten; Burgweg bis zum Portal verlaengern.
+- [x] Giesskanne, drei Beete und Martas Arbeitsbereich durch schmale Trittpfade verbinden; Saatgutbank, Tisch und Arbeitsanker aus der Engstelle ruecken.
+- [x] Flachen Steinvorplatz an der Burgschwelle und lokalen warmen Lichtakzent am Portal ergaenzen.
+- [x] Zusammenhaengenden Hofweg vom Turm ueber Ida, Hannes und Marta bis zum Tor physisch ablaufen; Gartenzugaenge, Portalinteraktion und Szenenneuladen pruefen.
+- [x] Den oestlichen Tor-/Brueckenbereich aus der Spielkamera staerker lesbar machen: sanfter Kameraschwenk zum Torbogen, lokale Sichtfreistellung Elians auf der Bruecke, breitere Erdboeschungen und trockener Feldweganschluss.
+- [ ] Kameraschwenk und begrenzten Sichtausschnitt am Tor beim normalen Spielen gemeinsam beurteilen.
+- [x] Kleinen aeusseren Torvorplatz mit ausgetretener Wegaufweitung, Aurenfeld-Wegweiser und niedrigen Randsteinen anlegen; die Mitte fuer Bewegung und spaeteres Gespraech freihalten.
+- [x] Goldene Getreidefelder direkt an den aeusseren Torvorplatz anschliessen; breite gruene Zwischenflaeche durch Getreide, ockerfarbenen Boden und strohfarbene Wegraender ersetzen.
+- [ ] Groesse und Wirkung des Torvorplatzes im Spiel gemeinsam beurteilen; die eigentliche Ankunft ist weiterhin offen.
+- [ ] Die neue Hofgestaltung im normalen Spiel gemeinsam beurteilen; anschliessend Ankunftsbereich der Arkanmeisterin festlegen.
 
 ## Danach: Ankunft und weiterer Introverlauf
 

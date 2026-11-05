@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.30.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.30.2`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1070,7 +1070,7 @@ The window uses the countryside framing from before the town pass: field layer a
 
 Native intro captures now use URP `SubmitRenderRequest`, not the legacy direct camera render, which produced misleading visual artifacts in the automated captures. Output defaults to the tested project's Builds directory; set `ARKMON_REVIEW_OUTPUT` to choose a separate review folder. All capture targets/canvas modes are restored after rendering.
 
-Suggested commits: `feat(room): build painted arched tower door`, `feat(intro): polish waking and courtyard arrival`, and `feat(world): reveal first town in tower vista`. These are uncommitted changes; the next proposed feature version remains 0.12.0.
+Release status: included in the committed courtyard pass listed below.
 
 Acceptance validation: all five focused PlayMode cases pass in `Builds/tower-intro-acceptance-tests.xml`, covering wake/bedside physics, outfit and quest-cue completion, fixed camera/frustum limits with real boundary movement, full paper silhouette against the 3D door, preserved room/courtyard state, animated door opening, black transition and completed entrance step. Captures include `Builds/tower-intro-finished-morning.png`, `tower-intro-3d-door.png` and `tower-intro-courtyard-arrival.png`. All runs used `-noaudio`; normal gameplay audio is unchanged.
 
@@ -1093,7 +1093,7 @@ Suggested coherent commits: `fix(visuals): restore original tower window composi
 
 The tower uses a warmer trilight ambient palette, a softer golden window spotlight, stronger local chandelier/desk candle pools, and a modest animated bedside candle using the existing paper fire frames. Exposure is slightly reduced and contrast softened. The existing window layers and manually editable parallax composition are unchanged. The extended focused intro check captures covered sleeping and sitting as well as validating the complete waking, outfit and courtyard transition (`Builds/cozy-wake-tests.xml`). All checks use `-noaudio`.
 
-Suggested commits: `fix(intro): tuck sleeping Elian beneath quilt and align bedside poses` (bed controller, sleeping head sprite, quilt mesh, scene pose references and focused checks) and `feat(visuals): warm tower room candle lighting` (lighting editor setup, bedside candle, scene light settings and volume profile). No commit or push has been made; next proposed feature version remains 0.12.0.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Paper silhouette clearance and walking arms
@@ -1104,7 +1104,7 @@ The tower-room player overrides the prefab's thin box with a 1.30 × 1.93 × 1.2
 
 `PlayerSilhouetteTests` physically pushes the player into the rotated wardrobe and curved wall, checks visible sprite vertices against the furniture plane/tower radius, and checks opposite arm angles, half-cycle reversal and mirrored presentation for both outfits. `TowerChapterFinishTests` verifies waking, outfit selection and the door/courtyard transition. Its quilt check respects the optional quilt reference in the currently authored scene. Tests run silently with `-noaudio`; results are in `Builds/silhouette-tests.xml`.
 
-Suggested commits: `fix(room): fit collision to camera-facing player silhouette` and `feat(animation): add shoulder-driven walking arm swing`. No commit or push has been made. The next proposed feature version remains 0.12.0.
+Release status: included in the committed courtyard pass listed below.
 
 The tower-room camera uses an 11-degree pitch with no sideways yaw. Elian's paper gait keeps the forward swing at 27 degrees and extends the rear swing to 40 degrees. The waking seat moves toward the mattress, and the bed shares a rounded rectangular linen cushion mesh between its two pillows.
 
@@ -1658,7 +1658,7 @@ All verge planting now excludes the central castle approach and a 1.1-metre corr
 
 Validation: six existing illustration, castle-palette, garden-access and actual castle-walk/reload checks passed in `Library/courtyard-meadow-islands-tests.xml` (47.8 seconds). After moving foreground islands farther into the normal gameplay view, three targeted capture/garden/walk checks passed in `Library/courtyard-meadow-final-tests.xml`. Both runs were silent. Review `Builds/courtyard-polish-gameplay-ida-workshop.png`, `Builds/courtyard-polish-gameplay-stable.png` and `Builds/garden-illustration-gameplay.png`; corresponding `-before-meadow-islands.png` files retain the earlier views. This is a bounded vegetation pass, not a completed whole-courtyard landscape or a frame-rate benchmark.
 
-Suggested commit: `style(courtyard): group meadow planting around clear walking routes`. This pass remains local with the preceding light and garden changes. Current version stays `0.25.6`; the next prepared commit would use `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Western breach and near-field transition (local preview)
@@ -1682,7 +1682,7 @@ Restart StartScene, walk to the low broken wall left of Elian's tower, and press
 
 Validation: `CourtyardLookoutTests.Lookout_CancelsRepeatsAndRestoresCameraInputAndHud` passed in `Library/courtyard-lookout-landscape-tests.xml` (23.7 seconds execution, audio disabled). It exercises actual interaction selection and range, movement suppression, duplicate activation prevention, early return, the complete flight and UI-button callback, repetition, component disabling and scene reload. It also verifies scenery materials, absence of scenery colliders and cloud movement. Real captures reviewed: `Builds/lookout-interaction.png`, `lookout-masonry-frame.png`, `lookout-fields-flight.png`, `lookout-fields-panorama.png`. Physical keyboard input and an exported build were not separately tested; no full-suite or performance run was needed for this bounded change.
 
-Suggested commit: `feat(courtyard): add a reversible western-field lookout` — optional scenic flight, shared control lock, return UI and painted horizon with lifecycle regression coverage. Changes are local, not committed or pushed. Version remains `0.25.6`; the next proposed commit version is `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Western field margins and groves (local visual polish)
@@ -1708,7 +1708,7 @@ Validation: `CourtyardCrossingStyleTests.Crossing_RemainsWalkableBothWays_WithEx
 
 The following eastern-field pass addresses the sky-colored gap and abruptly ending path identified in the oblique inspection view. The wider gate surroundings still need an overall visual acceptance pass. Restart StartScene in Play Mode to load these changes.
 
-Suggested commits: `style(courtyard): refine the eastern gate bridge and stream` (gate/bridge dressing and water shader) and `fix(courtyard): bevel the return seam at the drawbridge` (physical threshold and traversal regression). Changes are local, not committed or pushed. Current version remains `0.25.6`; the next actual commit would propose `0.25.7`, with later version increments decided per commit.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Eastern bank and field approach (local preview)
@@ -1719,7 +1719,7 @@ The rectangular exterior path is replaced with a narrowing, gently curving earth
 
 This is scenery dressing, not a new playable region: the existing solid bank and camera limits are retained. The distant path beyond the authored bank is a visual continuation, not a completed exploration route. Restart StartScene in Play Mode to load the changes.
 
-Suggested commit: `style(courtyard): connect the eastern bank to the golden fields` — shared terrain/vegetation height blending, winding exterior path, planted verges and extended crossing regression. Changes remain local and uncommitted; version stays `0.25.6`, with `0.25.7` proposed for the next actual commit.
+Release status: included in the committed courtyard pass listed below.
 
 Validation: the extended crossing test passed in `Library/courtyard-east-fields-final-tests.xml` (22.2 seconds execution, audio disabled), physically walking the player to x=70 and back through the gate, checking upward path faces/height continuity, bank support and installation after reload. Western breach and lookout tests passed in `Library/courtyard-east-fields-tests.xml` (14.0/22.5 seconds). The initial crossing run caught an incorrect path height on the authored bank; the correction uses that bank's actual flat surface. Visual review also caught the grass ribbon covering the earth ribbon and led to explicit draw order. Final gameplay and oblique captures (`Builds/east-crossing-gameplay.png`, `Builds/east-crossing-detail.png`) were reviewed. No full suite or exported build was run.
 
@@ -1756,7 +1756,7 @@ StartScene now uses a dedicated morning sky and field-wind material. The sun is 
 
 Validation: the existing lookout lifecycle and castle palette tests passed silently in `Library/courtyard-morning-view-tests.xml` (2/2, 35.8 seconds). After the final sky color adjustment, the lookout test passed again in `Library/courtyard-morning-final-tests.xml` (24.0 seconds). The panorama, return view and central courtyard capture were visually reviewed. `Builds/lookout-golden-morning.png` records the final view; `Builds/lookout-before-morning-correction.png` preserves the earlier local panorama. No exported-build or full-suite verification.
 
-Suggested commit: `fix(courtyard): restore mountain contrast and golden morning light` — painting-specific horizon shading, courtyard-only morning sky/field materials and aligned scene/generator lighting. Changes remain local, uncommitted and unpushed; version stays `0.25.6`, next proposed commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Western grove shadows (local visual polish)
@@ -1767,7 +1767,7 @@ The component installs after the StartScene landscaping, adds no colliders, foll
 
 Validation: the focused lookout PlayMode test passed silently in `Library/courtyard-tree-shadow-render-final-tests.xml` (23.9 seconds). It checks terrain alignment, alpha cutout casters, hiding/restoring trees and scene reload. Two captures within the same frame verify that the casters actually darken more than 1,000 image pixels, without wind/cloud movement contaminating the comparison. `Builds/lookout-tree-shadows.png` is the reviewed panorama; `Builds/lookout-tree-shadows-disabled.png` records the comparison. No full-suite or exported-build check was run.
 
-Suggested commit: `style(courtyard): ground western groves with morning shadows` — scene-owned tree casters, sloping root contacts, meadow shadow reception and render/lifecycle coverage. This pass covers the western groves only; the wider character/furniture/building shadow task remains open. Restart StartScene in Play Mode to see it. Nothing committed or pushed; version remains `0.25.6`, next proposed commit version `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Courtyard furniture contact and paper-shadow grounding
@@ -1789,7 +1789,7 @@ The scene component writes only `_MorningAccent` and `_MorningAccentStrength` to
 
 Validation: `CourtyardMorningAccentTests` passed silently in `Library/courtyard-morning-accent-final-tests.xml` (8.7 seconds). Each landmark has an independent same-frame on/off image comparison, disabling only its own zone. Coverage also checks shared materials, the unaffected central facade, property restoration and a single installation after scene reload. The three rendered previews were visually reviewed: `Builds/courtyard-morning-accent-tower.png`, `Builds/courtyard-morning-accent-breach.png`, `Builds/courtyard-morning-accent-gate.png`. No full-suite or exported-build test was run.
 
-Suggested commit: `style(courtyard): emphasize morning light at key landmarks` — local surface-shader highlights, reversible scene setup and isolated render/lifecycle checks. Restart StartScene in Play Mode to see the change. Nothing committed or pushed; version remains `0.25.6`, next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Garden morning-light accent
@@ -1798,7 +1798,7 @@ The existing `CourtyardMorningAccents` setup now includes a restrained fourth zo
 
 Validation: the extended landmark/garden rendering test and the watering completion/cancellation/reload test passed silently in `Library/courtyard-garden-morning-tests.xml` (2/2, 24.8 seconds execution). The isolated garden on/off comparison confirms visible changes, and assertions preserve wet soil and crop colors when toggling accents. The normal gameplay, closer garden and wet-bed captures were visually reviewed (`Builds/courtyard-garden-morning-gameplay.png`, `Builds/courtyard-morning-accent-garden.png`, `Builds/courtyard-garden-morning-wet.png`). Full-suite/build verification and joint visual acceptance remain open. The review also exposed a pre-existing sightline issue where the garden sign covered Elian; the subsequent low-marker correction below addresses it.
 
-Suggested commit: `style(courtyard): warm Marta's garden work area` — extend the local sunlight profile while preserving watering feedback, with render and gameplay validation. Changes remain local; nothing committed or pushed. Version stays `0.25.6`; next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Low garden wayfinding marker
@@ -1807,7 +1807,7 @@ The garden sign is now placed beside the first bed using that bed's bounds, with
 
 The existing garden illustration/approach/reload test passed silently in `Library/courtyard-garden-sign-tests.xml` (11.8 seconds). Captures at the formerly obscured approach and beside/behind the marker were visually checked: Elian's head stays clear, while ordinary lower-body overlap can still occur when standing directly behind scenery. The garden and cottage approaches and interaction targets remain covered by the existing test. Preview: `Builds/garden-sign-approach.png`, `Builds/garden-sign-side.png`, `Builds/garden-sign-behind.png`. No full-suite or exported-build check was run.
 
-Suggested commit: `fix(courtyard): lower garden sign to keep Elian visible` — anchor the low marker beside the first bed and record three gameplay-camera views in the existing garden check. Changes remain local; no commit or push. Version remains `0.25.6`; next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Aurenfeld tree varieties
@@ -1816,7 +1816,7 @@ Suggested commit: `fix(courtyard): lower garden sign to keep Elian visible` — 
 
 Standalone transparent PNGs live in `Assets/Resources/CourtyardStyle/Trees`. `CourtyardTreeImporter` imports them as single sprites with a low root pivot, uncompressed color, bilinear filtering and coverage-preserving mipmaps. The built-in image generator and exact prompts are recorded in `Generation.json` beside the assets. The runtime replacement runs before western shadow construction, so the new crowns also supply their shadow silhouettes. Added trees are scenery, without new gameplay collisions or destructibility. Removing the style restores original renderers and materials; scene reload builds it once.
 
-Suggested commit: `feat(courtyard): introduce illustrated Aurenfeld tree varieties` — four species, habitat placement, matching western shadows and targeted rendering/reload checks. No commit or push; project version remains `0.25.6`, next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 Validation: the tree resource/placement/reload check and existing western lookout/shadow rendering check passed silently (2/2, 31.4 seconds execution; `Library/courtyard-trees-tests.xml`). After moving the apple tree from behind the castle facade to the visible cottage side, the affected tree check passed again (1/1, 7.3 seconds; `Library/courtyard-tree-placement-tests.xml`). Reviewed in-game captures: `Builds/aurenfeld-trees-garden.png`, `Builds/aurenfeld-trees-stream.png`, and `Builds/lookout-fields-panorama.png`. No full-suite run or exported player build was made for this art change.
 
@@ -1857,7 +1857,7 @@ Suggested coherent commits: `style(meadow): add warm clustered Aurenfeld vegetat
 
 Validation: both targeted meadow tests passed silently (2/2, 21.3 seconds; `Library/courtyard-root-contact-tests.xml`). The new check disables long sun shadows and verifies a visible on/off contact difference, supported materials, shared LOD membership, no colliders and consistent recreation after scene reload. The existing sun-shadow budget/render test also passed. Reviewed `Builds/aurenfeld-grass-contact-on.png`, `Builds/aurenfeld-grass-contact-off.png`, `Builds/aurenfeld-grass-contact-combined.png`; panorama is `Builds/aurenfeld-grass-contact-panorama.png`. No standalone build was run; the old shadow timing comparison does not isolate the added contact cost.
 
-Suggested commit: `fix(meadow): ground grass tufts with soft contact shadows` — sample rendered terrain for roots and add batched near-LOD contact shading with an independent render comparison. Uncommitted and unpushed. Version remains `0.25.6`; next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Restrained Aurenfeld distance fog
@@ -1866,7 +1866,7 @@ StartScene linear fog now starts at 180 m and reaches full coverage at 1600 m, r
 
 Validation: the focused silent PlayMode farm/landscape check passed (1/1, 10.7 seconds; `Library/courtyard-distance-fog-tests.xml`), including supported materials, distant road visibility and scene reload. Reviewed `Builds/aurenfeld-clear-distance.png` and a diagnostic capture with the old global fog range, `Builds/aurenfeld-old-distance-fog.png`. The diagnostic retains the new unified material strengths and is not an exact reproduction of the entire previous setup. No full suite or standalone build was run for this adjustment.
 
-Suggested commit: `fix(courtyard): soften and unify distance fog` — preserve landscape colors with a gradual distant fade and consistent ground/path fog response. Changes remain uncommitted; version stays `0.25.6`, next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Golden western fields
@@ -1875,7 +1875,7 @@ The Aurenfeld western panorama now uses ripe grain throughout instead of alterna
 
 Validation: focused silent PlayMode landscape check passed (1/1, 11.2 seconds; `Library/courtyard-golden-fields-tests.xml`), including distant road visibility, supported materials and scene reload. Visually reviewed the actual Unity capture `Builds/aurenfeld-golden-fields.png`. Grain heads add geometry where short grass previously grew; density and the near-shadow budget were not increased, but this run is not a performance benchmark.
 
-Suggested commit: `style(courtyard): turn western meadows into golden grain fields` — unify vegetation, ground and distant hills around a ripe golden harvest palette. No commit or push; version remains `0.25.6`, next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Cultivated distant landscape
@@ -1884,7 +1884,7 @@ Suggested commit: `style(courtyard): turn western meadows into golden grain fiel
 
 Validation: the focused silent landscape PlayMode check passed (1/1, 11.7 seconds; `Library/courtyard-field-parcels-tests.xml`), covering distant road visibility and scene reload. Actual Unity views with identical camera settings: `Builds/aurenfeld-parcels-before.png` and `Builds/aurenfeld-parcels-after.png`. The field-edge mask was refined after inspecting the first render. These captures validate the final outlook; the subsequent farm-access and camera-flight pass is documented below.
 
-Suggested commit: `style(courtyard): structure distant hills into cultivated fields` — add varied golden parcels, green boundaries and sparse illustrated tree/hedge groups. Uncommitted and unpushed; version remains `0.25.6`, next proposed actual commit `0.25.7`.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Farm access and lookout flight polish
@@ -1908,14 +1908,14 @@ Pre-push validation: 12 additional targeted silent PlayMode checks passed in 149
 Release reconciliation: the eight courtyard commits above include all previously local work through `0.26.4`. Historical uncommitted/proposed-version statements in the development notes are superseded by this release list. Targeted pre-push checks are recorded below.
 
 
-### Golden parcels without green boundary strips (local follow-up)
+### Golden parcels without green boundary strips (implemented)
 
 After pushing the courtyard series through `0.26.4`, removed the green field-boundary color mask in `CourtyardDistantFields`. The gently bent parcels remain distinguishable by their harvest tones; the brown road, farm access, trees and hedge groups remain unchanged. The focused silent landscape test passed (1/1, 11.7 seconds; `Library/courtyard-golden-parcels-tests.xml`), and `Builds/aurenfeld-golden-parcels-no-green-strips.png` was visually reviewed.
 
-Suggested commit: `style(landscape): remove green strips from distant fields` — retain the golden parcel pattern without green dividing lines. This follow-up is not committed or pushed; current version is `0.26.4`, next proposed version `0.26.5`.
+Release status: included in the committed courtyard pass listed below.
 
 
-### Natural golden fields (local follow-up)
+### Natural golden fields (implemented)
 
 Five visual refinements are implemented for the western panorama:
 
@@ -1930,20 +1930,20 @@ Validation: four targeted silent Unity PlayMode tests passed in 61.85 seconds (`
 Suggested commit grouping: `style(meadow): group grain and blend distant fields`; `style(landscape): add worn cart tracks`; `style(farm): add layered fences and ground contacts`. These changes remain local, without commits or a push. Current version remains `0.26.4`; the next actual commit proposes `0.26.5`, with one version increment per subsequent commit.
 
 
-### Raised western mountain range (local follow-up)
+### Raised western mountain range (implemented)
 
 `CourtyardLookoutLandscape` raises the mountain layer's composition height from 50 to 62 before the existing 2.65 depth scaling. Width, height, material and cloud placement remain unchanged. More of the connected mountain slopes are visible above the rolling fields without stretching the painting. Reviewed the identical final camera before/after; the existing silent distant-farm landscape test passed (1/1, 12.94 seconds). Capture: `Builds/aurenfeld-raised-mountains.png`.
 
-Suggested commit: `style(landscape): reveal the western mountain range` — lift the painted backdrop above the foreground hills. No commit or push; version remains `0.26.4`, next proposed actual commit `0.26.5` (pending earlier local changes).
+Release status: included in the committed courtyard pass listed below.
 
 
-### Restrained western field greenery (local follow-up)
+### Restrained western field greenery (implemented)
 
 `CourtyardFieldMargins` replaces scattered broadleaf/fern dressing along both field seams with six small road-shoulder patches (at most three low plants each). Grove undergrowth drops from seven large plants per tree to three short olive/straw-tinted plants. The twelve existing western trees remain in four groups with unequal depth/spacing; the two farther groups move outward to leave larger open grain areas and a clear view of the farm. `CourtyardTreeStyle` applies an olive/gold tint only to western field trees, with a gentler tint on farther groups. `CourtyardDistantFields` reduces each distant hedge from seven tall plants to three low plants. The farm orchard and courtyard plant palettes retain their existing colours.
 
 Validation: the existing silent distant-farm and lookout PlayMode tests passed (2/2, 38.97 seconds), including tree shadow linkage, scene reload and lookout return. Reviewed the final panorama and a mid-flight capture. Preview: `Builds/aurenfeld-grouped-groves.png`. No new tree species, textures or per-frame behaviours were added.
 
-Suggested commit: `style(landscape): group trees and restrain field greenery` — sparse roadside herbs, grouped existing trees and a coordinated olive/gold palette. Still uncommitted/unpushed; version stays `0.26.4`, next proposed actual commit `0.26.5`, taking earlier pending changes into account.
+Release status: included in the committed courtyard pass listed below.
 
 
 ### Scenic field finish: five local changes
@@ -1974,7 +1974,7 @@ The first scenic finish made the distant terrain read as dark parallel embankmen
 
 Validation: existing silent farm/landscape test passed after the final change (1/1, 13.64 seconds), including visible distant-road pixels, scene reload and supported shaders. Reviewed final panorama and the diagnostic closer terrain view. Capture: `Builds/aurenfeld-soft-hills.png`. This remains distant scenery; the close diagnostic view is not a playable location.
 
-Suggested commit: `style(landscape): soften distant golden hills` — lower irregular hill shapes, coherent golden surfaces and a cleaner vegetation transition. No commit/push; current version `0.26.4`, next proposed actual visual-fix commit `0.26.5`, accounting for other pending work.
+Release status: included in the committed courtyard pass listed below.
 
 
 ## Scenic courtyard releases
@@ -1990,6 +1990,90 @@ Suggested commit: `style(landscape): soften distant golden hills` — lower irre
 Release reconciliation: all preceding local/proposed-version notes through the softer hills correction are now included through 0.27.1. Historical six-band and tall-ridge descriptions were superseded by the four-band soft-hill correction. Particle work is planned separately in TODO.md.
 
 
+### Sunlit field seeds (implemented after 0.27.1)
+
+`CourtyardFieldParticles` adds a small world-space seed cloud near the western breach. The lookout enables it; returning or transitioning clears it. The volume is 22 x 5 x 16 world units, centred near (-55, ground + 4.2, 7), with two particles per second and a hard cap of 28. Soft procedural seed/tuft silhouettes use ordinary alpha blending, no additive glow, no textures or extra lights. A proximity fade prevents large near-camera flecks; distance fade ends at 45 units. The material is destroyed with the scene-owned source.
+
+Validation: the silent lookout PlayMode check passed (1/1, 29.04 seconds), including supported shader, live bounded particles, clearing on return and destroying the old source on reload. Reviewed flight frames 04 and 07; seeds are deliberately subtle and most visible against the sky during the breach passage. Test capture: `Builds/aurenfeld-seeds-preview.png`. Exported-build performance and player preference remain to be checked.
+
+Release status: included in the committed courtyard pass listed below.
+
+
+### Western breach dressing (implemented)
+
+`CourtyardBreachStyle` now groups low olive and straw-tinted plants around the two fractured wall ends instead of scattering mixed foliage across the approach. Low exterior fragments use the shared castle stone material and soft terrain-conforming contact shadows. Warm earth patches blend the threshold into the golden fields. The viewing place stays clear; exterior fragments add no colliders and the existing low wall still encloses the courtyard. Scene-owned meshes and materials use the existing cleanup path.
+
+Release status: included in the committed courtyard pass listed below.
+
+Validation: existing silent breach and lookout PlayMode tests passed (2/2, 48.20 seconds), covering approach movement, courtyard boundary, camera cancellation/repetition and scene reload. Reviewed gameplay/detail captures and flight frames 02/04 for clear framing. No exported-build performance measurement.
+
+
+### Connected western courtyard pass (implemented)
+
+- The breach and its adjacent western wall pieces opt into world-space masonry projection. The shared painted atlas now uses the same repeats per metre regardless of block scale or irregular local geometry; other buildings retain their existing projection. Property blocks keep the change scoped to the ruin.
+- `CourtyardWestGroundStyle` replaces the western section of the legacy combined grass mesh and low primitive terrace leaves with small illustrated grass/clover/flower groups. Existing non-western geometry is retained. The existing soft-path pass now reaches the tower approach, with irregular edges and roadside pebble/plant groups.
+- Worn patches identify the tower stair foot, workshop doorway and carpenter standing area. Soft, terrain-conforming contacts sit at stair pillars, terrace bases, workshop foundations and stored material. Decorative additions have no colliders. Doorways, the stair flight, lookout and main path are kept clear when placing plants. Runtime meshes/materials are scene-owned and cleaned up.
+- Ida's timber stack is smaller and sits farther along the side wall, with its collider moved/resized to match. The offcut basket is closer to the work side; tools and the repair item are separated from the planing blank, with fewer shaving clusters. Ida's work anchor and the workshop building position stay intact.
+
+Release status: included in the committed courtyard pass listed below.
+
+Validation: five targeted silent PlayMode checks passed (75.67 seconds): breach access/boundary, shared castle palette/tower entrance, actual Rigidbody traversal from tower to workshop, Ida work poses/door clearance, and workpiece interaction/reload. After visually removing plant placement on stair treads and the workshop doorstep, the two affected route/workshop checks passed again (29.69 seconds). Ground contacts were checked against physical terrain heights. Reviewed the breach detail, five gameplay-route frames and workshop close view. No exported-build performance measurement.
+
+
+### Stable care and garden connection (implemented)
+
+`CourtyardStableStyle` refines the care-ground footprint, adds bedding in the spare stall and worn ground beneath the groomed horse and beside the trough. Soft terrain-conforming contacts anchor the trough, low stall gates, front posts and small care props. The caddy now sits near Hannes behind the brushing position; the bucket sits beside the trough, while hay stays beside the feeding rack. Horse and Hannes anchors remain unchanged so brushing still meets the horse.
+
+`CourtyardStableGardenStyle` adds a gently curved, roughly 1.4-metre-wide dirt connection from the stable forecourt to the watering-can approach. Its edges and ends fade into the existing ground. Low clover, grass and occasional flowers frame it; existing verge sprites that obscure the route or horse-care foreground are hidden locally. No new colliders are introduced, vegetable beds remain west of the castle access, and generated meshes/materials are scene-owned. The existing horse mesh already animates breathing, feeding/head motion, ear flicks, tail swishes and occasional hoof shifts; this pass preserves that animation instead of layering duplicate movement on top.
+
+Release status: included in the committed courtyard pass listed below.
+
+Validation: all seven scoped PlayMode checks passed across the targeted runs: stable working/dialogue, both horse greetings, anchored horse motion/hoof settling, garden appearance and watering approaches, clear castle access, and actual Rigidbody traversal from stable to watering can with scene reload. The new contact test initially included existing PaperGroundShadow meshes; its scope was corrected to the new stable-setting meshes. After matching the new path to the existing earth palette and overlapping its start with the forecourt, the route/contact/reload check passed again (20.62 seconds). Tests used -disableAudio. Reviewed stable close-up and five gameplay-route captures. No exported-build performance measurement.
+
+
+### Connected courtyard route and castle forecourt (implemented)
+
+- `CourtyardVergePolish` retires the old spherical roadside grass/pebble row and reduces illustrated edge-group repetition. Legacy grass triangles intersecting the road are removed from the scene-owned decorative mesh. Ground resampling uses the physical terrain height so paths do not rise over shallow paving. The central road junction varies its width and edges; the castle spur extends to the portal instead of stopping short. Garden walking strips remain clear of new verge plants.
+- `CourtyardGardenPlace` connects the watering can, three bed approaches and Marta's work area with narrow, terrain-following worn-earth strips with tapered, fading ends. The seed bench moves 0.85 metres farther toward the cottage, and the potting table plus Marta's work anchor move 0.45 metres together to clear the garden spine. Soil/watering ownership and all three bed locations remain intact.
+- `CourtyardCastleEntranceStyle` adds a shallow stone apron at the existing threshold without extra collisions. `CourtyardMorningAccents` gives the portal a restrained local morning-light emphasis; it does not add another light source or alter the global palette.
+- `CourtyardConnectedRouteTests` physically traverses tower stairs, Ida's doorstep, Hannes' forecourt, the watering can, garden beds, castle approach and eastern gate in one run. Captures at eight stations support visual review; existing garden and portal tests cover interaction focus and reloads.
+
+Release status: included in the committed courtyard pass listed below.
+
+Validation: four targeted silent PlayMode checks passed (89.68 seconds): the continuous physical route, both garden-access/reload checks and the portal interaction/reload check. The first run exposed the seed-bench obstruction; moving the work furniture resolved it. After removing residual road grass and correcting the path's height above shallow paving, the two affected route/portal checks passed again (58.55 seconds). Reviewed eight route stations and the portal close/gameplay views. No exported-build frame-rate measurement. Audio was disabled throughout.
+
+
+### Eastern gate, stream banks and field connection (implemented)
+
+`CourtyardCamera` blends toward a 38-degree eastward view between courtyard x=28 and x=41, revealing the inside of the gate arch and its drawbridge. The existing focus damping is retained. Angular catch-up is bounded to 45 degrees per second with a 50-ms step cap so a long frame cannot jump through the turn. Scenic presentations still override the full camera pose. Gate masonry opts into a small camera-ray cutaway around Elian while he crosses the bridge. The illustrated surface shader defaults this feature off; both its color and depth passes use the same cutout, while shadow casting and collision stay intact. Scene-owned property blocks are restored when the gate component is disabled.
+
+`CourtyardGateStyle` gives the exterior stream a gently varying centre and width. A narrower channel leaves wider earth-coloured slopes. The far slope folds over the straight bank face and meets the existing solid ground, while smaller, separated grass/fern/pebble groups frame the water. The bridge opening and arrival space stay clear. The existing bridge, bank and gate colliders are retained.
+
+`CourtyardEastFieldStyle` replaces the broad green road fringe with a subdued dry-earth margin, slightly widens the bridge-side path connection, adds restrained cart-track shading and reduces scattered roadside plants. Low planting transitions from streamside green toward straw-gold farther into the fields. The path remains continuous into the distant field terrain.
+
+Release status: included in the committed courtyard pass listed below.
+
+Validation: four distinct targeted silent PlayMode checks passed across the scoped runs: gate-to-far-bank traversal, eastern courtyard relief/access, the bidirectional crossing including scene reload, and lookout cancellation/repetition with camera restoration. The camera check exposed a large catch-up turn after screenshot stalls; the angular step cap fixes it. The cutaway property block is initialized in Build rather than a MonoBehaviour field initializer. A same-frame rendered comparison now confirms Elian is visible on the bridge (2,306 differing character pixels in the final run). The final crossing/visibility/scenic-override/reload check passed in 28.05 seconds. Five approach/bridge/field frames plus gate gameplay/detail views were reviewed. Tests used -disableAudio; no exported-build performance measurement.
+
+
+### Small exterior gate forecourt (implemented)
+
+`CourtyardGateForecourt` adds a modest asymmetric widening on the field side of the drawbridge, centred near (57.3, 1.15) in world XZ. The worn-earth mesh follows the solid bank and fades into the lane. Low plants and two small limestone boundary stones frame its edges; a painted wooden Aurenfeld waymarker points back toward the castle. The centre stays open for walking and a later conversation. This is scenery only: no arrival event, new dialogue, quest trigger or NPC has been added.
+
+The same forecourt footprint is used by `CourtyardEastFieldStyle.IsBarePath` and the meadow generator so grass is not generated through the open area. The nearby illustrated path planting also respects it. Three small prop colliders remain at the margins; the existing bridge and bank surfaces are unchanged. Runtime meshes/materials are owned by the scene component and released on unload.
+
+Release status: included in the committed courtyard pass listed below.
+Validation: the targeted forecourt traversal/open-centre/ground-height/reload check passed in 25.12 seconds after the sign readability adjustment. The existing bidirectional bridge, rendered-player visibility and scenic-camera restoration check also passed in the preceding scoped run. Reviewed the generated forecourt captures for vegetation clearance and sign readability. An initial test attempted to inspect uploaded, non-readable meadow meshes; that invalid assertion was removed without changing the production mesh optimization. Grass clearance is visually reviewed, not asserted through CPU mesh access. All runs used -disableAudio; no exported-build frame-rate measurement.
+
+### Golden fields immediately beyond the drawbridge
+
+The shared ripe-field mask now reaches full gold at eastern world x=53.5, just outside the stream bank. It drives both terrain vertex colours and the generated vegetation. The eastern field uses the existing varied grain/stubble treatment in both LODs, replacing the broad short-green-grass buffer. The solid far-bank surface gets its own scene-owned ochre material, restored on unload, so gaps between stalks no longer expose green ground. Low planting along the lane and forecourt is tinted straw-gold. The lane and meeting-space clearance are retained.
+
+Validation: the existing silent forecourt PlayMode traversal, open-space, ground-height and reload check passed; the generated gameplay capture was visually reviewed for the field transition. No performance benchmark was run for the denser eastern grain.
+
+Release status: included in the committed courtyard pass listed below.
+
+
 ### Committed courtyard refinement pass
 
 - **0.28.0** — `feat(landscape): add sunlit seeds to the lookout`. Add bounded drifting seed particles with scene-owned resources and lookout lifecycle checks. The effect follows lookout visibility and avoids filling the whole courtyard.
@@ -2001,3 +2085,4 @@ Release reconciliation: all preceding local/proposed-version notes through the s
 - **0.29.0** — `feat(camera): reveal the gate and keep Elian visible on the bridge`. Turn gradually toward the eastern arch, cap angular catch-up after long frames and clip only foreground masonry around Elian in color and depth passes. Soften stream banks and group shore planting. Crossing checks cover rendered visibility, both directions, scenic overrides and reload.
 - **0.30.0** — `feat(courtyard): add a small exterior gate forecourt`. Widen the exterior lane into terrain-following worn earth with an Aurenfeld waymarker and low boundary dressing. Share vegetation clearance with the meadow and retain an open walking and conversation space. Add traversal and reload coverage; no arrival event is added.
 - **0.30.1** — `style(courtyard): bring golden fields up to the gate forecourt`. Start ripe grain immediately beyond the drawbridge and align terrain, far-bank soil and verge colours. Preserve lane and forecourt clearance in both vegetation LODs and restore the bank material on unload.
+- **0.30.2** — `test(courtyard): record and verify the connected courtyard pass`. Add the continuous tower-to-gate route check and reconcile README/TODO with the completed landscape, station and gate refinements. Record silent targeted validation and remaining visual/performance review; captures and logs are excluded.
