@@ -43,7 +43,11 @@ public sealed class CourtyardTreeStyle : MonoBehaviour
             float oldBottom = tree.sprite.bounds.min.y * Mathf.Abs(tree.transform.lossyScale.y);
             tree.transform.position += Vector3.up * oldBottom;
             tree.transform.localScale *= height / (sprites[kind].bounds.size.y * Mathf.Abs(tree.transform.lossyScale.y));
-            tree.sprite = sprites[kind]; tree.sharedMaterial = style.paper; tree.color = Color.white;
+            tree.sprite = sprites[kind]; tree.sharedMaterial = style.paper;
+            // Only the western field groves receive the olive/gold palette; retain the painted highlights.
+            tree.color = tree.name == "Western field tree"
+                ? Color.Lerp(new Color(.84f, .87f, .67f), new Color(.94f, .92f, .80f), Mathf.InverseLerp(-80, -175, p.x))
+                : Color.white;
         }
         foreach (var old in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
             .Where(r => r.name == "Tree illustration" && r.transform.parent?.name == "Courtyard paper tree"))

@@ -19,7 +19,8 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
         float t = Mathf.Clamp01((-x - 164) / 208);
         return 20 + Mathf.Sin((x + 70) * .055f) * 10 - (x + 70) * .10f + Mathf.Sin(t * Mathf.PI * 3) * 15 * t + 90 * t * t;
     }
-    public static float PathHalfWidth(float x) => Mathf.Lerp(1.3f, .85f, Mathf.InverseLerp(-150, -365, x));
+    public static float PathHalfWidth(float x) => Mathf.Lerp(1.3f, .85f, Mathf.InverseLerp(-150, -365, x))
+        + .16f*Mathf.Pow(Mathf.Sin(x*.055f),2) + .4f*Mathf.Exp(-Mathf.Pow((x+123)/8,2));
     private static float SecondZ(float x) => VergeZ(x) - 38 + Mathf.Sin(x * .08f) * 4;
     private static float Weight(Vector3 p) => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-372, -350, p.x))
         * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-46, -54, p.x));
@@ -52,8 +53,8 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
         green = new Material(source) { name = "Western field golden stubble" }; materials.Add(green);
         green.SetTexture("_BaseMap", Texture2D.whiteTexture); green.SetColor("_BaseColor", new Color(.58f, .43f, .20f, .80f));
         earth = new Material(source) { name = "Western worn field path" }; materials.Add(earth);
-        earth.SetColor("_BaseColor", new Color(.75f, .78f, .70f, .96f));
-        earth.SetFloat("_FogStrength", 1f); green.SetFloat("_FogStrength", 1f);
+        earth.SetColor("_BaseColor", new Color(.85f, .82f, .70f, .96f));
+        earth.SetFloat("_WheelRuts",1); earth.SetFloat("_FogStrength", 1f); green.SetFloat("_FogStrength", 1f);
         earth.renderQueue = green.renderQueue + 1; // The path must always draw above its wider stubble verge.
         var tree = horizon.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == "Meadow tree")?.GetComponentInChildren<SpriteRenderer>();
         foreach (var old in horizon.GetComponentsInChildren<Transform>())
@@ -70,26 +71,36 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
         {
             Grove(tree, new Vector3(-77, 0, -16), 7.1f, 13);
             Grove(tree, new Vector3(-91, 0, 48), 8.8f, 29);
-            Grove(tree, new Vector3(-119, 0, -10), 8.1f, 47);
-            Grove(tree, new Vector3(-145, 0, 56), 9.2f, 61);
+            Grove(tree, new Vector3(-137, 0, -21), 7.8f, 47);
+            Grove(tree, new Vector3(-166, 0, 66), 8.4f, 61);
         }
+        // Sparse low herbs belong on the road shoulders, not scattered through ripe grain.
         var random = new System.Random(305);
-        for (int i = 0; i < 160; i++)
+        var patches = new[] { -62f, -79f, -97f, -112f, -133f, -148f };
+        for (int patch = 0; patch < patches.Length; patch++)
         {
-            float x = -54 - (float)random.NextDouble() * 97;
-            bool second = i % 3 == 0;
-            if (Mathf.PerlinNoise((x + 200) * .12f, second ? 3 : 7) < .43f) continue;
-            float z = (second ? SecondZ(x) : VergeZ(x)) + (i % 2 == 0 ? 1 : -1) * (2.2f + (float)random.NextDouble() * 2.1f);
-            Plant(i % 19 == 0 ? "Flowers" : i % 4 == 0 ? "Fern" : "Mixed", new Vector3(x, 0, z), .4f + (float)random.NextDouble() * .55f, i);
+            float side = patch % 2 == 0 ? 1 : -1;
+            for (int i = 0; i < 3; i++)
+            {
+                float x = patches[patch] + ((float)random.NextDouble() - .5f) * 3.6f;
+                float z = VergeZ(x) + side * (PathHalfWidth(x) + .8f + (float)random.NextDouble() * .9f);
+                var p = new Vector3(x, 0, z);
+                if (CourtyardFarmApproach.IsBareGround(p)) continue;
+                Plant(i == 0 ? "Mixed" : "Grass", p, .24f + (float)random.NextDouble() * .19f, patch * 3 + i);
+            }
         }
     }
+
     private Vector3 Ground(Vector3 p) => CourtyardDistantFields.Surface(meadow, p);
     private void Grove(SpriteRenderer source, Vector3 centre, float height, int seed)
     {
         var random = new System.Random(seed);
         for (int i = 0; i < 3; i++)
         {
-            var p = Ground(centre + new Vector3((i - 1) * 6.2f, 0, (i % 2 == 0 ? -1 : 1) * 2.2f));
+            // Unequal spacing and depth make each group read as a small field-edge copse.
+            var offset = i == 0 ? new Vector3(-4.2f, 0, -3.4f)
+                : i == 1 ? new Vector3(1.1f, 0, 1.8f) : new Vector3(3.6f, 0, 5.1f);
+            var p = Ground(centre + offset);
             var tree = new GameObject("Western field tree", typeof(SpriteRenderer)); tree.transform.SetParent(transform, false);
             var renderer = tree.GetComponent<SpriteRenderer>(); renderer.sprite = source.sprite; renderer.sharedMaterial = source.sharedMaterial;
             float h = height * (.85f + (float)random.NextDouble() * .3f);
@@ -98,10 +109,10 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
             renderer.flipX = i % 2 == 0; renderer.color = new Color(.94f, .98f, .83f);
             illustrations.Add(tree.transform);
             // Small undergrowth clusters ground the trunks without blocking the middle of the panorama.
-            for (int j = 0; j < 7; j++)
+            for (int j = 0; j < 3; j++)
             {
-                float a = j * Mathf.PI * 2 / 7;
-                Plant(j % 3 == 0 ? "Fern" : "Mixed", p + new Vector3(Mathf.Cos(a) * 2, 0, Mathf.Sin(a) * 2), .65f + j % 3 * .15f, j);
+                float a = j * 2.3f + i * .7f;
+                Plant(j == 0 ? "Mixed" : "Grass", p + new Vector3(Mathf.Cos(a) * 1.4f, 0, Mathf.Sin(a) * 1.4f), .32f + j * .07f, j);
             }
         }
     }
@@ -111,7 +122,7 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
         var go = new GameObject("Western field " + kind, typeof(SpriteRenderer)); go.transform.SetParent(transform, false);
         go.transform.position = Ground(p) + Vector3.up * .04f; go.transform.localScale = Vector3.one * (height / sprite.bounds.size.y);
         var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = sprite; renderer.flipX = index % 2 == 0;
-        renderer.color = new Color(.91f, .98f, .77f); illustrations.Add(go.transform);
+        renderer.color = new Color(.78f, .75f, .49f); illustrations.Add(go.transform);
     }
     private void Ribbon(bool second, float width, Material material, string name)
     {
@@ -124,9 +135,11 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
             for (int col = 0; col < columns; col++)
             {
                 float side = col / (float)(columns - 1) * 2 - 1;
-                var p = new Vector3(x, 0, z + side * width * (material == earth ? PathHalfWidth(x) / 1.3f : 1) * (1 + .08f * Mathf.Sin(x * .33f)));
+                var p = new Vector3(x, 0, z + side * width * (material == earth ? PathHalfWidth(x) / 1.3f : Mathf.Lerp(1, .24f, Mathf.InverseLerp(-164, -220, x))) * (1 + .08f * Mathf.Sin(x * .33f)));
                 vertices.Add(Ground(p) + Vector3.up * (material == earth ? .095f : .075f));
-                colors.Add(new Color(Mathf.Max(Mathf.Abs(side), 1 - Weight(p)), 0, 0, 1));
+                // The secondary near-field margin must not become a second dark road on distant hills.
+                float seamFade = second ? Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-164, -210, x)) : 0;
+                colors.Add(new Color(Mathf.Max(Mathf.Max(Mathf.Abs(side), 1 - Weight(p)), seamFade), (side+1)*.5f, 0, 1));
                 if (row == 0 || col == 0) continue;
                 int n = vertices.Count - 1, previous = n - columns;
                 triangles.AddRange(new[] { previous - 1, n - 1, previous, previous, n - 1, n });
