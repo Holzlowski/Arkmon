@@ -25,6 +25,9 @@ public class PaperShadowTests
         Assert.That(body.sprite, Is.Not.Null);
         figure.GetComponent<BoxCollider>().center = Vector3.up;
         figure.GetComponent<BoxCollider>().size = new Vector3(1, 2, 1);
+        GameObject overhead = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        overhead.transform.position = new Vector3(1000, 6, 1000);
+        overhead.transform.localScale = new Vector3(6, .2f, 6);
         attach.Invoke(null, new object[] { figure, body });
         attach.Invoke(null, new object[] { figure, body });
         Physics.SyncTransforms();
@@ -39,6 +42,16 @@ public class PaperShadowTests
         figure.transform.position += Vector3.right;
         Physics.SyncTransforms(); yield return null;
         Assert.That(plane.position.x, Is.EqualTo(figure.transform.position.x));
+        floor.transform.rotation = Quaternion.Euler(0, 0, 8);
+        figure.transform.position += Vector3.right * .1f;
+        Physics.SyncTransforms(); yield return null;
+        Assert.That(Vector3.Angle(plane.up, floor.transform.up), Is.LessThan(.1f), "Contact should follow a sloped floor.");
+        floor.SetActive(false); figure.transform.position += Vector3.right * .1f;
+        Physics.SyncTransforms(); yield return null;
+        Assert.That(plane.GetComponent<Renderer>().enabled, Is.False, "No ground means no floating shadow; the overhead surface is not a floor.");
+        floor.SetActive(true); figure.transform.position -= Vector3.right * .1f;
+        Physics.SyncTransforms(); yield return null;
+        Assert.That(plane.GetComponent<Renderer>().enabled, Is.True);
         body.color = new Color(1, 1, 1, 0);
         yield return null;
         var properties = new MaterialPropertyBlock();
@@ -46,7 +59,7 @@ public class PaperShadowTests
         Assert.That(properties.GetColor("_ShadowColor").a, Is.Zero);
         body.enabled = false; yield return null;
         Assert.That(plane.GetComponent<Renderer>().enabled, Is.False);
-        UnityEngine.Object.Destroy(figure); UnityEngine.Object.Destroy(floor);
+        UnityEngine.Object.Destroy(figure); UnityEngine.Object.Destroy(floor); UnityEngine.Object.Destroy(overhead);
         yield return null;
         Assert.That(plane == null, Is.True);
         LogAssert.NoUnexpectedReceived();

@@ -6,6 +6,9 @@ Die Aufgaben umfassen neue Arbeiten und Feinschliff an vorhandenen Funktionen. E
 
 ## 1. Als Nächstes: Bewohner und ihr Alltag
 
+- [x] Drei Gemüsebeete aus der Burgauffahrt entfernt und kompakter rechts neben Martas Haus angeordnet; Beetrahmen, Rankhilfe, Pflanzen, Kanne, Gießpunkte, Saatgutbank und Schild angepasst. Durchlaufen bis zum Portal, Gießen und Szenenneustart geprüft.
+- [ ] Seitliche Gartenanordnung gemeinsam im Spiel ansehen.
+
 - [x] Martas zu schmale Darstellung am Import korrigiert: originales Seitenverhältnis 1024 × 1536 statt gestreckter 1024 × 2048, ursprüngliche Figurenhöhe und Fußpunkt erhalten. Irrtümliche zusätzliche Höhe zurückgenommen; ruhige Reaktionen bleiben erhalten. Zeichnung und Dialogporträts unverändert.
 - [ ] Martas angepasste Proportionen gemeinsam im Spiel abnehmen.
 - [x] Burgeingang hinter John als gezeichnetes Rundbogenportal mit plastischem Steinrahmen, zweiflügeligem Holztor, Beschlägen und festem Aurenfeld-Wappen überarbeitet. Freier Zugang, geschlossene Kollision, Inspektionsdialog und Szenenneustart geprüft.
@@ -92,12 +95,20 @@ Fertig, wenn die Außenwelt aus den vorgesehenen Kamerawinkeln Weite und Tiefe z
 - [ ] Verzogene Texturen, unterschiedliche Detailgrößen und auffällige Materialwiederholungen korrigieren.
 - [ ] Überlappende Gebäude und Gegenstände sowie ungewolltes Verdecken der Burg prüfen und korrigieren.
 - [ ] Werkstatt, Stall und Wohnhäuser unterscheidbar gestalten; Bewohner ihren Arbeits- und Hausbereichen zuordnen.
-- [ ] Eingestürzte linke Mauer mit Bruchkanten, Steinen und einfallendem Sonnenlicht ausarbeiten.
-- [ ] An der linken Mauer eine optionale Interaktion zum Betrachten der Felder anbieten.
-- [ ] Eine ruhige Kamerafahrt von der Mauer über die goldenen Felder zu einem prachtvollen Horizont inszenieren; die dafür sichtbare Landschaft zuerst ausarbeiten.
+- [x] Erster Gestaltungspass der eingestürzten linken Mauer: unregelmäßige Bruchkanten, seitliche Steinhaufen, gezeichnete Bodenpflanzen und freier Aussichtszugang; vorhandenes goldenes Licht erhalten. Schwebende Zinnen entfernt; niedrige Mauer bleibt begehbarem Hof gegenüber eine feste Begrenzung. Zugang und Szenenneustart geprüft.
+- [x] Harte Höhenkante der Außenlandschaft hinter der Maueröffnung abgeflacht; Getreide und nahe Pflanzen folgen dem weicheren Übergang.
+- [ ] Maueröffnung, Feldübergang und neue Aussichtskamerafahrt gemeinsam im Spiel visuell abnehmen; Feldränder und Baumgruppen weiter ausarbeiten.
+- [x] An der linken Mauer eine optionale E-Interaktion zum Betrachten der Felder eingebaut; bestehende Reichweitenregeln und bodennahe Markierung verwendet.
+- [x] Erste ruhige Kamerafahrt durch die Maueröffnung über die goldenen Felder eingebaut, mit gemalten Bergen und langsam wandernden Wolken aus den vorhandenen Turmzimmer-Texturen. Panorama bleibt bis zur Rückkehr offen.
+- [x] Westliche Aussicht mit zwei geschwungenen grünen Feldsäumen, schmalem Erdweg, vier Baumgruppen und lückiger Randbepflanzung verfeinert. Getreide folgt denselben Saumkurven; Zeichenreihenfolge von Bergen und Baumkronen korrigiert.
+- [ ] Neue Feldsäume, Baumgrößen, Tiefenwirkung sowie Tempo und Bildausschnitt der Aussicht gemeinsam im Spiel abnehmen; übrige Außenlandschaft weiter ausarbeiten.
 - [ ] Kurze eingeblendete Texte zur Wahrnehmung des Landes durch Außenstehende entwerfen. Erzählerstimme, Ortsnamen und konkrete Aussagen über das Land gemeinsam festlegen.
-- [ ] Aussicht abbrechbar und erneut betrachtbar machen; Kamera, Steuerung und Interaktionszustand danach zuverlässig zurücksetzen.
-- [ ] Rechtes Tor und Zugbrücke fertig gestalten; eine gut sichtbare freie Fläche für die spätere Ankunft reservieren.
+- [x] Aussicht mit E, Escape oder Zurück-Schaltfläche abbrechbar und erneut betrachtbar gemacht; Kamera, Steuerung und Aufgabenanzeige werden wiederhergestellt. Früher Abbruch, vollständige Fahrt, Schaltflächenrückkehr, Deaktivierung und Szenenwechsel gezielt ohne Ton getestet.
+- [x] Ersten Detailpass für rechtes Tor und Zugbrücke umgesetzt: durchgehender Rundbogen, gezeichnete Eichenbretter, Nieten und echte Kettenglieder. Wasserbewegung, seichte Ufer und gezeichnete Randpflanzen ergänzt; Durchgang und spätere Ankunftsfläche frei gehalten.
+- [x] Rückweg über die Brücke abgesichert: flache abgeschrägte Schwelle über der bisherigen Geländekante; tatsächlicher Hin-/Rücklauf und Szenenneustart geprüft.
+- [ ] Torbogen, Brückenholz und Wasserbewegung gemeinsam im Spiel abnehmen; die Gesamtgestaltung der Torumgebung bleibt offen.
+- [x] Östliches Außenufer und Feldlandschaft über ein gemeinsames Höhenprofil verbunden; Himmelsspalte geschlossen, Erdweg mit weichen Rändern verlängert und niedrige Pflanzengruppen ergänzt.
+- [ ] Östlichen Feldweg und Ufer im Spiel gemeinsam visuell abnehmen; der weiterführende Weg außerhalb des bestehenden festen Ufers ist vorerst nur Kulisse.
 
 ## 4. Gelände, Wege und Vegetation im Hof
 
@@ -105,16 +116,28 @@ Fertig, wenn die Außenwelt aus den vorgesehenen Kamerawinkeln Weite und Tiefe z
 - [ ] Den Hauptweg durchgängig vom Turmausgang links zum Tor rechts führen, mit natürlichen Rändern und nachvollziehbarem Verlauf.
 - [ ] Gras, Erde, Pflaster und ausgetretene Stellen passend zur Nutzung verteilen.
 - [ ] Kleine Bodenunregelmäßigkeiten ergänzen, ohne Bewegung, Interaktionen oder Figurenstand zu beeinträchtigen.
-- [ ] Vegetation bewusst gruppieren: Gras an Mauern, Moos im Schatten, einzelne Wildblumen und zurückhaltender Efeu.
+- [x] Erste acht zusammenhängende Wieseninseln aus gezeichnetem Gras, Klee und wenigen Blüten mit weichen Bodenübergängen ergänzt. Burgauffahrt, Wachroute, Arbeitsplätze und Beete ausgespart; Zugänge und Neustart geprüft.
+- [x] Nördliche und östliche Hofmauer mit niedrigen Farn-/Kleegruppen, weichen Erdstellen und dezenten unregelmäßigen Moosspuren im Stein verbunden. Tor, Interaktionen und Wachroute ausgespart; Materialzustand, Rückbau, Szenenneustart und Brückenlauf gezielt geprüft.
+- [ ] Neue Pflanzengruppen und Moosstärke gemeinsam in Bewegung abnehmen; weitere Sockel und zurückhaltenden Kletterefeu separat gestalten.
 - [ ] Requisiten auf Zweck, Größe und Platzierung prüfen; die Schubkarre ohne sinnvolle Aufgabe als Umgebungselement behandeln, nicht als Pflichtbeschäftigung.
 
 ## 5. Licht, Schatten und Atmosphäre
 
-- [ ] Warmes Sonnenlicht und kühlere Schattenbereiche auf die friedliche Morgenstimmung abstimmen.
-- [ ] Kontaktschatten unter Figuren, Möbeln und Gebäuden verbessern.
+**Festgelegte Gestaltungsrichtung:** Aurenfeld soll in warmem, gemütlichem Gold erstrahlen. Dieses regionale Außenlicht auch in späteren Gebieten wiedererkennbar machen: freundlich beleuchtete Schatten, frische Grüntöne und blauer Himmel als Gegenfarbe; keine düstere, entsättigte Grundstimmung.
+
+- [x] Hoflicht auf warmes, gemütliches Gold umstellen: hellere warme Schatten, freundlicheres Wiesengrün, goldener Ferndunst und zurückhaltende Farbkorrektur. Räumliche Schattierung erhalten; drei stille Darstellungs-/Zugangsprüfungen bestanden und Spielbilder gesichert.
+- [x] Rückmeldung zur weißen Bergkulisse und fehlenden Morgenwirkung umgesetzt: Bergzeichnung vom starken globalen Nebel getrennt, Blau-/Grüntöne erhalten, Sonne tiefer/wärmer gesetzt, Himmel zum Horizont vergoldet und Felder an echte Sonnenfarbe angebunden. Aussicht und Hofbilder geprüft; Rückkehr/Szenenneustart getestet.
+- [ ] Korrigiertes Morgenlicht und Bergkontrast gemeinsam in Bewegung abnehmen; örtliche Lichtakzente und restliche Landschaft separat weiter verfeinern.
+- [x] Westliche Baumgruppen mit echten Kronenschatten auf Wiese und Aehren sowie weichen, dem Gelaende folgenden Stammschatten verankert. Bildvergleich im selben Frame, Sichtbarkeit und Szenenneustart ohne Audio geprueft.
+- [x] Weiche Bodenschatten unter Idas Werkbank, Martas Pflanztisch und beiden Gartenbaenken ergaenzt. Figurenschatten suchen unter den Fuessen, folgen sanften Bodenneigungen und verschwinden ohne tragenden Boden; zwei gezielte Tests samt Bildvergleich bestanden.
+- [ ] Kontaktschatten unter Figuren, Möbeln und Gebäuden verbessern. Rest: weitere Hofobjekte/Gebaeude und gemeinsame visuelle Abnahme.
 - [ ] Helligkeit und Farbwirkung von Figuren und Umgebung angleichen; Gesichter, Wege und Interaktionsobjekte lesbar halten.
-- [ ] Lichtakzente an Turm, Maueröffnung, Garten und Tor gezielt setzen.
-- [ ] Windbewegung, wenige schwebende Partikel und dezente Entfernungstrübung dort einsetzen, wo sie die Szene verbessern.
+- [x] Lokale Morgenlichtakzente am Turmeingang, an den besonnten Bruchkanten der Westmauer und am rechten Torbogen umgesetzt. Sonnenfarbe, Flaechenausrichtung und Verschattung bleiben massgebend; getrennte Bildvergleiche und Szenenneustart ohne Audio bestanden.
+- [x] Garten-Lichtakzent auf Beetrahmen, Rankhilfen, Pflanztisch, Baenke und Trittsteine abgestimmt. Pflanzenfarben und nasse Erde bleiben erhalten; normale Spielkamera, getrennter Bildvergleich und Giessablauf ohne Audio geprueft.
+- [ ] Alle vier lokalen Morgenlichtakzente gemeinsam im Spiel abnehmen.
+- [x] Gartenschild als niedrigen Wegweiser seitlich am ersten Beet platziert; Schriftgroesse erhalten. Elians Kopf bleibt beim Herantreten sowie seitlich/hinter dem Schild frei. Bilder geprueft; bestehende Garten-Zugangs-/Interaktions-/Neustartpruefung ohne Audio bestanden.
+- [x] Gezeichnetes Gras, Klee, Farne, Mischpflanzen und Blüten mit sanfter Windbiegung ergänzt; Wurzeln bleiben stehen und Gruppen schwingen zeitlich versetzt. Vorhandene Farben/Spiegelung, tatsächliche Bildbewegung, Aus-/Einschalten und Szenenneustart ohne Audio geprüft.
+- [ ] Windstärke gemeinsam in der normalen Spielkamera abnehmen und Leistung im Windows-Build prüfen; zusätzliche Partikel und Entfernungstrübung nur gezielt ergänzen.
 - [ ] Schärfe, Flimmern an Konturen und Texturen sowie Transparenzdarstellung in Spielansicht und Windows-Build prüfen.
 
 ## 6. Kamera, Bewegung und Interaktionen
@@ -172,6 +195,27 @@ Die drei offenen Namen nicht eigenständig als feststehende Namen vergeben. Aus 
 - [ ] Gezielt betroffene automatisierte Prüfungen ausführen; Tests bleiben ohne hörbare Musik und Geräusche.
 - [ ] Einen Windows-Testbuild auf Bildwirkung, Bedienung, Audio und flüssige Darstellung prüfen.
 - [ ] Hof und Umgebung gemeinsam visuell abnehmen; verbleibende Auffälligkeiten konkret in diese Liste übernehmen.
+
+- [x] Vier gezeichnete Baumarten fuer Aurenfeld integrieren: Eichen/Birken an Feldraendern, Apfelbaum am Garten und Weide am Bach; alte Demo-/Kampfassets erhalten.
+- [ ] Neue Baumverteilung gemeinsam im laufenden Spiel visuell abnehmen.
+
+- [x] Kleinen Bauernhof am westlichen Feldweg in die Aurenfeld-Aussicht setzen, mit Scheune, Zaun und langsam aufsteigendem Kaminrauch. Als entfernte Kulisse umgesetzt und geprueft.
+
+- [x] Aurenfeld-Felder mit dunkleren Grasansaetzen, goldenen Spitzen, unregelmaessigen Wuchsinseln, gemeinsamen Windwellen und begrenzten Vordergrundschatten gestalten. Bildvergleich und kurzer Editor-Zeitvergleich bestanden.
+- [ ] Halmschatten im exportierten Build waehrend Kamerabewegungen auf Bildrate und Spitzen pruefen; aktuelle Editor-Messung ist kein Build-Benchmark.
+
+- [x] Bauernhof als gezeichnetes Gehoeft mit markanter Scheune, Heuwagen und korrekt verankertem Kaminrauch ueberarbeiten.
+- [x] Westlichen Feldweg ueber zusaetzliche Fernhuegel bis zum Horizont weiterfuehren; Sichtbarkeit aus der Aurenfeld-Kamera per Bildvergleich pruefen.
+
+- [x] Grasansaetze an gerenderten Bodendreiecken ausrichten und kleine, weiche Kontaktschatten je nahem Bueschel ergaenzen; getrennt von Sonnenschatten im Bildvergleich geprueft.
+
+- [x] Zu starken Entfernungsnebel abschwaechen: sanfter Verlauf von 180 bis 1600 m, einheitliche Reaktion von Fernhuegeln und Wegen; stille Unity-Pruefung und Vergleichsbilder kontrolliert.
+
+- [x] Westliche Aurenfeld-Aussicht auf goldene Getreidefelder umstellen: gruene Grasflaechen ersetzen, Boden/Fernhuegel und Wegsaeume in Stroh-/Ockertoenen abstimmen; Unity-Bild und gezielten Test pruefen.
+
+- [x] Ferne goldene Huegel als bewirtschaftete Ackerflaechen strukturieren: schmale gruene Feldraender, unterschiedliche Erntetoene und drei kleine Baum-/Heckengruppen; gleiche Aussichtskamera vorher/nachher verglichen.
+- [x] Bauernhof mit geschwungener Wegabzweigung bis zum Hoftor und kleinem Vorplatz verbinden; Obstbaum und Zaunbewuchs ergaenzen, Getreide auf der Zufahrt aussparen.
+- [x] Gesamte aktuelle Aussichtsfahrt automatisiert durchlaufen und zehn Zwischenbilder auf Gelaendekanten pruefen; harte Vegetationswechsel durch gemeinsame LOD-Ueberblendung fuer Halme, Schatten und Bodenkontakte ersetzen. Abbruch/Rueckkehr/Neustart geprueft.
 
 ## Danach: Ankunft und weiterer Introverlauf
 

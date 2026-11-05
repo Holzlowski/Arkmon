@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.4`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1437,10 +1437,11 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 - **0.26.1** — add painted tree varieties and grove shadows. Introduce illustrated oak, birch, apple and willow variants with reproducible sprite import settings and generation provenance. Add alpha-clipped crown shadows and terrain-following tree contacts. Cover grove lifecycle, lookout cancellation/reload and ten camera-flight checkpoints.
 - **0.26.2** — connect the painted farm to the field road. Add a distant illustrated farm with chimney-anchored rising smoke, a curved access lane, a trampled forecourt, an apple tree and low fence planting. Share lane/forecourt masks with grain generation so the entrance stays clear. Include supported-material, road-visibility and reload checks; the farm remains scenic and non-colliding.
 - **0.26.3** — soften wall foundations and animate undergrowth. Ground enclosing walls with bounded moss, earth transitions and low planting while preserving the gate and patrol access. Animate illustrated plants with restrained rooted wind, retaining their colors and mirroring. Include material restoration, movement and reload checks.
+- **0.26.4** — ground props and refine local morning accents. Make figure shadows follow supporting slopes and hide them when no ground is found. Add soft contacts beneath workshop/garden furniture and reversible local sunlight accents at the tower, breach, gate and garden. Include rendering/lifecycle regressions and reconcile the README and remaining courtyard tasks.
 
 ### Implementation and validation notes
 
-The following development notes describe the courtyard work included through 0.26.3. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
+The following development notes describe the courtyard work included through 0.26.4. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
 
 ### Illustrated details at Marta's garden
 
@@ -1625,3 +1626,283 @@ Validation: the final three focused cases passed in `Library/east-landscape-fina
 ### Guard clearance beside the sunken cellar
 
 The second patrol point moves from (23.8,11.1) to (23.35,11.1); the third moves from (24.8,4.5) to (23.35,5). This keeps the guard in the available gap between the wheelbarrow and cellar retaining wall until it has passed the staircase, before heading toward the gate. Both the native `Guard/Patrol` resource and the editor's new-route defaults use these coordinates. The eight-stop route, pace, pauses, dialogue and obstacle response are retained. The complete patrol regression above passes in both travel directions.
+
+### Aurenfeld golden daylight (local preview)
+
+Art direction: Aurenfeld's outdoor light should feel warmly golden, comfortable and welcoming, with fresh meadow greens, readable warm shadows and a blue sky as a complementary color. The previous cooler, darker trial was rejected in favor of this regional identity. Use this direction for later outdoor areas; interior lighting remains separately authored.
+
+StartScene retains the 42-degree sun elevation and -38-degree yaw, with honey-gold light (1, .88, .65), intensity 1.65 and shadow strength .88. Higher ambient sky/equator/ground colors lift shaded objects. A pale golden distance fog begins at 40 metres and ends at 200. The illustrated courtyard shader combines cream sky fill with warm earth bounce: ambient fill .52, directional contribution .64 and retained direct light in shadow .15. Directional shading and the reduced shadow bias still give beams, roof overhangs and facade projections depth.
+
+The courtyard-only volume adds .25 stops exposure, modest saturation (+6), contrast (+2), restrained bloom (.14) and less edge darkening (.025 vignette). The grass base is brighter green (.40, .54, .22); ConfigureIntroCourtyard preserves this on regeneration. No camera, collision or gameplay changes are part of this color pass. The relocated vegetable garden remains intact.
+
+Validation: three existing palette, work-area capture and garden access/reload checks passed silently in `Library/courtyard-golden-light-tests.xml`. Native Unity gameplay captures: `Builds/garden-illustration-gameplay.png`, `Builds/castle-palette-central-castle.png` and `Builds/courtyard-polish-gameplay-ida-workshop.png`. The corresponding `-before-golden-light.png` files preserve the previous images. The earlier release checks and garden-task results remain documented below.
+
+This revised lighting pass remains uncommitted. Suggested commit: `style(courtyard): establish warm golden Aurenfeld daylight` (scene lighting, courtyard shader/volume, grass material and its generator). Current version is `0.25.6`; the next prepared commit would use `0.25.7`.
+
+### Kitchen garden beside Marta's cottage (local correction)
+
+The three vegetable beds no longer span the approach to the castle. `CourtyardGardenPlace.PrepareBeds` groups the original soil, wooden borders, crops and bean supports into three compact beds east of Marta's cottage, before terrain, interactions or decorative planting sample their positions. Their footprints are 72% of the original size and their order is preserved, so crop identity and saved watering bits remain consistent. A scene-local root prevents double installation. The seed bench and garden sign are moved beside the new layout; Marta retains her clear work spot at the potting table.
+
+`CourtyardGarden` derives can/watering anchors from the relocated soil and targets the resized front plant row. `CourtyardVegetableBed` scales planting positions, plants and clods to the actual footprint. Restart StartScene in Play Mode to see this runtime dressing. No scene regeneration is needed, and the preceding local lighting changes remain intact.
+
+Validation: the existing garden illustration/access check and four garden-task checks passed in `Library/garden-relocation-tests.xml`. Its new broad corridor sweep initially touched John at the edge; after narrowing that check to the actual central passage between John and the guard, the targeted physical walk/reload check passed in `Library/garden-route-final-tests.xml` (11.8 seconds). All six distinct checks now pass across those runs, with audio disabled. They cover walking from the main path to the castle, all three watering actions, cancellation/reload, thanks and can return. Real gameplay views: `Builds/garden-relocated-gameplay.png` and `Builds/garden-relocated-castle-approach.png`.
+
+Suggested separate commit: `fix(garden): clear the castle approach with compact side beds`. This correction is not committed or pushed. Current version remains `0.25.6`; the next prepared commit would use `0.25.7`.
+
+
+### Grouped courtyard meadow islands (local preview)
+
+`CourtyardVergePolish` now adds eight bounded planting islands beside the western approach, between workplaces and along the south side of the main path. Existing drawn grass, clover and occasional small flower sprites form low groups over irregular, softly faded ground-color patches. The islands follow the existing terrain and add no colliders. Warm golden lighting and the side-mounted kitchen garden are preserved; open lawn remains between groups.
+
+All verge planting now excludes the central castle approach and a 1.1-metre corridor along the guard route, in addition to existing path, solid-object, interaction and vegetable-bed exclusions. Patch colors fade where those exclusions intersect an island. Runtime meshes/materials use the existing teardown ownership; no new textures or external assets were added.
+
+Validation: six existing illustration, castle-palette, garden-access and actual castle-walk/reload checks passed in `Library/courtyard-meadow-islands-tests.xml` (47.8 seconds). After moving foreground islands farther into the normal gameplay view, three targeted capture/garden/walk checks passed in `Library/courtyard-meadow-final-tests.xml`. Both runs were silent. Review `Builds/courtyard-polish-gameplay-ida-workshop.png`, `Builds/courtyard-polish-gameplay-stable.png` and `Builds/garden-illustration-gameplay.png`; corresponding `-before-meadow-islands.png` files retain the earlier views. This is a bounded vegetation pass, not a completed whole-courtyard landscape or a frame-rate benchmark.
+
+Suggested commit: `style(courtyard): group meadow planting around clear walking routes`. This pass remains local with the preceding light and garden changes. Current version stays `0.25.6`; the next prepared commit would use `0.25.7`.
+
+
+### Western breach and near-field transition (local preview)
+
+`CourtyardBreachStyle` runs after the shared castle facade palette. It replaces the old primitive rubble and foliage with uneven masonry courses, two small rubble piles and drawn low planting. Unsupported battlements above the opening are retired. Three soft earth patches lead to a clear viewing place; the low wall remains a visible collision boundary. Existing golden lighting is preserved.
+
+The outside meadow previously began with an abrupt raised cutout edge, exposing sky beneath it in close views. A bounded western blend lowers the nearby landscape and gradually returns to the existing fields. `MeadowVegetation` applies the same height adjustment to courtyard wheat; nearby tree and flower anchors follow it. Terrain meshes are cloned at runtime and restored on teardown. Battle-scene vegetation and authored scene assets are unchanged by this adjustment.
+
+Validation: the focused Play Mode test passed in `Library/courtyard-breach-landscape-tests.xml` (13.1 seconds, audio disabled). It checks the near-field mesh height, walks the actual player body into the viewing place, pushes against the low wall, and reloads the scene. The initial approach test found an obstructing rubble stone; the piles now sit closer to the wall. `Builds/west-breach-tower-approach.png` and `Builds/west-breach-gameplay.png` use the normal gameplay camera; `Builds/west-breach-detail.png` is a temporary inspection view. These captures were visually reviewed. No full-game regression or performance benchmark was run. The subsequent optional lookout and camera flight are documented below; landscape narration remains future work.
+
+Restart StartScene in Play Mode to see the runtime dressing. Suggested commit: `style(courtyard): shape the western breach and meadow transition`. Changes remain local and uncommitted. Version remains `0.25.6`; the next proposed commit version is `0.25.7`.
+
+
+### Optional western-field lookout (local playable preview)
+
+Restart StartScene, walk to the low broken wall left of Elian's tower, and press E at "Über die Felder schauen". `CourtyardLookout` moves the camera toward the opening and then over the fields over ten seconds. The final panorama stays open until E, Escape or the on-screen return button is used. Returning follows the same route backwards (at most 3.5 seconds). The player stays in the courtyard; no quest progress is changed. The objective and nearby interaction prompts are hidden during the view. The small landscape caption is provisional descriptive text, not the planned outside narrator's lore.
+
+`CourtyardCamera` owns an explicit scenic pose override, keeping Cinemachine and the normal follow camera from competing. `DemoOpening.IsPresenting` includes the lookout so movement and other interactions stay locked until the return finishes. Early cancellation, component disabling and scene unload restore the camera override and objective, remove the view UI and release that lock. Interaction discovery uses the existing range/collider rules; the lookout marker follows the raised courtyard ground.
+
+`CourtyardLookoutLandscape` adds distant western mountains and gently drifting clouds using the existing tower-window paintings. Two dedicated resource materials reference those textures without duplicating or editing them. The scenery has no colliders; its owned quad mesh is disposed on unload. This is a bounded western view, not a fully landscaped exterior region. The subsequent western field-edge and tree-group pass is documented below; the wider world remains future visual work.
+
+Validation: `CourtyardLookoutTests.Lookout_CancelsRepeatsAndRestoresCameraInputAndHud` passed in `Library/courtyard-lookout-landscape-tests.xml` (23.7 seconds execution, audio disabled). It exercises actual interaction selection and range, movement suppression, duplicate activation prevention, early return, the complete flight and UI-button callback, repetition, component disabling and scene reload. It also verifies scenery materials, absence of scenery colliders and cloud movement. Real captures reviewed: `Builds/lookout-interaction.png`, `lookout-masonry-frame.png`, `lookout-fields-flight.png`, `lookout-fields-panorama.png`. Physical keyboard input and an exported build were not separately tested; no full-suite or performance run was needed for this bounded change.
+
+Suggested commit: `feat(courtyard): add a reversible western-field lookout` — optional scenic flight, shared control lock, return UI and painted horizon with lifecycle regression coverage. Changes are local, not committed or pushed. Version remains `0.25.6`; the next proposed commit version is `0.25.7`.
+
+
+### Western field margins and groves (local visual polish)
+
+`CourtyardFieldMargins` adds two irregular green seams between the western crops, a narrow winding earth path, and four groups of three illustrated trees at different distances. Small fern/mixed-leaf groups and occasional flowers follow the seams with intentional gaps. The existing tower-window mountains remain visible through the middle. Existing scattered tree/flower props are retired only within this western dressing area; their active state is restored on teardown. Existing sprites and materials are reused, with no new texture files.
+
+`MeadowVegetation` samples the same curves in StartScene Play Mode: wheat gives way to short green grass near the margins, and vegetation is omitted from the narrow centre of the path. The effect fades at the western range limits. Ribbons, trees and plants follow the exterior surface height; they introduce no colliders and do not move the player, camera, courtyard buildings or garden. Runtime ribbons/materials are released on teardown. The mountain/cloud renderers now sort behind the nearer transparent trees; visual review caught and corrected a mountain layer drawing over tree crowns.
+
+Validation: the focused lookout lifecycle test passed in `Library/courtyard-field-margins-final-tests.xml` (23.9 seconds execution, audio disabled). Added checks cover twelve trees outside the wall, upward-facing path geometry, absence of decorative colliders, correct horizon/tree order and a single landscape installation after reload. The existing full flight, cancellation and control-restoration checks still pass. Final captures reviewed: `Builds/lookout-fields-panorama.png`, `lookout-masonry-frame.png`, `lookout-interaction.png`; `-before-field-margins.png` captures preserve the previous view. This is a bounded scenery pass; the wider landscape and a performance/build assessment remain open. Restart StartScene in Play Mode to see it.
+
+Suggested separate commit: `style(courtyard): shape western field margins and tree groves` — shared crop-edge curves, winding field path, grouped planting and corrected background sorting. This pass remains local alongside the earlier changes. Version remains `0.25.6`; the next proposed commit version is `0.25.7`.
+
+
+### Eastern gate, drawbridge and stream detail pass (local preview)
+
+`CourtyardGateStyle` dresses the existing crossing on the right-hand wall. A segmented curved limestone arch and fitted masonry replace the old box-shaped arch outline. Bridge decking uses the existing illustrated oak with lengthwise grain and a larger texture scale; straps gain small rivets, and two meshes of alternating oval links replace the disconnected chain rods. Gate piers gain carved feet and capitals. Existing gate interaction and arrival space remain unchanged; the Arkanmeisterin is not triggered by this work.
+
+The stream remains wholly outside the wall, below the bridge. A gently varying water ribbon, shallow green banks and sparse drawn plants replace the flat surface/glint boxes and primitive bank foliage. `Resources/CourtyardStream.shader` provides restrained moving highlights and lighter shallows, respecting the existing light, shadow and distance fog. The authored deck, far-bank ground and gate solids are retained. Decorative geometry adds no colliders; owned meshes and materials are released on scene teardown. The existing stream audio is unchanged.
+
+The initial physical test found that the box-shaped player caught the old five-millimetre meadow edge while returning from the bridge. `CourtyardBridgeThreshold` adds a shallow, visible bevel over that seam, with both ends below the neighboring surfaces and a matching Ground mesh collider. It avoids changing general movement or adding a teleport. This is a separate movement fix from the visual dressing.
+
+Validation: `CourtyardCrossingStyleTests.Crossing_RemainsWalkableBothWays_WithExteriorWaterAndClearApproach` passed in `Library/courtyard-crossing-verified-tests.xml` (15.6 seconds execution, audio disabled). It walks the real player body across and back, checks the far bank, verifies decorative collision isolation, water bounds and visible arch-face winding, then reloads the scene. `Builds/east-crossing-gameplay.png` uses the normal gameplay camera; `Builds/east-crossing-detail.png` is a temporary oblique inspection view. Both views were reviewed during this pass. No full-suite or exported-build test was run.
+
+The following eastern-field pass addresses the sky-colored gap and abruptly ending path identified in the oblique inspection view. The wider gate surroundings still need an overall visual acceptance pass. Restart StartScene in Play Mode to load these changes.
+
+Suggested commits: `style(courtyard): refine the eastern gate bridge and stream` (gate/bridge dressing and water shader) and `fix(courtyard): bevel the return seam at the drawbridge` (physical threshold and traversal regression). Changes are local, not committed or pushed. Current version remains `0.25.6`; the next actual commit would propose `0.25.7`, with later version increments decided per commit.
+
+
+### Eastern bank and field approach (local preview)
+
+`CourtyardEastFieldStyle` lowers the near eastern meadow to meet the existing far bank, then blends back to the original rolling landscape beyond it. The existing exterior mesh owner in `CourtyardBreachStyle` applies this bounded profile together with the western profile, so there is still a single mesh clone/restore lifecycle. Trees and generated grass follow the same height adjustment. The western profile and battle landscapes are unchanged.
+
+The rectangular exterior path is replaced with a narrowing, gently curving earth ribbon, a soft grass fringe and sparse illustrated plants. The shared path curve also clears crop blades from the trail. Transparent earth is explicitly drawn after its wider grass fringe. Old path renderers are restored and owned geometry/materials released when the dressing is destroyed. No new texture assets are needed.
+
+This is scenery dressing, not a new playable region: the existing solid bank and camera limits are retained. The distant path beyond the authored bank is a visual continuation, not a completed exploration route. Restart StartScene in Play Mode to load the changes.
+
+Suggested commit: `style(courtyard): connect the eastern bank to the golden fields` — shared terrain/vegetation height blending, winding exterior path, planted verges and extended crossing regression. Changes remain local and uncommitted; version stays `0.25.6`, with `0.25.7` proposed for the next actual commit.
+
+Validation: the extended crossing test passed in `Library/courtyard-east-fields-final-tests.xml` (22.2 seconds execution, audio disabled), physically walking the player to x=70 and back through the gate, checking upward path faces/height continuity, bank support and installation after reload. Western breach and lookout tests passed in `Library/courtyard-east-fields-tests.xml` (14.0/22.5 seconds). The initial crossing run caught an incorrect path height on the authored bank; the correction uses that bank's actual flat surface. Visual review also caught the grass ribbon covering the earth ribbon and led to explicit draw order. Final gameplay and oblique captures (`Builds/east-crossing-gameplay.png`, `Builds/east-crossing-detail.png`) were reviewed. No full suite or exported build was run.
+
+
+### Courtyard wall feet (local visual polish)
+
+`CourtyardWallFootStyle` connects the north/east enclosing walls to the lawn with separate low fern, clover and mixed-leaf groups and soft earth patches. Ground samples follow the existing collision surface. The placement excludes interaction approaches, the gate corridor, solid furniture/buildings and the guard route. The decoration adds no colliders and reuses the existing illustrated sprites/materials.
+
+The illustrated surface shader now supports optional per-renderer `_FootMoss` parameters: low, irregular green staining retains the original drawn masonry. Only the three selected enclosing walls opt in; the shared stone material and other buildings keep their existing appearance. Property blocks preserve texture scale and other renderer settings. Teardown restores the previous moss parameters and releases generated meshes/materials. `IntroChapter` installs the pass after the existing landscaping.
+
+Validation: both targeted PlayMode tests passed with audio disabled in `Library/courtyard-wall-foot-tests.xml` (34.2 seconds total execution). Castle palette coverage checks local versus shared moss state, absence of decorative colliders, clear gate planting, preserved texture scale after teardown and single installation after reload. The crossing regression physically walks to the far bank and back. Gameplay and oblique captures were visually reviewed; `Builds/courtyard-wall-foot-detail.png` records this pass. No exported-build or full-suite test was run.
+
+Restart StartScene in Play Mode to see the additions. This is a bounded wall-foot pass; climbing ivy, wider environmental composition and visual acceptance in motion remain open. Suggested commit: `style(courtyard): soften enclosing wall foundations` — opt-in moss shading, low planting, ground transitions and lifecycle checks. Nothing committed or pushed. Version remains `0.25.6`; next proposed commit version is `0.25.7`.
+
+
+### Gentle wind in illustrated courtyard plants (local preview)
+
+`CourtyardPlantWind` runs once after the StartScene dressing has been installed. It selects only the existing Grass, Clover, Mixed, Fern and Flowers resources. Characters, vegetables, trees, standalone pebbles and the existing field-wind system are excluded. Each selected source sprite gets one shared runtime copy with a 5-by-7 vertex grid and one shared material; imported assets are not modified. `OverrideGeometry` receives sprite-rectangle pixel coordinates, as specified in the [Unity API documentation](https://docs.unity.cn/6000.0/Documentation/ScriptReference/Sprite.OverrideGeometry.html).
+
+`Resources/CourtyardPlantWind.shader` bends upper vertices with a height-squared weight, keeping the planted edge stationary. Gentle waves and slower gusts vary by world position, while maximum motion is limited by both plant height and type. Existing billboarding, sprite colors, transparency and horizontal flipping remain intact. Bounds expand to include the possible sideways movement. Wind runs on the GPU; no per-plant Update scripts or CPU mesh deformation are added. Disabling the scene-owned component restores original sprite/material bindings, re-enabling reapplies them, and teardown releases runtime resources. Draw-call/performance profiling in an exported build remains open.
+
+Validation: `CourtyardPlantWindTests` passed with audio disabled in `Library/courtyard-plant-wind-geometry-tests.xml` (11.2 seconds execution). The test renders an isolated tinted/flipped fern, compares the zero-wind image with the original sprite shader, verifies actual image movement above stable roots, checks resource sharing and untouched source geometry, excludes player/vegetables, then tests disabling, enabling and scene reload. Earlier failed iterations exposed the wrong coordinate space for sprite geometry; the final test includes the correction. Sampled render frames and the gameplay capture were visually inspected. `Builds/courtyard-plant-wind-preview.gif` contains 24 actual test-render frames; `Builds/courtyard-plant-wind-gameplay.png` shows the normal camera. No full-suite or exported-build check was run.
+
+Restart StartScene in Play Mode to see the movement. Suggested commit: `feat(courtyard): add rooted wind motion to illustrated plants` — shared subdivided sprites, restrained GPU wind, lifecycle restoration and render-based verification. Changes remain local; no commit or push. Version stays `0.25.6`; the next proposed commit version is `0.25.7`.
+
+
+### Clear mountains and golden morning light (feedback correction)
+
+The western mountain painting was being strongly blended towards the pale global fog color, hiding its blue shaded faces. `CourtyardPaintedHorizon.shader` now renders the existing mountain/cloud paintings with controlled tint/contrast and only a small height-dependent haze near the mountain base. It deliberately avoids the global distance fog: the painted image already includes atmospheric perspective. Source images, sizes, positions and layer sorting are unchanged.
+
+StartScene now uses a dedicated morning sky and field-wind material. The sun is lower (22 degrees elevation), with its sky glow aligned to the directional light; warmer light, amber horizon and warm cloud highlights distinguish it from the previous midday appearance. The upper sky remains blue. Global fog is less pale; the later distance-fog refinement extends its linear range to 180–1600 metres. Existing ambient fill keeps the courtyard readable. Meadow and crop shaders have an opt-in scene-sun response, enabled only on courtyard field materials; other scenes retain their former shader defaults and shared sky/vegetation materials. Ground normals respond to the actual sun, and crop tips receive more warmth than their bases. No full-screen yellow filter was added.
+
+`ConfigureIntroCourtyard.Horizon` retains the field material selection on regeneration, and the west architecture lighting setup uses the same morning sun/sky/fog values as the saved scene. These generators were updated and compiled, not executed to rebuild the user's layout.
+
+Validation: the existing lookout lifecycle and castle palette tests passed silently in `Library/courtyard-morning-view-tests.xml` (2/2, 35.8 seconds). After the final sky color adjustment, the lookout test passed again in `Library/courtyard-morning-final-tests.xml` (24.0 seconds). The panorama, return view and central courtyard capture were visually reviewed. `Builds/lookout-golden-morning.png` records the final view; `Builds/lookout-before-morning-correction.png` preserves the earlier local panorama. No exported-build or full-suite verification.
+
+Suggested commit: `fix(courtyard): restore mountain contrast and golden morning light` — painting-specific horizon shading, courtyard-only morning sky/field materials and aligned scene/generator lighting. Changes remain local, uncommitted and unpushed; version stays `0.25.6`, next proposed commit `0.25.7`.
+
+
+### Western grove shadows (local visual polish)
+
+`CourtyardTreeShadows` adds an alpha-cutout, shadow-only mesh for each of the 12 western field trees and a soft contact patch at its roots. The upright shadow cards face the fixed morning sun instead of following the viewing camera. Contact patches sample the actual meadow triangles so they follow the sloping terrain. The courtyard meadow and wind shaders receive main-light shadows when their existing `_SunResponse` setting is enabled. Other scenes retain their default appearance.
+
+The component installs after the StartScene landscaping, adds no colliders, follows tree visibility and releases its generated materials/meshes on teardown. Geometry is prepared for the fixed scene lighting and tree positions; moving trees or a future day/night cycle would need an update path. Real shadows depend on the selected URP quality profile and shadow distance.
+
+Validation: the focused lookout PlayMode test passed silently in `Library/courtyard-tree-shadow-render-final-tests.xml` (23.9 seconds). It checks terrain alignment, alpha cutout casters, hiding/restoring trees and scene reload. Two captures within the same frame verify that the casters actually darken more than 1,000 image pixels, without wind/cloud movement contaminating the comparison. `Builds/lookout-tree-shadows.png` is the reviewed panorama; `Builds/lookout-tree-shadows-disabled.png` records the comparison. No full-suite or exported-build check was run.
+
+Suggested commit: `style(courtyard): ground western groves with morning shadows` — scene-owned tree casters, sloping root contacts, meadow shadow reception and render/lifecycle coverage. This pass covers the western groves only; the wider character/furniture/building shadow task remains open. Restart StartScene in Play Mode to see it. Nothing committed or pushed; version remains `0.25.6`, next proposed commit version `0.25.7`.
+
+
+### Courtyard furniture contact and paper-shadow grounding
+
+`CourtyardFurnitureShadows` adds soft ground contact beneath Ida's workbench, Marta's potting table and the two garden benches. Existing directional sun shadows remain in use. Footprints follow each furniture object's horizontal axes and sample walkable ground; they add no colliders. The four stationary patches share one material, follow source visibility, and release their meshes/material on scene teardown. Moving furniture would require rebuilding the footprints. Buildings and portrait/character colors are not changed by this pass.
+
+`PaperGroundShadow` now starts its floor ray near the owner's feet instead of above its head, preventing overhead tables/roofs from becoming the shadow surface. Contacts align with gentle ground slopes and disappear when no supporting surface is found. Invisible paving is excluded. The existing movement-based sampling cache and shared rendering resources are retained; moving platforms are not covered by this change.
+
+Validation: `PaperShadowTests` and `CourtyardFurnitureShadowTests` passed silently in `Library/courtyard-furniture-shadow-final-tests.xml` (2/2, 7.6 seconds execution). Coverage includes an overhead obstacle, sloped/missing floor, sprite visibility/opacity, four furniture contacts, disable/enable, scene reload and a same-frame rendered on/off comparison. The close bench view and normal gameplay capture were visually reviewed (`Builds/courtyard-furniture-contacts.png`, `Builds/courtyard-contacts-gameplay.png`). No full-suite or Windows-build check was run.
+
+Suggested small commits: `fix(rendering): keep paper shadows on supporting ground` (PaperGroundShadow and its regression test); `style(courtyard): add soft contact beneath work furniture` (new furniture component, IntroChapter hook and focused scene test), with relevant documentation hunks in each. Nothing committed or pushed. Version remains `0.25.6`; the next actual commit would propose `0.25.7`.
+
+
+### Local morning highlights at courtyard landmarks
+
+`CourtyardMorningAccents` emphasizes existing sunlight near the tower entrance, western wall breach and eastern gate. The illustrated surface shader adds a smoothly bounded, opt-in direct-sun contribution using the same sun color, normals and shadow attenuation as its ordinary lighting. Occluded surfaces receive no added highlight. This is local art direction, not extra light sources, volumetric beams or a global exposure change. Character sprites and the central castle are not opted in.
+
+The scene component writes only `_MorningAccent` and `_MorningAccentStrength` to selected renderer property blocks. Shared materials remain untouched; texture scales, moss and other properties are preserved when enabling, disabling or destroying the component. Installation runs after the existing StartScene dressing. It creates no colliders, meshes, extra lights or material copies, and performs no per-frame work. The three fixed zones are tailored to the current layout; moving the authored architecture requires adjusting/rebuilding the zones.
+
+Validation: `CourtyardMorningAccentTests` passed silently in `Library/courtyard-morning-accent-final-tests.xml` (8.7 seconds). Each landmark has an independent same-frame on/off image comparison, disabling only its own zone. Coverage also checks shared materials, the unaffected central facade, property restoration and a single installation after scene reload. The three rendered previews were visually reviewed: `Builds/courtyard-morning-accent-tower.png`, `Builds/courtyard-morning-accent-breach.png`, `Builds/courtyard-morning-accent-gate.png`. No full-suite or exported-build test was run.
+
+Suggested commit: `style(courtyard): emphasize morning light at key landmarks` — local surface-shader highlights, reversible scene setup and isolated render/lifecycle checks. Restart StartScene in Play Mode to see the change. Nothing committed or pushed; version remains `0.25.6`, next proposed actual commit `0.25.7`.
+
+
+### Garden morning-light accent
+
+The existing `CourtyardMorningAccents` setup now includes a restrained fourth zone centered on Marta's potting table (8 m radius, strength 0.30). It selects the potting table, kitchen-garden wooden frames/trellises, benches and approach flagstones. Crop sprites retain their existing colors; soil and earth clods are explicitly excluded, including if their material gains accent support later. No additional shader, light, geometry or collider was required.
+
+Validation: the extended landmark/garden rendering test and the watering completion/cancellation/reload test passed silently in `Library/courtyard-garden-morning-tests.xml` (2/2, 24.8 seconds execution). The isolated garden on/off comparison confirms visible changes, and assertions preserve wet soil and crop colors when toggling accents. The normal gameplay, closer garden and wet-bed captures were visually reviewed (`Builds/courtyard-garden-morning-gameplay.png`, `Builds/courtyard-morning-accent-garden.png`, `Builds/courtyard-garden-morning-wet.png`). Full-suite/build verification and joint visual acceptance remain open. The review also exposed a pre-existing sightline issue where the garden sign covered Elian; the subsequent low-marker correction below addresses it.
+
+Suggested commit: `style(courtyard): warm Marta's garden work area` — extend the local sunlight profile while preserving watering feedback, with render and gameplay validation. Changes remain local; nothing committed or pushed. Version stays `0.25.6`; next proposed actual commit `0.25.7`.
+
+
+### Low garden wayfinding marker
+
+The garden sign is now placed beside the first bed using that bed's bounds, with a 0.75 m post instead of 1.5 m. Its board dimensions and text size are retained. `CourtyardLife.Sign` accepts an optional post height; the other three wayfinding signs keep their previous heights. No extra colliders, interactions or update scripts were added.
+
+The existing garden illustration/approach/reload test passed silently in `Library/courtyard-garden-sign-tests.xml` (11.8 seconds). Captures at the formerly obscured approach and beside/behind the marker were visually checked: Elian's head stays clear, while ordinary lower-body overlap can still occur when standing directly behind scenery. The garden and cottage approaches and interaction targets remain covered by the existing test. Preview: `Builds/garden-sign-approach.png`, `Builds/garden-sign-side.png`, `Builds/garden-sign-behind.png`. No full-suite or exported-build check was run.
+
+Suggested commit: `fix(courtyard): lower garden sign to keep Elian visible` — anchor the low marker beside the first bed and record three gameplay-camera views in the existing garden check. Changes remain local; no commit or push. Version remains `0.25.6`; next proposed actual commit `0.25.7`.
+
+
+### Aurenfeld tree varieties
+
+`CourtyardTreeStyle` replaces the active courtyard/meadow tree illustrations in StartScene with four newly generated, hand-drawn silhouettes: spreading oak and slender birch along the fields, a small apple tree beside the garden cottage, and a willow on the far stream bank north of the drawbridge. Western grove spacing increases from 3.2 m to 6.2 m. Existing field tree heights are retained; all variants use uniform scaling, not stretched crowns. Original demo/battle assets remain untouched.
+
+Standalone transparent PNGs live in `Assets/Resources/CourtyardStyle/Trees`. `CourtyardTreeImporter` imports them as single sprites with a low root pivot, uncompressed color, bilinear filtering and coverage-preserving mipmaps. The built-in image generator and exact prompts are recorded in `Generation.json` beside the assets. The runtime replacement runs before western shadow construction, so the new crowns also supply their shadow silhouettes. Added trees are scenery, without new gameplay collisions or destructibility. Removing the style restores original renderers and materials; scene reload builds it once.
+
+Suggested commit: `feat(courtyard): introduce illustrated Aurenfeld tree varieties` — four species, habitat placement, matching western shadows and targeted rendering/reload checks. No commit or push; project version remains `0.25.6`, next proposed actual commit `0.25.7`.
+
+Validation: the tree resource/placement/reload check and existing western lookout/shadow rendering check passed silently (2/2, 31.4 seconds execution; `Library/courtyard-trees-tests.xml`). After moving the apple tree from behind the castle facade to the visible cottage side, the affected tree check passed again (1/1, 7.3 seconds; `Library/courtyard-tree-placement-tests.xml`). Reviewed in-game captures: `Builds/aurenfeld-trees-garden.png`, `Builds/aurenfeld-trees-stream.png`, and `Builds/lookout-fields-panorama.png`. No full-suite run or exported player build was made for this art change.
+
+
+### Painted farm and road to the horizon
+
+`CourtyardDistantFarm` now presents a fixed, upright scenic illustration instead of the initial block-built farmhouse/barn. The new silhouette includes a steep tiled farmhouse roof, a large barn with braced doors and hayloft, hay wagon, haystacks, climbing greenery and a fenced yard. It sits on the sampled meadow at (-144, 0, 14), with a 20 m illustrated width. This is explicitly distant scenery, not a walkable new location. The artwork is `Assets/Resources/CourtyardStyle/Farm/AurenfeldFarm.png`; `Generation.json` records the built-in image generator prompt and normalized chimney-mouth anchor. `CourtyardTreeImporter` also configures this standalone sprite, preserving transparency, mipmaps and a ground-level pivot.
+
+The existing chimney smoke remains a separate world-space particle system: 1.8 puffs/second, 8-11 second lifetime, maximum 32 particles, gentle drift and fading. Its emitter is anchored to the illustrated chimney mouth instead of the former 3D chimney. The card does not rotate with the camera during the lookout flight. Owned materials are released on unload.
+
+`CourtyardFieldMargins` extends the winding road from x=-48 to x=-372, narrowing its half-width from 1.3 m to 0.85 m and fading out beyond the final rise. Its distant bends lead to the right of the farm so the barn does not hide the continuation. Path and vegetation-clearance masks share the same centerline; the earth ribbon draws explicitly after its grassy verge. `CourtyardDistantFields` adds one lightweight, non-colliding rolling-ground mesh behind the original meadow (22,713 vertices after the parcel refinement, no extra grass simulation), and both road and hills sample the same surface function. The mountain/cloud cards move farther back with proportional scaling about the final lookout camera, preserving their apparent composition while leaving room for the distant ground. Roads, grassy margins and distant fields now share the same restrained global fog response; StartScene uses a gradual 180-1600 m linear fade to retain warm greens/golds and a readable distant road.
+
+Validation: the expanded farm/road PlayMode check passed silently (1/1, 9.2 seconds; `Library/courtyard-farm-horizon-tests.xml`). It checks the illustration, chimney smoke, supported materials, upward-facing ground/path geometry, road extent, visible road differences in the horizon band, no added colliders and a single farm after reload. The existing lookout return/input/shadow check also passed during this change before the final local color/road-route adjustments. Reviewed final actual-camera views: `Builds/aurenfeld-farm-panorama.png`, `Builds/aurenfeld-farm-detail.png`, and the diagnostic `Builds/aurenfeld-far-road-detail.png`. No standalone build or full suite was run.
+
+Suggested coherent commits: `style(courtyard): replace distant farm with illustrated homestead` (art, import, scenic rendering and chimney anchor), then `feat(courtyard): extend field road to the horizon` (distant ground, road continuation, local haze and rendering checks). Nothing committed or pushed. Version stays `0.25.6`; next proposed actual commit `0.25.7`.
+
+
+### Aurenfeld meadow clusters, wind and foreground shadows
+
+The StartScene meadow now uses darker green/brown roots, a mid-stem color transition and warmer yellow-green/gold tips. Two deterministic world-space noise scales vary density, height and tint, producing irregular grass islands and small sparse areas rather than uniform scatter. Near tufts contain 3-5 blades; distant tufts retain three. Existing courtyard exclusions and western/eastern bare paths are preserved. Other scenes retain their previous palette and distribution.
+
+`MeadowWind.shader` adds opt-in broad travelling wind waves with small tuft-level variation. Roots remain fixed; both forward rendering and the new shadow-caster pass call the same deformation function. Only `Courtyard morning wind.mat` enables the new field profile. Expanded mesh bounds account for the stronger bending.
+
+`MeadowVegetation.NearShadowsEnabled` can disable the new shadows for comparison. At most four nearby LOD0 chunks can cast; LOD1 never casts. Individual tufts progressively stop casting between 26 and 34 metres from the viewing camera. The explicit camera position is passed per renderer, including during shadow rendering. Selection is updated after camera movement or a toggle, not repeatedly for a stationary view. Far vegetation keeps its inexpensive vertex-color shading. No additional lights, colliders or scene-wide shadow-resolution changes are introduced.
+
+Validation: the targeted silent PlayMode check passed (1/1, 9.7 seconds; `Library/courtyard-meadow-tests.xml`). It checks supported shaders, the near-only four-chunk budget, disabling shadows, visible rendered shadow differences, retirement after moving the camera to the east, and clean scene reload. Same-frame 1080p captures showed 186,419 darker pixels with grass shadows. Reviewed `Builds/aurenfeld-meadow-panorama.png`, `Builds/aurenfeld-meadow-shadows.png`, and `Builds/aurenfeld-meadow-no-shadows.png`.
+
+An uncapped Editor A/B/B/A comparison used a 1920x1080 camera target, 20 warmup frames per block and 160 samples per state on an NVIDIA GeForce RTX 3070 Ti. Shadows ON: median 3.82 ms, p95 8.16 ms; OFF: median 3.76 ms, p95 4.08 ms. These are editor frame intervals including CPU/GPU/test overhead, not isolated GPU costs or a standalone-build FPS guarantee. Typical times were close, but the enabled sample had larger spikes. Recheck representative gameplay in a player build before selecting final quality defaults. Raw report: `Builds/aurenfeld-meadow-timing.txt`.
+
+Suggested coherent commits: `style(meadow): add warm clustered Aurenfeld vegetation` (distribution, heights and palette); then `feat(meadow): add wind-matched foreground shadows` (shared wind deformation, bounded shadow selection and comparison test). Changes remain uncommitted and unpushed. Version stays `0.25.6`; the next actual commit would propose `0.25.7`, incremented only when committing.
+
+
+### Grass root contact shading
+
+`MeadowRootContacts` adds a small, soft multiplicative contact patch per near grass/getreide tuft, batched into one mesh per occupied LOD0 chunk. Its five sampled vertices follow the actual rendered meadow triangles. The same ground sampler seats each blade root slightly into that surface rather than trusting only the continuous terrain height formula. Sampling occurs during mesh construction; no per-blade GameObjects, colliders, raycasts or frame updates are added. Sampling caches are cleared after construction, and owned meshes/materials are released during rebuild/unload.
+
+`MeadowRootContact.shader` darkens the existing ground color with a soft radial falloff. Contacts remain fixed under the roots, independently of wind and directional-light shadow bias. They fade between 32 and 48 m and share the grass's near LOD, so there are no distant orphan contact patches. This is a stylized local occlusion approximation, not screen-space ambient occlusion. Other scenes keep their existing setup.
+
+Validation: both targeted meadow tests passed silently (2/2, 21.3 seconds; `Library/courtyard-root-contact-tests.xml`). The new check disables long sun shadows and verifies a visible on/off contact difference, supported materials, shared LOD membership, no colliders and consistent recreation after scene reload. The existing sun-shadow budget/render test also passed. Reviewed `Builds/aurenfeld-grass-contact-on.png`, `Builds/aurenfeld-grass-contact-off.png`, `Builds/aurenfeld-grass-contact-combined.png`; panorama is `Builds/aurenfeld-grass-contact-panorama.png`. No standalone build was run; the old shadow timing comparison does not isolate the added contact cost.
+
+Suggested commit: `fix(meadow): ground grass tufts with soft contact shadows` — sample rendered terrain for roots and add batched near-LOD contact shading with an independent render comparison. Uncommitted and unpushed. Version remains `0.25.6`; next proposed actual commit `0.25.7`.
+
+
+### Restrained Aurenfeld distance fog
+
+StartScene linear fog now starts at 180 m and reaches full coverage at 1600 m, replacing the much stronger 65-340 m range. The west architecture authoring setup uses the same values so regeneration preserves the correction. Distant-field and road/verge material fog strengths are unified at 1, avoiding mismatched haze between adjacent surfaces. The mountain/cloud paintings retain their existing artistic atmospheric perspective. Lighting and the warm sky palette are unchanged by this correction.
+
+Validation: the focused silent PlayMode farm/landscape check passed (1/1, 10.7 seconds; `Library/courtyard-distance-fog-tests.xml`), including supported materials, distant road visibility and scene reload. Reviewed `Builds/aurenfeld-clear-distance.png` and a diagnostic capture with the old global fog range, `Builds/aurenfeld-old-distance-fog.png`. The diagnostic retains the new unified material strengths and is not an exact reproduction of the entire previous setup. No full suite or standalone build was run for this adjustment.
+
+Suggested commit: `fix(courtyard): soften and unify distance fog` — preserve landscape colors with a gradual distant fade and consistent ground/path fog response. Changes remain uncommitted; version stays `0.25.6`, next proposed actual commit `0.25.7`.
+
+
+### Golden western fields
+
+The Aurenfeld western panorama now uses ripe grain throughout instead of alternating green grass and wheat. `CourtyardFieldMargins.AdjustGold` smoothly transitions from the original vegetation at x=-46 to fully ripe grain at x=-54, leaving the courtyard/eastern landscape unchanged. Existing density islands, wind, root contacts, shadow limits and bare-road exclusions remain in use. The original ground is recolored on its existing runtime mesh copy; `GoldenGround` supplies the same varied ochre/straw palette for the distant hills. Road verges now resemble golden stubble. Trees and small broadleaf plants retain their colors. Original shared ground meshes are restored on teardown.
+
+Validation: focused silent PlayMode landscape check passed (1/1, 11.2 seconds; `Library/courtyard-golden-fields-tests.xml`), including distant road visibility, supported materials and scene reload. Visually reviewed the actual Unity capture `Builds/aurenfeld-golden-fields.png`. Grain heads add geometry where short grass previously grew; density and the near-shadow budget were not increased, but this run is not a performance benchmark.
+
+Suggested commit: `style(courtyard): turn western meadows into golden grain fields` — unify vegetation, ground and distant hills around a ripe golden harvest palette. No commit or push; version remains `0.25.6`, next proposed actual commit `0.25.7`.
+
+
+### Cultivated distant landscape
+
+`CourtyardDistantFields` now divides the remote hills into broad, gently bent crop parcels with alternating straw/ochre shades and narrow green meadow boundaries. The pattern fades in behind the near grain fields to avoid a hard seam. Ground resolution is 113 by 201 vertices (22,713 total), sufficient to resolve the soft boundaries without per-field objects or distant grass simulation. Three small clusters reuse the illustrated oak/birch and undergrowth sprites; their bases follow the terrain, a clearance excludes the winding road, and all decoration remains collider-free. Owned meshes and materials are released on teardown.
+
+Validation: the focused silent landscape PlayMode check passed (1/1, 11.7 seconds; `Library/courtyard-field-parcels-tests.xml`), covering distant road visibility and scene reload. Actual Unity views with identical camera settings: `Builds/aurenfeld-parcels-before.png` and `Builds/aurenfeld-parcels-after.png`. The field-edge mask was refined after inspecting the first render. These captures validate the final outlook; the subsequent farm-access and camera-flight pass is documented below.
+
+Suggested commit: `style(courtyard): structure distant hills into cultivated fields` — add varied golden parcels, green boundaries and sparse illustrated tree/hedge groups. Uncommitted and unpushed; version remains `0.25.6`, next proposed actual commit `0.25.7`.
+
+
+### Farm access and lookout flight polish
+
+`CourtyardFarmApproach` adds a curved, ground-following lane from the western main path to the illustrated farm gate, a soft-edged trampled forecourt, an apple tree beside the farmhouse and six low fence plants. The same sampled centreline and forecourt ellipse exclude grain during `MeadowVegetation` mesh generation, keeping the access clear. The fixed farm illustration and chimney anchor are preserved. New meshes/materials are owned by the approach and released on unload; decoration adds no colliders or gameplay interactions.
+
+StartScene meadow LOD groups now use distance-based dither crossfading (22% of the near LOD range, 18% of the far range). The wind shader's forward/shadow passes and root-contact shader consume the same LOD fade, avoiding abrupt chunk/detail switches and lingering contacts. Other scenes retain their previous LOD mode. Geometry counts and the four-chunk sun-shadow budget remain unchanged by this refinement; the brief overlap renders both LODs, so standalone-build performance still needs measurement.
+
+Validation: four targeted PlayMode tests passed silently in 59.1 seconds (`Library/courtyard-farm-flight-tests.xml`): farm/road/reload, lookout cancellation/repeat/return/input restoration, sun-shadow budget/render comparison, and root contacts. The earlier intermediate capture attempt used an unsupported batchmode end-of-frame yield; the capture loop now advances with normal frame yields and the final run passes. Reviewed all ten actual Unity frames `Builds/lookout-flight-01.png` through `lookout-flight-10.png`, plus `Builds/aurenfeld-farm-detail.png`. No open terrain edge was visible in these sampled frames. This is a sampled visual review plus automated traversal, not a continuous-video or standalone-build benchmark. No new build was produced.
+
+Suggested coherent commits (still uncommitted/unpushed):
+- `style(courtyard): connect the distant farm to the field road` — approach mesh, matching grain exclusion, forecourt, orchard tree, fence plants and focused validation.
+- `fix(meadow): crossfade vegetation during the lookout flight` — LOD group settings, wind/contact shader fades and ten-stage camera review.
+
+Version remains `0.25.6`; next proposed actual commit is `0.25.7`, incremented only when committing.
+
+
+Pre-push validation: 12 additional targeted silent PlayMode checks passed in 149.8 seconds (`Library/courtyard-prepush-tests.xml`), covering garden access/watering, crossing, castle palette, plant wind, furniture contacts, local morning accents and figure shadows. Together with the four farm/flight/meadow checks, 16 targeted tests passed for this state. No full-suite or standalone-build claim is implied.
+
+
+Release reconciliation: the eight courtyard commits above include all previously local work through `0.26.4`. Historical uncommitted/proposed-version statements in the development notes are superseded by this release list. Targeted pre-push checks are recorded below.

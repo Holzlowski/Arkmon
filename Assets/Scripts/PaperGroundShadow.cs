@@ -12,6 +12,8 @@ public class PaperGroundShadow : MonoBehaviour
     private MaterialPropertyBlock properties;
     private Vector3 lastGroundPosition;
     private float groundHeight;
+    private Vector3 groundNormal = Vector3.up;
+    private bool hasGround;
     private bool groundKnown;
     private bool registered;
     private static Mesh mesh;
@@ -86,35 +88,41 @@ public class PaperGroundShadow : MonoBehaviour
         // Raycast only after actual movement; ignore this figure's own collider.
         if (!groundKnown || (anchor - lastGroundPosition).sqrMagnitude > .0001f)
         {
+            // Start near the feet: a tabletop or roof above the figure is not its floor.
+            const float clearance = .25f;
             float reach = Mathf.Max(3, illustration.bounds.size.y + 2);
             groundHeight = 0;
+            groundNormal = Vector3.up;
+            hasGround = false;
             float nearest = float.PositiveInfinity;
-            foreach (RaycastHit hit in Physics.RaycastAll(anchor + Vector3.up * reach,
+            foreach (RaycastHit hit in Physics.RaycastAll(anchor + Vector3.up * clearance,
                 Vector3.down, reach + 10, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (hit.transform == transform || hit.transform.IsChildOf(transform)
                     || transform.IsChildOf(hit.transform) || hit.normal.y < .9f) continue;
-                if (hit.distance < nearest) { nearest = hit.distance; groundHeight = hit.point.y; }
+                if (hit.distance < nearest) { nearest = hit.distance; groundHeight = hit.point.y; groundNormal = hit.normal; hasGround = true; }
             }
             // Decorative paving sits above the collider floor without its own collider.
             foreach (Renderer tile in paving)
             {
-                if (tile == null || !tile.enabled) continue;
+                if (!hasGround || tile == null || !tile.enabled || !tile.gameObject.activeInHierarchy) continue;
                 Bounds bounds = tile.bounds;
                 if (anchor.x >= bounds.min.x && anchor.x <= bounds.max.x
                     && anchor.z >= bounds.min.z && anchor.z <= bounds.max.z
                     && bounds.max.y >= groundHeight && bounds.max.y - groundHeight < .3f)
-                    groundHeight = bounds.max.y;
+                    { groundHeight = bounds.max.y; groundNormal = Vector3.up; }
             }
             groundKnown = true;
             lastGroundPosition = anchor;
         }
+        shadow.enabled = hasGround;
+        if (!hasGround) return;
         SpriteRenderer sprite = illustration as SpriteRenderer;
         float width = sprite != null && sprite.sprite != null
             ? sprite.sprite.bounds.size.x * Mathf.Abs(sprite.transform.lossyScale.x)
             : Mathf.Max(illustration.bounds.size.x, illustration.bounds.size.z);
         width = Mathf.Max(.01f, width * .72f);
-        shadow.transform.SetPositionAndRotation(new Vector3(anchor.x, groundHeight + .008f, anchor.z), Quaternion.identity);
+        shadow.transform.SetPositionAndRotation(new Vector3(anchor.x, groundHeight + .008f, anchor.z), Quaternion.FromToRotation(Vector3.up, groundNormal));
         // World dimensions are independent of the parent illustration's scaling.
         Vector3 parentScale = transform.lossyScale;
         shadow.transform.localScale = new Vector3(width / Mathf.Max(.001f, Mathf.Abs(parentScale.x)),
