@@ -27,20 +27,26 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
         DialogueBoxController.OnDialogueStarted-=BeginConversation;
         DialogueBoxController.OnLinePresented-=PresentLine;
         DialogueBoxController.OnDialogueEnded-=EndConversation;
+        if(foley!=null)foley.Stop();
         engaged=false;IsWorking=false;CurrentEmotion=DialogueEmotion.Neutral;
     }
     private void Start()
     {
         player=GameObject.FindWithTag("Player")?.transform;view=Camera.main;
-        idle=Resources.Load<Sprite>("Hannes/Idle");
-        work=new[]{Resources.Load<Sprite>("Hannes/WorkForward"),Resources.Load<Sprite>("Hannes/WorkMiddle"),
-            Resources.Load<Sprite>("Hannes/WorkBack"),Resources.Load<Sprite>("Hannes/WorkMiddle")};
+        idle=Resources.Load<Sprite>("Hannes/GroomIdle");
+        work=new[]{Resources.Load<Sprite>("Hannes/GroomForward"),Resources.Load<Sprite>("Hannes/GroomMiddle"),
+            Resources.Load<Sprite>("Hannes/GroomBack"),Resources.Load<Sprite>("Hannes/GroomMiddle")};
         paper=new GameObject("Hannes illustrated stablekeeper",typeof(SpriteRenderer)).transform;paper.SetParent(transform,false);
         illustration=paper.GetComponent<SpriteRenderer>();illustration.sprite=idle;
         PaperGroundShadow.Attach(gameObject,illustration);
         foley=gameObject.AddComponent<StableLocalFoley>();brush=Resources.Load<AudioClip>("Audio/Stable/saddle-brush");
     }
-    private void BeginConversation(){engaged=false;CurrentEmotion=DialogueEmotion.Neutral;}
+    private void BeginConversation()
+    {
+        engaged=false;CurrentEmotion=DialogueEmotion.Neutral;IsWorking=false;
+        if(foley!=null)foley.Stop();
+        if(illustration!=null)illustration.sprite=idle;
+    }
     private void PresentLine(string speaker,DialogueEmotion emotion)
     {
         if(speaker=="Hannes")
@@ -57,7 +63,7 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
         if(paper==null)return;
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
-        IsWorking=!engaged && !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning;
+        IsWorking=!engaged && !(DialogueBoxController.instance!=null && DialogueBoxController.instance.IsOpen) && !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning;
         if(IsWorking)
         {
             if(Time.time>=resumeAt)workTime+=Time.deltaTime;

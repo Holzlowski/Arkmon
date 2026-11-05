@@ -4,7 +4,7 @@ public static class HannesConversation
     {
         dialogue.ShowConversation(new[]{new DialogueSection{
             dialogue=new[]{
-                "Guten Morgen, Prinz Elian! Ich bürste nur noch diesen Sattel sauber.",
+                "Guten Morgen, Prinz Elian! Ich bürste ihr nur noch das Fell. Das gehört zu unserem Morgen dazu.",
                 "Die Pferde haben schon Heu und frisches Wasser. Bei ihnen beginnt der Tag immer zuerst.",
                 "Du schaust heute so ernst. Macht dir die Prüfung Sorgen?",
                 "Ein bisschen. Ich möchte meine Familie stolz machen.",

@@ -56,15 +56,16 @@ public class CourtyardStableTests
         Assert.That(poses.Count,Is.GreaterThanOrEqualTo(3),"The cleaning activity must use distinct working poses.");
         Assert.That(Vector3.Distance(origin,Hannes.transform.position),Is.LessThan(.001f));
         Capture("intro-courtyard-hannes");
+        yield return ReviewCare();
         var camera=Camera.main;var pos=camera.transform.position;var angle=camera.transform.rotation;
         camera.transform.position=house.position+new Vector3(0,7,-13.3f);
         camera.transform.LookAt(house.position+new Vector3(0,2.2f,-.8f));
         Capture("intro-courtyard-hannes-detail");
         var paper=Hannes.GetComponentInChildren<SpriteRenderer>();var savedSprite=paper.sprite;
-        foreach(string frame in new[]{"WorkForward","WorkMiddle","WorkBack"})
+        foreach(string frame in new[]{"GroomForward","GroomMiddle","GroomBack"})
         {
             paper.sprite=Resources.Load<Sprite>("Hannes/"+frame);
-            Capture("hannes-saddle-"+frame);
+            Capture("hannes-grooming-"+frame);
         }
         paper.sprite=savedSprite;
         camera.transform.SetPositionAndRotation(pos,angle);
@@ -78,7 +79,7 @@ public class CourtyardStableTests
         {
             yield return null;
             Assert.That((bool)P(Visual,"IsWorking"),Is.False,"Work must stay paused during Elian's reply too.");
-            Assert.That(Hannes.GetComponentInChildren<SpriteRenderer>().sprite,Is.SameAs(Resources.Load<Sprite>("Hannes/Idle")));
+            Assert.That(Hannes.GetComponentInChildren<SpriteRenderer>().sprite,Is.SameAs(Resources.Load<Sprite>("Hannes/GroomIdle")));
             Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo(emotion=="Elian"?"Elian":"Hannes"));
             if(emotion!="Elian")
             {
@@ -102,7 +103,7 @@ public class CourtyardStableTests
         LogAssert.NoUnexpectedReceived();
     }
 
-    [UnityTest] public IEnumerator HorsesStayInTheirStalls_AnimateWithPlantedFeet_AndSoundFadesWithPlayerDistance()
+    [UnityTest] public IEnumerator HorsesStayAtTheirAnchors_AnimateWithPlantedFeet_AndSoundFadesWithPlayerDistance()
     {
         yield return Load();
         var stable=GameObject.Find("Stable").transform;
@@ -128,7 +129,18 @@ public class CourtyardStableTests
                 if(before[h][i].y<.08f)
                     Assert.That(Vector3.Distance(before[h][i],after[i]),Is.LessThan(.0001f),"Hoof-level vertices must stay planted.");
         }
-        foreach(string resource in new[]{"horse-snort","saddle-brush","straw-rustle"})
+        // Exercise the rare hoof lift without waiting half a minute.
+        var first=horses[0];var horseType=first.GetType();
+        horseType.GetField("hoofAt",Hidden).SetValue(first,Time.time);
+        horseType.GetField("hoofPending",Hidden).SetValue(first,true);
+        yield return new WaitForSeconds(.2f);
+        var lifted=meshList[0].vertices;
+        Assert.That(lifted.Where((v,i)=>before[0][i].y<.08f && v.y-before[0][i].y>.005f).Any(),Is.True);
+        yield return new WaitForSeconds(.4f);
+        var settled=meshList[0].vertices;
+        for(int i=0;i<settled.Length;i++)
+            if(before[0][i].y<.08f)Assert.That(Vector3.Distance(before[0][i],settled[i]),Is.LessThan(.0001f));
+        foreach(string resource in new[]{"horse-snort","saddle-brush","straw-rustle","hoof-shift"})
             Assert.That(Resources.Load<AudioClip>("Audio/Stable/"+resource),Is.Not.Null);
         var camera=Camera.main;var position=camera.transform.position;var rotation=camera.transform.rotation;
         camera.transform.position=stable.position+new Vector3(0,6.6f,-12.8f);
@@ -141,4 +153,67 @@ public class CourtyardStableTests
         foreach(var horse in horses)
             Assert.That((float)P(horse.GetComponent(T("StableLocalFoley")),"Audibility"),Is.EqualTo(0));
         LogAssert.NoUnexpectedReceived();
-    }}
+    }
+
+    static IEnumerator ReviewCare()
+    {
+        var focus=(Behaviour)GameObject.FindWithTag("Player").GetComponent(T("PlayerInteractionFocus"));
+        bool showPrompt=focus.enabled;focus.enabled=false;
+        var camera=Camera.main;
+        var follow=(Behaviour)UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));
+        var brain=(Behaviour)camera.GetComponent(T("Cinemachine.CinemachineBrain"));
+        bool f=follow!=null && follow.enabled,b=brain!=null && brain.enabled;
+        var position=camera.transform.position;var rotation=camera.transform.rotation;float fov=camera.fieldOfView;
+        if(follow!=null)follow.enabled=false;if(brain!=null)brain.enabled=false;
+        var stable=GameObject.Find("Stable").transform;
+        camera.fieldOfView=40;camera.transform.rotation=Quaternion.Euler(25,0,0);
+        camera.transform.position=stable.position+new Vector3(.1f,1.35f,-2.3f)-camera.transform.forward*12;
+        yield return null;yield return null;
+        Capture("stable-care-overview");
+        var visual=(Behaviour)Visual;bool active=visual.enabled;visual.enabled=false;
+        var paper=Hannes.GetComponentInChildren<SpriteRenderer>();
+        foreach(var frame in new[]{"GroomForward","GroomMiddle","GroomBack"})
+        {
+            paper.sprite=Resources.Load<Sprite>("Hannes/"+frame);yield return null;
+            Capture("stable-care-"+frame);
+        }
+        visual.enabled=active;
+        camera.transform.SetPositionAndRotation(position,rotation);camera.fieldOfView=fov;
+        if(follow!=null)follow.enabled=f;if(brain!=null)brain.enabled=b;focus.enabled=showPrompt;
+    }
+
+    [UnityTest] public IEnumerator HorseGreetings_AreReachable_PauseGrooming_AndCannotHijackDialogue()
+    {
+        yield return Load();
+        var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
+        var greetings=UnityEngine.Object.FindObjectsByType(T("CourtyardHorseGreeting"),FindObjectsSortMode.None).Cast<Component>().ToArray();
+        Assert.That(greetings.Length,Is.EqualTo(2));
+        foreach(var point in greetings)
+        {
+            player.transform.position=point.transform.position+new Vector3(0,1,-.6f);body.position=player.transform.position;
+            Physics.SyncTransforms();yield return null;yield return null;
+            var blockers=Physics.OverlapBox(player.transform.position,new Vector3(.30f,.65f,.30f),Quaternion.identity,~0,QueryTriggerInteraction.Ignore)
+                .Where(c=>!c.transform.IsChildOf(player.transform) && c.transform!=player.transform).Select(c=>c.name).ToArray();
+            Assert.That(blockers,Is.Empty,"Greeting approach is free.");
+            var focus=player.GetComponent(T("PlayerInteractionFocus"));
+            Assert.That(Call(focus,"Refresh"),Is.SameAs(point),"The visible prompt selects this horse.");
+            Call(point,"InteractWithPlayer");yield return null;
+            Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo("Elian"));
+            Assert.That((bool)P(Visual,"IsWorking"),Is.False,"Hannes pauses during Elian's first line.");
+            var other=greetings.First(g=>g!=point);Call(other,"InteractWithPlayer");
+            Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo("Elian"));
+            yield return Advance();
+            Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo("Hannes"));
+            Assert.That(((Sprite)P(Dialogue,"ActivePortrait")).name,Is.EqualTo("Hannes-friendly"));
+            Capture(point.name.Contains("chestnut")?"stable-chestnut-greeting":"stable-dun-greeting");
+            Call(Dialogue,"CloseDialogue");yield return new WaitForSeconds(.6f);
+            Assert.That((bool)P(Visual,"IsWorking"),Is.True);
+        }
+        player.transform.position+=Vector3.back*20;body.position=player.transform.position;
+        Call(greetings[0],"InteractWithPlayer");
+        Assert.That((bool)P(Dialogue,"IsOpen"),Is.False,"Remote greetings are rejected.");
+        yield return Load();
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardHorseGreeting"),FindObjectsSortMode.None).Length,Is.EqualTo(2));
+        LogAssert.NoUnexpectedReceived();
+    }
+}

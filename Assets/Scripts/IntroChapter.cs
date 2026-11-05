@@ -22,6 +22,7 @@ public class IntroChapter : MonoBehaviour
         if (gameObject.scene.name == "StartScene")
         {
             CourtyardGarden.Install();
+            CourtyardStableCare.Install();
             CourtyardLife.Install();
             CourtyardGuard.Install();
         }

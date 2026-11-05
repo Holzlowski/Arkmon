@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-// Animate a single illustration continuously; the hooves and world anchor stay fixed.
+// Continuous paper motion; the world anchor stays fixed, with an occasional small hoof lift.
 public sealed class CourtyardHorse : MonoBehaviour
 {
     [SerializeField] private Sprite artwork;
@@ -14,9 +14,19 @@ public sealed class CourtyardHorse : MonoBehaviour
     private Vector2[] coordinates;
     private Camera view;
     private StableLocalFoley foley;
-    private AudioClip snort, rustle;
+    private AudioClip snort, rustle, hoof;
+    private float nextHoof, hoofAt=-100;
+    private bool hoofPending;
     private float nextSnort, nextRustle, snortAt=-100;
     private System.Random random;
+    private float greetingAt=-100;
+    public bool IsGreeting => Time.time-greetingAt<1.1f;
+    public void Greet()
+    {
+        if(Time.time-greetingAt<3)return;
+        greetingAt=Time.time;snortAt=Time.time;
+        if(foley!=null)foley.Play(snort,.18f,1.03f);
+    }
     public bool IsFeeding => feeding;
     public float MotionTime { get; private set; }
 
@@ -42,6 +52,7 @@ public sealed class CourtyardHorse : MonoBehaviour
         foley=gameObject.AddComponent<StableLocalFoley>();
         snort=Resources.Load<AudioClip>("Audio/Stable/horse-snort");
         rustle=Resources.Load<AudioClip>("Audio/Stable/straw-rustle");
+        hoof=Resources.Load<AudioClip>("Audio/Stable/hoof-shift");nextHoof=Time.time+(feeding?27:38);
         nextSnort=Time.time+(feeding?8:19);nextRustle=Time.time+(feeding?4:12);
     }
 
@@ -81,6 +92,17 @@ public sealed class CourtyardHorse : MonoBehaviour
         float tailWindow=Pulse(t,7.8f,1.8f);
         float tail=Mathf.Sin(t*5.2f)*tailWindow*.075f;
         float ear=Mathf.Sin(t*15)*Pulse(t+2.7f,9.4f,.48f)*.018f;
+        ear+=Mathf.Sin(Mathf.Clamp01((Time.time-greetingAt)/1.1f)*Mathf.PI)*.025f;
+        if(Time.time>=nextHoof)
+        {
+            hoofAt=Time.time;hoofPending=true;nextHoof=Time.time+31+(float)random.NextDouble()*18;
+        }
+        float hoofPhase=Mathf.Clamp01((Time.time-hoofAt)/.48f);
+        float hoofLift=Mathf.Sin(hoofPhase*Mathf.PI)*.035f;
+        if(hoofPending && hoofPhase>=1)
+        {
+            hoofPending=false;foley.Play(hoof,.12f,feeding?.97f:1.02f);
+        }
         float snortMotion=Mathf.Sin(Mathf.Clamp01((Time.time-snortAt)/.65f)*Mathf.PI)*.015f;
         for(int i=0;i<rest.Length;i++)
         {
@@ -93,6 +115,7 @@ public sealed class CourtyardHorse : MonoBehaviour
             float earWeight=Smooth(.73f,.87f,p.x)*Smooth(earHeight,earHeight+.13f,p.y);
             v.y+=breath*torso+(neck+snortMotion)*neckWeight;
             v.x+=tail*tailWeight+ear*earWeight;
+            v.y+=hoofLift*Smooth(.58f,.68f,p.x)*(1-Smooth(.72f,.82f,p.x))*(1-Smooth(.18f,.32f,p.y));
             animated[i]=v;
         }
         mesh.vertices=animated;mesh.RecalculateBounds();

@@ -142,7 +142,17 @@
       },
       "note": "Recorded cloth foley reused as gentle brushing and rustling; these are not horse vocal recordings."
     },
-    "runtime": "StableLocalFoley uses player distance rather than the high camera, fades out at 14 units, ducks during dialogue, mutes at transitions and never plays in batch mode."
+    "runtime": "StableLocalFoley uses player distance rather than the high camera, fades out at 14 units, ducks during dialogue, mutes at transitions and never plays in batch mode.",
+    "hoof": {
+      "author": "Joseph SARDIN",
+      "title": "Horse steps on concrete",
+      "source": "https://bigsoundbank.com/horse-steps-on-concrete-s0496.html",
+      "download": "https://bigsoundbank.com/UPLOAD/bwf-en/0496.wav",
+      "license": "CC0",
+      "runtime_file": "Assets/Resources/Audio/Stable/hoof-shift.wav",
+      "recipe": "tools/render_stable_hoof.py",
+      "processing": "Recorded hoof foley, not a synthesized sound. Isolated 0.245-second attack from 1.9506s, DC removal, 4ms fade-in, 45ms fade-out, peak 0.48, mono PCM16 48kHz. Quiet playback when an occasional small hoof lift settles."
+    }
   },
   "workshop_planing": {
     "author": "DeqstersLab",

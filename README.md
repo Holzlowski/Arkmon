@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.23.2`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.24.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1421,3 +1421,4 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 ### Courtyard refinement releases
 
 - **0.23.2** — Add source illustrations, reproducible sprite importers and shared courtyard materials/shaders. Record generation provenance and preserve existing character artwork.
+- **0.24.0** — Dress the grooming area, align Hannes to the horse, and add reachable individual horse greetings. Pause grooming during dialogue and add a documented recorded hoof cue. Existing silent stable-care tests cover interaction, reload and clearance.
