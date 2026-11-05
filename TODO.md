@@ -140,6 +140,15 @@ Fertig, wenn die Außenwelt aus den vorgesehenen Kamerawinkeln Weite und Tiefe z
 - [ ] Windstärke gemeinsam in der normalen Spielkamera abnehmen und Leistung im Windows-Build prüfen; zusätzliche Partikel und Entfernungstrübung nur gezielt ergänzen.
 - [ ] Schärfe, Flimmern an Konturen und Texturen sowie Transparenzdarstellung in Spielansicht und Windows-Build prüfen.
 
+### Partikeleffekte: gezielt und im gezeichneten Stil
+
+- [ ] Wenige windgetragene Pollen/Samen am westlichen Mauerdurchbruch und am nahen Feldrand erproben; Fernsicht und Dialoge frei halten.
+- [ ] Kleine Blaetter nur gelegentlich bei Baumgruppen und am Garten bewegen; Windrichtung mit Getreide abstimmen.
+- [ ] Staub und kleine Strohpartikel bei passenden Bodenaktionen pruefen; Effekte an echte Schritte beziehungsweise Arbeit koppeln.
+- [ ] Wasserpartikel beim Giessen und am Bach auf den Papierstil, Bodenkontakt und erkennbare Spritzer abstimmen.
+- [ ] Beschwoerungsfunken, Feuer und Umgebungsstaub auf gemeinsame Formensprache und zurueckhaltende Helligkeit pruefen; vorhandene Effekte zuerst sichten.
+- [ ] Sichtweite, Partikelobergrenzen, Szenenwechsel und Bildrate im Testbuild pruefen; keine flaechenweite Partikeldecke.
+
 ## 6. Kamera, Bewegung und Interaktionen
 
 - [ ] Kameraführung, Grenzen und Bildausschnitt über den gesamten Hof prüfen; Elian und wichtige Orte bleiben erkennbar.
@@ -213,9 +222,27 @@ Die drei offenen Namen nicht eigenständig als feststehende Namen vergeben. Aus 
 
 - [x] Westliche Aurenfeld-Aussicht auf goldene Getreidefelder umstellen: gruene Grasflaechen ersetzen, Boden/Fernhuegel und Wegsaeume in Stroh-/Ockertoenen abstimmen; Unity-Bild und gezielten Test pruefen.
 
-- [x] Ferne goldene Huegel als bewirtschaftete Ackerflaechen strukturieren: schmale gruene Feldraender, unterschiedliche Erntetoene und drei kleine Baum-/Heckengruppen; gleiche Aussichtskamera vorher/nachher verglichen.
+- [x] Ferne goldene Huegel als bewirtschaftete Ackerflaechen strukturieren: unterschiedliche Erntetoene und drei kleine Baum-/Heckengruppen; gleiche Aussichtskamera vorher/nachher verglichen. Gruene Trennstreifen auf Wunsch anschliessend entfernt, damit der Hintergrund golden bleibt.
 - [x] Bauernhof mit geschwungener Wegabzweigung bis zum Hoftor und kleinem Vorplatz verbinden; Obstbaum und Zaunbewuchs ergaenzen, Getreide auf der Zufahrt aussparen.
 - [x] Gesamte aktuelle Aussichtsfahrt automatisiert durchlaufen und zehn Zwischenbilder auf Gelaendekanten pruefen; harte Vegetationswechsel durch gemeinsame LOD-Ueberblendung fuer Halme, Schatten und Bodenkontakte ersetzen. Abbruch/Rueckkehr/Neustart geprueft.
+
+- [x] Getreidegruppen verdichten, Halme variieren und kleine Stoppelflaechen ergaenzen.
+- [x] Fernfelder mit unregelmaessigen Grenzen und dezenter Erntestruktur gestalten; Hintergrund golden belassen.
+- [x] Vordergrund und Fernhuegel mit auslaufenden Getreidesilhouetten verbinden.
+- [x] Feldweg mit zwei dezenten Fahrspuren, wechselnder Breite und unregelmaessigen Raendern verfeinern.
+- [x] Gezeichneten Bauernhof mit vorgelagerten Zaeunen, gestaffeltem Bewuchs und weichen Bodenkontakten verankern; vier gezielte stille Unity-Tests bestanden.
+- [ ] Neue Getreidedichte und Fernuebergaenge im Testbuild auf Bildrate und Bildruhe pruefen.
+
+- [x] Verstreutes Buschwerk in den goldenen Feldern reduzieren, vorhandene Baeume zu unregelmaessigen Gruppen ordnen und olivgolden abstimmen; kraeftigeres Gruen am Bauernhof erhalten. Zwei stille Unity-Tests und Vergleichsbilder geprueft.
+
+- [x] Fernfelder mit gebogenen Erntestrukturen und weiter reichenden Getreidesilhouetten verfeinern.
+- [x] Fernweg durch echte Kuppen und Senken teilweise verdecken und wieder sichtbar machen.
+- [x] Kleine abgeerntete Arbeitsflaeche neben der Scheune mit drei gebundenen Heubuendeln und Bodenkontakten ergaenzen.
+- [x] Westliche Felder mit warmem Direktlicht, kuehlerer Schattenfuellung und ruhigen Windwellen abstimmen.
+- [x] Drei entfernte Vogelsilhouetten und leises, nur waehrend der Aussicht eingeblendetes Feldrascheln integrieren; stille Rueckkehr-/Neuladepruefung bestanden.
+- [ ] Lautstaerke und Klang des neuen Feldraschelns beim normalen Spielen gemeinsam abstimmen; bisherige Tests bewusst stumm.
+
+- [x] Unnatuerliche Fernhuegel korrigieren: flachere unregelmaessige Formen, goldene Oberflaechen, kurze dichte Halmausblendung und kein dunkler paralleler Fernstreifen; Vergleichsansicht und stiller Test geprueft.
 
 ## Danach: Ankunft und weiterer Introverlauf
 

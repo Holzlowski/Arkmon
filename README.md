@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.27.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.27.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1880,7 +1880,7 @@ Suggested commit: `style(courtyard): turn western meadows into golden grain fiel
 
 ### Cultivated distant landscape
 
-`CourtyardDistantFields` now divides the remote hills into broad, gently bent crop parcels with alternating straw/ochre shades and narrow green meadow boundaries. The pattern fades in behind the near grain fields to avoid a hard seam. Ground resolution is 113 by 201 vertices (22,713 total), sufficient to resolve the soft boundaries without per-field objects or distant grass simulation. Three small clusters reuse the illustrated oak/birch and undergrowth sprites; their bases follow the terrain, a clearance excludes the winding road, and all decoration remains collider-free. Owned meshes and materials are released on teardown.
+`CourtyardDistantFields` now divides the remote hills into broad, gently bent crop parcels with alternating straw/ochre shades. The initially added green boundary strips have been removed in the local follow-up so the background stays golden. The pattern fades in behind the near grain fields to avoid a hard seam. Ground resolution is 113 by 201 vertices (22,713 total), sufficient to resolve the soft boundaries without per-field objects or distant grass simulation. Three small clusters reuse the illustrated oak/birch and undergrowth sprites; their bases follow the terrain, a clearance excludes the winding road, and all decoration remains collider-free. Owned meshes and materials are released on teardown.
 
 Validation: the focused silent landscape PlayMode check passed (1/1, 11.7 seconds; `Library/courtyard-field-parcels-tests.xml`), covering distant road visibility and scene reload. Actual Unity views with identical camera settings: `Builds/aurenfeld-parcels-before.png` and `Builds/aurenfeld-parcels-after.png`. The field-edge mask was refined after inspecting the first render. These captures validate the final outlook; the subsequent farm-access and camera-flight pass is documented below.
 
@@ -1907,6 +1907,76 @@ Pre-push validation: 12 additional targeted silent PlayMode checks passed in 149
 
 Release reconciliation: the eight courtyard commits above include all previously local work through `0.26.4`. Historical uncommitted/proposed-version statements in the development notes are superseded by this release list. Targeted pre-push checks are recorded below.
 
+
+### Golden parcels without green boundary strips (local follow-up)
+
+After pushing the courtyard series through `0.26.4`, removed the green field-boundary color mask in `CourtyardDistantFields`. The gently bent parcels remain distinguishable by their harvest tones; the brown road, farm access, trees and hedge groups remain unchanged. The focused silent landscape test passed (1/1, 11.7 seconds; `Library/courtyard-golden-parcels-tests.xml`), and `Builds/aurenfeld-golden-parcels-no-green-strips.png` was visually reviewed.
+
+Suggested commit: `style(landscape): remove green strips from distant fields` — retain the golden parcel pattern without green dividing lines. This follow-up is not committed or pushed; current version is `0.26.4`, next proposed version `0.26.5`.
+
+
+### Natural golden fields (local follow-up)
+
+Five visual refinements are implemented for the western panorama:
+
+- `MeadowVegetation` groups mature grain with varied blade heights and occasional short stubble. Existing root contacts, shared wind and the four nearby shadow-chunk limit remain active.
+- `CourtyardDistantFields` uses jittered field centres and softly bent harvest-tone boundaries instead of regular rectangular parcels. No green dividing strips are reintroduced. The ground shader adds restrained, distance-filtered grain texture.
+- Four combined, non-shadow-casting grain meshes taper the vegetation into the distant terrain. These share the existing field wind material and are destroyed on teardown; no per-stem objects or distant colliders are created.
+- `CourtyardFieldMargins` and the farm approach add opt-in double cart ruts, irregular road edges and varying path width. The courtyard forecourt retains its separate surface treatment.
+- `CourtyardFarmApproach` adds two short physical fence sections, staggered plants and soft terrain-following ground contacts beneath the painted farm, tree and fences. The farmhouse itself remains a distant illustration.
+
+Validation: four targeted silent Unity PlayMode tests passed in 61.85 seconds (`CourtyardDistantFarmTests`, `CourtyardLookoutTests`, `CourtyardMeadowStyleTests`). Reviewed the final panorama, farm detail and intermediate flight captures. Captures and logs remain under ignored Builds/Library folders. This pass increases nearby grain geometry; no new exported-build performance benchmark was performed.
+
+Suggested commit grouping: `style(meadow): group grain and blend distant fields`; `style(landscape): add worn cart tracks`; `style(farm): add layered fences and ground contacts`. These changes remain local, without commits or a push. Current version remains `0.26.4`; the next actual commit proposes `0.26.5`, with one version increment per subsequent commit.
+
+
+### Raised western mountain range (local follow-up)
+
+`CourtyardLookoutLandscape` raises the mountain layer's composition height from 50 to 62 before the existing 2.65 depth scaling. Width, height, material and cloud placement remain unchanged. More of the connected mountain slopes are visible above the rolling fields without stretching the painting. Reviewed the identical final camera before/after; the existing silent distant-farm landscape test passed (1/1, 12.94 seconds). Capture: `Builds/aurenfeld-raised-mountains.png`.
+
+Suggested commit: `style(landscape): reveal the western mountain range` — lift the painted backdrop above the foreground hills. No commit or push; version remains `0.26.4`, next proposed actual commit `0.26.5` (pending earlier local changes).
+
+
+### Restrained western field greenery (local follow-up)
+
+`CourtyardFieldMargins` replaces scattered broadleaf/fern dressing along both field seams with six small road-shoulder patches (at most three low plants each). Grove undergrowth drops from seven large plants per tree to three short olive/straw-tinted plants. The twelve existing western trees remain in four groups with unequal depth/spacing; the two farther groups move outward to leave larger open grain areas and a clear view of the farm. `CourtyardTreeStyle` applies an olive/gold tint only to western field trees, with a gentler tint on farther groups. `CourtyardDistantFields` reduces each distant hedge from seven tall plants to three low plants. The farm orchard and courtyard plant palettes retain their existing colours.
+
+Validation: the existing silent distant-farm and lookout PlayMode tests passed (2/2, 38.97 seconds), including tree shadow linkage, scene reload and lookout return. Reviewed the final panorama and a mid-flight capture. Preview: `Builds/aurenfeld-grouped-groves.png`. No new tree species, textures or per-frame behaviours were added.
+
+Suggested commit: `style(landscape): group trees and restrain field greenery` — sparse roadside herbs, grouped existing trees and a coordinated olive/gold palette. Still uncommitted/unpushed; version stays `0.26.4`, next proposed actual commit `0.26.5`, taking earlier pending changes into account.
+
+
+### Scenic field finish: five local changes
+
+1. **Distant grain:** `Meadow.shader` adds derivative-filtered contour strokes and irregular grain flecks. Six combined wind-driven silhouette bands now extend from x=-178 to approximately -346, replacing the previous four shorter bands. Their density and height taper; they add no individual GameObjects, colliders or distant shadow casters.
+2. **Road and terrain:** `CourtyardDistantFields.Surface` supplies two broad crests and a hollow. Road ribbons and distant scenery sample this same surface, so terrain naturally hides and reveals the route. Far stubble verges taper in width to avoid broad parallel stripes.
+3. **Farm work area:** `CourtyardFarmApproach` adds a small straw-covered harvested patch beside the barn, three tied hay bundles reusing `StableCare/Hay`, and soft ground contacts. `MeadowVegetation` uses the same harvest mask to replace full-height wheat with short stubble. The scenic farm remains non-interactive and non-colliding.
+4. **Morning light:** west-field ground and grain shaders separate warm direct light from cooler shadow fill. Effects are gated by the existing field properties and western coordinates, leaving the room/arena palettes alone. The directional-light transform, scene exposure and global fog are unchanged.
+5. **Quiet atmosphere:** the existing broad wind sweep receives slightly stronger western bending and restrained tip highlights. `CourtyardFieldAtmosphere`, installed by `IntroChapter`, owns three distant wing silhouettes, three small dynamic meshes and one quiet stereo loop. Flocks cross for 18 seconds within a 44-second cycle, with small offsets. The loop fades in only during the lookout, follows `SoundManager.effectsVolume`, fades out on return/transition, and stops on disable or unload. Batch mode never starts playback. Scene-owned meshes/materials are destroyed on teardown.
+
+The 24-second loop is a Foley approximation made from the existing Kenney CC0 cloth4/straw-rustle recording, not a new outdoor recording. `tools/render_field_rustle.py` reproduces it with numpy/soundfile; `docs/audio-sources.json` records the source and processing. No oscillators or generated noise are used. Its PCM peak is 0.42, RMS 0.0551, and the loop endpoint samples match. Import normalization is disabled. The in-game mix still needs listening during normal play; validation here remained silent.
+
+Validation: all four targeted PlayMode checks passed (66.46 seconds), covering scenery/reload, lookout lifecycle and grass/tree shadow rendering. After the final far-field visual adjustment, the two affected farm/lookout tests passed again (41.34 seconds). The lookout regression additionally verifies ambient fade-in/out, batch silence and disposal after scene reload. Final panorama, farm detail, distant road and a mid-flight frame were reviewed. `Builds/aurenfeld-scenic-finish.png` is the final panorama. This is targeted Editor validation, not a full-suite or exported-build performance claim.
+
+Suggested coherent commits (with their relevant documentation/tests):
+- `style(landscape): texture distant grain fields` — filtered harvest texture and six tapering grain bands.
+- `style(landscape): reveal roads across rolling crests` — terrain relief and narrower distant verges.
+- `style(farm): add a harvested work area` — shared stubble mask, tied hay and contacts.
+- `style(lighting): separate warm field light from cool shadows` — scoped ground/grain lighting.
+- `feat(landscape): add quiet lookout ambience` — broad wind highlights, birds, recorded-Foley loop, source notes and lifecycle checks.
+
+No commits or push were performed. Version remains `0.26.4`; the next actual commit is proposed as `0.26.5` for pending visual work, with the later new ambience feature suitable for `0.27.0`. Increment metadata once per actual commit when the pending series is requested.
+
+
+### Softer distant hills (visual correction, local)
+
+The first scenic finish made the distant terrain read as dark parallel embankments with scattered bright stems. `CourtyardDistantFields.Surface` now uses lower, wider, spatially bounded crests and a shallow hollow instead of long ridge walls. Parcel colours move closer to ripe grain and blend over a wider transition. The grain transition returns to four denser short bands, with height fading to zero before x=-246; the six long sparse bands described above are superseded. `Meadow.shader` replaces distant regular ribbing with subdued clustered texture. The secondary near-field margin fades out before x=-210 so it no longer appears as a second dark road. The actual road remains visible in the final panorama.
+
+Validation: existing silent farm/landscape test passed after the final change (1/1, 13.64 seconds), including visible distant-road pixels, scene reload and supported shaders. Reviewed final panorama and the diagnostic closer terrain view. Capture: `Builds/aurenfeld-soft-hills.png`. This remains distant scenery; the close diagnostic view is not a playable location.
+
+Suggested commit: `style(landscape): soften distant golden hills` — lower irregular hill shapes, coherent golden surfaces and a cleaner vegetation transition. No commit/push; current version `0.26.4`, next proposed actual visual-fix commit `0.26.5`, accounting for other pending work.
+
+
 ## Scenic courtyard releases
 
 - **0.26.5** — `style(landscape): refine golden fields and distant hills`. Group ripe grain with varied heights and short stubble. Replace green parcel separators with golden tones, soften distant hill shapes and blend a dense short grain transition into a filtered painted surface. Keep road and scenery on the same sampled terrain. Validation: targeted landscape captures and silent PlayMode scenery/reload checks passed.
@@ -1915,3 +1985,6 @@ Release reconciliation: the eight courtyard commits above include all previously
 - **0.26.8** — `style(landscape): reveal the western mountain range`. Raise the mountain backdrop composition from 50 to 62 while preserving its proportions and cloud placement. Reveal connected slopes above the fields. Validation: identical-camera comparison and silent scenery test passed.
 - **0.26.9** — `style(meadow): refine golden wind waves and cool shadows`. Strengthen broad western wind sweeps slightly and add restrained tip highlights. Separate warm field lighting from cooler shadow fill while sharing deformation between forward and shadow passes. Validation: targeted near-shadow and root-contact rendering checks passed; no exported-build performance claim.
 - **0.27.0** — `feat(landscape): add quiet lookout ambience`. Add three occasional distant bird silhouettes and a quiet recorded-Foley field loop limited to the lookout. Respect effects volume, fade on return and dispose scene-owned resources. Document the existing CC0 source and reproducible audio recipe. Validation: ambient fade, batch silence, reload and lookout return checks passed; playback remained silent during tests.
+- **0.27.1** — `docs(courtyard): record scenic review and particle tasks`. Reconcile the implemented scenic pass, targeted validation and remaining prototype limits. Add scoped particle tasks for pollen, leaves, action dust, water and existing magical effects, including visibility and performance checks. Captures, logs and the design PDF remain outside these commits.
+
+Release reconciliation: all preceding local/proposed-version notes through the softer hills correction are now included through 0.27.1. Historical six-band and tall-ridge descriptions were superseded by the four-band soft-hill correction. Particle work is planned separately in TODO.md.
