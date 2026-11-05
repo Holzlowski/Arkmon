@@ -46,6 +46,8 @@ public class IntroChapter : MonoBehaviour
             CourtyardGateStyle.Install();
             CourtyardBridgeThreshold.Install();
             CourtyardEastFieldStyle.Install();
+            CourtyardTreeStyle.Install();
+            CourtyardTreeShadows.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
