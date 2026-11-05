@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.4`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.5`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1427,3 +1427,4 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 - **0.25.2** — Add collider-free illustrated ground cover and soft path edges between work areas. Bring the courtyard camera from 30 to 25 and use linear distance fog. Include shader, interaction and reload checks.
 - **0.25.3** — Apply a common painted masonry palette to the castle, residence and outer walls. Add recessed windows and an arched throne-hall portal while preserving entrance inspection and collision.
 - **0.25.4** — Replace the surface cellar door with a sealed underground approach, walkable ramp, stairs and retaining masonry. Place prompts at the actual lower landing and cover descent, return and reload in PlayMode tests.
+- **0.25.5** — Bring the eastern cottage into the shared illustrated palette, add facade details and a grounded approach. Preserve access beside the cellar and verify decoration does not block exploration.

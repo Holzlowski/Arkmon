@@ -32,6 +32,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardCastleEntranceStyle.Install();
             CourtyardCastleFacadeStyle.Install();
             CourtyardCellarEntranceStyle.Install();
+            CourtyardEastCottageStyle.Install();
             CourtyardGuard.Install();
             CourtyardVergePolish.Install();
         }
