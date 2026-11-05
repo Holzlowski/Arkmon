@@ -20,8 +20,12 @@ public class CourtyardDistantFarmTests
         Assert.That(farm.GetComponentsInChildren<Renderer>().All(r => r.sharedMaterial != null && r.sharedMaterial.shader.isSupported), Is.True);
         var approach=GameObject.Find("Farm access and orchard");Assert.That(approach,Is.Not.Null);
         Assert.That(approach.GetComponentsInChildren<Collider>(),Is.Empty);
-        Assert.That(approach.GetComponentsInChildren<MeshFilter>().All(f=>f.sharedMesh.normals.All(n=>n.y>0)),Is.True);
+        Assert.That(approach.GetComponentsInChildren<MeshFilter>().Where(f=>!f.name.StartsWith("Farm depth fence")).All(f=>f.sharedMesh.normals.All(n=>n.y>0)),Is.True);
         Assert.That(GameObject.Find("Farm apple tree"),Is.Not.Null);
+        Assert.That(GameObject.Find("Farm harvested work patch"),Is.Not.Null);
+        Assert.That(approach.GetComponentsInChildren<SpriteRenderer>().Count(r=>r.name=="Farm tied hay bundle"),Is.EqualTo(3));
+        Assert.That(approach.GetComponentsInChildren<MeshRenderer>().Count(r=>r.name=="Farm depth fence post"),Is.EqualTo(6));
+        Assert.That(GameObject.Find("Farm building foot contact"),Is.Not.Null);
         var art = farm.transform.Find("Painted Aurenfeld farm").GetComponent<SpriteRenderer>(); Assert.That(art, Is.Not.Null);
         Assert.That(art.sprite, Is.EqualTo(Resources.Load<Sprite>("CourtyardStyle/Farm/AurenfeldFarm")));
         var road = GameObject.Find("Western winding field path").GetComponent<MeshFilter>().sharedMesh;
@@ -42,6 +46,8 @@ public class CourtyardDistantFarmTests
         Capture("aurenfeld-clear-distance");
         Capture("aurenfeld-golden-fields");
         Capture("aurenfeld-parcels-after");
+        Capture("aurenfeld-golden-parcels-no-green-strips");
+        Capture("aurenfeld-natural-fields");
         // Visual diagnostic: compare the old strong distance veil at this identical camera.
         float fogStart=RenderSettings.fogStartDistance,fogEnd=RenderSettings.fogEndDistance;
         try

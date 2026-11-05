@@ -12,7 +12,13 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
     static readonly Vector3[] Lane = MakeLane();
     readonly List<Mesh> meshes = new List<Mesh>();
     readonly List<Transform> plants = new List<Transform>();
-    Material earth, paper;
+    Material earth, paper, contact, fenceWood, straw;
+    public static Vector3 HarvestCenter => Gate + Right*15 + Front*2;
+    public static bool IsHarvested(Vector3 point)
+    {
+        var delta=point-HarvestCenter;
+        return Mathf.Pow(Vector3.Dot(delta,Right)/6.4f,2)+Mathf.Pow(Vector3.Dot(delta,Front)/4.8f,2)<1;
+    }
     MeadowVegetation meadow;
 
     static Vector3[] MakeLane()
@@ -49,12 +55,42 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         var style=root.AddComponent<CourtyardFarmApproach>();style.meadow=meadow;
         style.earth=new Material(source){name="Farm worn earth"};
         style.earth.SetColor("_BaseColor",new Color(.81f,.78f,.66f,.96f));
-        style.earth.renderQueue=2972;
+        style.earth.renderQueue=2972;style.earth.SetFloat("_WheelRuts",1);
+        style.contact=new Material(Resources.Load<Shader>("CourtyardFarmContact")){name="Farm soft ground contacts"};
         style.paper=new Material(Shader.Find("Sprites/Default")){name="Farm orchard illustrations"};
-        style.BuildLane();style.BuildForecourt();
+        style.BuildLane();style.BuildForecourt();style.BuildHarvestYard();
+        style.Contact(Gate-Front*.1f,9.4f,1.7f,"Farm building foot contact");
+        style.Contact(Gate-Right*10.8f-Front*1.6f,2.8f,1.6f,"Orchard root contact");
+        style.Fence(Gate-Right*9+Front*.5f,Gate-Right*10.4f+Front*5.2f);
+        style.Fence(Gate+Right*8.6f+Front*.6f,Gate+Right*10.1f+Front*4.4f);
         style.Plant("Trees/Apple",Gate-Right*10.8f-Front*1.6f,7.6f,"Farm apple tree");
         foreach(float side in new[]{-8.4f,-6.6f,-4.5f,4.7f,6.3f,8.1f})
-            style.Plant("Mixed",Gate+Right*side+Front*.25f,.55f+Mathf.Abs(side)*.045f,"Farm fence growth");
+            style.Plant("Mixed",Gate+Right*side+Front*(.5f+Mathf.Abs(side)*.11f),.55f+Mathf.Abs(side)*.045f,"Farm fence growth");
+    }
+    void BuildHarvestYard()
+    {
+        straw=new Material(Resources.Load<Material>("CourtyardStyle/Stable straw earth")){name="Farm harvested straw ground"};
+        straw.SetColor("_BaseColor",new Color(.92f,.79f,.50f,.92f));
+        straw.SetFloat("_WheelRuts",0);straw.SetFloat("_FogStrength",1);
+        const int sides=48,rings=8;
+        var v=new List<Vector3>();var c=new List<Color>();var t=new List<int>();
+        for(int ring=0;ring<=rings;ring++)for(int side=0;side<sides;side++)
+        {
+            float a=side*Mathf.PI*2/sides,r=ring/(float)rings;
+            v.Add(Ground(HarvestCenter+(Right*Mathf.Cos(a)*6.8f+Front*Mathf.Sin(a)*5.2f)*r*(1+.035f*Mathf.Sin(a*5))));
+            c.Add(new Color(r,0,0,1));if(ring==0)continue;
+            int n=ring*sides+side,previous=n-sides,next=(side+1)%sides;
+            t.AddRange(new[]{previous,ring*sides+next,n,previous,(ring-1)*sides+next,ring*sides+next});
+        }
+        MeshPart("Farm harvested work patch",v,c,t,straw);
+        var hay=Resources.Load<Sprite>("StableCare/Hay");
+        if(hay==null)return;
+        for(int i=0;i<3;i++)
+        {
+            var p=HarvestCenter+Right*(i-1)*2.3f+Front*(i==1?-.9f:1.3f);
+            Contact(p,1.2f,.75f,"Farm hay contact");
+            Illustration(hay,p,1.05f+i*.13f,"Farm tied hay bundle");
+        }
     }
     Vector3 Ground(Vector3 p) => meadow.SurfacePoint(p)+Vector3.up*.12f;
     void BuildLane()
@@ -69,7 +105,7 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
             for(int col=0;col<columns;col++)
             {
                 float across=col/(float)(columns-1)*2-1;
-                v.Add(Ground(Lane[row]+side*across*width));c.Add(new Color(Mathf.Abs(across),0,0,1));
+                v.Add(Ground(Lane[row]+side*across*width));c.Add(new Color(Mathf.Abs(across),(across+1)*.5f,0,1));
                 if(row==0||col==0)continue;
                 int n=v.Count-1,previous=n-columns;
                 t.AddRange(new[]{previous-1,n-1,previous,previous,n-1,n});
@@ -92,7 +128,7 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         }
         MeshPart("Farm trampled forecourt",v,c,t);
     }
-    void MeshPart(string label,List<Vector3> v,List<Color> c,List<int> t)
+    void MeshPart(string label,List<Vector3> v,List<Color> c,List<int> t,Material overrideMaterial=null)
     {
         for(int i=0;i<v.Count;i++)v[i]=transform.InverseTransformPoint(v[i]);
         // Keep every face upward regardless of the centreline direction.
@@ -103,11 +139,58 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         mesh.RecalculateNormals();mesh.RecalculateBounds();meshes.Add(mesh);
         var go=new GameObject(label,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(transform,false);
         go.GetComponent<MeshFilter>().sharedMesh=mesh;
-        var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=earth;renderer.shadowCastingMode=ShadowCastingMode.Off;
+        var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=overrideMaterial!=null?overrideMaterial:earth;renderer.shadowCastingMode=ShadowCastingMode.Off;
+        if(label=="Farm trampled forecourt"){var block=new MaterialPropertyBlock();block.SetFloat("_WheelRuts",0);renderer.SetPropertyBlock(block);}
+    }
+    void Contact(Vector3 center,float width,float depth,string label)
+    {
+        const int sides=40,rings=6;
+        var v=new List<Vector3>();var c=new List<Color>();var t=new List<int>();
+        for(int ring=0;ring<=rings;ring++)for(int side=0;side<sides;side++)
+        {
+            float a=side*Mathf.PI*2/sides,r=ring/(float)rings;
+            v.Add(Ground(center+(Right*Mathf.Cos(a)*width+Front*Mathf.Sin(a)*depth)*r)+Vector3.up*.008f);
+            c.Add(new Color(r,0,0,1));if(ring==0)continue;
+            int n=ring*sides+side,prev=n-sides,next=(side+1)%sides;
+            t.AddRange(new[]{prev,ring*sides+next,n,prev,(ring-1)*sides+next,ring*sides+next});
+        }
+        MeshPart(label,v,c,t,contact);
+    }
+    void Fence(Vector3 from,Vector3 to)
+    {
+        if(fenceWood==null)
+        {
+            var source=Resources.Load<Material>("CourtyardStyle/Stable oak");if(source==null)return;
+            fenceWood=new Material(source){name="Sunlit orchard fence wood"};
+            fenceWood.SetColor("_BaseColor",new Color(.95f,.86f,.69f));
+        }
+        var wood=fenceWood;
+        for(int i=0;i<3;i++)
+        {
+            var at=meadow.SurfacePoint(Vector3.Lerp(from,to,i*.5f));
+            Beam(at,at+Vector3.up*1.15f,.16f,wood,"Farm depth fence post");
+            if(i==0)continue;
+            var previous=meadow.SurfacePoint(Vector3.Lerp(from,to,(i-1)*.5f));
+            foreach(float h in new[]{.40f,.88f})Beam(previous+Vector3.up*h,at+Vector3.up*h,.12f,wood,"Farm depth fence rail");
+        }
+        Contact((from+to)*.5f,1,3,"Farm fence contact");
+    }
+    void Beam(Vector3 a,Vector3 b,float width,Material wood,string label)
+    {
+        var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=label;
+        Destroy(go.GetComponent<Collider>());go.transform.SetParent(transform,false);
+        go.transform.position=(a+b)*.5f;go.transform.rotation=Quaternion.FromToRotation(Vector3.up,b-a);
+        go.transform.localScale=new Vector3(width,Vector3.Distance(a,b),width);
+        var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=wood;
+        var block=new MaterialPropertyBlock();block.SetVector("_ObjectScale",go.transform.lossyScale);renderer.SetPropertyBlock(block);
     }
     void Plant(string resource,Vector3 p,float height,string label)
     {
         var sprite=Resources.Load<Sprite>("CourtyardStyle/"+resource);if(sprite==null)return;
+        Illustration(sprite,p,height,label);
+    }
+    void Illustration(Sprite sprite,Vector3 p,float height,string label)
+    {
         var go=new GameObject(label,typeof(SpriteRenderer));go.transform.SetParent(transform,false);
         float scale=height/sprite.bounds.size.y;
         go.transform.position=meadow.SurfacePoint(p)+Vector3.up*(.02f-sprite.bounds.min.y*scale);
@@ -126,6 +209,6 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
     void OnDestroy()
     {
         foreach(var mesh in meshes)if(mesh!=null)Destroy(mesh);
-        if(earth!=null)Destroy(earth);if(paper!=null)Destroy(paper);
+        if(straw!=null)Destroy(straw);if(fenceWood!=null)Destroy(fenceWood);if(contact!=null)Destroy(contact);if(earth!=null)Destroy(earth);if(paper!=null)Destroy(paper);
     }
 }

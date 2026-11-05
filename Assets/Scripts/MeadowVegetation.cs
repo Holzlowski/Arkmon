@@ -193,6 +193,7 @@ public class MeadowVegetation : MonoBehaviour
                     float tint = Mathf.Lerp(.88f, 1.06f, detail); tip *= tint; root *= tint;
                     height *= Mathf.Lerp(.80f, 1.25f, fullness) * Mathf.Lerp(.85f, 1.12f, detail);
                 }
+                if (westernGrain && CourtyardFarmApproach.IsHarvested(world)) stubble = true;
                 if (stubble) height = .13f + detail * .19f;
                 int bladeCount = illustrated ? (detailed ? 3 + Mathf.RoundToInt(fullness * 2) : 3) : 3;
                 if (westernGrain) bladeCount = stubble ? 2 : (detailed ? 5 + Mathf.RoundToInt(fullness * 2) : 3);

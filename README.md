@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.6`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.7`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1911,3 +1911,4 @@ Release reconciliation: the eight courtyard commits above include all previously
 
 - **0.26.5** — `style(landscape): refine golden fields and distant hills`. Group ripe grain with varied heights and short stubble. Replace green parcel separators with golden tones, soften distant hill shapes and blend a dense short grain transition into a filtered painted surface. Keep road and scenery on the same sampled terrain. Validation: targeted landscape captures and silent PlayMode scenery/reload checks passed.
 - **0.26.6** — `style(landscape): refine field margins and grove placement`. Add opt-in cart ruts and varied road width. Reduce scattered bushes to low roadside herbs, group the existing trees and apply a scoped olive/gold palette. Fade the secondary margin before the distant hills so it no longer reads as a second road. Validation: final panorama and existing tree-shadow/lookout checks passed.
+- **0.26.7** — `style(farm): add a harvested work area and ground contacts`. Ground the painted farm with short fences, staggered plants and soft contacts. Add a harvested patch with three existing illustrated hay bundles and share its stubble mask with vegetation. Extend scenery/reload checks for the additions. Validation: final silent farm test passed in 13.64 seconds; close and panoramic captures reviewed.
