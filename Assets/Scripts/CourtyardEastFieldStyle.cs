@@ -28,9 +28,9 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
         float t = Mathf.Clamp01((x - 54) / 96);
         return -1 + 22 * t * t + Mathf.Sin(t * Mathf.PI * 2) * 3 * t;
     }
-    static float HalfWidth(float x) => Mathf.Lerp(2.05f, 1.15f, Mathf.InverseLerp(51, 130, x));
+    static float HalfWidth(float x) => Mathf.Lerp(2.25f, 1.15f, Mathf.InverseLerp(51, 130, x));
     public static bool IsBarePath(Vector3 p) => p.x >= 50.5f && p.x < 146
-        && Mathf.Abs(p.z - PathZ(p.x)) < HalfWidth(p.x) + .25f;
+        && (Mathf.Abs(p.z - PathZ(p.x)) < HalfWidth(p.x) + .25f || CourtyardGateForecourt.IsBareGround(p));
 
     internal static void Install()
     {
@@ -57,29 +57,29 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
             if (renderer.name == "Curved courtyard path" && renderer.bounds.min.x > 49)
             { retiredPaths.Add(renderer); renderer.enabled = false; }
         var earth = new Material(source) { name = "Eastern field earth path" };
-        materials.Add(earth); earth.SetColor("_BaseColor", new Color(.68f, .74f, .77f, .92f));
-        var verge = new Material(source) { name = "Eastern field grass verge" };
+        materials.Add(earth); earth.SetFloat("_WheelRuts",.28f); earth.SetColor("_BaseColor", new Color(.68f, .74f, .77f, .92f));
+        var verge = new Material(source) { name = "Eastern field dry verge" };
         materials.Add(verge); verge.SetTexture("_BaseMap", Texture2D.whiteTexture);
-        verge.SetColor("_BaseColor", new Color(.35f, .45f, .18f, .88f));
+        verge.SetColor("_BaseColor", new Color(.53f, .46f, .25f, .30f));
         // Transparent ribbons share a footprint; draw earth after the wider grass fringe.
         earth.renderQueue = verge.renderQueue + 1;
-        Ribbon("Eastern grassy path margin", verge, 1.7f, .026f);
+        Ribbon("Eastern dry path margin", verge, .85f, .026f);
         Ribbon("Eastern winding field path", earth, 0, .045f);
         var random = new System.Random(619);
-        for (int i = 0; i < 115; i++)
+        for (int i = 0; i < 70; i++)
         {
             float x = 53 + (float)random.NextDouble() * 59;
             float side = i % 2 == 0 ? 1 : -1;
             float z = PathZ(x) + side * (HalfWidth(x) + 1.1f + (float)random.NextDouble() * 6);
-            if (Mathf.PerlinNoise(x * .24f, z * .3f) < .39f) continue;
-            var sprite = Resources.Load<Sprite>("CourtyardStyle/" + (i % 13 == 0 ? "Flowers" : i % 4 == 0 ? "Fern" : "Mixed"));
+            if (Mathf.PerlinNoise(x * .24f, z * .3f) < .48f || CourtyardGateForecourt.IsBareGround(new Vector3(x,0,z))) continue;
+            var sprite = Resources.Load<Sprite>("CourtyardStyle/" + (i % 9 == 0 ? "Pebbles" : i % 4 == 0 ? "Mixed" : "Grass"));
             if (sprite == null) continue;
             var plant = new GameObject("Eastern path planting", typeof(SpriteRenderer));
             plant.transform.SetParent(transform, false);
             plant.transform.position = Ground(new Vector3(x, 0, z)) + Vector3.up * .025f;
-            plant.transform.localScale = Vector3.one * ((.35f + (float)random.NextDouble() * .45f) / sprite.bounds.size.y);
+            plant.transform.localScale = Vector3.one * ((.23f + (float)random.NextDouble() * .25f) / sprite.bounds.size.y);
             var renderer = plant.GetComponent<SpriteRenderer>(); renderer.sprite = sprite;
-            renderer.flipX = i % 2 == 0; renderer.color = new Color(.96f, 1, .85f);
+            renderer.flipX = i % 2 == 0; renderer.color = Color.Lerp(new Color(.88f,.94f,.73f),new Color(1,.84f,.48f),Mathf.InverseLerp(53,66,x));
             plants.Add(plant.transform);
         }
     }
@@ -96,7 +96,7 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
                 float side = col / (float)(columns - 1) * 2 - 1;
                 float width = (HalfWidth(x) + extraWidth) * (1 + .07f * Mathf.Sin(x * .63f));
                 vertices.Add(Ground(new Vector3(x, 0, PathZ(x) + side * width)) + Vector3.up * offset);
-                colors.Add(new Color(Mathf.Max(Mathf.Abs(side), fade), 0, 0, 1));
+                colors.Add(new Color(Mathf.Max(Mathf.Abs(side), fade), (side+1)*.5f, 0, 1));
                 if (row == 0 || col == 0) continue;
                 int n = vertices.Count - 1, previous = n - columns;
                 triangles.AddRange(new[] { previous - 1, previous, n - 1, previous, n, n - 1 });

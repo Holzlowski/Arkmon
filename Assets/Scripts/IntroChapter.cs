@@ -49,6 +49,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardGateStyle.Install();
             CourtyardBridgeThreshold.Install();
             CourtyardEastFieldStyle.Install();
+            CourtyardGateForecourt.Install();
             CourtyardWallFootStyle.Install();
             CourtyardWestGroundStyle.Install();
             CourtyardStableGardenStyle.Install();
