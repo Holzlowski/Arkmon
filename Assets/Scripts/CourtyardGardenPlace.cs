@@ -5,7 +5,9 @@ using UnityEngine;
 // Local, reversible scene dressing. Keep the authored fountain available for a later courtyard square.
 public sealed class CourtyardGardenPlace : MonoBehaviour
 {
-    Mesh groundMesh;
+    readonly List<Mesh> groundMeshes=new List<Mesh>();
+    readonly List<Renderer> hiddenHerbs=new List<Renderer>();
+    Material trailEarth;
     // Run before ground cover, crop visuals and interaction anchors sample the authored beds.
     internal static void PrepareBeds()
     {
@@ -38,7 +40,10 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
         // Keep the seed bench beside Marta, outside the new first bed and the house approach.
         foreach (var part in FindObjectsByType<Transform>(FindObjectsSortMode.None))
             if (part.name == "Garden bench seat" || part.name == "Garden bench stone foot")
-                part.position += new Vector3(-1.5f, 0, -.3f);
+                part.position += new Vector3(-2.35f, 0, -.3f);
+        var cottage=GameObject.Find("Garden cottage").transform;
+        foreach(var part in cottage.GetComponentsInChildren<Transform>())
+            if(part.name=="Garden potting table" || part.name=="Marta work spot")part.position+=Vector3.left*.45f;
         Physics.SyncTransforms();
     }
     internal static void Install()
@@ -76,7 +81,24 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
             var scale=step.localScale;scale.x*=.78f;scale.z*=.9f;step.localScale=scale;
         }
         Physics.SyncTransforms();
-        place.WorkingGround(house.TransformPoint(new Vector3(2.6f,0,-4.15f)));
+        place.WorkingGround(house.TransformPoint(new Vector3(2.15f,0,-4.15f)));
+        var earth=Resources.Load<Material>("CourtyardStyle/Stable earth");
+        if(earth!=null)
+        {
+            place.trailEarth=new Material(earth){name="Subtle worn garden paths"};
+            place.trailEarth.SetColor("_BaseColor",new Color(.62f,.70f,.79f,.63f));
+        }
+        foreach(var herb in house.GetComponentsInChildren<SpriteRenderer>())
+            if(herb.name=="Illustrated garden herbs" && herb.transform.position.x>3.85f && herb.transform.position.z<10)
+            {place.hiddenHerbs.Add(herb);herb.enabled=false;}
+        // One narrow spine serves every bed; short branches mark the actual watering positions.
+        place.Trail("Garden worn spine",new Vector3(3.95f,0,.35f),new Vector3(4.35f,0,4.9f),new Vector3(4.55f,0,9.6f),.53f);
+        foreach(var bed in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name=="Garden soil bed"))
+        {
+            float z=bed.transform.position.z-2.05f;
+            place.Trail("Garden watering approach",new Vector3(4.35f,0,z),new Vector3(5.2f,0,z-.10f),new Vector3(bed.transform.position.x,0,z),.48f);
+        }
+        place.Trail("Garden worktable connection",new Vector3(3.1f,0,5.35f),new Vector3(3.7f,0,5.05f),new Vector3(4.45f,0,5.15f),.48f);
     }
     static Vector3 Ground(Vector3 at)
     {
@@ -100,12 +122,41 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
             int prev=(ring-1)*sides+side,cur=ring*sides+side,next=(side+1)%sides;
             triangles.AddRange(new[]{prev,ring*sides+next,cur,prev,(ring-1)*sides+next,ring*sides+next});
         }
-        groundMesh=new Mesh{name="Marta worn work ground"};groundMesh.SetVertices(vertices);groundMesh.SetColors(colors);
+        var groundMesh=new Mesh{name="Marta worn work ground"};groundMeshes.Add(groundMesh);groundMesh.SetVertices(vertices);groundMesh.SetColors(colors);
         groundMesh.SetTriangles(triangles,0);groundMesh.RecalculateNormals();groundMesh.RecalculateBounds();
         var patch=new GameObject("Marta worn work ground",typeof(MeshFilter),typeof(MeshRenderer));patch.transform.SetParent(transform,false);
         patch.GetComponent<MeshFilter>().sharedMesh=groundMesh;
         var renderer=patch.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;
         renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
     }
-    void OnDestroy(){if(groundMesh!=null)Destroy(groundMesh);}
+    void Trail(string name,Vector3 a,Vector3 b,Vector3 c,float width)
+    {
+        var material=trailEarth;if(material==null)return;
+        const int rows=40,across=9;var vertices=new List<Vector3>();var colors=new List<Color>();var triangles=new List<int>();
+        for(int row=0;row<=rows;row++)
+        {
+            float t=row/(float)rows,u=1-t;var center=u*u*a+2*u*t*b+t*t*c;
+            var tangent=(2*u*(b-a)+2*t*(c-b)).normalized;var side=new Vector3(tangent.z,0,-tangent.x);
+            for(int col=0;col<across;col++)
+            {
+                float x=col/4f-1;
+                var at=Ground(center+side*x*width*(.55f+.45f*Mathf.Sin(t*Mathf.PI))*(1+.10f*Mathf.Sin(row*.49f)))+Vector3.up*.052f;
+                vertices.Add(transform.InverseTransformPoint(at));
+                colors.Add(new Color(Mathf.Max(Mathf.Abs(x),Mathf.Max(1-row/9f,1-(rows-row)/9f)),0,0,1));
+                if(row==0 || col==0)continue;int n=vertices.Count-1;
+                triangles.AddRange(new[]{n-across-1,n-1,n-across,n-across,n-1,n});
+            }
+        }
+        var mesh=new Mesh{name=name};mesh.SetVertices(vertices);mesh.SetColors(colors);mesh.SetTriangles(triangles,0);
+        mesh.RecalculateNormals();mesh.RecalculateBounds();groundMeshes.Add(mesh);
+        var go=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(transform,false);
+        go.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;
+        renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+    }
+    void OnDestroy()
+    {
+        foreach(var r in hiddenHerbs)if(r!=null)r.enabled=true;
+        foreach(var mesh in groundMeshes)if(mesh!=null)Destroy(mesh);
+        if(trailEarth!=null)Destroy(trailEarth);
+    }
 }

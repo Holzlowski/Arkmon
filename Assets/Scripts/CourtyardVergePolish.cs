@@ -15,6 +15,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     readonly List<(Vector3 center,float width)> roadSections=new List<(Vector3,float)>();
     readonly List<(Vector3 at,Vector3 outside)> edges=new List<(Vector3,Vector3)>();
     IInteractableAsPlayer[] interactions;
+    readonly List<Renderer> retiredGrowth=new List<Renderer>();
     float left,right;
     Bounds[] gardenBeds=new Bounds[0];
     CourtyardGuardRoute patrol;
@@ -27,7 +28,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         if(workshop==null || stable==null)return;
         var root=new GameObject("Illustrated workshop and stable verges");
         var polish=root.AddComponent<CourtyardVergePolish>();
-        polish.left=workshop.position.x-4.5f;polish.right=stable.position.x+4.8f;
+        polish.left=-42.5f;polish.right=stable.position.x+4.8f;
         polish.gardenBeds=FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
             .Where(r=>r.name=="Garden soil bed").OrderBy(r=>r.transform.position.x).Select(r=>r.bounds).ToArray();
         if(polish.gardenBeds.Length>0)polish.right=Mathf.Max(polish.right,polish.gardenBeds.Max(b=>b.max.x)+1.2f);
@@ -35,7 +36,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         polish.interactions=FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IInteractableAsPlayer>().ToArray();
         Physics.SyncTransforms();
         polish.patrol=Resources.Load<CourtyardGuardRoute>("Guard/Patrol");
-        polish.Paths();polish.PlantEdges();
+        polish.Paths();polish.RetirePrimitiveVerge();polish.PlantEdges();
         polish.Foundation(workshop,3.35f,-2.15f);
         polish.Foundation(stable,3.85f,-2.1f);
         polish.ConnectWorkplaces(workshop,stable);
@@ -71,6 +72,27 @@ public sealed class CourtyardVergePolish : MonoBehaviour
                         vertices[first+side]=filter.transform.InverseTransformPoint(Ground(filter.transform.TransformPoint(point))-Vector3.up*.005f);
                     }
                 }
+            bool castleSpur=Vector2.Distance(new Vector2(start.x,start.z),new Vector2(11,-1))<.2f;
+            bool mainRoad=vertices.Length/Across>250;
+            if(castleSpur || mainRoad)
+                for(int row=0;row<vertices.Length/Across;row++)
+                {
+                    int first=row*Across;var center=(vertices[first]+vertices[first+Across-1])*.5f;
+                    var across=(vertices[first+Across-1]-vertices[first]).normalized;
+                    float t=row/(float)(vertices.Length/Across-1);
+                    var world=filter.transform.TransformPoint(center);
+                    // The castle spur originally stops several metres short of the threshold.
+                    float extension=castleSpur?4.0f*Mathf.Pow(t,3):0;
+                    float weight=mainRoad?Mathf.Clamp01((world.x+3)/4)*Mathf.Clamp01((17-world.x)/4):1;
+                    float width=1+weight*(.10f*Mathf.Sin(row*.16f)+.05f*Mathf.Sin(row*.39f));
+                    float drift=weight*.14f*Mathf.Sin(row*.21f);
+                    for(int side=0;side<Across;side++)
+                    {
+                        var point=center+(vertices[first+side]-center)*width+across*drift;
+                        world=filter.transform.TransformPoint(point)+Vector3.forward*extension;
+                        vertices[first+side]=filter.transform.InverseTransformPoint(Ground(world)-Vector3.up*.005f);
+                    }
+                }
             for(int row=0;row<vertices.Length/Across;row++)
             {
                 Vector3 a=filter.transform.TransformPoint(vertices[row*Across]);
@@ -103,8 +125,22 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             filter.sharedMesh=copy;renderer.sharedMaterials=new[]{source,paint};
         }
     }
+    void RetirePrimitiveVerge()
+    {
+        // Superseded by the illustrated clusters along the actual curved road, not the old straight row.
+        foreach(var r in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+            if(r.enabled && (r.name=="Path edge grass" || r.name=="Path edge pebble"))
+            {retiredGrowth.Add(r);r.enabled=false;}
+    }
     bool Clear(Vector3 point)
     {
+        // Keep the entire western stair flight and Ida's stone doorstep visibly free.
+        if(point.x> -37.5f && point.x< -30.5f && point.z>3.7f)return false;
+        if(point.x> -24.4f && point.x< -22.4f && point.z> -1.8f && point.z<2.6f)return false;
+        // Worn kitchen-garden spine and the three watering approaches remain open.
+        if(point.x>3.7f && point.x<4.95f && point.z>-.1f && point.z<10.1f)return false;
+        foreach(var bed in gardenBeds)
+            if(point.x>3.7f && point.x<bed.center.x+.5f && Mathf.Abs(point.z-(bed.center.z-2.05f))<.65f)return false;
         // Preserve the newly opened castle approach and the guard's complete patrol corridor.
         if(point.x>10.55f && point.x<13.45f && point.z>-.8f && point.z<12.3f)return false;
         if(patrol!=null)
@@ -137,11 +173,11 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         string[] kinds={"Grass","Clover","Mixed","Grass","Fern","Clover","Flowers","Pebbles"};
         foreach(var edge in edges)
         {
-            if(edge.at.x<left+1 || edge.at.x>right-1 || random.NextDouble()<.24)continue;
+            if(edge.at.x<left+1 || edge.at.x>right-1 || random.NextDouble()<.46)continue;
             var at=edge.at+edge.outside*(.08f+(float)random.NextDouble()*.30f);
             if(!Clear(at))continue;
             Prop(kinds[random.Next(kinds.Length)],Ground(at),1.05f+(float)random.NextDouble()*.45f,random.Next(2)==0);
-            int companions=random.Next(1,4);
+            int companions=random.Next(1,3);
             for(int i=0;i<companions;i++)
             {
                 var nearby=at+edge.outside*(.22f+i*.16f)+new Vector3((i-1)*.28f,0,.1f);
@@ -266,10 +302,10 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     }
     static Vector3 Ground(Vector3 point)
     {
-        float y=point.y;
+        float y=float.NegativeInfinity;
         foreach(var hit in Physics.RaycastAll(point+Vector3.up*20,Vector3.down,40,~0,QueryTriggerInteraction.Ignore))
             if(hit.collider.CompareTag("Ground"))y=Mathf.Max(y,hit.point.y);
-        point.y=y+.035f;return point;
+        point.y=(float.IsNegativeInfinity(y)?point.y:y)+.035f;return point;
     }
     Transform Prop(string resource,Vector3 at,float scale,bool flip)
     {
@@ -286,6 +322,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     }
     void OnDestroy()
     {
+        foreach(var r in retiredGrowth)if(r!=null)r.enabled=true;
         foreach(var saved in originals)
         {
             if(saved.filter!=null)saved.filter.sharedMesh=saved.mesh;
