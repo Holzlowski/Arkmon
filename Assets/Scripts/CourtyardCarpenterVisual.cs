@@ -46,7 +46,12 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
         illustration=paper.GetComponent<SpriteRenderer>();illustration.sprite=idle;
         PaperGroundShadow.Attach(gameObject,illustration);
     }
-    private void BeginConversation(){engaged=false;CurrentEmotion=DialogueEmotion.Neutral;}
+    private void BeginConversation()
+    {
+        engaged=false;IsWorking=false;CurrentEmotion=DialogueEmotion.Neutral;
+        ResetWork();
+        if(illustration!=null)illustration.sprite=idle;
+    }
     private void PresentLine(string speaker,DialogueEmotion emotion)
     {
         if(speaker=="Ida")
@@ -59,8 +64,7 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
     }
     private void EndConversation()
     {
-        // Other residents' conversations must not restart Ida's work cycle.
-        if(!engaged)return;
+        // Also settle after an observation cancelled during Elian's first line.
         engaged=false;CurrentEmotion=DialogueEmotion.Neutral;reactionTime=1;
         ResetWork();
     }
@@ -74,7 +78,8 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
         if(paper==null)return;
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
-        IsWorking=!engaged && !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning;
+        IsWorking=!engaged && !(DialogueBoxController.instance?.IsOpen??false) &&
+            !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning;
         if(IsWorking)
         {
             if(Time.time>=resumeAt)workTime+=Time.deltaTime;

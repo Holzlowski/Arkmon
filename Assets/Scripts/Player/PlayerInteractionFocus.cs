@@ -54,6 +54,7 @@ public class PlayerInteractionFocus : MonoBehaviour
         if (item is CourtyardGarden garden) return garden.Label;
         if (item is CourtyardLife life) return life.Label;
         if (item is CourtyardHorseGreeting horse) return horse.Label;
+        if (item is CourtyardWorkshopWorkpiece workpiece) return workpiece.Label;
         if (item is CourtyardGuard guard) return guard.Label;
         if (item is DemoInteractable target)
             switch (target.kind)

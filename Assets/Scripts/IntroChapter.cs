@@ -23,6 +23,7 @@ public class IntroChapter : MonoBehaviour
         {
             CourtyardGarden.Install();
             CourtyardStableCare.Install();
+            CourtyardWorkshopDetails.Install();
             CourtyardLife.Install();
             CourtyardGuard.Install();
         }
