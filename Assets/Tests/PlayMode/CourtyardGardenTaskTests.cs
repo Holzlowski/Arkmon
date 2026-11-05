@@ -44,6 +44,12 @@ public class CourtyardGardenTaskTests
         while((bool)State("IsBusy") && Time.realtimeSinceStartup<deadline)yield return null;
         Assert.That(State("IsBusy"),Is.False,"The garden animation must finish and release exploration.");
     }
+    static float PlantWetness(Component bed)
+    {
+        var soil=(Renderer)bed.GetType().GetField("soil",Hidden).GetValue(bed);
+        var art=soil.GetComponent(T("CourtyardVegetableBed"));
+        return (float)art.GetType().GetProperty("Wetness").GetValue(art);
+    }
     static Color SoilColor(Component bed)
     {
         var soil=(Renderer)bed.GetType().GetField("soil",Hidden).GetValue(bed);
@@ -63,12 +69,18 @@ public class CourtyardGardenTaskTests
         Assert.That(State("WateredCount"),Is.EqualTo(0));
         yield return new WaitForSeconds(.7f);Capture("garden-watering-in-progress");
         Assert.That(SoilColor(bed).r,Is.LessThan(dry.r));
+        Assert.That(PlantWetness(bed),Is.GreaterThan(0));
+        var water=GameObject.Find("Garden watering drops");
+        Assert.That(water.GetComponentsInChildren<LineRenderer>().Any(l=>l.enabled),Is.True,"Water flows only during the tilted pour.");
+        Assert.That(water.GetComponentsInChildren<Collider>(),Is.Empty,"Visual water cannot block the player.");
+        yield return CloseUp("garden-water-polished",new Vector3(9,.8f,3.6f),8);
         Assert.That(UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Count(t=>t.name=="Garden watering drops"),Is.EqualTo(1));
         Assert.That(bed.GetComponent<AudioSource>().clip,Is.Not.Null);
         Call(bed,"CancelWatering");yield return null;
         Assert.That(State("WateredCount"),Is.EqualTo(0));Assert.That(State("IsWatering"),Is.False);
         Assert.That(T("DemoOpening").GetProperty("IsPresenting").GetValue(null),Is.False);
         Assert.That(SoilColor(bed),Is.EqualTo(dry));
+        Assert.That(PlantWetness(bed),Is.Zero);
         Assert.That(GameObject.Find("Garden watering drops"),Is.Null);
         Assert.That(bed.GetComponent<AudioSource>(),Is.Null);
         Call(bed,"InteractWithPlayer");yield return WaitForPour();
@@ -80,6 +92,8 @@ public class CourtyardGardenTaskTests
         Assert.That(State("IsWatering"),Is.False);Assert.That(State("HasCan"),Is.True);
         Assert.That(State("WateredCount"),Is.EqualTo(1));
         Assert.That(SoilColor(Beds[0]).r,Is.LessThan(SoilColor(Beds[1]).r));
+        Assert.That(PlantWetness(Beds[0]),Is.EqualTo(1).Within(.001f));
+        Assert.That(PlantWetness(Beds[1]),Is.Zero);
         Assert.That(GameObject.Find("Garden watering drops"),Is.Null);
         yield return Load();
         Assert.That(State("WateredCount"),Is.EqualTo(0));Assert.That(State("HasCan"),Is.False);
@@ -109,13 +123,15 @@ public class CourtyardGardenTaskTests
             Assert.That(State("HasCan"),Is.False);Assert.That(State("ObjectiveText"),Is.Null);
             Assert.That(Vector3.Distance(GameObject.Find("Watering can model").transform.position,Station.transform.position),Is.LessThan(.7f));
             Capture("garden-task-complete");
+            yield return CloseUp("marta-garden-workspace",new Vector3(4.2f,1.2f,5.5f),9);
+            yield return CloseUp("marta-garden-beds",new Vector3(13.4f,.5f,4.0f),20);
             Call(marta,"InteractWithPlayer");yield return new WaitForSeconds(.1f);
             Assert.That(Dialogue.GetType().GetProperty("ActiveEmotion").GetValue(Dialogue).ToString(),Is.EqualTo("Friendly"));Close();
         }
         finally{evt.RemoveEventHandler(null,handler);}
         LogAssert.NoUnexpectedReceived();
     }
-    static IEnumerator CloseUp(string name)
+    static IEnumerator CloseUp(string name,Vector3? focus=null,float distance=5)
     {
         var camera=Camera.main;var brain=(Behaviour)camera.GetComponent(T("Cinemachine.CinemachineBrain"));
         var courtyard=(Behaviour)UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));
@@ -124,7 +140,7 @@ public class CourtyardGardenTaskTests
         if(courtyard!=null)courtyard.enabled=false;
         float fov=camera.fieldOfView;
         if(brain!=null)brain.enabled=false;
-        camera.transform.position=Player.transform.position+Vector3.up*.1f-camera.transform.forward*5;
+        camera.transform.position=(focus ?? (Player.transform.position+Vector3.up*.1f))-camera.transform.forward*distance;
         camera.fieldOfView=35;
         yield return null;yield return null;Capture(name);
         camera.transform.position=position;camera.fieldOfView=fov;

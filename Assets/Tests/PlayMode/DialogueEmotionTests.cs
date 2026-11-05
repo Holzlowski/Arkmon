@@ -51,6 +51,8 @@ public class DialogueEmotionTests
         Assert.That(P(Dialogue,"ActiveEmotion").ToString(),Is.EqualTo(emotion));
         Assert.That(Portrait.name,Is.EqualTo("Marta-"+emotion.ToLowerInvariant()));
         Assert.That(P(Visual,"CurrentEmotion").ToString(),Is.EqualTo(emotion));
+        var drawing=GameObject.Find("Marta illustrated gardener").transform;
+        Assert.That(drawing.localScale.y,Is.InRange(.98f,1.02f),"Expression changes must preserve Marta's original height.");
     }
 
     [UnityTest] public IEnumerator Conversation_ChangesSpeakerAndAllFourExpressions_ThenClears()
@@ -103,6 +105,14 @@ public class DialogueEmotionTests
             foreach(var bed in beds){CourtyardGardenTaskTests.MoveTo(bed);Call(bed,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();}
             Assert.That(completions,Is.EqualTo(1));
             Assert.That(P(Visual,"CurrentEmotion").ToString(),Is.EqualTo("Friendly"));
+            var player=GameObject.FindWithTag("Player");
+            player.transform.position=Marta.transform.position+new Vector3(-1,1,-1);
+            player.GetComponent<Rigidbody>().position=player.transform.position;
+            yield return new WaitForSeconds(.15f);
+            var gardener=GameObject.Find("Marta illustrated gardener").GetComponent<SpriteRenderer>();
+            Assert.That(gardener.flipX,Is.False,"Marta first admires the vegetables to her right, even with Elian on her left.");
+            yield return new WaitForSeconds(.45f);
+            Assert.That(gardener.flipX,Is.True,"After admiring the garden Marta turns back to Elian.");
             Call(beds[0],"InteractWithPlayer");Close();
             Assert.That(completions,Is.EqualTo(1),"Inspecting watered beds must not replay completion.");
             yield return new WaitForSeconds(.85f);

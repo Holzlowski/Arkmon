@@ -4,11 +4,15 @@ using UnityEngine;
 // All reactions share the dialogue's per-line emotion and leave the work spot fixed.
 public sealed class CourtyardGardenerVisual : MonoBehaviour
 {
+    // Keep the corrected source aspect and boot anchor through every reaction.
+    private static readonly Vector3 SilhouetteScale=Vector3.one;
     private Transform paper, player;
     private SpriteRenderer illustration;
     private Camera view;
     private bool speaking;
     private float reactionTime=1;
+    private float gardenLookTime;
+    private Vector3 gardenLookTarget;
     public DialogueEmotion CurrentEmotion { get; private set; }
 
     private void OnEnable()
@@ -29,6 +33,7 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
         view=Camera.main;player=GameObject.FindWithTag("Player")?.transform;
         paper=new GameObject("Marta illustrated gardener",typeof(SpriteRenderer)).transform;
         paper.SetParent(transform,false);
+        paper.localScale=SilhouetteScale;
         illustration=paper.GetComponent<SpriteRenderer>();
         illustration.sprite=Resources.Load<Sprite>("Marta/Gardener");
         PaperGroundShadow.Attach(gameObject,illustration);
@@ -36,17 +41,27 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     private void OnLine(string speaker,DialogueEmotion emotion)
     {
         if(speaker!="Marta"){if(speaking)ResetReaction();return;}
+        gardenLookTime=0;
         speaking=true;CurrentEmotion=emotion;reactionTime=0;FacePlayer(true);
     }
     private void OnDialogueEnded(){if(speaking)ResetReaction();}
     private void OnGardenCompleted()
     {
-        CurrentEmotion=DialogueEmotion.Friendly;reactionTime=0;FacePlayer(true);
+        CurrentEmotion=DialogueEmotion.Friendly;reactionTime=0;
+        var beds=FindObjectsByType<CourtyardVegetableBed>(FindObjectsSortMode.None);
+        if(beds.Length>0)
+        {
+            gardenLookTarget=Vector3.zero;
+            foreach(var bed in beds)gardenLookTarget+=bed.transform.position;
+            gardenLookTarget/=beds.Length;gardenLookTime=.48f;
+        }
+        else FacePlayer(true);
     }
     private void ResetReaction()
     {
+        gardenLookTime=0;
         speaking=false;CurrentEmotion=DialogueEmotion.Neutral;reactionTime=1;
-        if(paper!=null){paper.localPosition=Vector3.zero;paper.localScale=Vector3.one;}
+        if(paper!=null){paper.localPosition=Vector3.zero;paper.localScale=SilhouetteScale;}
     }
     private void FacePlayer(bool force)
     {
@@ -60,14 +75,20 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
         if(paper==null)return;
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
-        FacePlayer(speaking);
+        if(gardenLookTime>0 && !speaking)
+        {
+            gardenLookTime-=Time.deltaTime;
+            illustration.flipX=gardenLookTarget.x<transform.position.x;
+            if(gardenLookTime<=0)FacePlayer(true);
+        }
+        else FacePlayer(speaking);
         reactionTime+=Time.deltaTime;
         float wave=Mathf.Sin(Mathf.Clamp01(reactionTime/.75f)*Mathf.PI);
         float breath=Mathf.Sin(Time.time*1.8f)*.006f;
-        float nod=CurrentEmotion==DialogueEmotion.Worried?.025f:.014f;
+        float nod=CurrentEmotion==DialogueEmotion.Worried?.006f:.003f;
         float lift=CurrentEmotion==DialogueEmotion.Friendly?.065f:
             CurrentEmotion==DialogueEmotion.Surprised?.035f:0;
-        paper.localScale=new Vector3(1-breath*.4f,1+breath-wave*nod,1);
+        paper.localScale=Vector3.Scale(SilhouetteScale,new Vector3(1-breath*.2f,1+breath-wave*nod,1));
         paper.localPosition=Vector3.up*(wave*lift);
         if(!speaking && reactionTime>=.75f)CurrentEmotion=DialogueEmotion.Neutral;
     }

@@ -14,7 +14,6 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     Renderer soil;
     GameObject canModel, dropsRoot;
     SpriteRenderer canSprite;
-    Material waterMaterial;
     AudioSource pourAudio;
     Coroutine routine;
     GardenAction action;
@@ -56,7 +55,8 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     public static void BeginThanks() => thanksPending = true;
     public string Label => bedIndex < 0 ? hasCan ? "Gießkanne zurückstellen" : "Gießkanne nehmen"
         : IsWatered ? "Beet ansehen" : hasCan ? "Beet gießen" : "Trockenes Beet ansehen";
-    bool IsWatered => bedIndex >= 0 && (watered & (1 << bedIndex)) != 0;
+    internal static bool IsBedWatered(int index) => index >= 0 && index < 3 && (watered & (1 << index)) != 0;
+    bool IsWatered => IsBedWatered(bedIndex);
     public Vector3 GetTransform() => transform.position;
 
     internal static void Install()
@@ -225,31 +225,19 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     IEnumerator Pour()
     {
         dropsRoot = new GameObject("Garden watering drops"); dropsRoot.transform.SetParent(transform, false);
-        waterMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit")); waterMaterial.SetColor("_BaseColor", new Color(.46f, .78f, .94f));
-        var drops = new Transform[18];
-        for (int i = 0; i < drops.Length; i++)
-        {
-            var drop = GameObject.CreatePrimitive(PrimitiveType.Sphere); drop.transform.SetParent(dropsRoot.transform, false);
-            drop.transform.localScale = new Vector3(.035f, .06f, .035f); drop.GetComponent<Collider>().enabled = false;
-            drop.GetComponent<Renderer>().sharedMaterial = waterMaterial; drops[i] = drop.transform;
-        }
+        var spray = dropsRoot.AddComponent<GardenWaterEffect>();
         pourAudio = gameObject.AddComponent<AudioSource>(); pourAudio.playOnAwake = false;
         pourAudio.clip = Resources.Load<AudioClip>("Audio/IntroFoley/garden-water");
         pourAudio.volume = (SoundManager.instance != null ? SoundManager.instance.effectsVolume : .55f) * .55f;
         if (!Application.isBatchMode && pourAudio.clip != null) pourAudio.Play();
-        Vector3 target = soil.bounds.center + new Vector3(0, .17f, -.8f);
+        Vector3 target = soil.bounds.center + new Vector3(0, .42f, -.91f);
         for (float t = 0; t < 1.9f; t += Time.deltaTime)
         {
             float tilt = Mathf.SmoothStep(0, 1, Mathf.Clamp01(Mathf.Min(t, 1.9f - t) / .3f));
             visual.SetGardenPose(station.canSprite, true, .10f * tilt, 38 * tilt);
             Vector3 spout = station.canSprite.transform.TransformPoint(new Vector3(.41f, -.19f, 0));
-            for (int i = 0; i < drops.Length; i++)
-            {
-                float phase = Mathf.Repeat(t * 2.4f + i / (float)drops.Length, 1);
-                Vector3 spread = new Vector3((i % 3 - 1) * .065f, 0, (i % 5 - 2) * .045f);
-                drops[i].position = Vector3.Lerp(spout, target + spread, phase) + Vector3.up * (.07f * Mathf.Sin(phase * Mathf.PI));
-                drops[i].gameObject.SetActive(tilt > .5f);
-            }
+            Vector3 sweep = target + Vector3.right * (Mathf.Sin(t * 2.1f) * .32f);
+            spray.Present(spout, sweep, t, tilt);
             SetWetness(Mathf.Clamp01((t - .2f) / 1.4f)); yield return null;
         }
         watered |= 1 << bedIndex; RefreshAppearance();
@@ -266,7 +254,6 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         RestoreMovement();
         if (dropsRoot != null) Destroy(dropsRoot); dropsRoot = null;
         if (pourAudio != null) { pourAudio.Stop(); Destroy(pourAudio); } pourAudio = null;
-        if (waterMaterial != null) Destroy(waterMaterial); waterMaterial = null;
         if (visual != null) visual.SetGardenPose(hasCan && station != null ? station.canSprite : null, hasCan);
         if (!hasCan && station != null) station.PlaceCanOnGround();
         routine = null; action = GardenAction.None; if (activeAction == this) activeAction = null;
@@ -278,6 +265,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         var properties = new MaterialPropertyBlock(); soil.GetPropertyBlock(properties);
         var original = soil.sharedMaterial.GetColor("_BaseColor");
         properties.SetColor("_BaseColor", Color.Lerp(original, original * .56f, amount)); soil.SetPropertyBlock(properties);
+        soil.GetComponent<CourtyardVegetableBed>()?.SetWetness(amount);
     }
     void RefreshAppearance() => SetWetness(IsWatered ? 1 : 0);
 }
