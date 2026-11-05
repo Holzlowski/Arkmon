@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.9`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.27.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1914,3 +1914,4 @@ Release reconciliation: the eight courtyard commits above include all previously
 - **0.26.7** — `style(farm): add a harvested work area and ground contacts`. Ground the painted farm with short fences, staggered plants and soft contacts. Add a harvested patch with three existing illustrated hay bundles and share its stubble mask with vegetation. Extend scenery/reload checks for the additions. Validation: final silent farm test passed in 13.64 seconds; close and panoramic captures reviewed.
 - **0.26.8** — `style(landscape): reveal the western mountain range`. Raise the mountain backdrop composition from 50 to 62 while preserving its proportions and cloud placement. Reveal connected slopes above the fields. Validation: identical-camera comparison and silent scenery test passed.
 - **0.26.9** — `style(meadow): refine golden wind waves and cool shadows`. Strengthen broad western wind sweeps slightly and add restrained tip highlights. Separate warm field lighting from cooler shadow fill while sharing deformation between forward and shadow passes. Validation: targeted near-shadow and root-contact rendering checks passed; no exported-build performance claim.
+- **0.27.0** — `feat(landscape): add quiet lookout ambience`. Add three occasional distant bird silhouettes and a quiet recorded-Foley field loop limited to the lookout. Respect effects volume, fade on return and dispose scene-owned resources. Document the existing CC0 source and reproducible audio recipe. Validation: ambient fade, batch silence, reload and lookout return checks passed; playback remained silent during tests.

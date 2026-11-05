@@ -167,5 +167,13 @@
       "Assets/Resources/Audio/Workshop/plane-stroke-2.wav"
     ],
     "processing": "Two 0.5-second excerpts from the public HQ preview at 5.2s and 5.9s; DC removal, 35ms fade-in, 85ms fade-out, peak 0.65, mono PCM16 at 32kHz. Alternated on forward cuts only; player-distance attenuation and dialogue interruption. No synthesis."
+  },
+  "field_rustle": {
+    "source_file": "Assets/Resources/Audio/Stable/straw-rustle.ogg",
+    "original": "Kenney RPG Audio cloth4.ogg (CC0-1.0), already documented under stable_ambience.foley",
+    "runtime_file": "Assets/Resources/Audio/field-rustle.wav",
+    "recipe": "tools/render_field_rustle.py",
+    "processing": "24-second stereo circular overlap of slowed recorded cloth rustle, softened transients, no generated noise/oscillators. Peak 0.42. Foley approximation of wind in grain, not a field recording.",
+    "runtime": "Fades in during the optional lookout, follows effectsVolume, fades out on return/transition, stops on disable and scene unload. No playback in batch mode."
   }
 }

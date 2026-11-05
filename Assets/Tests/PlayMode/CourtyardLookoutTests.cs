@@ -28,6 +28,10 @@ public class CourtyardLookoutTests
     {
         yield return Load();
         var point = Point;
+        var fieldAtmosphere = GameObject.Find("Aurenfeld field atmosphere");
+        var fieldAudio = fieldAtmosphere.GetComponent<AudioSource>();
+        Assert.That(fieldAudio.clip, Is.Not.Null);
+        Assert.That(fieldAudio.volume, Is.Zero, "The field loop must not play over courtyard conversations.");
         var margins = GameObject.Find("Western field margins");
         Assert.That(margins, Is.Not.Null);
         Assert.That(margins.GetComponentsInChildren<Collider>(), Is.Empty, "Distant field dressing must not introduce movement obstacles.");
@@ -93,6 +97,8 @@ public class CourtyardLookoutTests
             yield return null;Capture("lookout-flight-"+stage.ToString("00"));
         }
         Capture("lookout-fields-panorama");
+        Assert.That(fieldAudio.volume, Is.GreaterThan(0), "The scenic view should fade its ambient bed in.");
+        if(Application.isBatchMode) Assert.That(fieldAudio.isPlaying, Is.False, "Batch tests must remain silent.");
         // Render both states in one frame so wind/cloud motion cannot fake a shadow difference.
         Capture("lookout-tree-shadows");
         foreach (var caster in casters) caster.enabled = false;
@@ -117,6 +123,8 @@ public class CourtyardLookoutTests
         Assert.That(Vector3.Distance(playerPosition, player.transform.position), Is.LessThan(.15f));
         GameObject.Find("Return to courtyard").GetComponent<Button>().onClick.Invoke();
         yield return Return(point);
+        yield return new WaitForSeconds(1.6f);
+        Assert.That(fieldAudio.volume, Is.Zero, "Ambient audio must fade away after leaving the lookout.");
         Assert.That(Call(focus, "Refresh"), Is.EqualTo(point));
         Assert.That(((Behaviour)camera.GetComponent(T("Cinemachine.CinemachineBrain"))).enabled, Is.False);
         Call(point, "InteractWithPlayer"); yield return new WaitForSeconds(.3f);
@@ -124,6 +132,8 @@ public class CourtyardLookoutTests
         Assert.That(Busy, Is.False); Assert.That(objective.enabled, Is.True);
         ((Behaviour)point).enabled = true; Call(point, "InteractWithPlayer");
         yield return new WaitForSeconds(.2f); yield return Load();
+        Assert.That(fieldAudio == null, Is.True, "Unloading the scene must dispose the old loop source.");
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardFieldAtmosphere"), FindObjectsSortMode.None).Length, Is.EqualTo(1));
         Assert.That(Busy, Is.False);
         Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardLookout"), FindObjectsSortMode.None).Length, Is.EqualTo(1));
         Assert.That(GameObject.Find("Field lookout overlay"), Is.Null);
