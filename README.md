@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.23.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.23.2`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1416,3 +1416,8 @@ The garden task and illustrated player animation are included in version `0.23.0
 Garden arm correction: the generated forearm cells also contained upper-arm/shoulder artwork. `ImportElianGardenRig` now slices only the lower 65% of those cells at the original pixel density. The reach pose brings the can closer while standing and bends farther when picking it up; the upper sleeve overlaps the elbow cut instead of exposing another shoulder shape. Its open cuff is trimmed from the lower 12% so no second sleeve opening remains at the joint. Source image pixels remain unchanged.
 
 John grounding correction (0.23.1): his `StartScene` prefab override placed the foot-pivoted NPC at Y=1. It now uses the courtyard surface at Y=0.005. `ConfigureIntroCourtyard` uses `GroundHeight + 0.005` so regeneration preserves this placement. No global NPC prefab or battle scene is changed. Two silent targeted tests passed in `Library/garden-arms-final-tests.xml` (14.0 seconds): garden handle alignment/cancellation in both directions and John's foot contour over idle frames, dialogue and scene reload. Visual review: `Builds/courtyard-john-grounded.png` and the updated garden close-ups.
+
+
+### Courtyard refinement releases
+
+- **0.23.2** — Add source illustrations, reproducible sprite importers and shared courtyard materials/shaders. Record generation provenance and preserve existing character artwork.
