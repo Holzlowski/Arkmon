@@ -16,10 +16,10 @@ RenderSettings:
   serializedVersion: 10
   m_Fog: 1
   m_FogColor: {r: 0.72, g: 0.86, b: 0.86, a: 1}
-  m_FogMode: 3
+  m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
+  m_LinearFogStart: 30
+  m_LinearFogEnd: 190
   m_AmbientSkyColor: {r: 0.51, g: 0.62, b: 0.77, a: 1}
   m_AmbientEquatorColor: {r: 0.3, g: 0.36, b: 0.38, a: 1}
   m_AmbientGroundColor: {r: 0.2, g: 0.23, b: 0.16, a: 1}
@@ -192738,7 +192738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CourtyardCamera
   horizontalBounds: {x: -30, y: 52}
   depthBounds: {x: -9, y: 11}
-  distance: 30
+  distance: 25
   pitch: 25
   fieldOfView: 48
   damping: 0.28

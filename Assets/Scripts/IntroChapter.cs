@@ -30,6 +30,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardGardenStyle.Install();
             CourtyardGardenPlace.Install();
             CourtyardGuard.Install();
+            CourtyardVergePolish.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

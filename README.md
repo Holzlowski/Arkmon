@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.2`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1424,3 +1424,4 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 - **0.24.0** — Dress the grooming area, align Hannes to the horse, and add reachable individual horse greetings. Pause grooming during dialogue and add a documented recorded hoof cue. Existing silent stable-care tests cover interaction, reload and clearance.
 - **0.25.0** — Dress Ida's bench and house, add workpiece observation dialogue, and pause work and audio immediately when conversation starts. Focused workshop tests cover access, cancellation and unchanged quest progress.
 - **0.25.1** — Replace placeholder vegetables, add spout-following streams and persistent wetness feedback, and clear the garden frontage. Preserve Marta's source aspect ratio and add a brief completed-bed reaction. Include targeted watering and dialogue regressions.
+- **0.25.2** — Add collider-free illustrated ground cover and soft path edges between work areas. Bring the courtyard camera from 30 to 25 and use linear distance fog. Include shader, interaction and reload checks.
