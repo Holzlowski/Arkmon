@@ -21,6 +21,7 @@ public class IntroChapter : MonoBehaviour
     {
         if (gameObject.scene.name == "StartScene")
         {
+            CourtyardEastGroundStyle.PrepareTerrain();
             CourtyardGarden.Install();
             CourtyardStableCare.Install();
             CourtyardWorkshopDetails.Install();
@@ -35,6 +36,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardEastCottageStyle.Install();
             CourtyardGuard.Install();
             CourtyardVergePolish.Install();
+            CourtyardEastGroundStyle.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

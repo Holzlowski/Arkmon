@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.5`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.6`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1428,3 +1428,192 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 - **0.25.3** — Apply a common painted masonry palette to the castle, residence and outer walls. Add recessed windows and an arched throne-hall portal while preserving entrance inspection and collision.
 - **0.25.4** — Replace the surface cellar door with a sealed underground approach, walkable ramp, stairs and retaining masonry. Place prompts at the actual lower landing and cover descent, return and reload in PlayMode tests.
 - **0.25.5** — Bring the eastern cottage into the shared illustrated palette, add facade details and a grounded approach. Preserve access beside the cellar and verify decoration does not block exploration.
+- **0.25.6** — Connect garden, buried cellar and eastern cottage with fading earth paths and low planted meadow relief. Update the terrain collider and move the guard route clear of the cellar retaining wall. Final silent landscape, cottage and complete patrol checks passed (3/3).
+
+### Implementation and validation notes
+
+The following development notes describe the courtyard work included through 0.25.6. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
+
+### Illustrated details at Marta's garden
+
+`CourtyardGardenDetails` adds a seed organizer with gloves and twine to the existing garden bench, a seedling tray on the potting table, a wall-mounted hand-tool rack and cabbage/carrot/sprout markers inside the three vegetable beds. Two old table pots are hidden and the cloth is moved aside to make space. The details are installed only in StartScene, stay attached to the garden cottage hierarchy and add no colliders or interaction targets. Camera-facing props align after the courtyard camera updates; the wall rack remains fixed to the house.
+
+Source art: `Assets/Art/Intro/CharacterStyle/Marta garden details.png`. **Arkmon > Import Marta garden details** creates six native Sprite assets in `Assets/Resources/GardenDetails` from transparent bounds, without changing source pixels. Generation prompt and reference are recorded in `docs/paper-art-generation.json`.
+
+The existing complete garden-task check covers watering all three beds, Marta's acknowledgement and returning the can. Silent results: `Library/marta-details-tests.xml`. Inspection captures: `Builds/marta-garden-workspace.png` and `Builds/marta-garden-beds.png`; these use temporary review framing and do not change the gameplay camera. This pass decorates Marta's workstation. The house remains prototype scenery; illustrated vegetables are described below.
+
+### Painted vegetables and watering polish
+
+`CourtyardVegetableBed` replaces the old crop renderers inside the three beds with illustrated cabbage, carrot greens and young bean plants. Two cabbage/carrot variants, deterministic small size/position differences, occasional grass and low earth clods vary the rows. Borders, trellis and watering points remain in place. An unscaled art hierarchy avoids shearing under the soil mesh; decorations have no colliders.
+
+**Arkmon > Import illustrated garden vegetables** (`ImportGardenVegetables.Run`) slices `Assets/Art/Intro/CharacterStyle/Garden vegetables.png` into six native sprites in `Assets/Resources/GardenPlants`. Source pixels are unchanged. The built-in image tool, exact prompt and style reference are documented in `docs/paper-art-generation.json`.
+
+`GardenWaterEffect` adds five fine curved streams, falling drops and small landing splashes. It follows the can spout and gently sweeps the front plants. This is decorative animation, not fluid simulation or leaf collision detection. Soil, plants and earth clods share progressive wetness; completed wetness is restored directly from session progress after reload. Cancellation resets incomplete wetness and removes the effect, audio and temporary material.
+
+`CourtyardGardenerVisual` briefly looks at the completed beds with the existing happy nod before turning back to Elian. Dialogue interrupts the glance. Her personal thanks remains in the conversation, and the glance does not mark it as read.
+
+Validation: six checks passed in `Library/garden-polish-tests.xml`. The reload check exposed floating-point error when reconstructing wetness from soil color; initialization now reads task progress directly. The targeted rerun passed in `Library/garden-polish-reload-tests.xml`. Together these cover blocked approaches, mirrored grip, cancellation, scene reload, completion/thanks/returning the can, garden-to-player facing and dialogue/event behavior. All runs are silent. Unity captures: `Builds/marta-garden-beds.png`, `Builds/garden-water-polished.png` and `Builds/garden-task-complete.png`.
+
+### Stable care and horse greetings
+
+The existing chestnut and dun illustrations remain the horses' visual baseline. In StartScene, `CourtyardStableCare` places the dun on a small grooming spot outside the second bay and moves Hannes beside it. The saddle stand is parked at the left side of the stable. A hanging bridle, grooming caddy, spare hay and a water bucket use new paper artwork. The dun has a solid body collider; greeting anchors remain outside the stall boundaries. This is a runtime arrangement applied before residents spawn, not a rebuild of the courtyard scene.
+
+Hannes uses `Hannes horse grooming.png` through four new native sprites. `ImportStableCare.Run` aligns each pose by opaque boot bounds and a common body height; image pixels are unchanged. His established three-pose stroke/rest rhythm now brushes the horse. Any open dialogue pauses grooming immediately, including Elian's first horse-greeting line; work resumes after the existing short settling delay. The ordinary Hannes greeting now refers to grooming the horse rather than cleaning the saddle.
+
+`CourtyardHorseGreeting` supplies separate reachable prompts for the two horses. Elian greets the animal, it responds with a small head/ear reaction and quiet snort, and Hannes describes the feeding chestnut's calm nature or the dun's cautious curiosity. Speaker-specific portraits follow the dialogue lines. Existing conversations, transitions and remote calls cannot start a second greeting. Closing the conversation restores exploration and grooming. Repeat greetings use a shorter first line during the current scene visit; they are not saved to disk. This pass adds greeting, not a petting animation, riding or free horse movement.
+
+`CourtyardHorse` also makes an occasional tiny hoof lift, followed by a quiet impact on settling. The cue is a 0.245-second excerpt of Joseph SARDIN's CC0 recorded hoof foley, with its source, edit recipe and license in `docs/audio-sources.json`. `tools/render_stable_hoof.py` reproduces the clip. Snorting, brushing and straw rustling retain player-distance attenuation, dialogue ducking and silent batch-mode behavior.
+
+Use **Arkmon > Import stable care artwork** to reproduce native sprite slicing. Source art: `Assets/Art/Intro/CharacterStyle/Hannes horse grooming.png` and `Stable care details.png`; prompts and references from the built-in image tool are in `docs/paper-art-generation.json`. Earlier source art and native sprites are retained.
+
+Validation: all four focused PlayMode cases passed in `Library/stable-care-final-tests.xml` (25.8 seconds on the first complete pass). Coverage includes fixed work anchors, approach clearance, both reachable horse prompts, speaker/portrait changes, work interruption/resumption, remote/overlapping greeting rejection, reload cleanup, horse motion, hoof lift/settling and audio attenuation. Final art alignment is checked separately in `Library/stable-care-art-tests.xml`. Review captures: `Builds/stable-care-overview.png`, `Builds/stable-care-GroomForward.png`, `Builds/stable-care-GroomMiddle.png`, `Builds/stable-care-GroomBack.png` and both `Builds/stable-*-greeting.png`. The overview is a temporary inspection camera; gameplay framing is unchanged. Movement feel and sound balance remain for user review.
+
+
+### Ida workshop details and workpiece observation
+
+`CourtyardWorkshopDetails` dresses the existing workshop at runtime: an illustrated tool rail, carpenter caddy, offcut basket, spare timber and visible curled shavings replace simple placeholder props. The planing blank is shortened to match Ida's existing three work poses. The repaired garden-trowel head, cracked grip and replacement grip make her dialogue about Marta's tool visible on the bench. The main door and front interaction approach stay clear; the old timber collider is reduced to the new stack's footprint.
+
+At the right side of the bench, **[E] Werkstück ansehen** opens a six-line conversation between Elian and Ida with their appropriate portraits/emotions. `CourtyardWorkshopWorkpiece` checks distance and rejects interaction during another conversation, a transition or the opening. Ida pauses immediately even when Elian speaks first, stops the plane sound and waits briefly before resuming after completion or cancellation. This observation changes no quest, inventory or garden progress.
+
+Use **Arkmon > Import workshop details artwork** to reproduce the six native sprite slices. The unchanged generated source is `Assets/Art/Intro/CharacterStyle/Ida workshop details.png`; the exact prompt and Ida style reference are recorded in `docs/paper-art-generation.json`.
+
+Validation: five focused PlayMode cases passed in `Library/workshop-details-final-tests.xml` (32.9 seconds of test execution). They cover work poses/anchors, door access, dialogue moods and cleanup after reload, audio interruption/resumption, reachable workpiece selection, cancellation, repeated/remote interaction rejection and unchanged garden progress. `Builds/workshop-details-overview.png` and `workshop-details-Work*.png` use a temporary close inspection camera. `Builds/courtyard-review-ida-workshop.png`, `courtyard-review-stable.png` and `courtyard-review-garden-cottage.png` use the unchanged, serialized gameplay camera; they must not be confused with the detail view.
+
+A final focused clearance rerun after resizing the timber collider also passed (`Library/workshop-clearance-tests.xml`, 7.1 seconds).
+
+Visual review: the three work areas have distinct activities and consistent illustrated props. Broader environment polish remains necessary, especially the angular earth-path edges and large smooth grass areas between them. Small tools are hard to read from the distant gameplay camera. These are follow-up items in `TODO.md`, not claims that the whole courtyard is finished. Ida's existing three-frame animation still needs user review in motion.
+
+
+### Illustrated workshop and first courtyard verge section
+
+Ida's existing 3D workshop now uses a generated four-surface atlas for oak, warm plaster, terracotta shingles and sandstone. `CourtyardWorkshopStyle` assigns these materials only to the workshop (including the workbench and entrance stones). `Courtyard Illustrated Surface` keeps grain aligned to beam direction, scales texture detail in metres, adds restrained edge ink and follows the scene's directional light, shadows and fog. The original source atlas is preserved. Use **Arkmon > Import courtyard illustration** to reproduce the materials and six native verge sprite slices.
+
+`CourtyardVergePolish`, installed by `IntroChapter` after the residents, adds a bounded first pass from Ida's workshop to Hannes' stable. It clones the affected path meshes, assigns a softly irregular alpha edge inside that section and retains the original material on triangles outside it. A depth offset avoids fighting with intersecting paths. Deterministic groups of drawn grass, clover, ferns, small flowers and mossy stones decorate verges and building corners. Decorations have no colliders and avoid solid furniture, interaction points and path centers. Runtime mesh/material copies are restored and destroyed on teardown; the authored scene geometry and navigation remain intact.
+
+The StartScene camera distance is reduced from 30 to 25, preserving its 25-degree pitch, 48-degree field of view, movement limits and damping. This is a closer framing trial for user review. In the editor, **restart StartScene in Play Mode** to see the runtime material and verge dressing. No whole-courtyard rebuild is needed.
+
+Validation: both focused PlayMode cases in `CourtyardIllustrationTests` passed after refinement (`Library/courtyard-illustration-final-tests.xml`, 12.8 seconds of test execution, audio disabled). Checks cover supported rendering shaders, non-blocking decoration, workshop/stable approach clearance, workpiece focus selection and single installation after reload. Real Unity captures: `Builds/workshop-illustration-detail.png` uses a temporary inspection camera; `Builds/courtyard-polish-gameplay-ida-workshop.png` and `Builds/courtyard-polish-gameplay-stable.png` use the new gameplay framing. The initial orange palette was toned down, scene fog restored and vegetation inside solid furniture rejected after inspecting the first captures.
+
+The illustrated surface style now covers Ida's house and Hannes' stable (see below); the garden cottage is extended below; castle materials remain their existing versions. This is a reviewable first section, not a completed art pass on the entire courtyard. Remaining broad grass areas, the far-right path section and further style propagation are tracked in `TODO.md` for feedback-driven follow-up.
+
+
+### Illustrated stable, horse care ground and connecting planting
+
+`CourtyardStableStyle`, installed by `CourtyardStableCare`, extends the workshop's painted architectural style to the stable with its own darker oak and muted green shingles. It reuses the warm plaster and sandstone materials for continuity. Material replacement is restricted to the original stable building/wood materials and explicitly excludes the deforming horse meshes, leather, iron, water and hay. All building colliders, horse anchors, grooming poses and greeting points remain intact.
+
+Three collider-free ground meshes add a worn earth patch at the care spot and restrained straw around the feeding area/inside the first bay. They follow the existing ground with feathered irregular edges. `Courtyard Painted Ground Patch` renders before the softened paths and paper contact shadows, retaining visible grounding beneath the figures. The old small block-shaped forecourt straw pieces are hidden. Runtime meshes are destroyed on teardown.
+
+`CourtyardVergePolish.ConnectWorkplaces` adds three low, overlapping clover/grass islands between the workshop and stable. Placement uses the same checks against solid objects, path centers and interaction points as the existing verge pass. Stable corner planting is moved slightly outward so it sits outside the foundation collision.
+
+Use **Arkmon > Import illustrated stable surfaces** to recreate the four materials from the original `Assets/Art/Intro/CharacterStyle/Hannes illustrated surfaces.png` atlas. Its complete built-in image-tool prompt and architectural reference are in `docs/paper-art-generation.json`. Restart **StartScene in Play Mode** to see the dressing; camera framing remains the previously approved trial distance of 25.
+
+Validation: all three focused `CourtyardIllustrationTests` passed in `Library/stable-illustration-final-tests.xml` (16.4 seconds of test execution, silent batch mode). Coverage includes workshop/stable approach clearance, workpiece focus, both horse greeting prompts and opening dialogue, preserved transparent horse artwork, supported materials, shadow/ground rendering order, collision-free decoration and single installation after scene reload. `Builds/stable-illustration-detail.png` is a temporary inspection-camera view; `Builds/courtyard-polish-gameplay-stable.png` shows both buildings from the normal gameplay camera. Colors, planting density and visual balance still await user feedback; the garden cottage and castle are outside this pass.
+
+
+### Illustrated Marta cottage and garden verges
+
+`CourtyardGardenStyle`, installed after the vegetable beds, reuses the approved courtyard atlas on Marta's existing 3D cottage: painted oak framing, cream plaster, terracotta shingles, sandstone and distinct sage-green doors/shutters. `ImportGardenIllustration.Run` recreates the two garden accent materials (`Garden sage`, `Garden clay`) without changing existing material GUIDs. No additional generated source artwork is required.
+
+The cottage's placeholder herb leaves are hidden and replaced with small illustrated fern sprites in the pots, window boxes and ground clusters. Garden bed borders, bean supports and the garden work bench use the same painted wood. Soil materials/property blocks remain owned by the watering system, preserving dry/wet feedback. Existing geometry, building collisions, character poses and interaction anchors are unchanged.
+
+The soft path and non-blocking verge planting now extend to the last vegetable bed. Additional low growth sits behind and outside the beds. Placement excludes the crop rectangles with a half-metre margin and retains existing checks against interactions, solid objects and path centers. No new decoration colliders are added.
+
+Validation: all five selected PlayMode tests passed in `Library/garden-illustration-tests.xml` (40.7 seconds test execution, audio disabled). They cover all four watering task cases plus material support, clear approaches and interaction focus at the can and beds, unchanged soil ownership, and a single garden-style installation after reload. Real captures: `Builds/garden-illustration-gameplay.png` uses the normal gameplay camera; `Builds/garden-illustration-detail.png` and `Builds/garden-illustration-beds.png` use temporary inspection cameras. The fountain and front bench were subsequently rearranged as described below. Castle materials remain unchanged; the entire courtyard is not yet visually complete.
+
+Restart StartScene in Play Mode to see the runtime dressing. Suggested coherent commits: `feat(art): illustrate Marta cottage and garden furnishings` (importer, accent materials, local styling and integration) and `feat(courtyard): extend soft verges around vegetable beds` (bounded path/planting extension and access checks). These changes remain uncommitted; metadata remains `0.23.1`, with `0.23.2` proposed for the first pending commit only.
+
+
+### Marta garden place: open frontage and side seating
+
+`CourtyardGardenPlace.Install`, after the garden material pass and before verge planting, disables the authored fountain (including its collider) and large front bench in Play Mode. The original scene objects remain available for a later courtyard square. A copy of the bench becomes a smaller painted side seat facing toward the vegetable garden. Its existing solid collider scales with the furniture; no new sitting interaction is introduced.
+
+The cottage approach stones are narrower and slightly staggered. `CourtyardVergePolish` identifies only the cottage spur by its authored starting center (4,-2), clones its mesh and reduces its width to 60 percent with a slight lateral variation, following the ground. The main route and other spurs keep their geometry. The normal soft-edge pass still applies. A feathered, collider-free earth patch marks Marta's potting workspace; low clover, grass and a few stones link the cleared frontage toward the stable. Existing interaction, crop and obstacle exclusion checks protect the usable space.
+
+Validation: both targeted PlayMode tests passed in `Library/garden-place-tests.xml` (18.7 seconds execution, audio disabled). Checks cover the removed active fountain/front bench, side-seat overlap against solid objects, clear cottage and watering approaches, focus selection, single installation after reload, and the complete three-bed watering/thanks/can-return sequence. Updated screenshots `Builds/garden-illustration-gameplay.png` (normal game camera) and `Builds/garden-illustration-detail.png` (inspection close-up) were visually reviewed. Restart StartScene in Play Mode to see the arrangement; seating placement and density remain open to player feedback.
+
+
+### Marta silhouette and illustrated throne-hall portal
+
+Marta's world sprite now preserves the source drawing's 1024 x 1536 aspect ratio. Its previous power-of-two import stretched it to 1024 x 2048, making the character look too narrow. `ConfigureMartaEmotions.RepairWorldSprite` disables that rescaling for this texture and rebuilds the native sprite while preserving its GUID, 2.26-unit world height and boot pivot. The mistaken extra 10 percent runtime height adjustment has been removed; the baseline is (1, 1, 1). Breathing remains subtle; expression squash is reduced from 1.4/2.5 percent to 0.3/0.6 percent. Original image pixels and dialogue portrait assets are unchanged. The normal Marta configuration command also retains the corrected import setting.
+
+`CourtyardCastleEntranceStyle`, installed with the other courtyard dressing, locates the existing ThroneHall inspection anchor and replaces only the nearby closed entrance's visible door/trim. It builds twelve extruded oak planks under a round arch, deep limestone jambs and segmented arch stones, a keystone, threshold, two sets of iron straps, brass studs and door pulls. The frame uses a muted painted plaster atlas region for carved limestone; the door uses the stable oak atlas with a longer vertical grain. Generated meshes and local materials are released on scene teardown. No new image asset is generated.
+
+The original Aurenfeld crest image/material is reused on a shield-shaped mesh fixed above the door handles. Its geometry does not copy the courtyard banner's movement component. Solid jambs and a front-aligned closed-door collider keep the illustration physically grounded, while the existing **Burgeingang ansehen** interaction and Elian's throne-hall line remain unchanged. This pass adds no opening animation, interior transition or new quest; the neighboring castle walls remain for a later art pass.
+
+Validation: two final focused PlayMode cases passed in `Library/castle-entrance-final-tests.xml` (13.5 seconds execution, audio disabled). They cover approach clearance, a solid closed door, interaction focus and dialogue, fixed crest placement, supported materials, reload uniqueness, Marta's then-current baseline and all four existing dialogue emotions/speaker changes. Real screenshots: `Builds/castle-entrance-gameplay.png` uses the normal game camera; `Builds/castle-entrance-detail.png` and `Builds/marta-proportions-detail.png` are inspection views. The first image review led to less repetitive door grain and removal of inherited banner motion.
+
+
+Marta aspect-ratio follow-up: the original width correction is verified in `Library/marta-aspect-tests.xml` (2/2 focused PlayMode cases passed, 13.2 seconds, audio disabled). The checks assert the imported 1024 x 1536 texture, original 2:3 sprite aspect, unchanged 2.26-unit height, dialogue reactions and reload behavior. `Builds/marta-proportions-detail.png` has been recaptured and visually reviewed with the corrected proportions. Use **Arkmon > Repair Marta sprite proportions** to reproduce the native sprite without rebuilding dialogue portraits.
+
+
+### Illustrated central castle facade
+
+`CourtyardCastleFacadeStyle` extends the entrance palette to **Castle hall**, **Castle upper keep** and its two flanking towers. The existing stone atlas supplies outlined masonry with metre-based texture sizing; the plaster atlas supplies muted dressed-limestone trim matching the portal. Existing structure meshes, dimensions, solid colliders and navigation remain intact. The outer walls and western residence are extended in the shared-palette pass below; the cellar storehouse retains its previous finish.
+
+The original rectangular window drawings/reveals are hidden on these four buildings. New dark round-arched panes, projecting stone jambs, segmented arches, layered sills and thin glazing bars give the openings more depth. Battlements receive shallow capstones. Geometry is combined into three material batches per building, rather than separate renderers for every arch stone; these decorative batches have no colliders. Two existing banner crests reuse their artwork on shield-shaped meshes to remove the rectangular backing, retaining their original banner movement. No raster image is regenerated. Runtime meshes and local material instances are released on scene teardown.
+
+Validation: the focused entrance/facade PlayMode case passed in `Library/castle-facade-tests.xml` (7.5 seconds execution, audio disabled). It verifies preserved building colliders, supported facade/window materials, collider-free decoration, unchanged cottage material, portal approach and collision, the inspection dialogue, Marta's corrected proportions, and one facade installation/four window-surround batches after reload. Real gameplay and detail images were visually reviewed at `Builds/castle-entrance-gameplay.png` and `Builds/castle-entrance-detail.png`. Restart StartScene in Play Mode to see the changes; facade palette and window proportions still await player feedback.
+
+
+### Courtyard architectural color and contrast
+
+The illustrated architecture shader no longer uses a fixed 0.78 saturation factor and large constant shadow fill. It exposes paint saturation (0.98), local contrast (1.05 around a 0.18 linear-light pivot), ambient fill (0.43), sunlight strength (0.50) and retained sunlight in shadow (0.28). These defaults retain more of the original painted colors and separate sunlit surfaces from shade without increasing scene exposure. They apply to the courtyard materials sharing `Courtyard Illustrated Surface`, including the central castle, illustrated houses and their wooden furnishings; character sprite shaders and UI are unchanged.
+
+StartScene fog is now linear from 30 to 190 world units instead of exponential-squared density 0.01. This reduces the pale veil over courtyard buildings while retaining a distant atmospheric fade. Camera angle, position settings, directional-light settings and post-processing volumes are unchanged. The viewing distance previously contributed to the washed-out look through fog; perspective itself was not the main cause.
+
+Validation: both selected existing PlayMode cases passed in `Library/courtyard-color-final-tests.xml` (13.1 seconds, audio disabled). Castle access/reload/material checks and workshop/stable game/detail captures were reused, with no new color-only tests. Castle, cottage, workshop and stable captures were visually inspected; an initially stronger orange treatment was reduced before the final pass. The castle's previous matching captures are retained as `Builds/castle-entrance-gameplay-before-contrast.png` and `Builds/castle-entrance-detail-before-contrast.png`; current captures keep their normal names. Color balance remains subject to in-game user feedback.
+
+
+### Shared castle, residence and enclosing-wall palette
+
+`CourtyardCastleFacadeStyle` now extends the central castle's illustrated stone and dressed-limestone trim to the player tower, its entrance, west wing, upper residence, connecting wing and raised approach. Explicitly named enclosing walls, battlements, broken-wall stones and eastern gate masonry share that palette. Replacement is restricted to the original architectural materials and named roots; blue slate roofs, wood, iron, ivy and other furnishings retain their own finishes. Residence crests also reuse the shield-shaped mesh. No new source artwork is required.
+
+The shared masonry enables the shader's optional face-aligned projection for vertical faces. This keeps the apparent stone width consistent on oblique octagonal tower facets and straight walls, with object scale still supplied per renderer. Cube trim retains restrained edge ink; custom meshes do not receive inappropriate cube-edge outlines. Geometry, collisions, camera framing and interaction anchors are unchanged.
+
+Validation: both targeted PlayMode cases passed in `Library/castle-palette-tests.xml` (16.7 seconds execution, audio disabled). They cover shared supported materials, tower texture scale/projection, preserved boundary colliders, tower interaction focus, scene reload and actual stair ascent/descent. Five captures use the unchanged gameplay camera: `Builds/castle-palette-tower.png`, `castle-palette-west-residence.png`, `castle-palette-castle-connection.png`, `castle-palette-central-castle.png` and `castle-palette-east-wall.png`. Tower, west residence, castle connection and east-wall views were visually reviewed. Restart StartScene in Play Mode to see the runtime styling. The cellar storehouse and eastern cottage still need their own pass; this does not complete the entire courtyard.
+
+
+### Exterior cellar access trial
+
+`CourtyardCellarEntranceStyle`, installed after the castle facade, replaces the visible cellar storehouse with a low stone service entrance beside the castle. It reuses the courtyard stone/plaster/oak artwork: a segmented round arch and barrel vault, a short masonry connection to the castle foundation, a heavy strapped oak door with the family seal, an amber lantern, retaining walls, four descending treads, a lower landing and a small worn-earth/flagstone approach with ferns. No new image assets are generated. The nearby eastern cottage remains outside this pass.
+
+The entrance descends 0.75 world units. Only runtime mesh copies of the intersecting courtyard ground/meadow/path are clipped to the rectangular stairwell; the surrounding floor and authored scene assets remain intact. A sealed convex ramp with buried ends and low friction carries the player over the visible steps without catching on the landing or upper lip. The old storehouse collision is disabled and replaced with matching body, vault, side-wall and closed-door collision. Local meshes, materials and the physics material are released on scene teardown.
+
+The existing cellar inspection anchor moves to the lower landing, retaining Elian's inspection dialogue. The door remains closed: this adds neither a cellar interior nor the sealed mystical story gate. The exterior service entrance is a visual trial for user feedback; the story gate is still intended for the interior below the castle. Restart StartScene in Play Mode to see the runtime layout.
+
+Validation: both focused PlayMode cases passed in `Library/cellar-entrance-final-tests.xml` (17.8 seconds execution, audio disabled). The cellar test walks down and back up with the real player body, checks inspection focus/dialogue, closed-door blocking, excavated floor height, preserved neighboring ground, correct vault collision and reload uniqueness. The existing tower stair ascent/descent case also passes. `Builds/cellar-entrance-gameplay.png` uses the normal game camera; `Builds/cellar-entrance-detail.png` is a temporary inspection view. Both were visually reviewed. Initial tests exposed stair lip collisions; overlapping ramp ends resolve them. Palette, scale and the new exterior location remain subject to user review.
+
+
+### Buried cellar entrance at the castle foundation
+
+The exterior-access trial above has been revised: the doorway now sits entirely below courtyard level at the eastern castle foundation, 1.5 units west and 3.9 units behind its first trial position. The landing is 3.95 units below the courtyard, reached by eighteen treads in an approximately 8.6-unit stair run. Full-depth retaining walls enclose the excavated ground; only low coping remains above ground. The portal/vault are sunk by 3.2 units and the former tall foundation link is replaced with a low connection beside the castle. The door remains closed with the existing inspection dialogue; the actual cellar rooms and story gate are still future work.
+
+The buried geometry reuses the existing ground clipping and smooth ramp, with submerged endpoints and matching landing/side collision. The lantern moves to the inside face so the retaining wall does not hide its glow. Lower ambient material fill helps distinguish the stairwell from the courtyard. Only the cellar interaction marker uses its landing height; its label is raised to leave Elian's head visible. Other interaction marker heights and the gameplay camera are unchanged.
+
+Validation: the focused PlayMode regression passed in `Library/cellar-underground-final-tests.xml` (20.2 seconds, audio disabled). It verifies the entire door below ground, landing depth, physical descent and return, closed-door collision, inspection dialogue, marker height and reload. `Builds/cellar-underground-gameplay.png` and `Builds/cellar-underground-bottom-gameplay.png` use the unchanged gameplay camera; `Builds/cellar-underground-detail.png` uses a temporary inspection camera. All three were visually reviewed. Suggested coherent commit: `feat(courtyard): sink cellar access below courtyard level` — deeper foundation entrance, longer walkable stair and excavation, interior lantern, corrected interaction marker and regression coverage. No commit/push or version increment; metadata remains `0.23.1`, with `0.23.2` proposed for the first pending commit.
+
+
+### Illustrated eastern cottage and forecourt
+
+`CourtyardEastCottageStyle`, installed after the cellar entrance in StartScene, gives the existing eastern cottage warm painted plaster, outlined oak beams, muted green shingles and sage shutters from the existing courtyard atlases. Its structure, location and original building solid are preserved. The old small facade details are hidden locally; three framed windows add dark panes, projecting jambs/sills, glazing bars and shutter braces. The planked closed door has iron fittings, a carved surround, a small supported canopy and a matching closed-door collider. The chimney is raised above the steep roof and capped. No new house interior, interaction or resident is introduced.
+
+A feathered worn-earth patch, seven staggered flagstones and low fern/clover/grass groups connect the frontage to the courtyard. Ground height is sampled from the existing walkable surfaces; flagstones also follow the local slope. Decorative plants and stones have no colliders. The main eastward route and the passage beside the cellar remain clear. Scene-owned materials are reused; the two local glass/iron materials and ground mesh are released on teardown. No additional generated image assets are required.
+
+Validation: the cottage clearance/reload test and the existing physical cellar stair test both passed in `Library/east-cottage-final-tests.xml` (28.4 seconds execution, audio disabled). Checks cover shader support, retained building solid, closed-door collision, free entrance/east/cellar approaches, terrain-following flagstones and single installation after reload. `Builds/east-cottage-gameplay.png` uses the unchanged gameplay camera; `Builds/east-cottage-detail.png` uses a temporary inspection view. Colors and proportions still await player feedback. Restart StartScene in Play Mode to load this runtime dressing.
+
+### Buried arch closure from eastern views
+
+Reviewing the cottage exposed a sky-colored gap above the neighboring cellar arch from oblique viewpoints. A shallow solid stone cap closes the ground cutout above the portal, and decorative masonry wedges fill between the curved arch and that level cap. Stair, door and inspection positions are unchanged. The cellar movement regression above includes the cap; the final visual closure was recaptured and reviewed with the cottage view test (`Library/east-cottage-view-tests.xml`, passed, 8.6 seconds, audio disabled). Suggested separate commit: `fix(courtyard): close gaps above buried cellar arch`. This remains part of the pending work, with no separate version increment prepared.
+
+
+### Eastern courtyard ground, connecting paths and meadow groups
+
+`CourtyardEastGroundStyle.PrepareTerrain` runs before courtyard furnishings sample their ground. It clones the authored meadow mesh and adds three bounded, shallow rises (maximum 0.26 units) in the eastern free spaces. Existing paths, the patrol corridor, cottage foundation and cellar opening keep their reference heights. The mesh collider follows the altered surface. Ground dressing is installed after the existing verge pass: three curved footpath connections join the garden edge, cellar approach and eastern house to the main route, with soft sides and fading endpoints. `CourtyardVergePolish` now extends the existing softened main-path treatment to x=43 at the gate.
+
+Six low meadow groups mix drawn grass, clover, sparse flowers and subtle ground-color patches. Narrow earth/planting strips tie the cottage, cellar retaining walls and eastern boundary to the terrain. Positions follow the walkable surface. Plants exclude crops, entrances, the cellar shaft, path centers, solid props and the patrol corridor. Decorative meshes and sprites have no colliders. Existing artwork/materials are reused; runtime mesh/material instances are released on teardown. Camera and lighting settings remain unchanged. This is an eastern-section pass; wider courtyard landscaping and lighting remain future work.
+
+Validation: the final three focused cases passed in `Library/east-landscape-final-tests.xml` (37.2 seconds execution, audio disabled): landscape placement/reload and actual player traversal over the new relief, eastern cottage/route clearance and a complete guard patrol to the gate and back. The existing cellar descent/return/inspection case passed in the preceding `Library/east-landscape-tests.xml` run. That earlier run exposed two issues: a flat-height clearance assertion intersected the intended ground rise (now paired with a physical walk test), and the old guard route approached the relocated cellar wall too closely (fixed below). Four real gameplay-camera captures were generated as `Builds/east-landscape-garden-link.png`, `east-landscape-overview.png`, `east-landscape-house.png` and `east-landscape-gate.png`; overview, house and gate were visually reviewed. Player feedback on planting density and path balance remains pending. Restart StartScene in Play Mode to see the new landscape.
+
+### Guard clearance beside the sunken cellar
+
+The second patrol point moves from (23.8,11.1) to (23.35,11.1); the third moves from (24.8,4.5) to (23.35,5). This keeps the guard in the available gap between the wheelbarrow and cellar retaining wall until it has passed the staircase, before heading toward the gate. Both the native `Guard/Patrol` resource and the editor's new-route defaults use these coordinates. The eight-stop route, pace, pauses, dialogue and obstacle response are retained. The complete patrol regression above passes in both travel directions.

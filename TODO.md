@@ -1,26 +1,67 @@
 # To-do für Intro, Burghof und Umgebung
 
-Stand: 4. November 2026. Ziel: Hof und Umgebung als stimmigen, spielbaren Abschnitt abrunden, bevor die Arkanmeisterin ankommt.
+Stand: 5. November 2026. Ziel: Hof und Umgebung als stimmigen, spielbaren Abschnitt abrunden, bevor die Arkanmeisterin ankommt.
 
 Die Aufgaben umfassen neue Arbeiten und Feinschliff an vorhandenen Funktionen. Ein vorhandenes Objekt oder bestandener Funktionstest bedeutet noch nicht, dass sein Aussehen fertig ist. Erst nach Umsetzung und passender Prüfung abhaken; wichtige Gestaltungsänderungen gemeinsam im Spiel ansehen.
 
 ## 1. Als Nächstes: Bewohner und ihr Alltag
 
-- [ ] Hannes' Bürstenbewegung abschließend verfeinern. Umgesetzt: ruhigerer Dreiposenrhythmus, längere Ruhepause, leises Bürstengeräusch und verzögerter Wiederbeginn nach dem Gespräch. Bewegungswirkung und weiterer Kopf-/Armfeinschliff bleiben zur gemeinsamen Prüfung offen.
+- [x] Martas zu schmale Darstellung am Import korrigiert: originales Seitenverhältnis 1024 × 1536 statt gestreckter 1024 × 2048, ursprüngliche Figurenhöhe und Fußpunkt erhalten. Irrtümliche zusätzliche Höhe zurückgenommen; ruhige Reaktionen bleiben erhalten. Zeichnung und Dialogporträts unverändert.
+- [ ] Martas angepasste Proportionen gemeinsam im Spiel abnehmen.
+- [x] Burgeingang hinter John als gezeichnetes Rundbogenportal mit plastischem Steinrahmen, zweiflügeligem Holztor, Beschlägen und festem Aurenfeld-Wappen überarbeitet. Freier Zugang, geschlossene Kollision, Inspektionsdialog und Szenenneustart geprüft.
+- [ ] Portalproportionen und Materialwirkung gemeinsam aus der Spielkamera ansehen.
+- [x] Zentralen Burgteil mit Eingangsflügel, höherem Hauptbau und beiden Flankentürmen stilistisch angeglichen: gezeichnetes Mauerwerk, einheitliche Steingrößen, helle Einfassungen, plastische Rundbogenfenster und Zinnenabdeckungen. Bannerwappen ohne rechteckigen Hintergrund; Gebäudeform und Kollisionen erhalten, Torzugang und Szenenneustart geprüft.
+- [ ] Zentrale Burgfassade gemeinsam im Spiel abnehmen: Farbwirkung, Steinmaßstab und Fensterproportionen.
+- [x] Mehr Kontrast und Farbigkeit für die gezeichneten Hofgebäude: bisherige Entsättigung reduziert, Schattenfüllung/Sonnenanteil abgestimmt und Nebelschleier im Hof vermindert. Kamera unverändert; Burg, Werkstatt, Stall und Martas Haus auf Spielbildern geprüft.
+- [ ] Neue Farbstärke und Schatten gemeinsam im Spiel abnehmen; entfernte Landschaft soll weiterhin weich bleiben.
+- [x] Außenmauern, Westflügel, Spielerturm und erhöhte Terrasse an die gezeichnete Steinpalette der zentralen Burg angleichen; Texturmaßstab auf den schrägen Turmflächen korrigieren. Zwei gezielte PlayMode-Prüfungen inklusive Treppenlauf bestanden.
+- [ ] Gemeinsame Burgpalette im Spiel visuell abnehmen.
+- [x] Äußeren Kellerzugang als Versuch gestalten: niedriger Gewölbeanbau an der Burg, eingelassene Treppe, schwere Holztür, Aurenfeld-Siegel, warme Laterne und kleiner Vorplatz. Treppenlauf in beide Richtungen, Kollision, Inspektion und Szenenneustart geprüft.
+- [x] Kellerzugang näher an den Burgsockel gesetzt und vollständig unter das Hofniveau versenkt: 3,95 Meter tieferes Podest, 18 Stufen, durchgehende Stützmauern, Laterne innen und bodenrichtiger Interaktionskreis.
+- [ ] Tieferen Kellerabgang gemeinsam im Spiel abnehmen; das mystische Tor bleibt für den späteren Innenraum vorgesehen.
+- [x] Östliches Häuschen mit gezeichnetem Putz, Eichenbalken, grünen Schindeln, gerahmten Fenstern und Läden sowie überdachtem Eingang angeglichen. Vorplatz mit Gelände folgenden Steinplatten, Erde und niedrigen Pflanzen ergänzt; Tür-/Durchgangskollision und Szenenneustart geprüft.
+- [x] Aus östlicher Perspektive sichtbare Lücke über dem versenkten Kellerbogen mit Steinabdeckung und Mauerfüllung geschlossen.
+- [ ] Östliches Haus und Vorplatz gemeinsam aus der Spielkamera abnehmen.
+- [x] Östlichen Abschnitt Garten–Keller–Haus–Burgtor landschaftlich verbunden: drei weiche Weganschlüsse, sanfte begehbare Bodenwellen, gruppiertes Gras/Klee/Blumen und Erde an den Sockeln; freie Beete, Zugänge und Laufwege geprüft.
+- [x] Zwei Wegpunkte der Wache an den versenkten Keller angepasst; vollständiger Hin- und Rückweg am Tor geprüft.
+- [ ] Östliche Pflanzendichte, Wegführung und Bodenübergänge gemeinsam im Spiel abnehmen; danach Licht und Schatten für den Hof als Ganzes abstimmen.
+
+- [ ] Hannes' neue Pferdepflege gemeinsam abnehmen: drei eigene Bürstenposen am hellen Pferd, Ruhepause, leises Bürstengeräusch und Gesprächsstopp ab Elians erster Zeile. Bewegungswirkung und Kontakt im Spiel feinjustieren.
 - [ ] Idas Hobelbewegung gemeinsam abnehmen. Umgesetzt: schnellerer Vorhub, langsamerer Rückhub, Ruhepause nach zwei Zügen, zwei echte örtliche Hobelgeräusche sowie sofortiger Gesprächsstopp und kurzer verzögerter Wiederbeginn. Die Animation verwendet weiterhin drei Zeichnungen; Bewegungswirkung und Werkzeugkontakt im Spiel prüfen.
 - [ ] Gesprächsübergänge verbessern: Arbeit unterbrechen, Elian ansehen und danach sinnvoll weiterarbeiten.
 - [ ] Neutrale, freundliche, überraschte und besorgte Gesichtsausdrücke auf die Dialogzeilen abstimmen; Übergänge im Dialogfenster prüfen.
-- [ ] Hannes' Arbeitsplatz mit wenigen Lederpflege- und Zaumzeugdetails ergänzen; Zugänge freihalten.
-- [x] Zwei Pferde eingebaut: ein braunes an der Heuraufe und ein helles mit dunkler Mähne in der zweiten offenen Box.
+- [x] Hannes' Pflegeplatz mit gezeichnetem Zaumzeug, Pflegekasten, Wassereimer und Reserveheu ergänzt; Sattelgestell seitlich geparkt und Zugänge geprüft.
+- [x] Zwei Pferde eingebaut: ein braunes an der Heuraufe und ein helles mit dunkler Mähne am Pflegeplatz vor der zweiten Box.
 - [x] Gezeichnete Pferde mit kontinuierlicher Atem-, Kopf-, Ohren- und Schweifbewegung sowie leisem Schnauben und Rascheln ergänzt; feste Hufe und örtliche Hörbarkeit automatisch geprüft.
 - [x] Zwei niedrige Boxentore, Heuraufe und kleinerer Dachüberstand eingerichtet; Sichtbarkeit aus der Spielkamera und freier Zugang zu Hannes geprüft.
+- [x] Beide Pferde können begrüßt werden: Elian spricht, die Tiere reagieren, Hannes beschreibt ihr Verhalten mit passendem Porträt. Wiederansprechen, Abbruch und Szenenwechsel berücksichtigt.
+- [x] Seltener kleiner Huftritt mit kurzem aufgenommenem Geräusch ergänzt; örtliche Lautstärke und stumme Testläufe bleiben erhalten.
 - [ ] Pferdestall gemeinsam im Spiel abnehmen: Größe, Stil, Bewegungswirkung und Lautstärke nach Nutzerfeedback feinjustieren.
 - [x] Erste Burgwache im freigegebenen gezeichneten Stil eingebaut: grüner Wappenrock, Aurenfeld-Stern, eine kontinuierliche Papierteil-Laufanimation und eigene Dialogporträts.
 - [ ] Weitere wandernde Bewohner erst nach den Ideen des Nutzers festlegen. Küchenhilfe und Bote sind vorerst zurückgestellt und nicht zur Umsetzung ausgewählt.
 - [ ] Rundgang der Burgwache gemeinsam im Spiel abnehmen: zwischen Burg und rechtem Tor außen am Garten vorbei, Wachpausen, Hindernisstopp, Elian ansehen und nach Gesprächen weitergehen sind umgesetzt. Tempo, Größe und Wirkung der Laufbewegung nach Nutzerfeedback feinjustieren. Weitere Bewohner erst nach Auswahl ihrer Rollen planen.
 - [ ] Bewegte Bewohner bei Dialogen und späteren Inszenierungen so anhalten oder umleiten, dass sie keine Wege oder Kamerabilder blockieren.
-- [ ] Idas Arbeitsplatz mit Werkzeugen, Holzresten und angefangenen Arbeiten abrunden.
-- [ ] Martas Platz mit Saatgut und Gartengeräten personalisieren; Beet und Wege sichtbar halten.
+- [x] Idas Arbeitsplatz mit gezeichneter Werkzeugleiste, Werkzeugkasten, Holzvorräten und sichtbaren Hobelspänen ergänzt; Martas beschädigte Gartenschaufel und Ersatzgriff liegen auf der Werkbank. Türzugang und Werkstückpunkt sind frei.
+- [x] Optionales „Werkstück ansehen“ ergänzt: Elian und Ida sprechen über Martas Schaufel, mit passenden Porträts und Gesprächsstopp ab Elians erster Zeile. Keine neue Sammelaufgabe; Gartenfortschritt bleibt unverändert.
+- [ ] Werkstattdetails und Kontakt zwischen Hobel und Holz gemeinsam im Spiel abnehmen. Die vorhandenen drei Arbeitsposen bleiben erhalten.
+- [x] Werkstatt, Stall und Garten aus der normalen Spielkamera verglichen; Bilder unter `Builds/courtyard-review-*.png` abgelegt.
+- [x] Ersten Abschnitt zwischen Ida und Hannes überarbeitet: weichere unregelmäßige Wegränder, gezeichnete Gras-/Kleegruppen, wenige Blüten und moosige Steine an Säumen und Sockeln; Interaktionen und Möbel bleiben frei.
+- [x] Idas bestehendes 3D-Haus mit gezeichnetem Holz, warmem Putz, größeren Dachziegeln und Sandstein versehen; Farbwirkung nach Unity-Vergleichsbildern beruhigt.
+- [x] Hannes' Stall stilistisch angeglichen: dunkleres gezeichnetes Holz, gedecktes grünes Schindeldach, warmer Putz und Sandsteinsockel. Pferdegrafiken und Pflegeablauf bleiben erhalten.
+- [x] Pflegeplatz mit weich auslaufender festgetretener Erde und zurückhaltenden Strohresten ergänzt; Kontaktschatten bleiben darüber sichtbar und beide Pferdebegrüßungen erreichbar.
+- [x] Drei niedrige Klee-/Grasinseln verbinden Werkstatt und Stall; Sockelbewuchs hält Abstand zu den Kollisionen.
+- [x] Martas bestehendes 3D-Haus mit gezeichnetem Holz, cremefarbenem Putz, Ziegeldach, Sandstein und grünen Läden/Türen angeglichen; kleine Kräuter in Töpfen und Fensterkästen durch gezeichnete Pflanzen ersetzt.
+- [x] Gezeichnetes Holz für Beeteinfassungen, Bohnenrankhilfe und Gartenarbeitsbank ergänzt; weiche Wegränder und niedriger Außenbewuchs bis zum letzten Beet erweitert. Gießstellen bleiben frei; fünf gezielte Spieltests bestanden.
+- [ ] Martas neue Hausfarben, Kräutergröße und Gartenränder gemeinsam im Spiel ansehen.
+- [x] Brunnen und große Frontbank aus Martas Spielbereich genommen; kleine seitliche Bank mit Blick Richtung Beete, schmaleren Haustürweg, Arbeitsboden und lockeren Übergang zum Stall angelegt. Freie Zugänge, Banküberschneidungen, Gießablauf und Szenenneustart geprüft.
+- [ ] Martas offenen Gartenplatz gemeinsam im Spiel abnehmen: seitliche Bank, Wegbreite und Bewuchsdichte.
+- [ ] Einen späteren gemeinsamen Hofplatz für einen Brunnen erst nach Abstimmung der umgebenden Gebäude und Wege festlegen.
+- [ ] Werkstatt und Stall gemeinsam im Spiel abnehmen: Hausfarben, Dichte des Bewuchses, Pflegeplatz und nähere Kamera (Abstand 25 statt 30, Winkel unverändert). Martas Haus und Garten sind inzwischen ebenfalls überarbeitet; die gemeinsame Abnahme steht noch aus.
+- [x] Martas Platz mit gezeichneter Saatgutkiste, Werkzeugleiste, Anzuchtschale und drei Gemüse-Bildschildern personalisiert. Bestehende Wege und Gießstellen bleiben frei; endgültige Wirkung gemeinsam im Spiel ansehen.
+- [x] Gemüse-Platzhalter durch gezeichneten Kohl, Möhrengrün und Bohnenpflanzen ersetzt; leichte Größen-/Positionsunterschiede, kleine Erdklumpen und einzelne Halme ergänzen die Beete.
+- [x] Gießfeedback verfeinert: feine Strahlen aus der Kanne, Tropfen und stilisierte Spritzer, feuchte Erde und Pflanzen; Abbruch und Szenenwechsel berücksichtigen den Fortschritt.
+- [x] Marta schaut nach dem letzten Beet kurz zum Gemüse und wieder zu Elian. Ihr persönlicher Dank bleibt im Dialog.
+- [ ] Neue Gemüsegröße, Beetdichte und Stärke des Wasserstrahls gemeinsam im Spiel abnehmen.
 - [x] Martas Gießablauf umgesetzt: sichtbare tragbare Kanne, abbrechbare Gießanimation, Wassertropfen und Geräusch, nasse Erde, Fortschritt (0–3), persönlicher Dank und Kanne zurückstellen. Abbruch, Szenenwechsel und Abschluss automatisch geprüft; Fortschritt gilt innerhalb einer Spielsitzung.
 - [ ] Wiederholtes Ansprechen, Dialogabbruch und Antworten nach erledigter Hilfe sinnvoll gestalten. Für Marta umgesetzt und geprüft; weitere Bewohner noch prüfen.
 - [ ] Martas Gartenaufgabe gemeinsam im Spiel abnehmen: Kanne an der Hand, Wasserstrahl, Lautstärke und Verständlichkeit. Gezeichnete 2D-Kanne und bewegliche Armteile mit Halte-, Aufnahme-, Gieß- und Abstellanimation sind umgesetzt. Griffverbindung nach links/rechts, blockiertes Herantreten und Abbrüche sind geprüft; Bewegungswirkung noch gemeinsam ansehen.

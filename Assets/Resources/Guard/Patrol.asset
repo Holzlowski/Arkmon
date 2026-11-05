@@ -17,10 +17,10 @@ MonoBehaviour:
   - position: {x: 14.1, y: 0, z: 9.2}
     wait: 4
     lookLeft: 1
-  - position: {x: 23.8, y: 0, z: 11.1}
+  - position: {x: 23.35, y: 0, z: 11.1}
     wait: 0
     lookLeft: 0
-  - position: {x: 24.8, y: 0, z: 4.5}
+  - position: {x: 23.35, y: 0, z: 5}
     wait: 0
     lookLeft: 0
   - position: {x: 24.8, y: 0, z: -1}

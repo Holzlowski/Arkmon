@@ -29,7 +29,7 @@ public static class ConfigureCourtyardGuard
         {
             var route=ScriptableObject.CreateInstance<CourtyardGuardRoute>();
             route.stops=new[]{
-                Stop(14.1f,9.2f,4,true),Stop(23.8f,11.1f),Stop(24.8f,4.5f),Stop(24.8f,-1),
+                Stop(14.1f,9.2f,4,true),Stop(23.35f,11.1f),Stop(23.35f,5),Stop(24.8f,-1),
                 Stop(26,-3.5f),Stop(31,-4),Stop(38,-2.6f),Stop(39.2f,-.3f,5,false)
             };
             AssetDatabase.CreateAsset(route,routePath);
