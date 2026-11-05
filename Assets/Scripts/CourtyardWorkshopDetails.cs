@@ -26,7 +26,7 @@ public sealed class CourtyardWorkshopDetails : MonoBehaviour
             var body=timber.GetComponent<BoxCollider>();
             if(body!=null)
             {
-                body.center=new Vector3(0,.34f,-1.15f);body.size=new Vector3(1.2f,.68f,.75f);body.enabled=true;
+                body.center=new Vector3(0,.29f,-.50f);body.size=new Vector3(1.02f,.58f,.64f);body.enabled=true;
             }
         }
         foreach(Transform child in workshop)
@@ -38,11 +38,12 @@ public sealed class CourtyardWorkshopDetails : MonoBehaviour
             blank.localScale=new Vector3(1.55f,.075f,.22f);
         }
         details.Prop("Illustrated hanging tools","Tools",new Vector3(-1.55f,.69f,-2.12f),false);
-        details.Prop("Marta trowel repair","Repair",new Vector3(-.05f,.91f,-3.80f),true);
-        details.Prop("Carpenter tool caddy","Caddy",new Vector3(-.50f,.91f,-3.12f),true);
-        details.Prop("Workshop spare timber","Planks",new Vector3(3.65f,.04f,-1.25f),true);
-        details.Prop("Workshop offcut basket","Offcuts",new Vector3(-3.65f,.02f,-1.1f),true);
-        for(int i=0;i<3;i++)
+        details.Prop("Marta trowel repair","Repair",new Vector3(.10f,.91f,-3.55f),true);
+        details.Prop("Carpenter tool caddy","Caddy",new Vector3(-.60f,.91f,-3.12f),true);
+        var stack=details.Prop("Workshop spare timber","Planks",new Vector3(3.65f,.04f,-.60f),true);
+        if(stack!=null)stack.localScale=Vector3.one*.85f;
+        details.Prop("Workshop offcut basket","Offcuts",new Vector3(-3.65f,.02f,-2.15f),true);
+        for(int i=0;i<2;i++)
         {
             var shavings=details.Prop("Illustrated wood shavings","Shavings",new Vector3(-1.75f+i*.42f,.045f,-4.72f-(i%2)*.30f),false);
             if(shavings!=null)
