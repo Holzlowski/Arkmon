@@ -28,7 +28,7 @@ public class DemoOpening : MonoBehaviour
         bool pending = firstTrialPending; firstTrialPending = false; return pending;
     }
     public static bool IsPresenting => presentation != null && presentation.IsBusy
-        || CourtyardArrivalPresentation.IsPresenting || DemoCompletionPanel.IsOpen || CourtyardGarden.IsBusy;
+        || CourtyardArrivalPresentation.IsPresenting || DemoCompletionPanel.IsOpen || CourtyardGarden.IsBusy || CourtyardLookout.IsPresenting;
     private static DemoOpeningPresentation presentation;
     public static void RecordTrialVictory() => PassedFirstTrial = true;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
