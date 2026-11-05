@@ -72,7 +72,8 @@ public class PlayerInteractionFocus : MonoBehaviour
         Refresh();
         if (Current == null || Camera.main == null) { Hide(); return; }
         Vector3 point = Current.GetTransform();
-        Vector3 screen = Camera.main.WorldToScreenPoint(point + Vector3.up * 1.65f);
+        bool undergroundCellar = Current is CourtyardEntrance cellar && cellar.destination == CourtyardEntrance.Destination.Cellar;
+        Vector3 screen = Camera.main.WorldToScreenPoint(point + Vector3.up * (undergroundCellar ? 2.6f : 1.65f));
         if (screen.z <= 0) { Hide(); return; }
         canvas.enabled = true; label.text = "[E]  " + LabelFor(Current);
         var canvasRect = (RectTransform)canvas.transform;
@@ -84,9 +85,10 @@ public class PlayerInteractionFocus : MonoBehaviour
         if (!ring.enabled) return;
         Vector3 markerPoint = prop != null ? prop.GetMarkerPosition() : point;
         float radius = prop != null && prop.kind == DemoInteractable.Kind.RoomDoor ? .35f : .55f;
+        float markerHeight = Current is CourtyardEntrance entrance && entrance.destination == CourtyardEntrance.Destination.Cellar ? markerPoint.y + .035f : .035f;
         float pulse = 1 + .035f * Mathf.Sin(Time.unscaledTime * 3);
         for (int i = 0; i < ring.positionCount; i++)
-        { float angle = i * Mathf.PI * 2 / ring.positionCount; ring.SetPosition(i, new Vector3(markerPoint.x + Mathf.Cos(angle)*radius*pulse, .035f, markerPoint.z + Mathf.Sin(angle)*radius*pulse)); }
+        { float angle = i * Mathf.PI * 2 / ring.positionCount; ring.SetPosition(i, new Vector3(markerPoint.x + Mathf.Cos(angle)*radius*pulse, markerHeight, markerPoint.z + Mathf.Sin(angle)*radius*pulse)); }
     }
     private void Hide() { if (canvas != null) canvas.enabled = false; if (ring != null) ring.enabled = false; }
     private void OnDisable() { Current = null; Hide(); }
