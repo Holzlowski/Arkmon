@@ -24,8 +24,10 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
     private static float SecondZ(float x) => VergeZ(x) - 38 + Mathf.Sin(x * .08f) * 4;
     private static float Weight(Vector3 p) => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-372, -350, p.x))
         * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-46, -54, p.x));
-    // Only the western outlook becomes ripe grain; the courtyard and eastern meadow stay unchanged.
-    public static float GoldenFieldWeight(Vector3 p) => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-46, -54, p.x));
+    // Ripe fields begin outside either castle boundary; the courtyard stays green.
+    public static float GoldenFieldWeight(Vector3 p) => Mathf.Max(
+        Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-46, -54, p.x)),
+        Mathf.SmoothStep(0, 1, Mathf.InverseLerp(50, 53.5f, p.x)));
     public static float AdjustGold(Vector3 p, float original) => Mathf.Lerp(original, 1, GoldenFieldWeight(p));
     public static Color GoldenGround(Vector3 p)
     {

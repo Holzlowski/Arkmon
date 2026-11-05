@@ -11,6 +11,8 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
     readonly List<Transform> plants = new List<Transform>();
     readonly List<MeshRenderer> retiredPaths = new List<MeshRenderer>();
     MeadowVegetation meadow;
+    MeshRenderer farBank;
+    Material originalBank;
 
     public static Vector3 ExteriorPoint(Vector3 p)
     {
@@ -56,6 +58,15 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
         foreach (var renderer in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
             if (renderer.name == "Curved courtyard path" && renderer.bounds.min.x > 49)
             { retiredPaths.Add(renderer); renderer.enabled = false; }
+        // This solid bank covers the meadow mesh: tint its own surface as well as the field vertices.
+        farBank = GameObject.Find("Far stream bank")?.GetComponent<MeshRenderer>();
+        if (farBank != null)
+        {
+            originalBank = farBank.sharedMaterial;
+            var soil = new Material(originalBank) { name = "Eastern golden field soil" };
+            soil.SetColor("_BaseColor", new Color(.64f, .46f, .20f));
+            materials.Add(soil); farBank.sharedMaterial = soil;
+        }
         var earth = new Material(source) { name = "Eastern field earth path" };
         materials.Add(earth); earth.SetFloat("_WheelRuts",.28f); earth.SetColor("_BaseColor", new Color(.68f, .74f, .77f, .92f));
         var verge = new Material(source) { name = "Eastern field dry verge" };
@@ -79,7 +90,7 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
             plant.transform.position = Ground(new Vector3(x, 0, z)) + Vector3.up * .025f;
             plant.transform.localScale = Vector3.one * ((.23f + (float)random.NextDouble() * .25f) / sprite.bounds.size.y);
             var renderer = plant.GetComponent<SpriteRenderer>(); renderer.sprite = sprite;
-            renderer.flipX = i % 2 == 0; renderer.color = Color.Lerp(new Color(.88f,.94f,.73f),new Color(1,.84f,.48f),Mathf.InverseLerp(53,66,x));
+            renderer.flipX = i % 2 == 0; renderer.color = new Color(.94f,.76f,.39f);
             plants.Add(plant.transform);
         }
     }
@@ -116,6 +127,7 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
     }
     void OnDestroy()
     {
+        if (farBank != null) farBank.sharedMaterial = originalBank;
         foreach (var renderer in retiredPaths) if (renderer != null) renderer.enabled = true;
         foreach (var mesh in meshes) if (mesh != null) Destroy(mesh);
         foreach (var material in materials) if (material != null) Destroy(material);

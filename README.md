@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.30.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.30.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2000,3 +2000,4 @@ Release reconciliation: all preceding local/proposed-version notes through the s
 - **0.28.5** — `style(castle): connect the entrance with a warm stone apron`. Add a shallow stone approach at the castle threshold and a restrained local sunlight accent without additional collision barriers.
 - **0.29.0** — `feat(camera): reveal the gate and keep Elian visible on the bridge`. Turn gradually toward the eastern arch, cap angular catch-up after long frames and clip only foreground masonry around Elian in color and depth passes. Soften stream banks and group shore planting. Crossing checks cover rendered visibility, both directions, scenic overrides and reload.
 - **0.30.0** — `feat(courtyard): add a small exterior gate forecourt`. Widen the exterior lane into terrain-following worn earth with an Aurenfeld waymarker and low boundary dressing. Share vegetation clearance with the meadow and retain an open walking and conversation space. Add traversal and reload coverage; no arrival event is added.
+- **0.30.1** — `style(courtyard): bring golden fields up to the gate forecourt`. Start ripe grain immediately beyond the drawbridge and align terrain, far-bank soil and verge colours. Preserve lane and forecourt clearance in both vegetation LODs and restore the bank material on unload.

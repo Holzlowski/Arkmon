@@ -107,7 +107,7 @@ public sealed class CourtyardGateForecourt : MonoBehaviour
                 obj.transform.position=at+Vector3.up*.025f;
                 obj.transform.localScale=Vector3.one*((kind=="Grass"?.32f:.22f)/sprite.bounds.size.y);
                 var renderer=obj.GetComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.flipX=i%2==0;
-                renderer.color=new Color(.95f,.89f,.66f);plants.Add(obj.transform);
+                renderer.color=new Color(.94f,.76f,.39f);plants.Add(obj.transform);
             }
         }
     }
