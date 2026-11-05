@@ -20,7 +20,8 @@ public sealed class CourtyardLookoutLandscape : MonoBehaviour
         quad.vertices = new[] { new Vector3(-.5f,-.5f,0),new Vector3(.5f,-.5f,0),new Vector3(.5f,.5f,0),new Vector3(-.5f,.5f,0) };
         quad.uv = new[] { Vector2.zero, Vector2.right, Vector2.one, Vector2.up };
         quad.triangles = new[] { 0,2,1,0,3,2 }; quad.RecalculateNormals(); quad.RecalculateBounds();
-        Layer("Western painted mountains", "Lookout mountains", new Vector3(-195, 50, 30), new Vector2(420, 168), -20);
+        // Lift the full mountain range above the rolling fields, keeping its painted proportions.
+        Layer("Western painted mountains", "Lookout mountains", new Vector3(-195, 62, 30), new Vector2(420, 168), -20);
         clouds = Layer("Western drifting clouds", "Lookout clouds", new Vector3(-205, 65, 30), new Vector2(380, 253), -21);
         cloudOrigin = clouds.position;
     }
