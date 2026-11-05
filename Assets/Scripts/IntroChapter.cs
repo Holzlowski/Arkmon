@@ -33,11 +33,17 @@ public class IntroChapter : MonoBehaviour
             CourtyardGardenPlace.Install();
             CourtyardCastleEntranceStyle.Install();
             CourtyardCastleFacadeStyle.Install();
+            CourtyardBreachStyle.Install();
+            CourtyardDistantFields.Install();
+            CourtyardFieldMargins.Install();
             CourtyardCellarEntranceStyle.Install();
             CourtyardEastCottageStyle.Install();
             CourtyardGuard.Install();
             CourtyardVergePolish.Install();
             CourtyardEastGroundStyle.Install();
+            CourtyardGateStyle.Install();
+            CourtyardBridgeThreshold.Install();
+            CourtyardEastFieldStyle.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

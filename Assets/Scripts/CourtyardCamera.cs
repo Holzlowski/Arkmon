@@ -19,6 +19,27 @@ public class CourtyardCamera : MonoBehaviour
     }
     private Vector3 Target()=>new Vector3(Mathf.Clamp(player.position.x,horizontalBounds.x,horizontalBounds.y),focusHeight,Mathf.Clamp(player.position.z+3,depthBounds.x,depthBounds.y));
     private void LateUpdate(){if(view==null || player==null)return;focus=Vector3.SmoothDamp(focus,Target(),ref velocity,damping,Mathf.Infinity,Time.unscaledDeltaTime);Apply();}
-    private void Apply(){var angle=Quaternion.Euler(pitch,0,0);view.transform.SetPositionAndRotation(focus-angle*Vector3.forward*distance,angle);view.fieldOfView=fieldOfView;}
+    private bool scenic;
+    private Vector3 scenicPosition;
+    private Quaternion scenicRotation;
+    private float scenicFov;
+    public void SetScenicView(Vector3 position, Quaternion rotation, float fov)
+    {
+        scenic = true; scenicPosition = position; scenicRotation = rotation; scenicFov = fov;
+        Apply();
+    }
+    public void ClearScenicView() { scenic = false; if (view != null) Apply(); }
+    private void Apply()
+    {
+        if (scenic)
+        {
+            view.transform.SetPositionAndRotation(scenicPosition, scenicRotation);
+            view.fieldOfView = scenicFov;
+            return;
+        }
+        var angle = Quaternion.Euler(pitch, 0, 0);
+        view.transform.SetPositionAndRotation(focus - angle * Vector3.forward * distance, angle);
+        view.fieldOfView = fieldOfView;
+    }
     private void OnDisable(){if(brain!=null)brain.enabled=previousBrain;}
 }
