@@ -692,7 +692,7 @@ public static class ConfigureIntroCourtyard
     static void Horizon()
     {
         var root=GameObject.Find("Castle horizon and golden fields");if(root==null)return;
-        var material=Clone("Courtyard outer meadow cutout","Assets/Art/SceneStyle/Courtyard meadow cutout.mat");material.SetVector("_ClearArea",new Vector4(-45,-19,62,22));material.SetFloat("_SunResponse",1);
+        var material=Clone("Courtyard outer meadow cutout","Assets/Art/SceneStyle/Courtyard meadow cutout.mat");material.SetVector("_ClearArea",new Vector4(-45,-19,62,22));material.SetFloat("_SunResponse",1);material.SetFloat("_FieldTexture",1);
         foreach(var renderer in root.GetComponentsInChildren<MeshRenderer>())if(renderer.sharedMaterial!=null && renderer.sharedMaterial.shader.name=="Arkmon/Meadow")renderer.sharedMaterial=material;
         var morningWind=AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/SceneStyle/MeadowVegetation/Courtyard morning wind.mat");
         foreach(var vegetation in root.GetComponentsInChildren<MeadowVegetation>())

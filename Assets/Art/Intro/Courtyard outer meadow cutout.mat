@@ -26,6 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _SunResponse: 1
+    - _FieldTexture: 1
     m_Colors:
     - _ClearArea: {r: -45, g: -19, b: 62, a: 22}
   m_BuildTextureStacks: []

@@ -11,6 +11,7 @@ public class MeadowVegetation : MonoBehaviour
     [SerializeField, Min(1f)] private float farSpacing = 2.8f;
     [SerializeField] private int seed = 721;
     [SerializeField] private Rect clearWorldArea;
+    internal Material FieldMaterial => material;
     public void SetClearArea(Rect area) { clearWorldArea = area; rebuild = true; }
     private GameObject generated;
     private readonly List<Mesh> meshes = new List<Mesh>();
@@ -179,7 +180,9 @@ public class MeadowVegetation : MonoBehaviour
                 float island = Mathf.PerlinNoise((world.x + 431) * .09f, (world.z + 173) * .09f);
                 float detail = Mathf.PerlinNoise((world.x + 79) * .38f, (world.z + 217) * .38f);
                 float fullness = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.20f, .65f, island));
-                if (illustrated && (island < .20f || Sample(random) > Mathf.Lerp(.50f, .98f, fullness))) continue;
+                bool westernGrain = illustrated && world.x < -54;
+                bool stubble = westernGrain && ((fullness < .14f && detail > .55f) || Sample(random) > Mathf.Lerp(.94f, .995f, fullness));
+                if (illustrated && !westernGrain && (island < .20f || Sample(random) > Mathf.Lerp(.50f, .98f, fullness))) continue;
                 Color tip = Color.Lerp(new Color(.44f, .65f, .24f), new Color(.86f, .69f, .31f), gold).linear;
                 Color root = Color.Lerp(new Color(.21f, .36f, .1f), new Color(.53f, .4f, .16f), gold).linear;
                 float height = Mathf.Lerp(.4f, 1.15f, gold) * (.75f + Sample(random) * .5f);
@@ -190,15 +193,19 @@ public class MeadowVegetation : MonoBehaviour
                     float tint = Mathf.Lerp(.88f, 1.06f, detail); tip *= tint; root *= tint;
                     height *= Mathf.Lerp(.80f, 1.25f, fullness) * Mathf.Lerp(.85f, 1.12f, detail);
                 }
+                if (stubble) height = .13f + detail * .19f;
                 int bladeCount = illustrated ? (detailed ? 3 + Mathf.RoundToInt(fullness * 2) : 3) : 3;
+                if (westernGrain) bladeCount = stubble ? 2 : (detailed ? 5 + Mathf.RoundToInt(fullness * 2) : 3);
                 if (illustrated && detailed)
                     rootContacts?.Add(new Vector3(wx + .125f, y, wz + .125f), .28f + bladeCount * .025f);
                 tuftPhase = illustrated ? Mathf.Repeat(world.x * .731f + world.z * .317f, 1) : 0;
+                float clusterHeight = height;
                 for (int blade = 0; blade < bladeCount; blade++)
                 {
+                    height = westernGrain ? clusterHeight * (.78f + Sample(random) * .42f) : clusterHeight;
                     float angle = Sample(random) * Mathf.PI * 2;
                     Vector3 side = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
-                    Vector3 basePoint = new Vector3(wx + Sample(random) * .25f, y, wz + Sample(random) * .25f);
+                    Vector3 basePoint = new Vector3(wx + Sample(random) * (westernGrain ? .55f : .25f), y, wz + Sample(random) * (westernGrain ? .55f : .25f));
                     if(Application.isPlaying && gameObject.scene.name=="StartScene")
                         basePoint=transform.InverseTransformPoint(CourtyardBreachStyle.ExteriorPoint(transform.TransformPoint(basePoint)));
                     if (illustrated) basePoint = rootContacts.Root(basePoint);
@@ -211,7 +218,7 @@ public class MeadowVegetation : MonoBehaviour
                     Vertex(basePoint + Vector3.up * height * .65f - side * width * .4f, middle, .65f);
                     Vertex(basePoint + Vector3.up * height + side * .16f, tip, 1);
                     Triangle(i, i + 2, i + 1); Triangle(i, i + 3, i + 2); Triangle(i + 3, i + 4, i + 2);
-                    if (gold <= .6f) continue;
+                    if (gold <= .6f || stubble) continue;
                     for (int grain = 0; grain < 3; grain++)
                     {
                         Vector3 center = basePoint + Vector3.up * (height * .75f + grain * .075f) + side * .12f;

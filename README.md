@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.4`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.26.5`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1906,3 +1906,7 @@ Pre-push validation: 12 additional targeted silent PlayMode checks passed in 149
 
 
 Release reconciliation: the eight courtyard commits above include all previously local work through `0.26.4`. Historical uncommitted/proposed-version statements in the development notes are superseded by this release list. Targeted pre-push checks are recorded below.
+
+## Scenic courtyard releases
+
+- **0.26.5** — `style(landscape): refine golden fields and distant hills`. Group ripe grain with varied heights and short stubble. Replace green parcel separators with golden tones, soften distant hill shapes and blend a dense short grain transition into a filtered painted surface. Keep road and scenery on the same sampled terrain. Validation: targeted landscape captures and silent PlayMode scenery/reload checks passed.
