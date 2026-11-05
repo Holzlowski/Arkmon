@@ -28,7 +28,7 @@ public sealed class CourtyardCastleEntranceStyle : MonoBehaviour
         old.enabled=false;
         foreach(var trim in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
             if((trim.name=="Doorway jamb" || trim.name=="Doorway lintel") && Mathf.Abs(trim.transform.position.x-root.transform.position.x)<2.1f && Mathf.Abs(trim.transform.position.z-root.transform.position.z)<.5f)trim.enabled=false;
-        style.Build();
+        style.Build();style.Forecourt();
     }
     Material Tint(string name,Color color,float metal)
     {
@@ -78,6 +78,20 @@ public sealed class CourtyardCastleEntranceStyle : MonoBehaviour
             for(int i=1;i<uv.Length-1;i++)tris.AddRange(new[]{0,i,i+1});
             var shield=new Mesh{name="Portal Aurenfeld shield",vertices=verts,uv=uv,triangles=tris.ToArray()};shield.RecalculateNormals();shield.RecalculateBounds();meshes.Add(shield);
             crest.GetComponent<MeshFilter>().sharedMesh=shield;crest.GetComponent<MeshRenderer>().sharedMaterial=source.sharedMaterial;
+        }
+    }
+    void Forecourt()
+    {
+        // Shallow stones bridge the dirt approach and the existing threshold. No step colliders.
+        for(int row=0;row<4;row++)for(int col=0;col<5;col++)
+        {
+            float x=(col-2)*.79f+(row%2==0?.06f:-.06f),z=-.95f-row*.69f;
+            var at=transform.TransformPoint(new Vector3(x,0,z));float y=0;
+            foreach(var hit in Physics.RaycastAll(at+Vector3.up*15,Vector3.down,30,~0,QueryTriggerInteraction.Ignore))
+                if(hit.collider.CompareTag("Ground"))y=Mathf.Max(y,hit.point.y);
+            var local=transform.InverseTransformPoint(new Vector3(at.x,y+.035f,at.z));
+            Box("Castle worn apron stone",local,new Vector3(.75f,.065f,.64f),stone);
+            transform.GetChild(transform.childCount-1).localRotation=Quaternion.Euler(0,Mathf.Sin(row*7+col*3)*2,0);
         }
     }
     void Box(string name,Vector3 position,Vector3 size,Material material,bool collision=false)

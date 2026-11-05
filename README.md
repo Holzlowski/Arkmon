@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.28.4`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.28.5`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1997,3 +1997,4 @@ Release reconciliation: all preceding local/proposed-version notes through the s
 - **0.28.2** — `style(workshop): tidy Ida's working area`. Reduce and rearrange workshop stock so the doorstep and working silhouette remain readable.
 - **0.28.3** — `fix(courtyard): clear and connect courtyard walking routes`. Replace obsolete primitive verges, soften the central junction, ground western details and connect the watering stations. Move the seed bench and work furniture out of the garden aisle; include western access checks.
 - **0.28.4** — `style(stable): connect the horse care area to the garden`. Ground the stable with earth and straw patches, arrange care supplies, and add a narrow garden path with low planting. Cover station access and scene reload.
+- **0.28.5** — `style(castle): connect the entrance with a warm stone apron`. Add a shallow stone approach at the castle threshold and a restrained local sunlight accent without additional collision barriers.

@@ -27,6 +27,10 @@ public sealed class CourtyardMorningAccents : MonoBehaviour
             "Illustrated west breach", "West wall near", "West wall far", "Broken west wall base");
         style.Add(new Vector3(43, 3.2f, -1), 6.5f, .45f,
             "Illustrated east crossing", "East wall north of gate", "East wall south of gate", "Gate stone pier");
+        var portal = GameObject.Find("Illustrated castle entrance");
+        if (portal != null)
+            style.Add(portal.transform.position + Vector3.up * 2.3f, 6f, .38f,
+                "Illustrated castle entrance");
         var pottingTable = GameObject.Find("Garden potting table");
         if (pottingTable != null)
             style.Add(pottingTable.transform.position + Vector3.up, 8f, .30f,
