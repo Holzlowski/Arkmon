@@ -48,28 +48,30 @@ public sealed class CourtyardVegetableBed : MonoBehaviour
         art = new GameObject("Illustrated vegetable bed").transform;
         art.SetParent(transform.parent, false);
         var bounds = soil.bounds;
+        var footprint = new Vector3(bounds.size.x / 4.3f, 1, bounds.size.z / 3.3f);
+        float plantScale = Mathf.Min(footprint.x, footprint.z);
         var random = new System.Random(729 + kind);
         for (int row = 0; row < 3; row++)
             for (int col = 0; col < 4; col++)
             {
                 float dx = ((float)random.NextDouble() - .5f) * .15f;
                 float dz = ((float)random.NextDouble() - .5f) * .12f;
-                var point = new Vector3(bounds.center.x - 1.5f + col + dx,
-                    bounds.max.y + .012f, bounds.center.z - .91f + row * .93f + dz);
-                AddPlant(sprites[(row + col) % 2], point, .91f + (float)random.NextDouble() * .17f, col % 2 == 1);
+                var point = new Vector3(bounds.center.x + (-1.5f + col + dx) * footprint.x,
+                    bounds.max.y + .012f, bounds.center.z + (-.91f + row * .93f + dz) * footprint.z);
+                AddPlant(sprites[(row + col) % 2], point, (.91f + (float)random.NextDouble() * .17f) * plantScale, col % 2 == 1);
                 // Low irregular clods define the rows without introducing obstacles.
                 var clod = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 clod.name = "Garden earth clod";
                 var collider = clod.GetComponent<Collider>(); collider.enabled = false; Destroy(collider);
                 clod.transform.SetParent(art, true); clod.transform.position = point - Vector3.up * .018f;
-                clod.transform.localScale = new Vector3(.38f, .055f, .25f);
+                clod.transform.localScale = Vector3.Scale(new Vector3(.38f, .055f, .25f), footprint);
                 var renderer = clod.GetComponent<Renderer>(); renderer.sharedMaterial = soil.sharedMaterial;
                 earth.Add(renderer);
             }
         var grass = Resources.Load<Sprite>("GardenPlants/Grass");
         if (grass != null)
             foreach (var offset in new[] {new Vector3(-1.82f,0,.72f),new Vector3(1.78f,0,-.45f),new Vector3(.36f,0,1.35f)})
-                AddPlant(grass, new Vector3(bounds.center.x,bounds.max.y+.01f,bounds.center.z)+offset, .8f, offset.x < 0);
+                AddPlant(grass, new Vector3(bounds.center.x,bounds.max.y+.01f,bounds.center.z)+Vector3.Scale(offset, footprint), .8f * plantScale, offset.x < 0);
     }
 
     void AddPlant(Sprite sprite, Vector3 point, float scale, bool mirror)

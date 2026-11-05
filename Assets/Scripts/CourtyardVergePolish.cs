@@ -17,6 +17,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     IInteractableAsPlayer[] interactions;
     float left,right;
     Bounds[] gardenBeds=new Bounds[0];
+    CourtyardGuardRoute patrol;
 
     internal static void Install()
     {
@@ -33,6 +34,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         polish.right=Mathf.Max(polish.right,43f);
         polish.interactions=FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IInteractableAsPlayer>().ToArray();
         Physics.SyncTransforms();
+        polish.patrol=Resources.Load<CourtyardGuardRoute>("Guard/Patrol");
         polish.Paths();polish.PlantEdges();
         polish.Foundation(workshop,3.35f,-2.15f);
         polish.Foundation(stable,3.85f,-2.1f);
@@ -41,6 +43,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         if(cottage!=null)polish.Foundation(cottage,3.2f,-2.8f);
         polish.GardenEdges();
         if(cottage!=null)polish.CottageMeadow(cottage);
+        polish.MeadowIslands();
     }
     void Paths()
     {
@@ -102,6 +105,16 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     }
     bool Clear(Vector3 point)
     {
+        // Preserve the newly opened castle approach and the guard's complete patrol corridor.
+        if(point.x>10.55f && point.x<13.45f && point.z>-.8f && point.z<12.3f)return false;
+        if(patrol!=null)
+            for(int i=1;i<patrol.stops.Length;i++)
+            {
+                var a=patrol.stops[i-1].position;var b=patrol.stops[i].position;
+                a.y=b.y=point.y;var segment=b-a;
+                float t=segment.sqrMagnitude<.001f?0:Mathf.Clamp01(Vector3.Dot(point-a,segment)/segment.sqrMagnitude);
+                if(Vector3.Distance(point,a+segment*t)<1.1f)return false;
+            }
         foreach(var bed in gardenBeds)
             if(point.x>bed.min.x-.5f && point.x<bed.max.x+.5f && point.z>bed.min.z-.5f && point.z<bed.max.z+.5f)return false;
         foreach(var obstacle in Physics.OverlapSphere(point+Vector3.up*.18f,.28f,~0,QueryTriggerInteraction.Ignore))
@@ -165,6 +178,61 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             if(!Clear(at))continue;
             Prop(i%9==0?"Pebbles":i%5==0?"Grass":"Clover",Ground(at),.70f+(float)random.NextDouble()*.30f,i%2==0);
         }
+    }
+    void MeadowIslands()
+    {
+        var source=Resources.Load<Material>("CourtyardStyle/Stable earth");if(source==null)return;
+        var undergrowth=new Material(source){name="Warm courtyard meadow undergrowth"};materials.Add(undergrowth);
+        undergrowth.SetTexture("_BaseMap",Texture2D.whiteTexture);
+        undergrowth.SetColor("_BaseColor",new Color(.34f,.51f,.14f,.24f));
+        // Broad, low islands flank the main path; leave generous open lawn between them.
+        var groups=new[]{
+            new Vector4(-30,-4.8f,3.0f,2.0f),new Vector4(-23,0,3.8f,1.9f),new Vector4(-17,-9.0f,5.2f,2.0f),
+            new Vector4(-5.5f,-8.5f,4.6f,2.3f),new Vector4(6.5f,-6.8f,3.7f,1.9f),
+            new Vector4(17.8f,-6.5f,3.6f,1.8f),new Vector4(18.2f,4.7f,2.5f,1.8f),
+            new Vector4(-17.5f,5.6f,2.0f,1.1f)};
+        for(int g=0;g<groups.Length;g++)
+        {
+            var area=groups[g];var center=new Vector3(area.x,0,area.y);
+            var root=new GameObject("Courtyard meadow island "+g).transform;root.SetParent(transform,false);
+            MeadowGround(root,center,area.z,area.w,undergrowth,g);
+            var random=new System.Random(8017+g*31);
+            int count=Mathf.RoundToInt(area.z*area.w*13);
+            for(int i=0;i<count;i++)
+            {
+                float angle=(float)random.NextDouble()*Mathf.PI*2,r=Mathf.Sqrt((float)random.NextDouble());
+                float edge=1+.12f*Mathf.Sin(angle*3+g)+.06f*Mathf.Cos(angle*5);
+                var at=center+new Vector3(Mathf.Cos(angle)*area.z*r*edge,0,Mathf.Sin(angle)*area.w*r*edge);
+                if(!Clear(at))continue;
+                string kind=i%19==0?"Flowers":i%7==0?"Mixed":i%3==0?"Grass":"Clover";
+                var sprite=Resources.Load<Sprite>("CourtyardStyle/"+kind);if(sprite==null)continue;
+                float height=(kind=="Grass"?.38f:.23f)+(float)random.NextDouble()*.20f;
+                var plant=Prop(kind,Ground(at),height/sprite.bounds.size.y,random.Next(2)==0);
+                if(plant==null)continue;
+                plant.SetParent(root,true);
+                plant.GetComponent<SpriteRenderer>().color=Color.Lerp(new Color(.78f,.93f,.62f),new Color(.95f,1,.79f),(float)random.NextDouble());
+            }
+        }
+    }
+    void MeadowGround(Transform root,Vector3 center,float rx,float rz,Material material,int seed)
+    {
+        const int sides=40,rings=7;var vertices=new List<Vector3>();var colors=new List<Color>();var triangles=new List<int>();
+        for(int ring=0;ring<=rings;ring++)for(int side=0;side<sides;side++)
+        {
+            float angle=side*Mathf.PI*2/sides,r=ring/(float)rings;
+            float edge=1+.12f*Mathf.Sin(angle*3+seed)+.06f*Mathf.Cos(angle*5);
+            var at=center+new Vector3(Mathf.Cos(angle)*rx*r*edge,0,Mathf.Sin(angle)*rz*r*edge);
+            vertices.Add(Ground(at)-Vector3.up*.015f);
+            // Fade the patch out at walking lines and props as well as its irregular outer edge.
+            colors.Add(new Color(Clear(at)?r:1,0,0,1));
+            if(ring==0)continue;int n=ring*sides+side,previous=n-sides,next=(side+1)%sides;
+            triangles.AddRange(new[]{previous,ring*sides+next,n,previous,(ring-1)*sides+next,ring*sides+next});
+        }
+        var mesh=new Mesh{name="Soft courtyard meadow island"};mesh.SetVertices(vertices);mesh.SetColors(colors);
+        mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();meshes.Add(mesh);
+        var obj=new GameObject("Meadow island ground",typeof(MeshFilter),typeof(MeshRenderer));obj.transform.SetParent(root,false);
+        obj.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=obj.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;
+        renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
     }
     void GardenEdges()
     {

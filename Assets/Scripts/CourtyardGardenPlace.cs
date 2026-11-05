@@ -6,6 +6,41 @@ using UnityEngine;
 public sealed class CourtyardGardenPlace : MonoBehaviour
 {
     Mesh groundMesh;
+    // Run before ground cover, crop visuals and interaction anchors sample the authored beds.
+    internal static void PrepareBeds()
+    {
+        if (GameObject.Find("Kitchen garden layout") != null) return;
+        var beds = FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+            .Where(r => r.name == "Garden soil bed").OrderBy(r => r.transform.position.x).ToArray();
+        if (beds.Length != 3 || GameObject.Find("Garden cottage") == null) return;
+        var centers = beds.Select(r => new Vector3(r.transform.position.x, 0, r.transform.position.z)).ToArray();
+        var parts = FindObjectsByType<Transform>(FindObjectsSortMode.None).Where(t =>
+            t.name == "Garden soil bed" || t.name == "Garden border" || t.name.StartsWith("Bean trellis") ||
+            t.name == "Lettuce" || t.name == "Carrot greens" || t.name == "Carrot shoulders" || t.name == "Bean leaves").ToArray();
+        var layout = new GameObject("Kitchen garden layout").transform;
+        layout.SetParent(beds[0].transform.parent, false);
+        const float size = .72f;
+        for (int i = 0; i < beds.Length; i++)
+        {
+            var group = new GameObject("Kitchen garden bed " + i).transform;
+            group.SetParent(layout, false);
+            group.position = new Vector3(6.6f + i * .25f, 0, 2.9f + i * 4.3f);
+            foreach (var part in parts)
+            {
+                var nearest = Enumerable.Range(0, centers.Length).OrderBy(n =>
+                    Vector2.SqrMagnitude(new Vector2(part.position.x - centers[n].x, part.position.z - centers[n].z))).First();
+                // Parts already moved belong to their new group and must not be selected again.
+                if (part.IsChildOf(layout) || nearest != i) continue;
+                var point = group.position + (part.position - centers[i]) * size;
+                part.SetParent(group, true); part.position = point; part.localScale *= size;
+            }
+        }
+        // Keep the seed bench beside Marta, outside the new first bed and the house approach.
+        foreach (var part in FindObjectsByType<Transform>(FindObjectsSortMode.None))
+            if (part.name == "Garden bench seat" || part.name == "Garden bench stone foot")
+                part.position += new Vector3(-1.5f, 0, -.3f);
+        Physics.SyncTransforms();
+    }
     internal static void Install()
     {
         var house=GameObject.Find("Garden cottage")?.transform;

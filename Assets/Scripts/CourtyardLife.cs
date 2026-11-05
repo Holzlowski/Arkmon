@@ -22,7 +22,13 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
         var stable=GameObject.Find("Stable")?.transform;
         var stableSign=stable?.Find("Stable sign spot");
         Sign("Stall",stableSign!=null?stableSign.position:new Vector3(-15.1f,0,1.9f));
-        Sign("Garten", new Vector3(20,0,2.4f));
+        // A low marker beside the first bed keeps the approach and Elian's face visible.
+        var firstBed = FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+            .Where(r => r.name == "Garden soil bed").OrderBy(r => r.bounds.center.z).FirstOrDefault();
+        var gardenSign = firstBed != null
+            ? new Vector3(firstBed.bounds.max.x + .95f, 0, firstBed.bounds.min.z + .4f)
+            : new Vector3(9.1f, 0, 2.1f);
+        Sign("Garten", gardenSign, .75f);
         Sign("Burgtor", new Vector3(37,0,4));
         var gardenerSpot = GameObject.Find("Garden cottage")?.transform.Find("Marta work spot");
         Person(Role.Gardener, gardenerSpot != null ? gardenerSpot.position : new Vector3(4.55f,0,5.55f), new Color(.28f,.44f,.25f));
@@ -74,16 +80,16 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
         facing.enabled = true;
     }
 
-    private static void Sign(string label, Vector3 position)
+    private static void Sign(string label, Vector3 position, float postHeight = 1.5f)
     {
         var root = new GameObject("Wayfinding - " + label).transform;
         root.position = OnGround(position);
         var wood = new Color(.26f,.14f,.07f);
-        Shape(root, PrimitiveType.Cube, new Vector3(0,.75f,0), new Vector3(.12f,1.5f,.12f), wood);
-        Shape(root, PrimitiveType.Cube, new Vector3(0,1.32f,0), new Vector3(1.65f,.48f,.12f), wood);
+        Shape(root, PrimitiveType.Cube, new Vector3(0,postHeight*.5f,0), new Vector3(.12f,postHeight,.12f), wood);
+        Shape(root, PrimitiveType.Cube, new Vector3(0,postHeight-.18f,0), new Vector3(1.65f,.48f,.12f), wood);
         var text = new GameObject("Painted sign label", typeof(TextMeshPro)).GetComponent<TextMeshPro>();
         text.transform.SetParent(root,false);
-        text.transform.localPosition = new Vector3(0,1.32f,-.075f);
+        text.transform.localPosition = new Vector3(0,postHeight-.18f,-.075f);
         text.rectTransform.sizeDelta = new Vector2(1.65f,.45f);
         text.fontSize = 2.15f;
         text.alignment = TextAlignmentOptions.Center;

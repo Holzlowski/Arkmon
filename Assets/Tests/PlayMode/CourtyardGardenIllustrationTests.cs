@@ -48,6 +48,16 @@ public class CourtyardGardenIllustrationTests
             Assert.That(focus.GetType().GetMethod("Refresh").Invoke(focus,null),Is.SameAs(station));
         }
         var prompt=(Behaviour)player.GetComponent(T("PlayerInteractionFocus"));prompt.enabled=false;
+        // Review the formerly obscured approach plus walking beside/behind the low marker.
+        var sign=GameObject.Find("Wayfinding - Garten");
+        var signPosition=sign.transform.position;
+        var reviewPositions=new[]{new Vector3(8.8f,1,1),new Vector3(signPosition.x+.8f,1,signPosition.z),new Vector3(signPosition.x,1,signPosition.z+1.2f)};
+        string[] reviewLabels={"approach","side","behind"};
+        for(int i=0;i<reviewPositions.Length;i++)
+        {
+            player.transform.position=reviewPositions[i];body.position=player.transform.position;
+            yield return new WaitForSeconds(1.1f);Capture("garden-sign-"+reviewLabels[i]);
+        }
         player.transform.position=house.position+new Vector3(0,1,-6.3f);body.position=player.transform.position;
         yield return new WaitForSeconds(1.3f);Capture("garden-illustration-gameplay");
         var camera=Camera.main;var follow=(Behaviour)UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));
@@ -59,7 +69,7 @@ public class CourtyardGardenIllustrationTests
             camera.fieldOfView=40;camera.transform.rotation=Quaternion.Euler(25,0,0);
             camera.transform.position=house.position+new Vector3(0,1.35f,-2.3f)-camera.transform.forward*12;
             yield return null;yield return null;Capture("garden-illustration-detail");
-            camera.transform.position=new Vector3(13.4f,.5f,4)-camera.transform.forward*19;
+            camera.transform.position=new Vector3(6.85f,.5f,7.2f)-camera.transform.forward*19;
             yield return null;yield return null;Capture("garden-illustration-beds");
         }
         finally
@@ -74,4 +84,40 @@ public class CourtyardGardenIllustrationTests
         Assert.That(UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Count(t=>t.name=="Marta side bench"),Is.EqualTo(1));
         LogAssert.NoUnexpectedReceived();
     }
+    [UnityTest] public IEnumerator KitchenGarden_LeavesCastleApproachWalkable_AndKeepsItsLayoutOnReload()
+    {
+        yield return Load();
+        var beds=UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+            .Where(r=>r.name=="Garden soil bed").OrderBy(r=>r.transform.position.x).ToArray();
+        var positions=beds.Select(b=>b.transform.position).ToArray();
+        Assert.That(beds.Length,Is.EqualTo(3));
+        foreach(var bed in beds)
+        {
+            Assert.That(bed.bounds.max.x,Is.LessThan(9),"Vegetables must stay west of the castle approach.");
+            Assert.That(bed.bounds.max.z,Is.LessThan(13),"The rear bed must remain outside the castle foundation.");
+            Assert.That(bed.GetComponentsInParent<Transform>().Any(t=>t.name=="Kitchen garden layout"),Is.True);
+        }
+        // Sweep the central approach between John and the guard, including the low bed borders.
+        for(float x=11.5f;x<=12.5f;x+=.5f)
+        foreach(var hit in Physics.BoxCastAll(new Vector3(x,.8f,-.8f),new Vector3(.35f,.7f,.35f),Vector3.forward,
+            Quaternion.identity,12.2f,~0,QueryTriggerInteraction.Ignore))
+            Assert.That(hit.collider.CompareTag("Ground"),Is.True,"Castle approach blocked by "+hit.collider.name);
+        var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
+        ((Behaviour)player.GetComponent(T("PlayerInteractionFocus"))).enabled=false;
+        body.isKinematic=false;body.position=new Vector3(12,1,-.8f);Physics.SyncTransforms();
+        for(int i=0;i<210 && body.position.z<11.3f;i++)
+        {body.linearVelocity=new Vector3(0,body.linearVelocity.y,4);yield return new WaitForFixedUpdate();}
+        Assert.That(body.position.z,Is.GreaterThan(11.2f),"Elian must walk from the main path to the castle without a detour.");
+        body.linearVelocity=Vector3.zero;body.isKinematic=true;
+        yield return new WaitForSeconds(1.3f);Capture("garden-relocated-castle-approach");
+        body.position=new Vector3(8.8f,1,1);player.transform.position=body.position;
+        yield return new WaitForSeconds(1.3f);Capture("garden-relocated-gameplay");
+        yield return Load();
+        var reloaded=UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+            .Where(r=>r.name=="Garden soil bed").OrderBy(r=>r.transform.position.x).ToArray();
+        for(int i=0;i<3;i++) Assert.That(Vector3.Distance(positions[i],reloaded[i].transform.position),Is.LessThan(.001f));
+        Assert.That(GameObject.Find("Kitchen garden layout").transform.childCount,Is.EqualTo(3));
+        LogAssert.NoUnexpectedReceived();
+    }
+
 }

@@ -73,7 +73,7 @@ public class CourtyardGardenTaskTests
         var water=GameObject.Find("Garden watering drops");
         Assert.That(water.GetComponentsInChildren<LineRenderer>().Any(l=>l.enabled),Is.True,"Water flows only during the tilted pour.");
         Assert.That(water.GetComponentsInChildren<Collider>(),Is.Empty,"Visual water cannot block the player.");
-        yield return CloseUp("garden-water-polished",new Vector3(9,.8f,3.6f),8);
+        yield return CloseUp("garden-water-polished",Beds[0].transform.position+new Vector3(0,.8f,1),8);
         Assert.That(UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Count(t=>t.name=="Garden watering drops"),Is.EqualTo(1));
         Assert.That(bed.GetComponent<AudioSource>().clip,Is.Not.Null);
         Call(bed,"CancelWatering");yield return null;
@@ -124,7 +124,7 @@ public class CourtyardGardenTaskTests
             Assert.That(Vector3.Distance(GameObject.Find("Watering can model").transform.position,Station.transform.position),Is.LessThan(.7f));
             Capture("garden-task-complete");
             yield return CloseUp("marta-garden-workspace",new Vector3(4.2f,1.2f,5.5f),9);
-            yield return CloseUp("marta-garden-beds",new Vector3(13.4f,.5f,4.0f),20);
+            yield return CloseUp("marta-garden-beds",new Vector3(6.85f,.5f,7.2f),20);
             Call(marta,"InteractWithPlayer");yield return new WaitForSeconds(.1f);
             Assert.That(Dialogue.GetType().GetProperty("ActiveEmotion").GetValue(Dialogue).ToString(),Is.EqualTo("Friendly"));Close();
         }

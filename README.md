@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.6`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.25.7`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1430,9 +1430,11 @@ John grounding correction (0.23.1): his `StartScene` prefab override placed the 
 - **0.25.5** — Bring the eastern cottage into the shared illustrated palette, add facade details and a grounded approach. Preserve access beside the cellar and verify decoration does not block exploration.
 - **0.25.6** — Connect garden, buried cellar and eastern cottage with fading earth paths and low planted meadow relief. Update the terrain collider and move the guard route clear of the cellar retaining wall. Final silent landscape, cottage and complete patrol checks passed (3/3).
 
+- **0.25.7** — clear the castle approach and refine watering. Move the compact kitchen beds beside Marta's cottage and keep the castle/patrol corridor clear. Align watering with the resized beds, lower the garden sign, and group low meadow planting beside paths. Include approach, watering and reload regressions.
+
 ### Implementation and validation notes
 
-The following development notes describe the courtyard work included through 0.25.6. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
+The following development notes describe the courtyard work included through 0.25.7. Earlier proposed-commit/version references in historical sections are superseded by the release list above.
 
 ### Illustrated details at Marta's garden
 

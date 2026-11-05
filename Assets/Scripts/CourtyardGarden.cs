@@ -230,7 +230,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         pourAudio.clip = Resources.Load<AudioClip>("Audio/IntroFoley/garden-water");
         pourAudio.volume = (SoundManager.instance != null ? SoundManager.instance.effectsVolume : .55f) * .55f;
         if (!Application.isBatchMode && pourAudio.clip != null) pourAudio.Play();
-        Vector3 target = soil.bounds.center + new Vector3(0, .42f, -.91f);
+        Vector3 target = soil.bounds.center + new Vector3(0, .42f, -soil.bounds.size.z * .276f);
         for (float t = 0; t < 1.9f; t += Time.deltaTime)
         {
             float tilt = Mathf.SmoothStep(0, 1, Mathf.Clamp01(Mathf.Min(t, 1.9f - t) / .3f));
