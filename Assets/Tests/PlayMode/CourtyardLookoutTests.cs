@@ -30,6 +30,10 @@ public class CourtyardLookoutTests
         var point = Point;
         var fieldAtmosphere = GameObject.Find("Aurenfeld field atmosphere");
         var fieldAudio = fieldAtmosphere.GetComponent<AudioSource>();
+        var seeds=GameObject.Find("Western sunlit seeds").GetComponent<ParticleSystem>();
+        Assert.That(seeds.particleCount,Is.Zero);
+        Assert.That(seeds.main.maxParticles,Is.LessThanOrEqualTo(28));
+        Assert.That(seeds.GetComponent<Renderer>().sharedMaterial.shader.isSupported,Is.True);
         Assert.That(fieldAudio.clip, Is.Not.Null);
         Assert.That(fieldAudio.volume, Is.Zero, "The field loop must not play over courtyard conversations.");
         var margins = GameObject.Find("Western field margins");
@@ -97,6 +101,7 @@ public class CourtyardLookoutTests
             yield return null;Capture("lookout-flight-"+stage.ToString("00"));
         }
         Capture("lookout-fields-panorama");
+        Assert.That(seeds.particleCount,Is.InRange(1,28),"The lookout should show a bounded, live seed effect.");
         Assert.That(fieldAudio.volume, Is.GreaterThan(0), "The scenic view should fade its ambient bed in.");
         if(Application.isBatchMode) Assert.That(fieldAudio.isPlaying, Is.False, "Batch tests must remain silent.");
         // Render both states in one frame so wind/cloud motion cannot fake a shadow difference.
@@ -125,6 +130,7 @@ public class CourtyardLookoutTests
         yield return Return(point);
         yield return new WaitForSeconds(1.6f);
         Assert.That(fieldAudio.volume, Is.Zero, "Ambient audio must fade away after leaving the lookout.");
+        Assert.That(seeds.particleCount,Is.Zero,"Seeds must clear after the lookout returns.");
         Assert.That(Call(focus, "Refresh"), Is.EqualTo(point));
         Assert.That(((Behaviour)camera.GetComponent(T("Cinemachine.CinemachineBrain"))).enabled, Is.False);
         Call(point, "InteractWithPlayer"); yield return new WaitForSeconds(.3f);
@@ -133,6 +139,8 @@ public class CourtyardLookoutTests
         ((Behaviour)point).enabled = true; Call(point, "InteractWithPlayer");
         yield return new WaitForSeconds(.2f); yield return Load();
         Assert.That(fieldAudio == null, Is.True, "Unloading the scene must dispose the old loop source.");
+        Assert.That(seeds==null,Is.True,"Reload must destroy the old particle source.");
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardFieldParticles"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
         Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardFieldAtmosphere"), FindObjectsSortMode.None).Length, Is.EqualTo(1));
         Assert.That(Busy, Is.False);
         Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardLookout"), FindObjectsSortMode.None).Length, Is.EqualTo(1));

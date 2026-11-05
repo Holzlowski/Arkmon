@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.27.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.28.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1988,3 +1988,8 @@ Suggested commit: `style(landscape): soften distant golden hills` — lower irre
 - **0.27.1** — `docs(courtyard): record scenic review and particle tasks`. Reconcile the implemented scenic pass, targeted validation and remaining prototype limits. Add scoped particle tasks for pollen, leaves, action dust, water and existing magical effects, including visibility and performance checks. Captures, logs and the design PDF remain outside these commits.
 
 Release reconciliation: all preceding local/proposed-version notes through the softer hills correction are now included through 0.27.1. Historical six-band and tall-ridge descriptions were superseded by the four-band soft-hill correction. Particle work is planned separately in TODO.md.
+
+
+### Committed courtyard refinement pass
+
+- **0.28.0** — `feat(landscape): add sunlit seeds to the lookout`. Add bounded drifting seed particles with scene-owned resources and lookout lifecycle checks. The effect follows lookout visibility and avoids filling the whole courtyard.
