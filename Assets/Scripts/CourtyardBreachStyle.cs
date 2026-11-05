@@ -11,6 +11,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
     readonly List<Material> materials=new List<Material>();
     readonly List<Transform> plants=new List<Transform>();
     Material stone,earth;
+    readonly List<(MeshRenderer renderer,float world)> mappedWalls=new List<(MeshRenderer,float)>();
     MeadowVegetation exterior;
     readonly List<(MeshFilter filter,Mesh original)> landscape=new List<(MeshFilter,Mesh)>();
     readonly List<(Transform prop,Vector3 point)> exteriorProps=new List<(Transform,Vector3)>();
@@ -30,8 +31,15 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
         boundary.transform.localScale=new Vector3(1.5f,1.26f,7);
         var surface=boundary.GetComponent<MeshRenderer>();var properties=new MaterialPropertyBlock();surface.GetPropertyBlock(properties);
         properties.SetVector("_ObjectScale",boundary.transform.lossyScale);surface.SetPropertyBlock(properties);
+        foreach(string name in new[]{"West wall near","West wall far","Broken west wall base"})
+        {
+            var r=GameObject.Find(name)?.GetComponent<MeshRenderer>();if(r==null)continue;
+            var b=new MaterialPropertyBlock();r.GetPropertyBlock(b);
+            style.mappedWalls.Add((r,b.GetFloat("_WorldMasonry")));
+            b.SetFloat("_WorldMasonry",1);r.SetPropertyBlock(b);
+        }
         style.BlendExterior();
-        style.BrokenEdges();style.Rubble();style.Forecourt();style.Vegetation();
+        style.BrokenEdges();style.Rubble();style.Forecourt();style.ExteriorRubble();style.Vegetation();
         Physics.SyncTransforms();
     }
     // Close the old cut-out terrain edge and let the near meadow rise gradually towards the fields.
@@ -103,6 +111,22 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
             Block("Breach fallen stone",ground+Vector3.up*size.y*.42f,size,new Vector3(-8+i%3*7,i*47,pile==0?-9:8),300+pile*31+i,i%4==0);
         }
     }
+    void ExteriorRubble()
+    {
+        var shader=Resources.Load<Shader>("CourtyardFarmContact");
+        Material contact=null;
+        if(shader!=null){contact=new Material(shader){name="Breach rubble contact"};materials.Add(contact);}
+        var random=new System.Random(672);
+        // Low fragments continue the broken courses outside, leaving the centre of the view open.
+        for(int side=0;side<2;side++)for(int i=0;i<9;i++)
+        {
+            float spread=(float)random.NextDouble();
+            var p=Ground(new Vector3(-44.1f-spread*2.3f,0,(side==0?3.7f:10.4f)+((float)random.NextDouble()-.5f)*1.6f));
+            var size=new Vector3(.32f+(1-spread)*.45f,.16f+(1-spread)*.20f,.27f+(float)random.NextDouble()*.38f);
+            if(contact!=null)Patch(p,size.x*.85f,size.z*.85f,contact,"Breach rubble contact");
+            Block("Breach exterior stone",p+Vector3.up*size.y*.38f,size,new Vector3(i%3*6-6,i*43,side==0?-7:9),700+side*19+i,false);
+        }
+    }
     void Block(string name,Vector3 at,Vector3 size,Vector3 angles,int seed,bool solid)
     {
         var random=new System.Random(seed);var corners=new Vector3[8];
@@ -115,7 +139,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
         var obj=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));obj.transform.SetParent(transform,false);
         obj.transform.SetPositionAndRotation(at,Quaternion.Euler(angles));obj.transform.localScale=size;
         obj.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=obj.GetComponent<MeshRenderer>();renderer.sharedMaterial=stone;
-        var block=new MaterialPropertyBlock();block.SetVector("_ObjectScale",size);renderer.SetPropertyBlock(block);
+        var block=new MaterialPropertyBlock();block.SetVector("_ObjectScale",size);block.SetFloat("_WorldMasonry",1);renderer.SetPropertyBlock(block);
         if(solid)obj.AddComponent<MeshCollider>().sharedMesh=mesh;
     }
     void Forecourt()
@@ -127,12 +151,12 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
         Patch(new Vector3(-39.0f,0,2.0f),1.0f,1.4f,earth);
         Patch(new Vector3(-40.0f,0,4.1f),.95f,1.5f,earth);
         Patch(new Vector3(-40.6f,0,6.7f),1.30f,1.6f,earth);
-        var meadow=new Material(source){name="Breach meadow transition"};materials.Add(meadow);
-        meadow.SetTexture("_BaseMap",Texture2D.whiteTexture);meadow.SetColor("_BaseColor",new Color(.42f,.52f,.18f,.26f));
+        var meadow=new Material(source){name="Breach dry field transition"};materials.Add(meadow);
+        meadow.SetColor("_BaseColor",new Color(.80f,.66f,.37f,.38f));
         Patch(new Vector3(-46.0f,0,6.8f),3.0f,4.2f,meadow);
         Patch(new Vector3(-49.1f,0,8.0f),2.9f,3.8f,meadow);
     }
-    void Patch(Vector3 center,float rx,float rz,Material material)
+    void Patch(Vector3 center,float rx,float rz,Material material,string label="Breach ground transition")
     {
         const int sides=40,rings=6;var v=new List<Vector3>();var c=new List<Color>();var t=new List<int>();
         for(int ring=0;ring<=rings;ring++)for(int side=0;side<sides;side++)
@@ -143,33 +167,36 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
             int n=ring*sides+side,prev=n-sides,next=(side+1)%sides;t.AddRange(new[]{prev,ring*sides+next,n,prev,(ring-1)*sides+next,ring*sides+next});
         }
         var mesh=new Mesh{name="Soft breach ground"};mesh.SetVertices(v);mesh.SetColors(c);mesh.SetTriangles(t,0);mesh.RecalculateNormals();mesh.RecalculateBounds();meshes.Add(mesh);
-        var obj=new GameObject("Breach ground transition",typeof(MeshFilter),typeof(MeshRenderer));obj.transform.SetParent(transform,false);
+        var obj=new GameObject(label,typeof(MeshFilter),typeof(MeshRenderer));obj.transform.SetParent(transform,false);
         obj.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=obj.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.Off;
     }
     void Vegetation()
     {
         var random=new System.Random(927);
-        for(int i=0;i<140;i++)
+        // Small islands hug the fractured ends; the approach and camera corridor remain open.
+        Vector3[] centers={new Vector3(-41.7f,0,3.5f),new Vector3(-40.6f,0,3.7f),
+            new Vector3(-41.8f,0,10.2f),new Vector3(-40.4f,0,10.7f),
+            new Vector3(-44.8f,0,3.1f),new Vector3(-46.4f,0,4.0f),
+            new Vector3(-45.0f,0,11.1f),new Vector3(-47.4f,0,10.9f),
+            new Vector3(-50.0f,0,2.8f),new Vector3(-50.5f,0,12.2f)};
+        for(int group=0;group<centers.Length;group++)for(int i=0;i<9;i++)
         {
-            float x=-42.1f+(float)random.NextDouble()*3.7f,z=3.0f+(float)random.NextDouble()*8;
-            if(x>-41.9f && x<-39.2f && z>5.0f && z<8.6f)continue; // viewing place
-            var p=Ground(new Vector3(x,0,z));
-            if(Physics.OverlapSphere(p+Vector3.up*.2f,.24f,~0,QueryTriggerInteraction.Ignore).Any(c=>!c.CompareTag("Ground")))continue;
-            Plant(i%17==0?"Flowers":i%5==0?"Fern":i%3==0?"Grass":"Clover",p,.22f+(float)random.NextDouble()*.25f,i);
-        }
-        // Lower near growth gives way to taller golden-field foreground outside the wall.
-        for(int i=0;i<100;i++)
-        {
-            float x=-44.6f-(float)random.NextDouble()*6.1f,z=1.8f+(float)random.NextDouble()*11.4f;
-            Plant(i%13==0?"Flowers":i%3==0?"Mixed":"Grass",Ground(new Vector3(x,0,z)),.25f+(float)random.NextDouble()*.35f,i);
+            float angle=(float)random.NextDouble()*Mathf.PI*2;
+            float radius=Mathf.Sqrt((float)random.NextDouble());
+            var p=Ground(centers[group]+new Vector3(Mathf.Cos(angle)*radius*.85f,0,Mathf.Sin(angle)*radius*.65f));
+            bool outside=group>=4;
+            if(!outside && Physics.OverlapSphere(p+Vector3.up*.2f,.24f,~0,QueryTriggerInteraction.Ignore).Any(c=>!c.CompareTag("Ground")))continue;
+            string kind=outside?"Grass":i%4==0?"Clover":"Grass";
+            var color=outside?new Color(.94f,.77f,.43f):new Color(.77f,.80f,.48f);
+            Plant(kind,p,.20f+(float)random.NextDouble()*(outside?.24f:.16f),group*9+i,color);
         }
     }
-    void Plant(string kind,Vector3 p,float height,int index)
+    void Plant(string kind,Vector3 p,float height,int index,Color color)
     {
         var sprite=Resources.Load<Sprite>("CourtyardStyle/"+kind);if(sprite==null)return;
         var obj=new GameObject("Breach illustrated "+kind,typeof(SpriteRenderer));obj.transform.SetParent(transform,false);
         obj.transform.position=p+Vector3.up*.025f;obj.transform.localScale=Vector3.one*(height/sprite.bounds.size.y);
-        var renderer=obj.GetComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.flipX=index%2==0;renderer.color=new Color(.90f,.98f,.73f);
+        var renderer=obj.GetComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.flipX=index%2==0;renderer.color=color;
         plants.Add(obj.transform);
     }
     Vector3 Ground(Vector3 p)
@@ -182,6 +209,8 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
     void LateUpdate(){if(Camera.main!=null)foreach(var plant in plants)plant.rotation=Camera.main.transform.rotation;}
     void OnDestroy()
     {
+        foreach(var item in mappedWalls)if(item.renderer!=null)
+        {var b=new MaterialPropertyBlock();item.renderer.GetPropertyBlock(b);b.SetFloat("_WorldMasonry",item.world);item.renderer.SetPropertyBlock(b);}
         foreach(var item in landscape)if(item.filter!=null)item.filter.sharedMesh=item.original;
         foreach(var item in exteriorProps)if(item.prop!=null)item.prop.position=item.point;
         foreach(var mesh in meshes)if(mesh!=null)Destroy(mesh);foreach(var material in materials)if(material!=null)Destroy(material);

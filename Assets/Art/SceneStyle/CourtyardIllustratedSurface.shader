@@ -8,6 +8,7 @@ Shader "Arkmon/Courtyard Illustrated Surface"
   _ObjectScale("Object metres",Vector)=(1,1,1,0)
   _Wood("Align wood grain",Float)=0 _GrainAxis("Long axis",Float)=1
   _EdgeWidth("Ink edge metres",Float)=0
+  _WorldMasonry("World-scale masonry projection",Float)=0
   _FaceAlignedMasonry("Face-aligned wall projection",Float)=0
   _FootMoss("Moss: ground height, reach, strength, variation",Vector)=(0,1,0,0)
   _MorningAccent("Local sunlight: center and radius",Vector)=(0,0,0,0)
@@ -36,7 +37,7 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
    CBUFFER_START(UnityPerMaterial)
    float4 _BaseColor,_Tile,_ObjectScale,_FootMoss,_MorningAccent;float _TextureScale,_Wood,_GrainAxis,_EdgeWidth;
-   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry,_MorningAccentStrength;
+   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry,_MorningAccentStrength,_WorldMasonry;
    CBUFFER_END
    V Vert(A i)
    {
@@ -63,6 +64,13 @@ Shader "Arkmon/Courtyard Illustrated Surface"
     {
      float3 tangent=normalize(float3(i.normalOS.z,0,-i.normalOS.x));
      uv=float2(dot(p,tangent),p.y);
+    }
+    // Opt-in for the ruin: every face samples the same metre-sized stone courses,
+    // independent of block scale, mesh authoring units and small broken-face rotations.
+    if(_WorldMasonry>.5)
+    {
+     float3 wn=abs(normalize(i.normal));
+     uv=wn.x>wn.y && wn.x>wn.z?i.world.zy:wn.y>wn.z?i.world.xz:i.world.xy;
     }
     half3 paint=Paint(uv*_TextureScale)*_BaseColor.rgb;
     // Preserve the original painted colors, then add modest local contrast in linear light.

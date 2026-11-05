@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.28.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.28.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -1993,3 +1993,4 @@ Release reconciliation: all preceding local/proposed-version notes through the s
 ### Committed courtyard refinement pass
 
 - **0.28.0** — `feat(landscape): add sunlit seeds to the lookout`. Add bounded drifting seed particles with scene-owned resources and lookout lifecycle checks. The effect follows lookout visibility and avoids filling the whole courtyard.
+- **0.28.1** — `style(courtyard): unify the broken wall and field transition`. Use metre-sized masonry projection across differently sized ruin blocks. Group dry vegetation and exterior rubble with ground contacts while keeping the viewing corridor open.
