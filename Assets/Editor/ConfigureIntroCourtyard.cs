@@ -42,7 +42,7 @@ public static class ConfigureIntroCourtyard
         stone.SetTexture("_BaseMap",AssetDatabase.LoadAssetAtPath<Texture2D>(Art+"Aurenfeld illustrated limestone.png"));
         oak=Clone("Courtyard oak architecture","Assets/Art/SceneStyle/Courtyard painted oak.mat");
         roof=Clone("Courtyard roof architecture","Assets/Art/SceneStyle/Courtyard painted roof.mat");
-        grass=Mat("Courtyard grass floor",new Color(.32f,.43f,.16f));
+        grass=Mat("Courtyard grass floor",new Color(.40f,.54f,.22f));
         grass.shader=Shader.Find("Arkmon/Tower Painted Light");
         grass.SetTexture("_BaseMap",BuildEarthTexture());
         grass.SetFloat("_TextureScale",.65f);
@@ -692,9 +692,18 @@ public static class ConfigureIntroCourtyard
     static void Horizon()
     {
         var root=GameObject.Find("Castle horizon and golden fields");if(root==null)return;
-        var material=Clone("Courtyard outer meadow cutout","Assets/Art/SceneStyle/Courtyard meadow cutout.mat");material.SetVector("_ClearArea",new Vector4(-45,-19,62,22));
+        var material=Clone("Courtyard outer meadow cutout","Assets/Art/SceneStyle/Courtyard meadow cutout.mat");material.SetVector("_ClearArea",new Vector4(-45,-19,62,22));material.SetFloat("_SunResponse",1);
         foreach(var renderer in root.GetComponentsInChildren<MeshRenderer>())if(renderer.sharedMaterial!=null && renderer.sharedMaterial.shader.name=="Arkmon/Meadow")renderer.sharedMaterial=material;
-        foreach(var vegetation in root.GetComponentsInChildren<MeadowVegetation>())vegetation.SetClearArea(new Rect(-45,-19,107,41));
+        var morningWind=AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/SceneStyle/MeadowVegetation/Courtyard morning wind.mat");
+        foreach(var vegetation in root.GetComponentsInChildren<MeadowVegetation>())
+        {
+            vegetation.SetClearArea(new Rect(-45,-19,107,41));
+            if(morningWind!=null)
+            {
+                var settings=new SerializedObject(vegetation);settings.FindProperty("material").objectReferenceValue=morningWind;
+                settings.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
         foreach(var item in root.GetComponentsInChildren<Transform>().ToArray())if(item!=null && (item.name=="Meadow tree"||item.name=="Meadow wildflowers"||item.name=="Meadow thistles") && new Rect(-45,-19,107,41).Contains(new Vector2(item.position.x,item.position.z)))Object.DestroyImmediate(item.gameObject);
     }
 }

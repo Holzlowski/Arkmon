@@ -3,6 +3,8 @@ Shader "Arkmon/Blue Sky"
     Properties
     {
         _Horizon("Horizon", Color)=(0.4,0.68,0.93,1)
+        _SunDirection("Sun direction",Vector)=(-.3,.65,-.5,0)
+        _DawnGlow("Warm horizon glow",Range(0,1))=0
         _Zenith("Zenith", Color)=(0.08,0.34,0.72,1)
     }
     SubShader
@@ -20,6 +22,7 @@ Shader "Arkmon/Blue Sky"
             CBUFFER_START(UnityPerMaterial)
                 half4 _Horizon;
                 half4 _Zenith;
+                float4 _SunDirection; float _DawnGlow;
             CBUFFER_END
             Varyings Vert(Attributes input)
             {
@@ -30,7 +33,9 @@ Shader "Arkmon/Blue Sky"
             {
                 float3 direction=normalize(input.direction);
                 half3 color=lerp(_Horizon.rgb,_Zenith.rgb,pow(saturate(direction.y*2),0.6));
-                float sun=saturate(dot(direction,normalize(float3(-0.3,0.65,-0.5))));
+                float sun=saturate(dot(direction,normalize(_SunDirection.xyz)));
+                float warmth=pow(sun,5)*(1-smoothstep(.1,.65,direction.y))*_DawnGlow;
+                color=lerp(color,half3(1,.62,.28),warmth*.55);
                 color+=half3(1,0.88,0.63)*(pow(sun,500)*0.45+pow(sun,24)*0.035);
                 return half4(color,1);
             }

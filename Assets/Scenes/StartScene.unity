@@ -15,18 +15,18 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.72, g: 0.86, b: 0.86, a: 1}
+  m_FogColor: {r: 0.79, g: 0.74, b: 0.64, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 30
-  m_LinearFogEnd: 190
-  m_AmbientSkyColor: {r: 0.51, g: 0.62, b: 0.77, a: 1}
-  m_AmbientEquatorColor: {r: 0.3, g: 0.36, b: 0.38, a: 1}
-  m_AmbientGroundColor: {r: 0.2, g: 0.23, b: 0.16, a: 1}
+  m_LinearFogStart: 180
+  m_LinearFogEnd: 1600
+  m_AmbientSkyColor: {r: 0.66, g: 0.72, b: 0.72, a: 1}
+  m_AmbientEquatorColor: {r: 0.5, g: 0.43, b: 0.31, a: 1}
+  m_AmbientGroundColor: {r: 0.32, g: 0.28, b: 0.14, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 1d7d386d1203ca043a7817dc438d11e7, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 4c308e4bd7f04dc7865a7d7f59db9be2, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 410087040}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -54847,8 +54847,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 1, g: 0.86, b: 0.66, a: 1}
-  m_Intensity: 1.2
+  m_Color: {r: 1, g: 0.80, b: 0.48, a: 1}
+  m_Intensity: 1.65
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -54857,9 +54857,9 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
+    m_Strength: 0.88
+    m_Bias: 0.03
+    m_NormalBias: 0.18
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
@@ -54892,7 +54892,7 @@ Light:
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
-  m_UseColorTemperature: 1
+  m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
@@ -54910,13 +54910,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2775209, y: -0.45975643, z: 0.15383233, w: 0.8294226}
+  m_LocalRotation: {x: 0.16092667, y: 0.52742790, z: -0.10252160, w: 0.82789597}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 22, y: 65, z: 0}
 --- !u!114 &410087042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120534,7 +120534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6328dbb2472c4247bc2a7f497a525743, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MeadowVegetation
-  material: {fileID: 2100000, guid: 949941304d529bf4d8125254408aa3c1, type: 2}
+  material: {fileID: 2100000, guid: 6d51413c1b624a6a8398668257856570, type: 2}
   nearSpacing: 0.85
   farSpacing: 2.8
   seed: 721

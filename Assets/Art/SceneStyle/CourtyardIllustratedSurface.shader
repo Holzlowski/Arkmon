@@ -9,11 +9,14 @@ Shader "Arkmon/Courtyard Illustrated Surface"
   _Wood("Align wood grain",Float)=0 _GrainAxis("Long axis",Float)=1
   _EdgeWidth("Ink edge metres",Float)=0
   _FaceAlignedMasonry("Face-aligned wall projection",Float)=0
+  _FootMoss("Moss: ground height, reach, strength, variation",Vector)=(0,1,0,0)
+  _MorningAccent("Local sunlight: center and radius",Vector)=(0,0,0,0)
+  _MorningAccentStrength("Local sunlight emphasis",Range(0,1))=0
   _Saturation("Paint saturation",Range(0,2))=.98
   _Contrast("Paint contrast",Range(.5,1.5))=1.05
-  _AmbientFill("Illustrated shadow fill",Range(0,1))=.43
-  _SunStrength("Sunlight strength",Range(0,1))=.50
-  _ShadowFloor("Sunlight retained in shadow",Range(0,1))=.28
+  _AmbientFill("Illustrated shadow fill",Range(0,1))=.52
+  _SunStrength("Sunlight strength",Range(0,1))=.64
+  _ShadowFloor("Sunlight retained in shadow",Range(0,1))=.15
  }
  SubShader
  {
@@ -32,8 +35,8 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 local:TEXCOORD1;float3 normal:TEXCOORD2;float3 normalOS:TEXCOORD3;float fog:TEXCOORD4; };
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
    CBUFFER_START(UnityPerMaterial)
-   float4 _BaseColor,_Tile,_ObjectScale;float _TextureScale,_Wood,_GrainAxis,_EdgeWidth;
-   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry;
+   float4 _BaseColor,_Tile,_ObjectScale,_FootMoss,_MorningAccent;float _TextureScale,_Wood,_GrainAxis,_EdgeWidth;
+   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry,_MorningAccentStrength;
    CBUFFER_END
    V Vert(A i)
    {
@@ -65,11 +68,28 @@ Shader "Arkmon/Courtyard Illustrated Surface"
     // Preserve the original painted colors, then add modest local contrast in linear light.
     paint=max(0,lerp(dot(paint,half3(.2126,.7152,.0722)).xxx,paint,_Saturation));
     paint=max(0,(paint-.18)*_Contrast+.18);
+    // Opt-in per wall: preserve the drawn stone detail beneath irregular, low moss stains.
+    if(_FootMoss.z>0)
+    {
+     float along=i.world.x*.73+i.world.z*.89+_FootMoss.w;
+     float patch=.5+.25*sin(along*1.7)+.15*sin(along*4.3+i.world.y*3.1)+.1*sin(along*9.2-i.world.y*5.7);
+     float reach=max(.05,_FootMoss.y*(.25+.75*patch));
+     float low=1-smoothstep(0,reach,max(0,i.world.y-_FootMoss.x));
+     float moss=saturate(low*patch*_FootMoss.z)*(1-abs(normalize(i.normal).y));
+     paint=lerp(paint,paint*half3(.48,.68,.32),moss);
+    }
     if(_EdgeWidth>0)paint*=lerp(.42,1,smoothstep(0,max(_EdgeWidth,fwidth(edge)*1.5),edge));
     Light sun=GetMainLight(TransformWorldToShadowCoord(i.world));
     half diffuse=saturate(dot(normalize(i.normal),sun.direction));
     half shade=lerp(_ShadowFloor,1,sun.shadowAttenuation);
-    half3 light=half3(.95,.98,1.03)*_AmbientFill+sun.color*(_SunStrength*diffuse*shade);
+    // Aurenfeld has golden daylight: cream sky fill and warm earth bounce keep shadows welcoming.
+    half skyWeight=saturate(normalize(i.normal).y*.5+.5);
+    half3 ambient=lerp(half3(.88,.73,.50),half3(1.02,.97,.84),skyWeight)*_AmbientFill;
+    // Local art direction uses the same sun, surface normals and occlusion as the scene.
+    // Default strength is zero, so shared materials and other scenes keep their lighting.
+    half accent=(1-smoothstep(.15,1,distance(i.world,_MorningAccent.xyz)/max(.01,_MorningAccent.w)))
+        *_MorningAccentStrength*sun.shadowAttenuation;
+    half3 light=ambient+sun.color*(_SunStrength*diffuse*(shade+accent));
     return half4(MixFog(paint*light,i.fog),1);
    }
    ENDHLSL

@@ -276,12 +276,16 @@ public static class CourtyardWestArchitecture
     static void Lighting()
     {
         RenderSettings.ambientMode=AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor=new Color(.51f,.62f,.77f);
-        RenderSettings.ambientEquatorColor=new Color(.30f,.36f,.38f);
-        RenderSettings.ambientGroundColor=new Color(.20f,.23f,.16f);
+        RenderSettings.ambientSkyColor=new Color(.66f,.72f,.72f);
+        RenderSettings.ambientEquatorColor=new Color(.50f,.43f,.31f);
+        RenderSettings.ambientGroundColor=new Color(.32f,.28f,.14f);
+        RenderSettings.fog=true;RenderSettings.fogMode=FogMode.Linear;
+        RenderSettings.fogStartDistance=180;RenderSettings.fogEndDistance=1600;RenderSettings.fogColor=new Color(.79f,.74f,.64f);
+        var morningSky=AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/SceneStyle/Courtyard morning sky.mat");
+        if(morningSky!=null)RenderSettings.skybox=morningSky;
         var sun=GameObject.Find("Directional Light")?.GetComponent<Light>();
         if(sun==null)return;
-        sun.transform.rotation=Quaternion.Euler(37,-58,0);
-        sun.color=new Color(1,.86f,.66f);sun.intensity=1.2f;sun.shadows=LightShadows.Soft;
+        sun.transform.rotation=Quaternion.Euler(22,65,0);
+        sun.color=new Color(1,.80f,.48f);sun.intensity=1.65f;sun.shadows=LightShadows.Soft;RenderSettings.sun=sun;
     }
 }

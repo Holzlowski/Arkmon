@@ -3,6 +3,7 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
  Properties
  {
   _BaseMap("Painted ground atlas",2D)="white" {} _BaseColor("Tint",Color)=(1,1,1,1)
+  _FogStrength("Distance haze strength",Range(0,1))=1
   _Tile("Atlas scale and offset",Vector)=(.5,.5,0,0) _TextureScale("World repeats",Float)=.4
  }
  SubShader
@@ -25,7 +26,7 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
    struct V {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float edge:TEXCOORD1;float fog:TEXCOORD2;};
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
    CBUFFER_START(UnityPerMaterial)
-   float4 _BaseColor,_Tile;float _TextureScale;
+   float4 _BaseColor,_Tile;float _TextureScale,_FogStrength;
    CBUFFER_END
    V Vert(A i){V o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);o.edge=i.color.r;o.fog=ComputeFogFactor(o.positionCS.z);return o;}
    half4 Frag(V i):SV_Target
@@ -37,7 +38,7 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
     float alpha=(1-smoothstep(.62,1,i.edge+irregular))*_BaseColor.a;
     Light sun=GetMainLight(TransformWorldToShadowCoord(i.world));
     half3 light=max(SampleSH(half3(0,1,0)),half3(.09,.11,.16))+sun.color*saturate(sun.direction.y)*sun.shadowAttenuation;
-    return half4(MixFog(paint*light,i.fog),alpha);
+    return half4(lerp(paint*light,MixFog(paint*light,i.fog),_FogStrength),alpha);
    }
    ENDHLSL
   }
