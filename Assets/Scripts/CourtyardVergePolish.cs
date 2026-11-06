@@ -53,7 +53,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         {
             if(filter.name!="Curved courtyard path" || filter.sharedMesh==null)continue;
             var renderer=filter.GetComponent<MeshRenderer>();
-            if(renderer==null || renderer.bounds.max.x<left || renderer.bounds.min.x>right)continue;
+            if(renderer==null || renderer.bounds.max.x< -44 || renderer.bounds.min.x>right)continue;
             var original=filter.sharedMesh;var source=renderer.sharedMaterial;
             var vertices=original.vertices;
             // These authored paths consist of 17 vertices across each sampled cross-section.
@@ -111,13 +111,13 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             copy.colors=colors;
             var paint=new Material(template);materials.Add(paint);
             paint.SetTexture("_BaseMap",source.GetTexture("_BaseMap"));paint.SetColor("_BaseColor",source.GetColor("_BaseColor"));
-            paint.SetVector("_Region",new Vector4(left,right,0,0));
+            paint.SetVector("_Region",new Vector4(-44,right,0,0));
             // Keep all triangles outside this section on their original material.
             var inside=new List<int>();var outside=new List<int>();var triangles=original.triangles;
             for(int i=0;i<triangles.Length;i+=3)
             {
                 float x=filter.transform.TransformPoint((vertices[triangles[i]]+vertices[triangles[i+1]]+vertices[triangles[i+2]])/3).x;
-                var list=x>left && x<right?inside:outside;
+                var list=x> -44 && x<right?inside:outside;
                 list.Add(triangles[i]);list.Add(triangles[i+1]);list.Add(triangles[i+2]);
             }
             copy.subMeshCount=2;copy.SetTriangles(outside,0);copy.SetTriangles(inside,1);
@@ -220,7 +220,8 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         var source=Resources.Load<Material>("CourtyardStyle/Stable earth");if(source==null)return;
         var undergrowth=new Material(source){name="Warm courtyard meadow undergrowth"};materials.Add(undergrowth);
         undergrowth.SetTexture("_BaseMap",Texture2D.whiteTexture);
-        undergrowth.SetColor("_BaseColor",new Color(.34f,.51f,.14f,.24f));
+        undergrowth.SetColor("_BaseColor",new Color(.40f,.49f,.19f,.18f));
+        undergrowth.SetFloat("_EdgeStart",.36f);undergrowth.SetFloat("_EdgeBreakup",.12f);
         // Broad, low islands flank the main path; leave generous open lawn between them.
         var groups=new[]{
             new Vector4(-30,-4.8f,3.0f,2.0f),new Vector4(-23,0,3.8f,1.9f),new Vector4(-17,-9.0f,5.2f,2.0f),
@@ -239,14 +240,15 @@ public sealed class CourtyardVergePolish : MonoBehaviour
                 float angle=(float)random.NextDouble()*Mathf.PI*2,r=Mathf.Sqrt((float)random.NextDouble());
                 float edge=1+.12f*Mathf.Sin(angle*3+g)+.06f*Mathf.Cos(angle*5);
                 var at=center+new Vector3(Mathf.Cos(angle)*area.z*r*edge,0,Mathf.Sin(angle)*area.w*r*edge);
-                if(!Clear(at))continue;
+                float density=Mathf.PerlinNoise((at.x+77)*.68f,(at.z+33)*.68f);
+                if(!Clear(at) || random.NextDouble()>Mathf.Lerp(.94f,.24f,r*r)*Mathf.Lerp(.45f,1,Mathf.SmoothStep(.20f,.72f,density)))continue;
                 string kind=i%19==0?"Flowers":i%7==0?"Mixed":i%3==0?"Grass":"Clover";
                 var sprite=Resources.Load<Sprite>("CourtyardStyle/"+kind);if(sprite==null)continue;
-                float height=(kind=="Grass"?.38f:.23f)+(float)random.NextDouble()*.20f;
+                float height=((kind=="Grass"?.38f:.23f)+(float)random.NextDouble()*.20f)*Mathf.Lerp(1,.62f,r*r);
                 var plant=Prop(kind,Ground(at),height/sprite.bounds.size.y,random.Next(2)==0);
                 if(plant==null)continue;
                 plant.SetParent(root,true);
-                plant.GetComponent<SpriteRenderer>().color=Color.Lerp(new Color(.78f,.93f,.62f),new Color(.95f,1,.79f),(float)random.NextDouble());
+                plant.GetComponent<SpriteRenderer>().color=Color.Lerp(new Color(.77f,.87f,.64f),new Color(.92f,.96f,.76f),(float)random.NextDouble());
             }
         }
     }

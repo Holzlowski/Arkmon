@@ -16,11 +16,13 @@ public sealed class CourtyardResidenceGround : MonoBehaviour
         var style=new GameObject("Resident doorstep details").AddComponent<CourtyardResidenceGround>();
         style.contact=new Material(shader){name="Resident foundation contact"};
         style.earth=new Material(source){name="Resident work ground"};
-        style.earth.SetColor("_BaseColor",new Color(.70f,.67f,.53f,.55f));
+        style.earth.SetColor("_BaseColor",new Color(.70f,.67f,.53f,.38f));
+        style.earth.SetFloat("_EdgeStart",.38f);style.earth.SetFloat("_EdgeBreakup",.11f);
         foreach(string name in new[]{"Garden cottage","East cottage"})
         {
             var home=GameObject.Find(name)?.transform;if(home==null)continue;
             float width=name=="Garden cottage"?2.65f:2.77f;
+            style.Patch(name+" worn doorway apron",home.TransformPoint(new Vector3(0,0,-3.0f)),1.05f,1.15f,false);
             style.Patch(name+" facade contact",home.TransformPoint(new Vector3(0,0,-2.5f)),width,.35f,true);
             for(int side=-1;side<=1;side+=2)
                 style.Patch(name+" side foundation contact",home.TransformPoint(new Vector3(side*width,0,0)),.35f,2.5f,true);

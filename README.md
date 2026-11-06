@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.4`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2125,3 +2125,7 @@ The illustrated courtyard surface now supports GPU instancing in its forward, de
 Diagnostics: add `-reviewProfile` to the existing opt-in development review command to sample the stable view, write a renderer inventory, and compare shadow/plant/architecture/meadow contributions. `-reviewNoInstancing` provides the same-build control in this profiling mode. This abbreviated mode does not exercise the full route or interactions. Reports now include draw calls, SetPass calls, triangles and available main/render thread counters; a zero counter can mean that the platform did not expose it. The first profile's category filters omitted spaces and did not hide those categories; only its baseline and no-shadow samples are valid. The corrected filter is used in subsequent reports.
 
 Initial controlled view: approximately 58 FPS / 7,690 draw calls before instancing and 102-105 FPS / 4,350 draw calls afterward on the local RTX 3070 Ti at 1600x900. These are short offscreen development-player samples, not minimum-hardware or release-build guarantees. The first optimization comparison retained the original landscape dressing; the final route includes the subsequent visual changes.
+
+### 0.31.4 — Softer courtyard paths and planting
+
+The existing soft-path treatment now includes the western approach to the tower. Its wider irregular fade connects earth to lawn. Ground-patch edge width and breakup are configurable with unchanged defaults; resident work patches and meadow islands use softer, less opaque settings. Plant islands thin toward their edges, vary in density and taper in height. Low doorway aprons connect the two cottages to their existing approaches; no colliders or interaction points move.
