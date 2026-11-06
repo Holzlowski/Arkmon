@@ -181,6 +181,7 @@ public class MeadowVegetation : MonoBehaviour
                 float detail = Mathf.PerlinNoise((world.x + 79) * .38f, (world.z + 217) * .38f);
                 float fullness = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.20f, .65f, island));
                 bool ripeGrain = illustrated && (world.x < -54 || world.x > 53.5f);
+                float edgeGrowth = illustrated ? CourtyardEastFieldStyle.CropEdgeGrowth(world) : 1;
                 bool stubble = ripeGrain && ((fullness < .14f && detail > .55f) || Sample(random) > Mathf.Lerp(.94f, .995f, fullness));
                 if (illustrated && !ripeGrain && (island < .20f || Sample(random) > Mathf.Lerp(.50f, .98f, fullness))) continue;
                 Color tip = Color.Lerp(new Color(.44f, .65f, .24f), new Color(.86f, .69f, .31f), gold).linear;
@@ -194,6 +195,11 @@ public class MeadowVegetation : MonoBehaviour
                     height *= Mathf.Lerp(.80f, 1.25f, fullness) * Mathf.Lerp(.85f, 1.12f, detail);
                 }
                 if (ripeGrain && CourtyardFarmApproach.IsHarvested(world)) stubble = true;
+                if (illustrated && edgeGrowth < .85f)
+                {
+                    stubble |= detail > Mathf.Lerp(.30f, .88f, edgeGrowth);
+                    height *= Mathf.Lerp(.24f, 1, edgeGrowth);
+                }
                 if (stubble) height = .13f + detail * .19f;
                 int bladeCount = illustrated ? (detailed ? 3 + Mathf.RoundToInt(fullness * 2) : 3) : 3;
                 if (ripeGrain) bladeCount = stubble ? 2 : (detailed ? 5 + Mathf.RoundToInt(fullness * 2) : 3);

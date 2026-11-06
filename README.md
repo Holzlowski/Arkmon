@@ -2091,3 +2091,4 @@ Release status: included in the committed courtyard pass listed below.
 ### Courtyard finishing pass releases
 
 - **0.30.3** — `style(courtyard): settle the exterior forecourt into the ground`. Give the worn forecourt an irregular shared clearance boundary, subtle wheel wear and settled waymarkers. Retain the existing open walking area and collision surfaces.
+- **0.30.4** — `style(fields): soften grain edges along the eastern lane`. Use the shared road and forecourt distance to blend short grain and stubble into mature wheat. Apply the same world-space edge mask to both vegetation detail levels.

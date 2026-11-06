@@ -31,8 +31,17 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
         return -1 + 22 * t * t + Mathf.Sin(t * Mathf.PI * 2) * 3 * t;
     }
     static float HalfWidth(float x) => Mathf.Lerp(2.25f, 1.15f, Mathf.InverseLerp(51, 130, x));
-    public static bool IsBarePath(Vector3 p) => p.x >= 50.5f && p.x < 146
-        && (Mathf.Abs(p.z - PathZ(p.x)) < HalfWidth(p.x) + .25f || CourtyardGateForecourt.IsBareGround(p));
+    public static float EdgeDistance(Vector3 p)
+    {
+        if (p.x < 50.5f || p.x > 146) return 100;
+        float side = Mathf.Sign(p.z - PathZ(p.x));
+        float scallop = .15f * Mathf.Sin(p.x * .69f + side) + .12f * Mathf.Sin(p.x * 1.71f);
+        float road = Mathf.Abs(p.z - PathZ(p.x)) - HalfWidth(p.x) * (1 + .07f * Mathf.Sin(p.x * .63f));
+        return Mathf.Min(road - scallop, CourtyardGateForecourt.EdgeDistance(p));
+    }
+    public static bool IsBarePath(Vector3 p) => EdgeDistance(p) < .35f;
+    public static float CropEdgeGrowth(Vector3 p) => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.35f, 2.1f, EdgeDistance(p)));
+
 
     internal static void Install()
     {
