@@ -87,6 +87,17 @@ public sealed class CourtyardLife : MonoBehaviour, IInteractableAsPlayer
         var wood = new Color(.26f,.14f,.07f);
         Shape(root, PrimitiveType.Cube, new Vector3(0,postHeight*.5f,0), new Vector3(.12f,postHeight,.12f), wood);
         Shape(root, PrimitiveType.Cube, new Vector3(0,postHeight-.18f,0), new Vector3(1.65f,.48f,.12f), wood);
+        // Primitive default materials are not guaranteed to be included in a URP player.
+        var material = Resources.Load<Material>("CourtyardStyle/Stable oak");
+        if (material != null)
+            foreach (var renderer in root.GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.sharedMaterial = material;
+                var properties = new MaterialPropertyBlock();
+                properties.SetVector("_ObjectScale", renderer.transform.localScale);
+                properties.SetFloat("_GrainAxis", renderer.transform.localScale.y > 1 ? 1 : 0);
+                renderer.SetPropertyBlock(properties);
+            }
         var text = new GameObject("Painted sign label", typeof(TextMeshPro)).GetComponent<TextMeshPro>();
         text.transform.SetParent(root,false);
         text.transform.localPosition = new Vector3(0,postHeight-.18f,-.075f);
