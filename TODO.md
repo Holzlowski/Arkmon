@@ -290,3 +290,19 @@ Die drei offenen Namen nicht eigenständig als feststehende Namen vergeben. Aus 
 ## Pflege der Liste
 
 Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Aufgaben bleiben offen und erhalten eine kurze Restnotiz. Größere Gestaltungsentscheidungen zuerst anhand einer Vorschau abstimmen. Diese Liste ist die Arbeitsplanung und löst keine automatische Umsetzung aller Punkte aus.
+
+
+## Hofabschluss nach 0.30.2
+
+- [x] Unregelmaessige Getreideraender mit niedrigen Halmen und Stoppeln am oestlichen Weg.
+- [x] Breitere, variierende Bachboeschung und flache Ufersteine.
+- [x] Torvorplatz durch unregelmaessigen Boden, gesetzte Marker und Bodenkontakte einbetten.
+- [x] Holzabnutzung und Eisenbefestigungen an der Zugbruecke ergaenzen.
+- [x] Burg aus Spielansichten pruefen; Gesimsfugen und ruhigere Umfassungsmauern fuer Tiefenwirkung.
+- [x] Bodenkontakte unter Hausfassaden und Arbeitsmoebeln ergaenzen; vorhandene Schwellen/Zugaenge erhalten.
+- [x] Bewohnerplaetze durch abgetretene Arbeitsflaechen und freie Silhouetten abrunden.
+- [x] Warme Lichtakzente der Haeuser und Hauptansichten aufeinander abstimmen.
+- [x] Begrenzte Blaetter, Schrittstaub und ortsgebundenen Bachklang einbinden.
+- [x] Abschliessenden Windows-Build-Durchlauf mit Interaktionen, Kamerarueckkehr und Bildratenmessung abschliessen (stiller Entwicklungsbuild, 1600x900, RTX 3070 Ti; Hof ca. 46-77 FPS).
+- [ ] Aufwendige Hofansichten gezielt profilieren; der lokale Entwicklungsbuild erreicht noch nicht durchgehend 60 FPS.
+- [ ] Gemeinsame gestalterische Abnahme im normalen Spiel; insbesondere Feldkante, Befestigungen und Partikelstaerke.

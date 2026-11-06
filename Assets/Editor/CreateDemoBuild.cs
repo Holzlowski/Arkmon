@@ -19,7 +19,7 @@ public static class CreateDemoBuild
             scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
             locationPathName = output,
             target = BuildTarget.StandaloneWindows64,
-            options = BuildOptions.None
+            options = args.Contains("-arkmonReviewBuild") ? BuildOptions.Development : BuildOptions.None
         });
         Debug.Log("DEMO_BUILD_RESULT " + report.summary.result + " errors=" + report.summary.totalErrors
             + " size=" + report.summary.totalSize + " version=" + PlayerSettings.bundleVersion);
