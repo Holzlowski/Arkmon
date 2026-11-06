@@ -2086,3 +2086,8 @@ Release status: included in the committed courtyard pass listed below.
 - **0.30.0** — `feat(courtyard): add a small exterior gate forecourt`. Widen the exterior lane into terrain-following worn earth with an Aurenfeld waymarker and low boundary dressing. Share vegetation clearance with the meadow and retain an open walking and conversation space. Add traversal and reload coverage; no arrival event is added.
 - **0.30.1** — `style(courtyard): bring golden fields up to the gate forecourt`. Start ripe grain immediately beyond the drawbridge and align terrain, far-bank soil and verge colours. Preserve lane and forecourt clearance in both vegetation LODs and restore the bank material on unload.
 - **0.30.2** — `test(courtyard): record and verify the connected courtyard pass`. Add the continuous tower-to-gate route check and reconcile README/TODO with the completed landscape, station and gate refinements. Record silent targeted validation and remaining visual/performance review; captures and logs are excluded.
+
+
+### Courtyard finishing pass releases
+
+- **0.30.3** — `style(courtyard): settle the exterior forecourt into the ground`. Give the worn forecourt an irregular shared clearance boundary, subtle wheel wear and settled waymarkers. Retain the existing open walking area and collision surfaces.

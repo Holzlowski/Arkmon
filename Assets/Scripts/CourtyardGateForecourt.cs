@@ -7,11 +7,14 @@ using UnityEngine.Rendering;
 public sealed class CourtyardGateForecourt : MonoBehaviour
 {
     public static Vector3 Center => new Vector3(57.3f,0,1.15f);
-    public static bool IsBareGround(Vector3 point)
+    public static float EdgeDistance(Vector3 point)
     {
-        var d=point-Center;
-        return d.x*d.x/(4.8f*4.8f)+d.z*d.z/(3.6f*3.6f)<1;
+        var d = point - Center;
+        float angle = Mathf.Atan2(d.z / 3.6f, d.x / 4.8f);
+        float edge = 1 + .055f * Mathf.Sin(angle * 3) + .035f * Mathf.Cos(angle * 5);
+        return (Mathf.Sqrt(d.x*d.x/(4.8f*4.8f)+d.z*d.z/(3.6f*3.6f)) - edge) * 3.6f;
     }
+    public static bool IsBareGround(Vector3 point) => EdgeDistance(point) < 0;
     readonly List<Mesh> meshes=new List<Mesh>();
     readonly List<Material> materials=new List<Material>();
     readonly List<Transform> plants=new List<Transform>();
@@ -26,7 +29,8 @@ public sealed class CourtyardGateForecourt : MonoBehaviour
         if(source==null || wood==null || rock==null)return;
         var style=new GameObject("Eastern gate forecourt").AddComponent<CourtyardGateForecourt>();
         style.earth=new Material(source){name="Gate forecourt worn earth"};style.materials.Add(style.earth);
-        style.earth.SetColor("_BaseColor",new Color(.68f,.74f,.77f,.72f));
+        style.earth.SetColor("_BaseColor",new Color(.72f,.72f,.65f,.78f));
+        style.earth.SetFloat("_WheelRuts",.12f);
         style.oak=wood;style.stone=new Material(rock){name="Forecourt weathered limestone"};style.materials.Add(style.stone);
         style.stone.SetColor("_BaseColor",new Color(.70f,.68f,.57f));
         Physics.SyncTransforms();style.GroundPatch();style.Sign();style.Margins();
@@ -48,7 +52,7 @@ public sealed class CourtyardGateForecourt : MonoBehaviour
             float a=side*Mathf.PI*2/sides,r=ring/(float)rings;
             float edge=1+.055f*Mathf.Sin(a*3)+.035f*Mathf.Cos(a*5);
             v.Add(Ground(Center+new Vector3(Mathf.Cos(a)*5.3f,0,Mathf.Sin(a)*4.0f)*r*edge)+Vector3.up*.035f);
-            colors.Add(new Color(r,0,0,1));
+            colors.Add(new Color(Mathf.Clamp01(r + .08f * Mathf.Sin(a*5) * r*r), (Mathf.Cos(a)*r+1)*.5f,0,1));
             if(ring==0)continue;int n=ring*sides+side,p=n-sides,next=(side+1)%sides;
             t.AddRange(new[]{p,ring*sides+next,n,p,(ring-1)*sides+next,ring*sides+next});
         }
@@ -61,7 +65,7 @@ public sealed class CourtyardGateForecourt : MonoBehaviour
     void Sign()
     {
         var root=new GameObject("Aurenfeld exterior waymarker").transform;root.SetParent(transform,false);
-        root.position=Ground(new Vector3(54.6f,0,5.15f));root.rotation=Quaternion.Euler(0,38,0);
+        root.position=Ground(new Vector3(54.6f,0,5.15f));root.rotation=Quaternion.Euler(0,38,-3);
         Box(root,"Waymarker oak post",new Vector3(0,.68f,0),new Vector3(.16f,1.36f,.16f),oak,true);
         Box(root,"Waymarker painted board",new Vector3(0,1.17f,0),new Vector3(2.05f,.46f,.12f),oak,false);
         // A modest pointed end reads toward the castle, without another floating UI prompt.
@@ -75,7 +79,7 @@ public sealed class CourtyardGateForecourt : MonoBehaviour
     void Marker(Vector3 point,float yaw)
     {
         var root=new GameObject("Forecourt verge stone").transform;root.SetParent(transform,false);
-        root.position=Ground(point);root.rotation=Quaternion.Euler(0,yaw,0);
+        root.position=Ground(point);root.rotation=Quaternion.Euler(2,yaw,-3);
         Box(root,"Low boundary stone",new Vector3(0,.25f,0),new Vector3(.43f,.50f,.43f),stone,true);
         Box(root,"Worn stone cap",new Vector3(0,.50f,0),new Vector3(.48f,.08f,.48f),stone,false);
     }
