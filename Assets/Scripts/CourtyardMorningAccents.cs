@@ -21,11 +21,11 @@ public sealed class CourtyardMorningAccents : MonoBehaviour
         var style = new GameObject("Courtyard morning accents").AddComponent<CourtyardMorningAccents>();
         var entrance = GameObject.Find("Tower entrance");
         if (entrance != null)
-            style.Add(entrance.transform.position + Vector3.up * 2.7f, 7f, .55f,
+            style.Add(entrance.transform.position + Vector3.up * 2.7f, 7f, .46f,
                 "Tower entrance", "Player residence tower", "Aurenfeld raised approach");
-        style.Add(new Vector3(-42.5f, 2.5f, 7), 7.5f, .65f,
+        style.Add(new Vector3(-42.5f, 2.5f, 7), 7.5f, .52f,
             "Illustrated west breach", "West wall near", "West wall far", "Broken west wall base");
-        style.Add(new Vector3(43, 3.2f, -1), 6.5f, .45f,
+        style.Add(new Vector3(43, 3.2f, -1), 6.5f, .38f,
             "Illustrated east crossing", "East wall north of gate", "East wall south of gate", "Gate stone pier");
         var portal = GameObject.Find("Illustrated castle entrance");
         if (portal != null)
@@ -36,6 +36,11 @@ public sealed class CourtyardMorningAccents : MonoBehaviour
             style.Add(pottingTable.transform.position + Vector3.up, 8f, .30f,
                 "Garden potting table", "Kitchen garden layout", "Garden bench seat", "Garden bench stone foot",
                 "Marta side bench", "Worn approach flagstone");
+        foreach(string name in new[]{"Ida workshop","Stable","Garden cottage","East cottage"})
+        {
+            var home=GameObject.Find(name);
+            if(home!=null)style.Add(home.transform.position+new Vector3(-1,2.5f,-2.5f),5.5f,.20f,name);
+        }
         style.Apply(true);
     }
     void Add(Vector3 center, float radius, float strength, params string[] roots)
