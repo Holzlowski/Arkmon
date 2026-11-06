@@ -7,7 +7,7 @@ public sealed class CourtyardCastleFacadeStyle : MonoBehaviour
 {
     readonly List<Material> materials=new List<Material>();
     readonly List<Mesh> meshes=new List<Mesh>();
-    Material masonry,trim,glass,lead;
+    Material masonry,trim,glass,lead,boundaryStone;
     internal static void Install()
     {
         var hall=GameObject.Find("Castle hall")?.transform;
@@ -18,6 +18,10 @@ public sealed class CourtyardCastleFacadeStyle : MonoBehaviour
         var style=root.AddComponent<CourtyardCastleFacadeStyle>();
         style.masonry=style.Paint(stone,"Castle illustrated masonry",new Color(.73f,.77f,.78f),.34f);
         style.masonry.SetFloat("_FaceAlignedMasonry",1);
+        style.masonry.SetFloat("_Contrast",1.10f);
+        style.masonry.SetFloat("_AmbientFill",.45f);
+        style.boundaryStone=style.Paint(stone,"Quieter enclosing wall stone",new Color(.66f,.71f,.73f),.34f);
+        style.boundaryStone.SetFloat("_FaceAlignedMasonry",1);
         style.trim=style.Paint(plaster,"Castle dressed limestone",new Color(.76f,.73f,.66f),.45f);
         style.glass=style.Plain("Castle recessed blue glass",new Color(.085f,.14f,.16f));
         style.lead=style.Plain("Castle window bronze",new Color(.26f,.23f,.15f));
@@ -38,7 +42,7 @@ public sealed class CourtyardCastleFacadeStyle : MonoBehaviour
     }
     void Building(Transform building)
     {
-        var stoneParts=new Geometry();var glassParts=new Geometry();var bars=new Geometry();
+        var stoneParts=new Geometry();var glassParts=new Geometry();var bars=new Geometry();var seams=new Geometry();
         foreach(var renderer in building.GetComponentsInChildren<MeshRenderer>().ToArray())
         {
             string n=renderer.name;
@@ -54,12 +58,18 @@ public sealed class CourtyardCastleFacadeStyle : MonoBehaviour
             var s=renderer.transform.lossyScale;var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);
             block.SetVector("_ObjectScale",new Vector3(Mathf.Abs(s.x),Mathf.Abs(s.y),Mathf.Abs(s.z)));
             block.SetFloat("_EdgeWidth",dressed?.016f:0);renderer.SetPropertyBlock(block);
+            if(n=="Projecting stone cornice")
+            {
+                var p=renderer.transform.localPosition;var scale=renderer.transform.localScale;
+                seams.Box(p+Vector3.down*.15f,new Vector3(scale.x-.16f,.055f,scale.z-.16f));
+            }
             if(n=="Hall battlement")
             {
                 var p=renderer.transform.localPosition;var scale=renderer.transform.localScale;
                 stoneParts.Box(p+Vector3.up*(scale.y*.5f+.055f),new Vector3(scale.x+.13f,.11f,scale.z+.12f));
             }
         }
+        Emit(building,"Castle cornice shadow seams",seams,lead);
         Emit(building,"Painted castle window surrounds",stoneParts,trim);
         Emit(building,"Recessed castle arch windows",glassParts,glass);
         Emit(building,"Castle window glazing bars",bars,lead);
@@ -87,7 +97,7 @@ public sealed class CourtyardCastleFacadeStyle : MonoBehaviour
         {
             if(!wallNames.Contains(part.name))continue;
             var renderer=part.GetComponent<MeshRenderer>();if(renderer==null)continue;
-            Surface(renderer,part.name=="Gate arch voussoir" || part.name=="Fallen limestone"?trim:masonry);
+            Surface(renderer,part.name=="Gate arch voussoir" || part.name=="Fallen limestone"?trim:boundaryStone);
         }
     }
     static void Surface(MeshRenderer renderer,Material material)
