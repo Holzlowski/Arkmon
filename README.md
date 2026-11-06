@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.5`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.6`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2137,3 +2137,9 @@ Castle and tower masonry use 0.44 repeats per metre instead of 0.34. Resident li
 Validation: four targeted silent PlayMode checks passed in 62.84 seconds: rendered instancing equivalence, palette/resource/collision/reload isolation, bidirectional crossing and Elian visibility, and local morning-light/wet-soil preservation. The final Windows build and full diagnostic route also passed: tower-to-gate traversal and return, can pickup, completed watering, lookout entry/return and scene reload. All runs were silent.
 
 Final evidence: `Builds/CourtyardReview-polish-three/review.json` reports eight courtyard averages of 101.2-137.7 FPS and p95 frame times of 7.9-10.7 ms; the lookout averaged 292.5 FPS. The same-build non-instanced control (`Builds/Profile-final-control/review.json`) measured 60.5 and 61.1 FPS at the stable, compared with 108.3 FPS on the optimized route at that station. Draw calls there fell from about 7,603 to 4,275; triangle counts stayed around 2.57 million. This is a substantial measured local improvement, not proof of stutter-free gameplay on all hardware. Screenshots from the tower, stable, castle entrance and gate were reviewed. The review build reports 0.31.2 because it predates commit packaging; it does not include the later John relocation.
+
+### 0.31.6 — John beside the castle approach
+
+John steht in der StartScene auf der freien Fläche rechts neben dem Burgweg vor dem Kellerbereich (18, 0.005, 6.8). Der Burgzugang und die Wachroute bleiben frei; der Hof-Generator bewahrt diesen Standort. Der bestehende John-Test prüft zusätzlich die normale Interaktionsauswahl am neuen Platz.
+
+Validation: the focused silent John PlayMode test passed, including normal interaction selection, dialogue, grounded idle poses and scene reload. The existing Windows review build predates this relocation; test the new position in Unity.

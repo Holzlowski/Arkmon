@@ -30,6 +30,15 @@ public class CourtyardJohnGroundingTests
             }
             if(load==0)
             {
+                var player=GameObject.FindWithTag("Player");
+                var controller=(Behaviour)player.GetComponent(T("PlayerController"));controller.enabled=false;
+                var body=player.GetComponent<Rigidbody>();if(body!=null)body.isKinematic=true;
+                player.transform.position=john.transform.position+new Vector3(0,1,-1.5f);
+                Physics.SyncTransforms();
+                yield return new WaitForSeconds(.8f);
+                var focus=player.GetComponent(T("PlayerInteractionFocus"));
+                Assert.That(focus.GetType().GetMethod("Refresh").Invoke(focus,null),Is.SameAs(john),"John should be selectable from the open space in front of his new courtyard position.");
+                typeof(GameIntroTests).GetMethod("Capture",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new object[]{"courtyard-john-new-place"});
                 var follow=(Behaviour)UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));follow.enabled=false;
                 var camera=Camera.main;var brain=(Behaviour)camera.GetComponent(T("Cinemachine.CinemachineBrain"));if(brain!=null)brain.enabled=false;
                 camera.transform.position=john.transform.position+Vector3.up*1.05f-camera.transform.forward*5;camera.fieldOfView=35;
