@@ -16,11 +16,11 @@ public sealed class CourtyardCastleFacadeStyle : MonoBehaviour
         if(stone==null || plaster==null)return;
         var root=new GameObject("Illustrated castle facade");root.transform.SetParent(hall,false);
         var style=root.AddComponent<CourtyardCastleFacadeStyle>();
-        style.masonry=style.Paint(stone,"Castle illustrated masonry",new Color(.73f,.77f,.78f),.34f);
+        style.masonry=style.Paint(stone,"Castle illustrated masonry",new Color(.73f,.77f,.78f),.44f);
         style.masonry.SetFloat("_FaceAlignedMasonry",1);
-        style.masonry.SetFloat("_Contrast",1.10f);
+        style.masonry.SetFloat("_Contrast",1.06f);
         style.masonry.SetFloat("_AmbientFill",.45f);
-        style.boundaryStone=style.Paint(stone,"Quieter enclosing wall stone",new Color(.66f,.71f,.73f),.34f);
+        style.boundaryStone=style.Paint(stone,"Quieter enclosing wall stone",new Color(.66f,.71f,.73f),.44f);
         style.boundaryStone.SetFloat("_FaceAlignedMasonry",1);
         style.trim=style.Paint(plaster,"Castle dressed limestone",new Color(.76f,.73f,.66f),.45f);
         style.glass=style.Plain("Castle recessed blue glass",new Color(.085f,.14f,.16f));

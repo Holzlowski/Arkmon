@@ -38,4 +38,24 @@ public class CourtyardRenderingTests
         finally{foreach(var m in materials)if(m!=null)m.enableInstancing=true;UnityEngine.Object.Destroy(a);UnityEngine.Object.Destroy(b);}
         LogAssert.NoUnexpectedReceived();
     }
+    [UnityTest] public IEnumerator LocalPalette_RestoresResourcesAndLeavesSoilAndCollisionAlone()
+    {
+        yield return Load();
+        var stone=Resources.Load<Material>("CourtyardStyle/Stone");var plaster=Resources.Load<Material>("CourtyardStyle/Plaster");
+        float scale=stone.GetFloat("_TextureScale");Color color=plaster.GetColor("_BaseColor");
+        var root=GameObject.Find("Courtyard coherent architecture");var palette=(Behaviour)root.GetComponent(T("CourtyardArchitecturePalette"));
+        var targets=GameObject.Find("Garden cottage").GetComponentsInChildren<MeshRenderer>();
+        var replacement=targets.First(r=>r.sharedMaterial.name=="Resident local limestone");
+        var owned=replacement.sharedMaterial;
+        Assert.That(owned.GetFloat("_TextureScale"),Is.EqualTo(.58f).Within(.001f));
+        var soil=UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name=="Garden soil bed").ToArray();
+        var soilMaterials=soil.Select(r=>r.sharedMaterial).ToArray();
+        var colliders=UnityEngine.Object.FindObjectsByType<Collider>(FindObjectsSortMode.None).Where(c=>c.enabled).ToArray();
+        palette.enabled=false;Assert.That(replacement.sharedMaterial,Is.SameAs(stone));
+        palette.enabled=true;Assert.That(replacement.sharedMaterial,Is.SameAs(owned));
+        Assert.That(soil.Select(r=>r.sharedMaterial),Is.EqualTo(soilMaterials));Assert.That(colliders.All(c=>c.enabled),Is.True);
+        Assert.That(stone.GetFloat("_TextureScale"),Is.EqualTo(scale));Assert.That(plaster.GetColor("_BaseColor"),Is.EqualTo(color));
+        yield return Load();Assert.That(owned==null,Is.True);Assert.That(root==null,Is.True);
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardArchitecturePalette"),FindObjectsSortMode.None).Length,Is.EqualTo(1));LogAssert.NoUnexpectedReceived();
+    }
 }

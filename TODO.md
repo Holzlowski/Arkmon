@@ -304,5 +304,15 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Warme Lichtakzente der Haeuser und Hauptansichten aufeinander abstimmen.
 - [x] Begrenzte Blaetter, Schrittstaub und ortsgebundenen Bachklang einbinden.
 - [x] Abschliessenden Windows-Build-Durchlauf mit Interaktionen, Kamerarueckkehr und Bildratenmessung abschliessen (stiller Entwicklungsbuild, 1600x900, RTX 3070 Ti; Hof ca. 46-77 FPS).
-- [ ] Aufwendige Hofansichten gezielt profilieren; der lokale Entwicklungsbuild erreicht noch nicht durchgehend 60 FPS.
+- [x] Aufwendige Hofansichten gezielt profilieren und Architektur-Zeichenaufrufe reduzieren; neue lokale Messung nach 0.31.2: ca. 101-138 FPS. Breitere Hardware-/Langzeittests bleiben separat offen.
 - [ ] Gemeinsame gestalterische Abnahme im normalen Spiel; insbesondere Feldkante, Befestigungen und Partikelstaerke.
+
+
+## Hof: Leistung, Uebergaenge und Materialmassstab nach 0.31.2
+
+- [x] Langsame Ansicht mit Renderzaehlern pruefen; gemeinsame Zeichenaufrufe fuer gemalte Architektur inklusive Schatten implementieren.
+- [x] Bildgleichheit der Optimierung, lokale Lichter, Torfreistellung und Material-Lebensdauer testen.
+- [x] Weiche Wegkanten bis zum Turm erweitern; Arbeitsflaechen zuruecknehmen und Pflanzengruppen locker auslaufen lassen.
+- [x] Steinmassstab von Burg/Turm und Haussockeln annaehren; Putzfarben der vier Bewohnergebaeude abstimmen.
+- [x] Finalen Windows-Rundgang und Bildraten nach allen drei Aenderungen dokumentieren: bestanden; acht Hofansichten ca. 101-138 FPS im lokalen Entwicklungsbuild, RTX 3070 Ti, 1600x900.
+- [ ] Gestalterische Wirkung beim normalen Spielen gemeinsam beurteilen; erst danach die Ankunft der Arkanmeisterin beginnen.
