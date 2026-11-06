@@ -56,7 +56,7 @@ public sealed class CourtyardGateStyle : MonoBehaviour
         Box("Gate arch keystone", new Vector3(43.45f,5.5f,-1),new Vector3(2.5f,.7f,.46f),stone);
         foreach (float x in new[] {43.45f,50.48f})
             for (int i=0;i<9;i++) Box("Drawbridge strap rivet",new Vector3(x,.08f,-2.85f+i*.46f),new Vector3(.07f,.04f,.07f),iron);
-        Stream(); BankPlants(); BankStones();
+        Stream(); BankPlants(); BankStones(); BridgeWear();
         player=GameObject.FindWithTag("Player")?.transform;
         foreach(var renderer in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
         {
@@ -203,6 +203,24 @@ public sealed class CourtyardGateStyle : MonoBehaviour
             go.transform.rotation=Quaternion.Euler(8,i*47,6);
             var c=go.GetComponent<Collider>();c.enabled=false;Destroy(c);
             Surface(go.GetComponent<MeshRenderer>(),stone);
+        }
+    }
+    private void BridgeWear()
+    {
+        var worn=Paint("Stable oak","Drawbridge pale worn wood",new Color(.76f,.76f,.69f));
+        worn.SetFloat("_TextureScale",.32f);
+        // Thin scuffs and fastening plates are visual only: the deck remains a single reliable surface.
+        for(int i=0;i<12;i++)
+        {
+            float x=43.6f+i*.58f;
+            for(int side=-1;side<=1;side+=2)
+                Box("Drawbridge worn footfall",new Vector3(x,.040f,-1+side*.62f+.10f*Mathf.Sin(i*2)),
+                    new Vector3(.17f+(i%3)*.04f,.008f,.36f+(i%2)*.18f),worn);
+        }
+        foreach(float x in new[]{43.5f,50.45f})foreach(float z in new[]{-2.85f,.85f})
+        {
+            Box("Drawbridge iron end shoe",new Vector3(x,.04f,z),new Vector3(.28f,.06f,.36f),iron);
+            Box("Drawbridge shoe bolt",new Vector3(x,.082f,z),new Vector3(.075f,.025f,.075f),stone);
         }
     }
     private void Emit(string name,List<Vector3> vertices,List<int> triangles,List<Vector2> uv,Material material)
