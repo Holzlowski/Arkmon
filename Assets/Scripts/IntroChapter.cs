@@ -59,6 +59,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardTreeShadows.Install();
             CourtyardFurnitureShadows.Install();
             CourtyardMorningAccents.Install();
+            CourtyardAmbientDetails.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

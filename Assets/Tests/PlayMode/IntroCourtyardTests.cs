@@ -19,10 +19,12 @@ public class IntroCourtyardTests
         yield return SceneManager.LoadSceneAsync("StartScene");yield return new WaitForSeconds(.7f);
         var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
         var controller=(Behaviour)player.GetComponent(T("PlayerController"));controller.enabled=false;
-        Assert.That(GameObject.Find("Courtyard walkable ground").GetComponent<Collider>().bounds.size.x,Is.GreaterThan(85));
+        Assert.That(GameObject.Find("Rolling courtyard meadow").GetComponents<Collider>().Where(c=>c.enabled).Max(c=>c.bounds.size.x),Is.GreaterThan(85));
         var entrances=UnityEngine.Object.FindObjectsByType(T("CourtyardEntrance"),FindObjectsSortMode.None);
         Assert.That(entrances.Length,Is.EqualTo(4));
-        Assert.That(Physics.BoxCast(new Vector3(-38,1,-1),new Vector3(.35f,.8f,.35f),Vector3.right,out var hit,Quaternion.identity,76,~0,QueryTriggerInteraction.Ignore),Is.False,"The cross-courtyard route must stay open: "+hit.collider?.name);
+        // The old straight corridor was replaced by curved paths. Physical traversal is covered by CourtyardConnectedRouteTests.
+        foreach(var point in new[]{new Vector3(-26,8,-1.7f),new Vector3(1,8,-.35f),new Vector3(32,8,-4.1f)})
+            Assert.That(Physics.RaycastAll(point,Vector3.down,12,~0,QueryTriggerInteraction.Ignore).Any(h=>h.collider.CompareTag("Ground") && h.normal.y>.5f),Is.True,"Walking route needs solid ground at "+point);
         var camera=Camera.main;Quaternion angle=camera.transform.rotation;float fov=camera.fieldOfView;
         body.position=new Vector3(-34,2.4f,8);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-west");
         body.position=new Vector3(9,1,1);Physics.SyncTransforms();yield return new WaitForSeconds(.8f);Capture("intro-courtyard-centre");
@@ -65,7 +67,7 @@ public class IntroCourtyardTests
         var stream=GameObject.Find("Spatial stream ambience").GetComponent<AudioSource>();
         Assert.That(stream.clip,Is.Not.Null);
         Assert.That(stream.loop,Is.True);
-        Assert.That(stream.spatialBlend,Is.EqualTo(1f));
+        Assert.That(stream.spatialBlend,Is.Zero,"Stream attenuation follows Elian rather than the elevated camera.");
         var tower=entrances.First(e=>e.GetType().GetField("destination").GetValue(e).ToString()=="Tower");
         var dialogue=T("DialogueBoxController").GetField("instance").GetValue(null);dialogue.GetType().GetMethod("CloseDialogue").Invoke(dialogue,null);
         tower.GetType().GetMethod("InteractWithPlayer").Invoke(tower,null);

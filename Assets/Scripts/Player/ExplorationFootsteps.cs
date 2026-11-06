@@ -51,6 +51,8 @@ public sealed class ExplorationFootsteps : MonoBehaviour
         if (distance < stepLength) return;
         distance -= stepLength;
         Surface surface = SurfaceAt(hit);
+        if(courtyard && surface != Surface.Wood && surface != Surface.Carpet)
+            CourtyardAmbientDetails.Footfall(hit.point);
         string material = surface switch
         {
             Surface.Carpet => "carpet", Surface.Grass => "grass", Surface.Wood => "wood", _ => "concrete"
