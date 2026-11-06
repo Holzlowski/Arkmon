@@ -8,12 +8,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using Unity.Profiling;
 
 // Explicit command-line diagnostic, excluded from non-development players.
 [DefaultExecutionOrder(11000)]
 public sealed class CourtyardBuildReview : MonoBehaviour
 {
-    [Serializable] sealed class Sample {public string station;public float fps,p95Milliseconds;public int frames;}
+    [Serializable] sealed class Sample {public string station;public float fps,p95Milliseconds;public int frames;public double drawCalls,setPassCalls,triangles,mainThreadMilliseconds,renderThreadMilliseconds;}
     [Serializable] sealed class Report {public bool passed;public string graphics,version;public int width,height;public bool developmentBuild;public bool offscreenRendering;public Sample[] samples;public string[] errors;}
     readonly List<Sample> samples=new List<Sample>();readonly List<string> errors=new List<string>();string output;Rigidbody body;RenderTexture target;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void Begin()
@@ -36,6 +37,30 @@ public sealed class CourtyardBuildReview : MonoBehaviour
         if(player==null){errors.Add("Missing player");Finish();yield break;}
         player.GetComponent<PlayerController>().enabled=false;player.GetComponent<PlayerInteractionFocus>().enabled=false;
         body=player.GetComponent<Rigidbody>();body.isKinematic=false;body.position=new Vector3(-34,2.4f,8);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
+        if(args.Contains("-reviewProfile"))
+        {
+            body.isKinematic=true;body.interpolation=RigidbodyInterpolation.None;
+            yield return PlacePlayer(new Vector3(-10.8f,1,-.55f));
+            yield return new WaitForSeconds(2);
+            var renderers=FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            if(args.Contains("-reviewNoInstancing"))
+                foreach(var material in renderers.Select(r=>r.sharedMaterial).Where(m=>m!=null && m.shader.name=="Arkmon/Courtyard Illustrated Surface").Distinct())material.enableInstancing=false;
+            File.WriteAllLines(Path.Combine(output,"renderers.txt"),renderers.Where(r=>r.enabled && r.sharedMaterial!=null)
+                .GroupBy(r=>r.sharedMaterial.shader.name).OrderByDescending(g=>g.Count())
+                .Select(g=>g.Key+" count="+g.Count()));
+            yield return Measure("profile-baseline");Capture("profile-baseline");
+            var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            float shadowDistance=pipeline.shadowDistance;pipeline.shadowDistance=0;
+            yield return new WaitForSeconds(1);yield return Measure("profile-no-shadows");pipeline.shadowDistance=shadowDistance;
+            foreach(string category in new[]{"PlantWind","IllustratedSurface","MeadowWind"})
+            {
+                var hidden=renderers.Where(r=>r.enabled && r.sharedMaterial!=null && r.sharedMaterial.shader.name.Replace(" ", "").Contains(category)).ToArray();
+                foreach(var r in hidden)r.enabled=false;
+                yield return new WaitForSeconds(1);yield return Measure("profile-without-"+category);
+                foreach(var r in hidden)r.enabled=true;
+            }
+            yield return new WaitForSeconds(1);yield return Measure("profile-baseline-repeat");Finish();yield break;
+        }
         Vector2[] route={new Vector2(-34,4.2f),new Vector2(-30,1.3f),new Vector2(-26,-1.7f),new Vector2(-23.4f,-1.6f),new Vector2(-23.4f,1.1f),
             new Vector2(-23.4f,-1.6f),new Vector2(-18,-3),new Vector2(-16,-.7f),new Vector2(-10.8f,-.55f),new Vector2(-7,-1.15f),new Vector2(-3,-.95f),new Vector2(1,-.35f),new Vector2(3.95f,.25f),
             new Vector2(4.35f,4.9f),new Vector2(4.55f,9.45f),new Vector2(7.1f,9.45f),new Vector2(9.7f,9.45f),new Vector2(12,8),new Vector2(12,11.3f),
@@ -88,10 +113,16 @@ public sealed class CourtyardBuildReview : MonoBehaviour
     IEnumerator WaitGarden(){float end=Time.realtimeSinceStartup+5;while(CourtyardGarden.IsBusy && Time.realtimeSinceStartup<end)yield return null;if(CourtyardGarden.IsBusy)errors.Add("Garden action timeout");}
     IEnumerator Measure(string name)
     {
+        using var draws=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Draw Calls Count");
+        using var passes=ProfilerRecorder.StartNew(ProfilerCategory.Render,"SetPass Calls Count");
+        using var triangles=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Triangles Count");
+        using var main=ProfilerRecorder.StartNew(ProfilerCategory.Internal,"Main Thread");
+        using var render=ProfilerRecorder.StartNew(ProfilerCategory.Internal,"Render Thread");
+        double drawSum=0,passSum=0,triSum=0,mainSum=0,renderSum=0;
         PrepareCanvases();var frames=new List<float>();float end=Time.realtimeSinceStartup+3;yield return null;
-        while(Time.realtimeSinceStartup<end){frames.Add(Time.unscaledDeltaTime);yield return null;}
+        while(Time.realtimeSinceStartup<end){frames.Add(Time.unscaledDeltaTime);drawSum+=draws.Valid?draws.LastValue:0;passSum+=passes.Valid?passes.LastValue:0;triSum+=triangles.Valid?triangles.LastValue:0;mainSum+=main.Valid?main.LastValue:0;renderSum+=render.Valid?render.LastValue:0;yield return null;}
         if(frames.Count==0){errors.Add("No measured frames");yield break;}
-        frames.Sort();var sample=new Sample{station=name,frames=frames.Count,fps=1/frames.Average(),p95Milliseconds=1000*frames[Mathf.Min(frames.Count-1,Mathf.FloorToInt(frames.Count*.95f))]};samples.Add(sample);
+        frames.Sort();var sample=new Sample{station=name,frames=frames.Count,fps=1/frames.Average(),p95Milliseconds=1000*frames[Mathf.Min(frames.Count-1,Mathf.FloorToInt(frames.Count*.95f))]};sample.drawCalls=drawSum/frames.Count;sample.setPassCalls=passSum/frames.Count;sample.triangles=triSum/frames.Count;sample.mainThreadMilliseconds=mainSum/frames.Count/1e6;sample.renderThreadMilliseconds=renderSum/frames.Count/1e6;samples.Add(sample);
         Debug.Log("COURTYARD_REVIEW "+name+" fps="+sample.fps);
     }
     void PrepareCanvases()

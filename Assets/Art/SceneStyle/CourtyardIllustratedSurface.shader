@@ -26,10 +26,45 @@ Shader "Arkmon/Courtyard Illustrated Surface"
 
   HLSLINCLUDE
   #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-   CBUFFER_START(UnityPerMaterial)
-   float4 _BaseColor,_Tile,_ObjectScale,_FootMoss,_MorningAccent,_ViewCutaway;float _TextureScale,_Wood,_GrainAxis,_EdgeWidth;
-   float _Saturation,_Contrast,_AmbientFill,_SunStrength,_ShadowFloor,_FaceAlignedMasonry,_MorningAccentStrength,_WorldMasonry;
-   CBUFFER_END
+  // Per-piece paint, scale and light remain distinct inside an instanced draw.
+  UNITY_INSTANCING_BUFFER_START(PaintProps)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _Tile)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _ObjectScale)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _FootMoss)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _MorningAccent)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _ViewCutaway)
+   UNITY_DEFINE_INSTANCED_PROP(float, _TextureScale)
+   UNITY_DEFINE_INSTANCED_PROP(float, _Wood)
+   UNITY_DEFINE_INSTANCED_PROP(float, _GrainAxis)
+   UNITY_DEFINE_INSTANCED_PROP(float, _EdgeWidth)
+   UNITY_DEFINE_INSTANCED_PROP(float, _Saturation)
+   UNITY_DEFINE_INSTANCED_PROP(float, _Contrast)
+   UNITY_DEFINE_INSTANCED_PROP(float, _AmbientFill)
+   UNITY_DEFINE_INSTANCED_PROP(float, _SunStrength)
+   UNITY_DEFINE_INSTANCED_PROP(float, _ShadowFloor)
+   UNITY_DEFINE_INSTANCED_PROP(float, _FaceAlignedMasonry)
+   UNITY_DEFINE_INSTANCED_PROP(float, _MorningAccentStrength)
+   UNITY_DEFINE_INSTANCED_PROP(float, _WorldMasonry)
+  UNITY_INSTANCING_BUFFER_END(PaintProps)
+  #define _BaseColor UNITY_ACCESS_INSTANCED_PROP(PaintProps, _BaseColor)
+  #define _Tile UNITY_ACCESS_INSTANCED_PROP(PaintProps, _Tile)
+  #define _ObjectScale UNITY_ACCESS_INSTANCED_PROP(PaintProps, _ObjectScale)
+  #define _FootMoss UNITY_ACCESS_INSTANCED_PROP(PaintProps, _FootMoss)
+  #define _MorningAccent UNITY_ACCESS_INSTANCED_PROP(PaintProps, _MorningAccent)
+  #define _ViewCutaway UNITY_ACCESS_INSTANCED_PROP(PaintProps, _ViewCutaway)
+  #define _TextureScale UNITY_ACCESS_INSTANCED_PROP(PaintProps, _TextureScale)
+  #define _Wood UNITY_ACCESS_INSTANCED_PROP(PaintProps, _Wood)
+  #define _GrainAxis UNITY_ACCESS_INSTANCED_PROP(PaintProps, _GrainAxis)
+  #define _EdgeWidth UNITY_ACCESS_INSTANCED_PROP(PaintProps, _EdgeWidth)
+  #define _Saturation UNITY_ACCESS_INSTANCED_PROP(PaintProps, _Saturation)
+  #define _Contrast UNITY_ACCESS_INSTANCED_PROP(PaintProps, _Contrast)
+  #define _AmbientFill UNITY_ACCESS_INSTANCED_PROP(PaintProps, _AmbientFill)
+  #define _SunStrength UNITY_ACCESS_INSTANCED_PROP(PaintProps, _SunStrength)
+  #define _ShadowFloor UNITY_ACCESS_INSTANCED_PROP(PaintProps, _ShadowFloor)
+  #define _FaceAlignedMasonry UNITY_ACCESS_INSTANCED_PROP(PaintProps, _FaceAlignedMasonry)
+  #define _MorningAccentStrength UNITY_ACCESS_INSTANCED_PROP(PaintProps, _MorningAccentStrength)
+  #define _WorldMasonry UNITY_ACCESS_INSTANCED_PROP(PaintProps, _WorldMasonry)
   void ClipViewCutaway(float3 world)
   {
    if(_ViewCutaway.w<=0)return;
@@ -44,18 +79,19 @@ Shader "Arkmon/Courtyard Illustrated Surface"
   {
    Tags { "LightMode"="UniversalForward" }
    HLSLPROGRAM
+   #pragma multi_compile_instancing
    #pragma vertex Vert
    #pragma fragment Frag
    #pragma multi_compile_fog
    #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
    #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
-   struct A { float4 positionOS:POSITION;float3 normalOS:NORMAL; };
-   struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 local:TEXCOORD1;float3 normal:TEXCOORD2;float3 normalOS:TEXCOORD3;float fog:TEXCOORD4; };
+   struct A { float4 positionOS:POSITION;float3 normalOS:NORMAL; UNITY_VERTEX_INPUT_INSTANCE_ID };
+   struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 local:TEXCOORD1;float3 normal:TEXCOORD2;float3 normalOS:TEXCOORD3;float fog:TEXCOORD4; UNITY_VERTEX_INPUT_INSTANCE_ID };
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
 
    V Vert(A i)
    {
-    V o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);
+    V o;UNITY_SETUP_INSTANCE_ID(i);UNITY_TRANSFER_INSTANCE_ID(i,o);o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);
     o.local=i.positionOS.xyz;o.normal=TransformObjectToWorldNormal(i.normalOS);o.normalOS=i.normalOS;o.fog=ComputeFogFactor(o.positionCS.z);return o;
    }
    half3 Paint(float2 uv)
@@ -67,6 +103,7 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    }
    half4 Frag(V i):SV_Target
    {
+    UNITY_SETUP_INSTANCE_ID(i);
     ClipViewCutaway(i.world);
     float3 p=i.local*_ObjectScale.xyz,an=abs(normalize(i.normalOS));
     float2 uv;float edge;
@@ -117,7 +154,19 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    }
    ENDHLSL
   }
-  UsePass "Universal Render Pipeline/Lit/ShadowCaster"
+  Pass
+  {
+   Name "ShadowCaster"
+   Tags {"LightMode"="ShadowCaster"}
+   ZWrite On ZTest LEqual ColorMask 0
+   HLSLPROGRAM
+   #pragma vertex ShadowPassVertex
+   #pragma fragment ShadowPassFragment
+   #pragma multi_compile_instancing
+   #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+   #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+   ENDHLSL
+  }
   Pass
   {
    Name "DepthOnly"
@@ -125,12 +174,13 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    ZWrite On
    ColorMask 0
    HLSLPROGRAM
+   #pragma multi_compile_instancing
    #pragma vertex DepthVert
    #pragma fragment DepthFrag
-   struct DepthA {float4 positionOS:POSITION;};
-   struct DepthV {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;};
-   DepthV DepthVert(DepthA i){DepthV o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);return o;}
-   half4 DepthFrag(DepthV i):SV_Target {ClipViewCutaway(i.world);return 0;}
+   struct DepthA {float4 positionOS:POSITION;UNITY_VERTEX_INPUT_INSTANCE_ID};
+   struct DepthV {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;UNITY_VERTEX_INPUT_INSTANCE_ID};
+   DepthV DepthVert(DepthA i){DepthV o;UNITY_SETUP_INSTANCE_ID(i);UNITY_TRANSFER_INSTANCE_ID(i,o);o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);return o;}
+   half4 DepthFrag(DepthV i):SV_Target {UNITY_SETUP_INSTANCE_ID(i);ClipViewCutaway(i.world);return 0;}
    ENDHLSL
   }
  }
