@@ -56,7 +56,7 @@ public sealed class CourtyardGateStyle : MonoBehaviour
         Box("Gate arch keystone", new Vector3(43.45f,5.5f,-1),new Vector3(2.5f,.7f,.46f),stone);
         foreach (float x in new[] {43.45f,50.48f})
             for (int i=0;i<9;i++) Box("Drawbridge strap rivet",new Vector3(x,.08f,-2.85f+i*.46f),new Vector3(.07f,.04f,.07f),iron);
-        Stream(); BankPlants();
+        Stream(); BankPlants(); BankStones();
         player=GameObject.FindWithTag("Player")?.transform;
         foreach(var renderer in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
         {
@@ -150,7 +150,7 @@ public sealed class CourtyardGateStyle : MonoBehaviour
     }
     private static float Centre(float z) => 47.0f + Mathf.Sin((z+1)*.16f)*.42f + Mathf.Sin(z*.43f)*.12f;
     private static float HalfWidth(float z) => 1.80f + Mathf.Sin(z*.27f)*.18f + Mathf.Cos(z*.61f)*.08f;
-    private static float FarLip(float z) => 50.45f + Mathf.Sin(z*.31f)*.20f + Mathf.Cos(z*.74f)*.10f;
+    private static float FarLip(float z) => 51.0f + Mathf.Sin(z*.31f)*.48f + Mathf.Cos(z*.74f)*.18f;
     private void Stream()
     {
         var water=new Material(Resources.Load<Shader>("CourtyardStream")){name="Flowing courtyard stream"};materials.Add(water);
@@ -175,7 +175,7 @@ public sealed class CourtyardGateStyle : MonoBehaviour
                 // Fold the far slope over the solid bank's straight face, then blend onto its top.
                 // The deck and bank colliders keep their established heights and footprint.
                 float outer=side<0?43.62f:FarLip(z);
-                float crest=side<0?43.72f:50.0f;
+                float crest=side<0?43.72f:49.88f+.09f*Mathf.Sin(z*.55f);
                 v.Add(new Vector3(edge,-.81f,z));
                 v.Add(new Vector3(Mathf.Lerp(edge,crest,.58f),-.26f+.035f*Mathf.Sin(z*.7f),z));
                 v.Add(new Vector3(crest,.025f,z));v.Add(new Vector3(outer,.008f,z));
@@ -187,6 +187,22 @@ public sealed class CourtyardGateStyle : MonoBehaviour
                 }
             }
             Emit("Stream sloping bank",v,t,null,bank);
+        }
+    }
+    private void BankStones()
+    {
+        for(int i=0;i<16;i++)
+        {
+            float z=-16+i*3.5f;
+            if(z>-5 && z<3)continue;
+            float side=i%2==0?1:-1;
+            var go=GameObject.CreatePrimitive(PrimitiveType.Sphere);go.name="Stream worn bank stone";
+            go.transform.SetParent(transform,false);
+            go.transform.position=new Vector3(Centre(z)+side*(HalfWidth(z)+.22f),-.55f,z);
+            go.transform.localScale=new Vector3(.6f+(i%3)*.17f,.35f,.48f+(i%2)*.15f);
+            go.transform.rotation=Quaternion.Euler(8,i*47,6);
+            var c=go.GetComponent<Collider>();c.enabled=false;Destroy(c);
+            Surface(go.GetComponent<MeshRenderer>(),stone);
         }
     }
     private void Emit(string name,List<Vector3> vertices,List<int> triangles,List<Vector2> uv,Material material)

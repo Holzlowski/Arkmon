@@ -2092,3 +2092,4 @@ Release status: included in the committed courtyard pass listed below.
 
 - **0.30.3** — `style(courtyard): settle the exterior forecourt into the ground`. Give the worn forecourt an irregular shared clearance boundary, subtle wheel wear and settled waymarkers. Retain the existing open walking area and collision surfaces.
 - **0.30.4** — `style(fields): soften grain edges along the eastern lane`. Use the shared road and forecourt distance to blend short grain and stubble into mature wheat. Apply the same world-space edge mask to both vegetation detail levels.
+- **0.30.5** — `style(stream): soften banks and place worn shoreline stones`. Vary the far bank lip and crest and scatter low shoreline stones outside the crossing. Preserve bridge and bank colliders; decorative rocks do not block walking.
