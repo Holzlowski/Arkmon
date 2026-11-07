@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.7`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.8`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2149,3 +2149,9 @@ Validation: the focused silent John PlayMode test passed, including normal inter
 Check Unity object validity before reading a surface Renderer. Invisible tower ramps now resolve to stone without MissingComponentException; add a focused regression.
 
 Validation: The silent ramp regression and final tower traversal passed.
+
+### 0.31.8 — remove overlapping tower terrace surfaces
+
+Align the residence terrace extension with the tower platform in StartScene and its generator. Remove the coplanar overlap that flickered beside the door while preserving supported passage; extend the seam regression.
+
+Validation: The reported-issues regression verified the seam and ramp; tower-exit captures were inspected.
