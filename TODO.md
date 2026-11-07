@@ -365,3 +365,9 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Hofmusik bei Rueckkehr, Abbruch, Deaktivierung und Szenenwechsel wiederherstellen.
 - [x] Drei stumme Tests bestanden: Import/Loop, Textzeitpunkt und Lebenszyklus sowie bestehende Hof-Ueberblendung (27.33 Sekunden).
 - [ ] Musikbalance und Wirkung des Textakzents beim normalen Spielen gemeinsam beurteilen.
+
+
+## 0.35.0 — balance courtyard conversations and scenic ambience
+
+- [x] Musik bei Gespraechen weich absenken und Hofgeraeusche fuer die Aussicht zuruecknehmen.
+- [ ] Musikbalance beim normalen Spielen beurteilen.

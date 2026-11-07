@@ -13,13 +13,23 @@ public class SoundManager : MonoBehaviour
     private AudioSource music, outgoing, effects;
     private Coroutine crossfade;
     private float musicLevel, outgoingLevel, musicDucking = 1f;
+    private float conversationGain = 1;
+    public float ConversationGain => conversationGain;
     public float MusicDucking => musicDucking;
+    private void Update()
+    {
+        bool conversation = SceneManager.GetActiveScene().name == "StartScene"
+            && transitionDestination == null && (DialogueBoxController.instance?.IsOpen ?? false);
+        conversationGain = Mathf.MoveTowards(conversationGain, conversation ? .62f : 1f,
+            Time.unscaledDeltaTime / (conversation ? .65f : 1.2f));
+        ApplyMusicVolumes();
+    }
     public void SetMusicDucking(float gain)
     { musicDucking = Mathf.Clamp01(gain); ApplyMusicVolumes(); }
     private void ApplyMusicVolumes()
     {
-        if (music != null) music.volume = musicVolume * musicLevel * musicDucking;
-        if (outgoing != null) outgoing.volume = musicVolume * outgoingLevel * musicDucking;
+        if (music != null) music.volume = musicVolume * musicLevel * musicDucking * conversationGain;
+        if (outgoing != null) outgoing.volume = musicVolume * outgoingLevel * musicDucking * conversationGain;
     }
     private string transitionDestination;
     public string CurrentMusicName => music != null && music.clip != null ? music.clip.name : "";

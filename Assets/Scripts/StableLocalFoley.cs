@@ -20,14 +20,16 @@ public sealed class StableLocalFoley : MonoBehaviour
         Audibility=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.5f,14,distance));
         bool speaking=DialogueBoxController.instance!=null && DialogueBoxController.instance.IsOpen;
         float gain=SoundManager.instance!=null?SoundManager.instance.effectsVolume:.55f;
-        source.volume=SceneLoadManager.IsTransitioning?0:Audibility*gain*(speaking?.3f:1);
+        bool scenic = CourtyardLookout.IsPresenting || SceneLoadManager.IsTransitioning;
+        float target = scenic ? 0 : Audibility * gain * (speaking ? .24f : .85f);
+        source.volume = Mathf.MoveTowards(source.volume, target, Time.unscaledDeltaTime * 1.5f);
         if(view==null)view=Camera.main;
         if(view!=null)source.panStereo=Mathf.Clamp(Vector3.Dot(transform.position-player.position,view.transform.right)/12,-.5f,.5f);
     }
     public void Play(AudioClip clip,float gain,float pitch=1)
     {
         // Never produce sound during automated editor runs, including runs without -disableAudio.
-        if(Application.isBatchMode || clip==null || Audibility<=.001f || !isActiveAndEnabled)return;
+        if(CourtyardLookout.IsPresenting || SceneLoadManager.IsTransitioning || Application.isBatchMode || clip==null || Audibility<=.001f || !isActiveAndEnabled)return;
         source.pitch=pitch;source.PlayOneShot(clip,gain);
     }
     public void Stop(){if(source!=null)source.Stop();}

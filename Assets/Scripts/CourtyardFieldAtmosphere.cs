@@ -10,6 +10,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
     Material ink;
     AudioSource rustle;
     float age;
+    CourtyardLookout lookout;
 
     internal static void Install()
     {
@@ -19,6 +20,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
     }
     void Build()
     {
+        lookout = FindFirstObjectByType<CourtyardLookout>();
         ink = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { name = "Distant bird ink" };
         ink.SetColor("_BaseColor",new Color(.26f,.24f,.23f));
         ink.SetFloat("_Cull",0);
@@ -63,7 +65,9 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
         if(rustle==null)return;
         bool presenting=CourtyardLookout.IsPresenting && !SceneLoadManager.IsTransitioning;
         float gain=SoundManager.instance!=null?SoundManager.instance.effectsVolume:.55f;
-        float target = presenting ? .24f * gain : 0;
+        // Leave room for the one-time title chord, then let the fields breathe again.
+        bool title = lookout != null && lookout.Progress >= .68f && lookout.Progress < .84f;
+        float target = presenting ? (title ? .07f : .14f) * gain : 0;
         rustle.volume=Mathf.MoveTowards(rustle.volume,target,Time.unscaledDeltaTime*.10f);
         if(!Application.isBatchMode && presenting && !rustle.isPlaying && rustle.clip!=null)rustle.Play();
         if(!presenting && rustle.volume<=0 && rustle.isPlaying)rustle.Stop();

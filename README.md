@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.34.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.35.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2225,3 +2225,10 @@ Return restores courtyard music; early cancel, disable, missing camera and scene
 The three `Audio/aurenfeld-*` clips are preloaded stereo 44.1 kHz PCM (about 7.9 MB on disk / 15.9 MB decoded). Run `python tools/render_aurenfeld_lookout_music.py --install` using the cached samples and adjacent renderers from the courtyard pipeline; omit `--install` for previews only. `Builds/aurenfeld-lookout-music-preview.wav` demonstrates the reveal at 6.8 seconds. Runtime timing follows the actual reveal trigger. Source revisions, licenses and hashes are in `docs/audio-sources.json`.
 
 Validation: three silent PlayMode tests passed in 27.33 seconds (`Library/lookout-music.xml`): imported frame counts/loop seams, shared caption timing and single cue, early cancel, repeated entry, disable/unload recovery and the existing tower-to-courtyard crossfade. Installed WAV hashes match the renderer report; no clipped/non-finite samples. A normal in-game listening review and any further musical balancing remain open.
+
+
+### 0.35.0 — balance courtyard conversations and scenic ambience
+
+Courtyard music now eases down to 62% of its configured level during conversations and recovers afterwards. This gain multiplies the existing lookout ducking, so closing a dialogue cannot accidentally restore the main song over the scenic melody. Local workshop/stable sounds ease down during conversations and are suppressed during the lookout. The field rustle is quieter and briefly steps back around the Aurenfeld title chord. Music/effects settings and source files remain unchanged; subjective listening balance still needs normal-play review.
+
+Validation: Existing silent finishing and lookout lifecycle checks passed; subjective listening balance remains open.
