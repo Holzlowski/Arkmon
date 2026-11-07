@@ -78,7 +78,10 @@ public sealed class ExplorationFootsteps : MonoBehaviour
             else if (Mathf.Abs(p.x) <= bounds.extents.x && Mathf.Abs(p.z) <= bounds.extents.z)
                 return surface;
         }
-        var material = hit.collider.GetComponent<Renderer>()?.sharedMaterial;
+        // Collision-only ramps have no visible renderer. Unity's missing-component
+        // wrapper is not a CLR null, so ?. is not sufficient here.
+        var renderer = hit.collider.GetComponent<Renderer>();
+        var material = renderer != null ? renderer.sharedMaterial : null;
         if (material != null && material.name.IndexOf("oak", System.StringComparison.OrdinalIgnoreCase) >= 0)
             return Surface.Wood;
         return courtyard && (hit.collider.name == "Courtyard walkable ground"

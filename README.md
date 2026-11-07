@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.6`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.7`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2143,3 +2143,9 @@ Final evidence: `Builds/CourtyardReview-polish-three/review.json` reports eight 
 John steht in der StartScene auf der freien Fläche rechts neben dem Burgweg vor dem Kellerbereich (18, 0.005, 6.8). Der Burgzugang und die Wachroute bleiben frei; der Hof-Generator bewahrt diesen Standort. Der bestehende John-Test prüft zusätzlich die normale Interaktionsauswahl am neuen Platz.
 
 Validation: the focused silent John PlayMode test passed, including normal interaction selection, dialogue, grounded idle poses and scene reload. The existing Windows review build predates this relocation; test the new position in Unity.
+
+### 0.31.7 — handle renderer-free footstep surfaces
+
+Check Unity object validity before reading a surface Renderer. Invisible tower ramps now resolve to stone without MissingComponentException; add a focused regression.
+
+Validation: The silent ramp regression and final tower traversal passed.
