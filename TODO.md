@@ -376,3 +376,8 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 ## 0.36.0 — add resident work pauses and watering reactions
 
 - [x] Idas Arbeitspausen, Hannes Blick zum Pferd und Martas Reaktion beim Giessen ergaenzt und geprueft.
+
+
+## 0.37.0 — add tower and garden direction markers
+
+- [x] Turmabgang und Gartenabzweig durch zwei hoelzerne Wegweiser kennzeichnen; freie Wege bewahren.

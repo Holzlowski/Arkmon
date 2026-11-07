@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.36.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.37.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2239,3 +2239,10 @@ Validation: Existing silent finishing and lookout lifecycle checks passed; subje
 Existing anchored resident poses now have longer work breaks: Ida pauses after four pairs of planing strokes to inspect the surface; Hannes pauses between grooming rounds and looks toward the nearer horse. Marta watches Elian while a bed is being watered and retains her completion reaction. Dialogue and scenic presentation take precedence; residents do not slide between new positions or add quest requirements.
 
 Validation: Resident/dialogue/watering and planing-stroke checks passed in Library/courtyard-finishing-final.xml (three checks total, 31.64 seconds, including lighting/wayfinding).
+
+
+### 0.37.0 — add tower and garden direction markers
+
+Two low wooden direction markers identify the gate route and workshop/garden branches, keeping the existing winding paths. They replace the redundant gate sign, add no colliders and use the existing painted oak material and UI typeface. The full connected route remains the traversal check.
+
+Validation: Connected courtyard traversal and marker/reload checks passed during the finishing pass; tower and garden-junction gameplay captures reviewed.
