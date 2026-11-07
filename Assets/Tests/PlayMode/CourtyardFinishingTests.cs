@@ -72,4 +72,41 @@ public class CourtyardFinishingTests
         LogAssert.NoUnexpectedReceived();
     }
 
+    [UnityTest] public IEnumerator SunraysAndWayfinding_AreBoundedAndSurviveReload()
+    {
+        yield return Load();
+        var root=GameObject.Find("Breach golden sunrays");Assert.That(root,Is.Not.Null);
+        var rays=root.GetComponentsInChildren<MeshRenderer>();Assert.That(rays.Length,Is.EqualTo(3));
+        Assert.That(rays.All(r=>r.sharedMaterial.shader.isSupported),Is.True);
+        Assert.That(root.GetComponentsInChildren<Collider>(),Is.Empty);
+        Assert.That(root.GetComponentsInChildren<Light>(),Is.Empty);
+        var motes=root.GetComponentInChildren<ParticleSystem>();Assert.That(motes.main.maxParticles,Is.EqualTo(64));
+        var markers=GameObject.Find("Courtyard route markers");Assert.That(markers,Is.Not.Null);
+        Assert.That(markers.GetComponentsInChildren<Collider>(),Is.Empty);
+        Assert.That(markers.transform.childCount,Is.EqualTo(2));
+        var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
+        CourtyardGardenTaskTests.MoveTo(GameObject.Find("Western field lookout").GetComponent(T("CourtyardLookout")));
+        var follow=UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));
+        var position=new Vector3(-31,7,-3);
+        Call(follow,"SetScenicView",position,Quaternion.LookRotation(new Vector3(-42,2.6f,7)-position),48f);
+        yield return new WaitForSeconds(.5f);
+        Assert.That(rays.All(r=>r.enabled),Is.True);
+        Capture("courtyard-breach-godrays-on");
+        var style=(Behaviour)root.GetComponent(T("CourtyardBreachSunrays"));style.enabled=false;yield return null;
+        Assert.That(rays.All(r=>!r.enabled),Is.True);Assert.That(motes.particleCount,Is.Zero);
+        Capture("courtyard-breach-godrays-off");style.enabled=true;yield return null;
+        Call(follow,"SetScenicView",new Vector3(-61,11,7),Quaternion.LookRotation(new Vector3(-69,0,20)),58f);
+        yield return null;yield return null;
+        Assert.That(rays.All(r=>!r.enabled),Is.True,"No veil over the finished panorama.");
+        Call(follow,"ClearScenicView");
+        foreach(var point in new[]{new Vector3(-29,1,1),new Vector3(32,1,-3)})
+        {
+            body.position=player.transform.position=point;Physics.SyncTransforms();yield return new WaitForSeconds(1);
+            Capture(point.x<0?"courtyard-tower-directions":"courtyard-garden-directions");
+        }
+        yield return Load();Assert.That(root==null,Is.True);
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardBreachSunrays"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardWayfinding"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
+        LogAssert.NoUnexpectedReceived();
+    }
 }

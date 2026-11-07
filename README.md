@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.37.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.38.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2246,3 +2246,12 @@ Validation: Resident/dialogue/watering and planing-stroke checks passed in Libra
 Two low wooden direction markers identify the gate route and workshop/garden branches, keeping the existing winding paths. They replace the redundant gate sign, add no colliders and use the existing painted oak material and UI typeface. The full connected route remains the traversal check.
 
 Validation: Connected courtyard traversal and marker/reload checks passed during the finishing pass; tower and garden-junction gameplay captures reviewed.
+
+
+### 0.38.0 — add short golden breach rays and floating dust
+
+`CourtyardBreachSunrays` adds three scene-owned soft golden light ribbons inside the western opening plus at most 64 fine floating dust specks. The dedicated resource shader uses normal depth testing, feathered edges, slow intensity variation and a near-camera fade. These are illustrated light shafts, not physically simulated volumetric lighting. They add no lights or colliders, fade away after the scenic camera passes outside, and release meshes/materials on unload. The distant panorama has no extra fog overlay.
+
+The breach shafts now end at 55% of their previous length, with a softer final fade before the tower. Their richer gold tint has less green and blue to avoid the previous pale glow. A broad feathered layer, restrained inner core and angled sheet still use three mesh renderers total. The presentation lift remains 15% during the lookout. A separate additive dust shader replaces seed-shaped motes with small soft round specks: at most 64 particles, slowly drifting through a compact region around the shorter shafts and dimming outside the light. Dust visibility fades together with the beams. Depth testing and outside-camera hiding preserve the clear panorama; meshes and materials are released on unload.
+
+Validation: Focused silent visibility/reload check passed in 16.27 seconds (Library/breach-sunrays-golden.xml); gameplay captures reviewed. Three ray renderers, 64-particle cap, no extra lights/colliders. No benchmark or new build.

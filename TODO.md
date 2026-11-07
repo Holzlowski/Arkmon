@@ -381,3 +381,10 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 ## 0.37.0 — add tower and garden direction markers
 
 - [x] Turmabgang und Gartenabzweig durch zwei hoelzerne Wegweiser kennzeichnen; freie Wege bewahren.
+
+
+## 0.38.0 — add short golden breach rays and floating dust
+
+- [x] Kurze sattgoldene Sonnenstrahlen und feinen schwebenden Staub am Durchbruch ergaenzt.
+- [x] Sichtbarkeit, Deaktivierung und Neuladen stumm geprueft.
+- [ ] Lichtwirkung beim normalen Spielen gemeinsam beurteilen.
