@@ -371,3 +371,8 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 
 - [x] Musik bei Gespraechen weich absenken und Hofgeraeusche fuer die Aussicht zuruecknehmen.
 - [ ] Musikbalance beim normalen Spielen beurteilen.
+
+
+## 0.36.0 — add resident work pauses and watering reactions
+
+- [x] Idas Arbeitspausen, Hannes Blick zum Pferd und Martas Reaktion beim Giessen ergaenzt und geprueft.

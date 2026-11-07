@@ -16,6 +16,7 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
     private AudioClip[] scrapes;
     public bool IsWorking { get; private set; }
     public bool IsCutting { get; private set; }
+    public bool IsInspecting { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
 
     private void OnEnable()
@@ -70,7 +71,7 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
     }
     private void ResetWork()
     {
-        workTime=0;lastStroke=-1;IsCutting=false;resumeAt=Time.time+.45f;
+        workTime=0;lastStroke=-1;IsCutting=false;IsInspecting=false;resumeAt=Time.time+.45f;
         if(foley!=null)foley.Stop();
     }
     private void LateUpdate()
@@ -79,23 +80,27 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
         IsWorking=!engaged && !(DialogueBoxController.instance?.IsOpen??false) &&
-            !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning;
+            !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning && !CourtyardLookout.IsPresenting;
         if(IsWorking)
         {
             if(Time.time>=resumeAt)workTime+=Time.deltaTime;
-            float phase=Mathf.Repeat(workTime,CycleDuration);
+            // Four pairs of strokes, then a longer pause to inspect the surface.
+            float workCycle = Mathf.Repeat(workTime, CycleDuration * 4 + 2.8f);
+            IsInspecting = workCycle >= CycleDuration * 4;
+            float phase = Mathf.Repeat(workCycle, CycleDuration);
             float strokePhase=Mathf.Repeat(phase,StrokeDuration);
-            bool stroking=Time.time>=resumeAt && phase<2*StrokeDuration;
+            bool stroking=!IsInspecting && Time.time>=resumeAt && phase<2*StrokeDuration;
             bool cutting=stroking && strokePhase<PushDuration;
             float reach=0;
             if(stroking)
                 reach=cutting?Mathf.SmoothStep(0,1,strokePhase/PushDuration):
                     1-Mathf.SmoothStep(0,1,(strokePhase-PushDuration)/ReturnDuration);
-            illustration.sprite=work[Mathf.RoundToInt(reach*2)]??idle;
+            illustration.sprite=IsInspecting ? idle : work[Mathf.RoundToInt(reach*2)]??idle;
             illustration.flipX=false;
 
             // A short real scrape accompanies the forward cut only, never the return.
-            int stroke=Mathf.FloorToInt(workTime/CycleDuration)*2+Mathf.FloorToInt(phase/StrokeDuration);
+            int stroke = Mathf.FloorToInt(workTime / (CycleDuration * 4 + 2.8f)) * 8
+                + Mathf.FloorToInt(workCycle / CycleDuration) * 2 + Mathf.FloorToInt(phase / StrokeDuration);
             if(cutting && strokePhase>=.06f && stroke!=lastStroke)
             {
                 lastStroke=stroke;
@@ -106,6 +111,7 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
         }
         else
         {
+            IsInspecting=false;
             if(IsCutting)ResetWork();
             illustration.sprite=idle;
             if(player!=null && Mathf.Abs(player.position.x-transform.position.x)>.18f)

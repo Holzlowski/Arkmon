@@ -15,6 +15,7 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     private Vector3 gardenLookTarget;
     private Transform seedTray;
     public bool IsTending { get; private set; }
+    public bool IsWatchingWatering { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
 
     private void OnEnable()
@@ -62,7 +63,7 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     }
     private void ResetReaction()
     {
-        gardenLookTime=0;IsTending=false;
+        gardenLookTime=0;IsTending=false;IsWatchingWatering=false;
         speaking=false;CurrentEmotion=DialogueEmotion.Neutral;reactionTime=1;
         if(paper!=null){paper.localPosition=Vector3.zero;paper.localScale=SilhouetteScale;}
     }
@@ -78,7 +79,13 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
         if(paper==null)return;
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
-        if(gardenLookTime>0 && !speaking)
+        IsWatchingWatering = !speaking && CourtyardGarden.IsWatering && !SceneLoadManager.IsTransitioning;
+        if(IsWatchingWatering)
+        {
+            IsTending=false;
+            FacePlayer(true);
+        }
+        else if(gardenLookTime>0 && !speaking)
         {
             gardenLookTime-=Time.deltaTime;
             illustration.flipX=gardenLookTarget.x<transform.position.x;
@@ -87,7 +94,7 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
         else
         {
             IsTending=!speaking && !(DialogueBoxController.instance?.IsOpen??false) &&
-                !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning && seedTray!=null &&
+                !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning && !CourtyardLookout.IsPresenting && seedTray!=null &&
                 (player==null || (player.position-transform.position).sqrMagnitude>9);
             if(IsTending)
             {

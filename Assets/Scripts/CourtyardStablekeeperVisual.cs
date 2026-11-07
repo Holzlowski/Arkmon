@@ -3,7 +3,7 @@ using UnityEngine;
 // Work frames affect only the paper child. The resident and interaction spot stay fixed.
 public sealed class CourtyardStablekeeperVisual : MonoBehaviour
 {
-    private Transform paper,player;
+    private Transform paper,player,horse;
     private SpriteRenderer illustration;
     private Sprite idle;
     private Sprite[] work;
@@ -14,6 +14,7 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
     private StableLocalFoley foley;
     private AudioClip brush;
     public bool IsWorking { get; private set; }
+    public bool IsCheckingHorse { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
 
     private void OnEnable()
@@ -28,12 +29,15 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
         DialogueBoxController.OnLinePresented-=PresentLine;
         DialogueBoxController.OnDialogueEnded-=EndConversation;
         if(foley!=null)foley.Stop();
-        engaged=false;IsWorking=false;CurrentEmotion=DialogueEmotion.Neutral;
+        engaged=false;IsWorking=false;IsCheckingHorse=false;CurrentEmotion=DialogueEmotion.Neutral;
     }
     private void Start()
     {
         player=GameObject.FindWithTag("Player")?.transform;view=Camera.main;
         idle=Resources.Load<Sprite>("Hannes/GroomIdle");
+        foreach (var candidate in FindObjectsByType<CourtyardHorse>(FindObjectsSortMode.None))
+            if (horse == null || (candidate.transform.position-transform.position).sqrMagnitude < (horse.position-transform.position).sqrMagnitude)
+                horse=candidate.transform;
         work=new[]{Resources.Load<Sprite>("Hannes/GroomForward"),Resources.Load<Sprite>("Hannes/GroomMiddle"),
             Resources.Load<Sprite>("Hannes/GroomBack"),Resources.Load<Sprite>("Hannes/GroomMiddle")};
         paper=new GameObject("Hannes illustrated stablekeeper",typeof(SpriteRenderer)).transform;paper.SetParent(transform,false);
@@ -43,7 +47,7 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
     }
     private void BeginConversation()
     {
-        engaged=false;CurrentEmotion=DialogueEmotion.Neutral;IsWorking=false;
+        engaged=false;CurrentEmotion=DialogueEmotion.Neutral;IsWorking=false;IsCheckingHorse=false;
         if(foley!=null)foley.Stop();
         if(illustration!=null)illustration.sprite=idle;
     }
@@ -51,7 +55,7 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
     {
         if(speaker=="Hannes")
         {
-            engaged=true;IsWorking=false;CurrentEmotion=emotion;reactionTime=0;workTime=0;
+            engaged=true;IsWorking=false;IsCheckingHorse=false;CurrentEmotion=emotion;reactionTime=0;workTime=0;
             if(foley!=null)foley.Stop();
             if(illustration!=null)illustration.sprite=idle;
         }
@@ -63,26 +67,30 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
         if(paper==null)return;
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
-        IsWorking=!engaged && !(DialogueBoxController.instance!=null && DialogueBoxController.instance.IsOpen) && !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning;
+        IsWorking=!engaged && !(DialogueBoxController.instance!=null && DialogueBoxController.instance.IsOpen) && !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning && !CourtyardLookout.IsPresenting;
         if(IsWorking)
         {
             if(Time.time>=resumeAt)workTime+=Time.deltaTime;
-            float phase=Mathf.Repeat(workTime,3.6f);
+            float cycle = Mathf.Repeat(workTime, 14.4f);
+            IsCheckingHorse = cycle >= 10.8f;
+            float phase=Mathf.Repeat(cycle,3.6f);
             float strokePhase=Mathf.Repeat(phase,.72f);
-            float reach=phase<2.16f?.5f-.5f*Mathf.Cos(strokePhase/.72f*Mathf.PI*2):0;
+            float reach=!IsCheckingHorse && phase<2.16f?.5f-.5f*Mathf.Cos(strokePhase/.72f*Mathf.PI*2):0;
             // Back -> middle -> forward -> middle; ease at the ends, then rest.
             int pose=Mathf.RoundToInt(reach*2);
             int frame=pose==0?2:pose==1?1:0;
             int stroke=Mathf.FloorToInt(workTime/3.6f)*3+Mathf.FloorToInt(phase/.72f);
-            if(phase<2.16f && strokePhase>.12f && stroke!=lastStroke && Time.time>=resumeAt)
+            if(!IsCheckingHorse && phase<2.16f && strokePhase>.12f && stroke!=lastStroke && Time.time>=resumeAt)
             {
                 lastStroke=stroke;foley.Play(brush,.15f,.94f+(stroke%3)*.035f);
             }
-            illustration.sprite=work[frame]!=null?work[frame]:idle;
-            illustration.flipX=false;
+            illustration.sprite=IsCheckingHorse ? idle : work[frame]!=null?work[frame]:idle;
+            illustration.flipX=IsCheckingHorse && horse!=null && horse.position.x<transform.position.x;
+            if(IsCheckingHorse)foley.Stop();
         }
         else
         {
+            IsCheckingHorse=false;
             illustration.sprite=idle;
             if(player!=null && Mathf.Abs(player.position.x-transform.position.x)>.18f)
                 illustration.flipX=player.position.x<transform.position.x;
