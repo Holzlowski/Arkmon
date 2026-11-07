@@ -37,11 +37,11 @@ public class CourtyardGuardTests
         if((bool)T("DialogueBoxController").GetField("typing",Hidden).GetValue(Dialogue))Call(Dialogue,"SkipLine");
         yield return null;yield return null;Call(Dialogue,"SkipLine");yield return null;yield return null;
     }
-    [UnityTest] public IEnumerator CompletePatrolReturnsToCastle_WithoutCrossingProps()
+    [UnityTest] public IEnumerator CompletePatrolConnectsWorkplacesAndGate_WithoutCrossingProps()
     {
         yield return Load();
         var origin=Guard.transform.position;var angles=new HashSet<int>();var targets=new HashSet<int>();
-        float until=Time.time+95,waiting=0;bool reachedGate=false,captured=false;
+        float until=Time.time+160,waiting=0;bool reachedGate=false,captured=false;
         float scale=Time.timeScale;Time.timeScale=4;
         try
         {
@@ -68,9 +68,9 @@ public class CourtyardGuardTests
                 yield return null;
             }
             Assert.That(reachedGate,Is.True);Assert.That(Vector3.Distance(origin,Guard.transform.position),Is.LessThan(.08f));
-            Assert.That(targets.Count,Is.EqualTo(8));Assert.That(angles.Count,Is.GreaterThanOrEqualTo(6));
+            Assert.That(targets.Count,Is.EqualTo(13));Assert.That(angles.Count,Is.GreaterThanOrEqualTo(6));
             var atRest=Guard.GetComponent<Rigidbody>().position;yield return new WaitForSeconds(1);
-            Assert.That(Vector3.Distance(atRest,Guard.GetComponent<Rigidbody>().position),Is.LessThan(.02f),"Castle watch pause missing.");
+            Assert.That(Vector3.Distance(atRest,Guard.GetComponent<Rigidbody>().position),Is.LessThan(.02f),"Workshop watch pause missing.");
         }
         finally{Time.timeScale=scale;}
         LogAssert.NoUnexpectedReceived();
@@ -139,7 +139,7 @@ public class CourtyardGuardTests
         Assert.That((bool)P(Guard,"IsWaitingForObstacle"),Is.True);
         UnityEngine.Object.Destroy(obstacle);yield return new WaitForSeconds(.4f);
         Assert.That((bool)P(Guard,"IsMoving"),Is.True);
-        Call(Dialogue,"ShowMessage","Ein kurzer Blick über den Hof.","Elian");
+        Call(Dialogue,"ShowMessage","Ein kurzer Blick Ã¼ber den Hof.","Elian");
         var before=Guard.GetComponent<Rigidbody>().position;yield return new WaitForSeconds(.5f);
         Assert.That(Vector3.Distance(before,Guard.GetComponent<Rigidbody>().position),Is.LessThan(.02f));
         Call(Dialogue,"CloseDialogue");yield return new WaitForSeconds(.9f);

@@ -165,7 +165,7 @@ Fertig, wenn die Außenwelt aus den vorgesehenen Kamerawinkeln Weite und Tiefe z
 - [ ] Bachgeräusche in Tornähe hörbar machen und mit Entfernung ausblenden.
 - [ ] Arbeitsgeräusche, Schritte und Interaktionstöne an sichtbare Bewegungen und Materialien anpassen.
 - [ ] Musik und Effekte gemeinsam ausbalancieren; aufdringliche Wiederholungen vermeiden.
-- [ ] Hofmusik in eine organischere, harmonische Fantasy-Richtung überarbeiten. Gewünschte Stimmungsreferenzen: Final Fantasy Crystal Chronicles und Beyond Good & Evil; der bisherige Klang wirkt noch zu synthetisch.
+- [ ] Hofmusik in eine organischere, harmonische Fantasy-Richtung überarbeiten. Gewünschte Stimmungsreferenzen: Final Fantasy Crystal Chronicles, Beyond Good & Evil und nun auch Zelda: Breath of the Wild; der bisherige Klang wirkt noch zu synthetisch. Zur Erprobung: sparsame Klaviermotive, warme Holzbläser und akustische Saiten mit Pausen für Natur- und Hofgeräusche; eine eigene Melodie behalten.
 - [ ] Als erste Hörprobe eine eigene warme Melodie mit natürlich klingenden Holzbläsern, gezupften Saiten, dezenten Streichern und leichter akustischer Perkussion erproben; Besetzung noch abstimmen.
 - [ ] Kurze Musikvorschauen zuerst gemeinsam anhören, bevor eine neue vollständige Schleife eingebaut wird; vorhandene Musik bis zur Auswahl erhalten.
 - [ ] Musik und Naturgeräusche für die Aussichtskamerafahrt abstimmen; Text und Landschaft sollen dabei Raum bekommen.
@@ -316,3 +316,29 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Steinmassstab von Burg/Turm und Haussockeln annaehren; Putzfarben der vier Bewohnergebaeude abstimmen.
 - [x] Finalen Windows-Rundgang und Bildraten nach allen drei Aenderungen dokumentieren: bestanden; acht Hofansichten ca. 101-138 FPS im lokalen Entwicklungsbuild, RTX 3070 Ti, 1600x900.
 - [ ] Gestalterische Wirkung beim normalen Spielen gemeinsam beurteilen; erst danach die Ankunft der Arkanmeisterin beginnen.
+
+
+## Rueckmeldung vom 7. November: Hofleben und naechste Gestaltung
+
+- [x] Bestehende Bewohnerplaetze als zusammenhaengende kleine Lebensbereiche anordnen: Haus, Schwelle, Vorgarten, Arbeitsplatz und kurze Alltagspfade. Noch keine pauschale Vergroesserung des Hofs.
+- [ ] Je Bereich einen erkennbaren Zweck und eine kleine hilfreiche Aufgabe planen; vorhandenes Giessen und Pferdepflege einbeziehen, statt parallele Systeme aufzubauen.
+- [x] Auf Wunsch alle drei vorhandenen Bewohnerplaetze gemeinsam ausarbeiten. Gestalterische Abnahme bleibt offen; eine Verlaengerung mit weiteren Haeusern ist noch nicht beschlossen.
+- [ ] Eine kurze organische Musikprobe mit der ergaenzten Richtung erstellen und gemeinsam anhoeren; aktuelle Musik erst nach Auswahl ersetzen.
+
+- [x] Idas Werkstatt samt Werkbank, Holzlager, Arbeitsankern und Schild an die westliche Mauer versetzen; Turmvorplatz freilegen und Seitenweg neu anbinden. Drei gezielte stumme Tests und Spielansichten geprueft.
+- [ ] Neue Werkstattposition und freien Turmvorplatz gemeinsam im normalen Spiel beurteilen, bevor weitere Bewohnerplaetze umgeordnet werden.
+
+- [ ] Gesamten suedlichen Vordergrund in normaler Bewegung beurteilen: abgesenkte Aussenlandschaft, goldene Stoppelraender und Uebergang zu hoeherem Getreide. Technische Umsetzung vorhanden; gemeinsame gestalterische Abnahme offen.
+
+
+## Bewohnerplaetze: freie Burgfront und zusammenhaengende Arbeitsbereiche
+
+- [x] Martas Haus, Arbeitsplatz, Gartenbank, Beete, Giesskanne und Apfelbaum gemeinsam in den vorderen oestlichen Hofbereich versetzen; Burgvorplatz freilegen.
+- [x] Hausgarten ueber einen schmalen geschwungenen Seitenweg anbinden und mit einem niedrigen Zaun samt freien Zugaengen fassen.
+- [x] Idas Werkstatt mit zusammenhaengendem Arbeitsboden und Holzablage erden; freien Turmvorplatz erhalten.
+- [x] Hannes' Stall um einen kleinen westlichen Auslauf mit Futterraufe und Traenke erweitern; vorhandene Pferdepflege und Begruessungen erhalten.
+- [x] Vereinzelte Wegpflanzen reduzieren und groessere Gruppen bevorzugen; Burgvorplatz und Interaktionswege aussparen.
+- [x] Wachrunde bis in den westlichen Hof erweitern; Martas Blickwechsel am Pflanztisch und leises oertliches Windrascheln ergaenzen.
+- [ ] Neue Hausposition, Zaunhoehen, Sichtachsen und Geraeuschbalance gemeinsam im normalen Spiel beurteilen. Danach die weitere Belebung planen.
+
+- [x] Versetzten Garten samt Giessen/Abbruch/Neuladen, Martas Tuerzugang/Dialog, Stallanschluss und Wachrunde pruefen; abschliessenden verbundenen Rundgang mit aktiver Wache erfolgreich abschliessen.

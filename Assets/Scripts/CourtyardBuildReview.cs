@@ -67,19 +67,33 @@ public sealed class CourtyardBuildReview : MonoBehaviour
             new Vector2(27.3f,-12.05f),new Vector2(35.4f,-12.05f),new Vector2(35.4f,-8),new Vector2(35,-2),new Vector2(28,-2.5f),new Vector2(21,-2.9f),new Vector2(12,-2),new Vector2(12,4),new Vector2(12,8),new Vector2(12,11.3f),
             new Vector2(12,4),new Vector2(13,-1.8f),new Vector2(21,-2.9f),new Vector2(32,-4.1f),new Vector2(40.8f,-1),new Vector2(46,-1),new Vector2(57.3f,.8f),new Vector2(63,-.8f),new Vector2(40,-1)};
         var guard=FindFirstObjectByType<CourtyardGuard>();
+        Vector3? passingPoint=null, afterPassingPoint=null;
         for(int step=0;step<route.Length;step++)
         {
             float end=Time.realtimeSinceStartup+12,distance=100;
             while(Time.realtimeSinceStartup<end)
             {
                 var d=new Vector3(route[step].x,body.position.y,route[step].y)-body.position;distance=d.magnitude;if(distance<.18f)break;
-                // A real player can walk around the patrol instead of pushing indefinitely against it.
-                if(guard!=null)
+                // Finish a chosen sidestep before targeting the route again. Recomputing it
+                // every frame can oscillate while a courteous guard waits for the player.
+                if(passingPoint.HasValue)
                 {
-                    var toGuard=guard.transform.position-body.position;toGuard.y=0;
-                    if(toGuard.sqrMagnitude<9 && Vector3.Dot(d.normalized,toGuard)>-.2f)
-                        d=new Vector3(guard.transform.position.x+Mathf.Sign(d.x)*1.3f,body.position.y,guard.transform.position.z-1.8f)-body.position;
+                    var at=passingPoint.Value;at.y=body.position.y;passingPoint=at;
+                    if(Vector3.Distance(body.position,at)<.25f){passingPoint=afterPassingPoint;afterPassingPoint=null;}
                 }
+                if(!passingPoint.HasValue && guard!=null)
+                {
+                    var offset=guard.transform.position-body.position;offset.y=0;
+                    var heading=d.normalized;float ahead=Vector3.Dot(offset,heading);
+                    if(offset.sqrMagnitude<6.25f && ahead>0 && ahead<distance+.5f && (offset-heading*ahead).magnitude<1.1f)
+                    {
+                        var side=new Vector3(heading.z,0,-heading.x);if(side.z<0)side=-side;
+                        // Step sideways first; a diagonal straight to the far point still clips the guard.
+                        passingPoint=body.position+side*1.8f;
+                        afterPassingPoint=new Vector3(guard.transform.position.x,body.position.y,guard.transform.position.z)+heading*2.0f+side*1.8f;
+                    }
+                }
+                if(passingPoint.HasValue)d=passingPoint.Value-body.position;
                 var v=d.normalized*4;body.linearVelocity=new Vector3(v.x,body.linearVelocity.y,v.z);yield return new WaitForFixedUpdate();
             }
             body.linearVelocity=Vector3.zero;

@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.12`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.32.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2179,3 +2179,9 @@ Validation: Watering/cancellation/reload, stable contacts and Marta doorway/faci
 Add a worn workshop apron and timber delivery area, a western stable paddock with feeding rack and trough, and a low kitchen-garden fence. Align openings with approaches and watering stations. Keep both existing horses and care interactions. Generated yard meshes/materials are released per scene.
 
 Validation: Yard traversal/reload, the complete garden task and stable contacts passed together in 67.16 seconds; gameplay captures were inspected.
+
+### 0.32.0 — connect resident places with daily activity
+
+Extend the guard patrol from the workshop past the stable and castle approach to the gate. Marta alternates attention between seedlings and beds while Elian is distant; greetings and dialogue take priority. Add occasional local orchard wind using the existing recording alongside existing workshop/horse foley. Preserve conversation pauses and silent tests. The diagnostic driver completes a grounded two-stage detour around the guard; player controls are unchanged.
+
+Validation: The full patrol and Marta dialogue/facing passed. Final traversal with the active guard passed in 36.47 seconds. No new Windows build or subjective audio/performance benchmark was made; visual/listening review remains open.

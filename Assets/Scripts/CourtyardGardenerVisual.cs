@@ -13,6 +13,8 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     private float reactionTime=1;
     private float gardenLookTime;
     private Vector3 gardenLookTarget;
+    private Transform seedTray;
+    public bool IsTending { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
 
     private void OnEnable()
@@ -31,6 +33,7 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     private void Start()
     {
         view=Camera.main;player=GameObject.FindWithTag("Player")?.transform;
+        seedTray=GameObject.Find("Marta seedling tray")?.transform;
         paper=new GameObject("Marta illustrated gardener",typeof(SpriteRenderer)).transform;
         paper.SetParent(transform,false);
         paper.localScale=SilhouetteScale;
@@ -59,7 +62,7 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     }
     private void ResetReaction()
     {
-        gardenLookTime=0;
+        gardenLookTime=0;IsTending=false;
         speaking=false;CurrentEmotion=DialogueEmotion.Neutral;reactionTime=1;
         if(paper!=null){paper.localPosition=Vector3.zero;paper.localScale=SilhouetteScale;}
     }
@@ -81,14 +84,28 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
             illustration.flipX=gardenLookTarget.x<transform.position.x;
             if(gardenLookTime<=0)FacePlayer(true);
         }
-        else FacePlayer(speaking);
+        else
+        {
+            IsTending=!speaking && !(DialogueBoxController.instance?.IsOpen??false) &&
+                !DemoOpening.IsPresenting && !SceneLoadManager.IsTransitioning && seedTray!=null &&
+                (player==null || (player.position-transform.position).sqrMagnitude>9);
+            if(IsTending)
+            {
+                // Inspect seedlings, then the beds. Stay planted at the worktable; no skating NPC.
+                var target=Mathf.Repeat(Time.time,12)<7?seedTray.position:
+                    CourtyardResidentLayout.GardenPoint(new Vector3(6.85f,0,7.2f));
+                illustration.flipX=target.x<transform.position.x;
+            }
+            else FacePlayer(speaking);
+        }
         reactionTime+=Time.deltaTime;
         float wave=Mathf.Sin(Mathf.Clamp01(reactionTime/.75f)*Mathf.PI);
         float breath=Mathf.Sin(Time.time*1.8f)*.006f;
+        float tend=IsTending?Mathf.Pow(Mathf.Max(0,Mathf.Sin(Time.time*.85f)),2)*.012f:0;
         float nod=CurrentEmotion==DialogueEmotion.Worried?.006f:.003f;
         float lift=CurrentEmotion==DialogueEmotion.Friendly?.065f:
             CurrentEmotion==DialogueEmotion.Surprised?.035f:0;
-        paper.localScale=Vector3.Scale(SilhouetteScale,new Vector3(1-breath*.2f,1+breath-wave*nod,1));
+        paper.localScale=Vector3.Scale(SilhouetteScale,new Vector3(1-breath*.2f,1+breath-wave*nod-tend,1));
         paper.localPosition=Vector3.up*(wave*lift);
         if(!speaking && reactionTime>=.75f)CurrentEmotion=DialogueEmotion.Neutral;
     }

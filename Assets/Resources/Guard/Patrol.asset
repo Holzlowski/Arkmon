@@ -14,22 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CourtyardGuardRoute
   speed: 1.55
   stops:
-  - position: {x: 14.1, y: 0, z: 9.2}
+  - position: {x: -33, y: 0, z: -10.8}
     wait: 4
     lookLeft: 1
-  - position: {x: 23.35, y: 0, z: 11.1}
+  - position: {x: -31, y: 0, z: -7.5}
     wait: 0
     lookLeft: 0
-  - position: {x: 23.35, y: 0, z: 5}
+  - position: {x: -25, y: 0, z: -3.2}
     wait: 0
     lookLeft: 0
-  - position: {x: 24.8, y: 0, z: -1}
+  - position: {x: -18, y: 0, z: -5.8}
     wait: 0
     lookLeft: 0
-  - position: {x: 26, y: 0, z: -3.5}
+  - position: {x: -11, y: 0, z: -6.2}
+    wait: 2
+    lookLeft: 0
+  - position: {x: -5, y: 0, z: -6.2}
     wait: 0
     lookLeft: 0
-  - position: {x: 31, y: 0, z: -4}
+  - position: {x: 7, y: 0, z: -1.8}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 12, y: 0, z: -2}
+    wait: 3
+    lookLeft: 0
+  - position: {x: 21, y: 0, z: -2.9}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 26, y: 0, z: -3.2}
+    wait: 0
+    lookLeft: 0
+  - position: {x: 31, y: 0, z: -2.6}
     wait: 0
     lookLeft: 0
   - position: {x: 38, y: 0, z: -2.6}

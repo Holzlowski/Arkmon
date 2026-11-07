@@ -12,6 +12,9 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
     float oldVolume,oldBlend,oldPan;
     bool wasPlaying;
     Vector3 leafOrigin;
+    StableLocalFoley gardenWind;
+    AudioClip gardenRustle;
+    float nextGardenGust;
     internal static void Install()
     {
         if(GameObject.Find("Courtyard quiet details")!=null)return;
@@ -25,6 +28,10 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
         var home=GameObject.Find("Garden apple tree");
         style.leafOrigin=(home!=null?home.transform.position:Vector3.zero)+new Vector3(0,3.4f,0);
         style.leaves.transform.position=style.leafOrigin;
+        var wind=new GameObject("Garden orchard breeze");wind.transform.SetParent(style.transform,false);
+        wind.transform.position=style.leafOrigin-Vector3.up*3.4f;
+        style.gardenWind=wind.AddComponent<StableLocalFoley>();
+        style.gardenRustle=Resources.Load<AudioClip>("Audio/field-rustle");style.nextGardenGust=Time.time+9;
         var shape=style.leaves.shape;shape.enabled=true;shape.shapeType=ParticleSystemShapeType.Box;shape.scale=new Vector3(3.5f,1,2);
         var velocity=style.leaves.velocityOverLifetime;velocity.enabled=true;velocity.space=ParticleSystemSimulationSpace.World;
         velocity.x=.15f;velocity.y=-.48f;velocity.z=.08f;
@@ -65,6 +72,12 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
         bool near=!quiet && (player.position-leafOrigin).sqrMagnitude<22*22;
         if(near && !leaves.isPlaying)leaves.Play();
         else if(!near && leaves.isPlaying)leaves.Stop(true,ParticleSystemStopBehavior.StopEmitting);
+        if(!quiet && gardenWind!=null && gardenRustle!=null && Time.time>=nextGardenGust)
+        {
+            gardenWind.Play(gardenRustle,.10f,.98f);
+            nextGardenGust=Time.time+Mathf.Max(32,gardenRustle.length+12);
+        }
+        if(quiet && gardenWind!=null)gardenWind.Stop();
         if(stream==null)return;
         var point=new Vector3(47,player.position.y,Mathf.Clamp(player.position.z,-24,70));
         float d=Vector3.Distance(player.position,point);
@@ -81,6 +94,7 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
         if(dust!=null)dust.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         if(leaves!=null)leaves.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         if(stream!=null)stream.Stop();
+        if(gardenWind!=null)gardenWind.Stop();
     }
     void OnDestroy()
     {
