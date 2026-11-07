@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.32.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.33.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2191,3 +2191,26 @@ Validation: The full patrol and Marta dialogue/facing passed. Final traversal wi
 `CourtyardResidenceGround` joins the cottages, workshop and stable to their yards with irregular earth skirts, narrow foundation contacts and doorway aprons extending beneath existing stepping stones. Ground points follow each building's local frame. `CourtyardVergePolish` adds softly faded soil shoulders, and `CourtyardSoftPath` blends the dirt edges more gradually. No colliders are added; generated meshes and private materials are released on scene unload.
 
 Validation: the focused relocated-garden/working-yards PlayMode check passed silently in 25.37 seconds, including traversal and reload (`Library/residence-transitions.xml`). Fresh Marta and Ida gameplay captures were reviewed during implementation. This is not a new performance benchmark; normal-play visual review remains open.
+
+
+### 0.33.0 — original fantasy courtyard music loop
+
+`StartScene` now uses the approved `Audio/courtyard-storybook` arrangement: original piano-led village melody, concert harp, violin/viola/cello sections and flute, with deliberate quiet passages. Both tower scenes retain `Audio/courtyard`; battle retains `Audio/battle`. The persistent `SoundManager` crossfades over 0.8 unscaled seconds and keeps the destination track playing through scene loading.
+
+The loop contains exactly 2,948,644 stereo frames (66.862676 seconds, 44.1 kHz). The complete master release/room tail and pre-beat attack wrap at the 30-bar boundary without time stretching or silence padding. Import uses preloaded PCM, Decompress On Load and no normalization: approximately 11.8 MB on disk / 23.6 MB decoded.
+
+The authoring pipeline preserves earlier sketches and mix refinement. Final instruments use recorded CC0 VCSL and VSCO 2 Community Edition multisamples; pinned sources, licenses and hashes are in `docs/audio-sources.json`. These are sequenced recordings, not a live orchestra. No third-party game/film melody or soundtrack recording is used. Preview WAVs and source caches remain in ignored `Builds/`; the approved runtime loop is included in Git.
+
+Reproduce from the repository root with Python 3, numpy and soundfile (local `Builds/audio-tools` is supported):
+
+```powershell
+python tools/render_courtyard_natural_preview.py --download
+python tools/render_courtyard_village_preview.py --download
+python tools/refine_courtyard_village_preview.py
+python tools/render_courtyard_storybook_preview.py --download
+python tools/build_courtyard_music_loop.py --install
+```
+
+Download flags fetch bounded sample/license subsets under `Builds/sample-audio/natural-courtyard`; omit them for subsequent offline renders. The earlier GeneralUser sketch needs tinysoundfont and its licensed local SoundFont: `python tools/render_courtyard_morning_preview.py Builds/sample-audio/GeneralUser-GS.sf2`. No renderer triggers device playback.
+
+The loop recipe exports a seam audition, two-cycle audition and measurement report. Seam step 0.000366 (ordinary 99.9-percentile step 0.027008), peak 0.696, no clipped/non-finite samples. Two silent PlayMode tests passed in 35.02 seconds (`Library/courtyard-music-loop.xml`): exact imported frames/seam, tower-to-courtyard crossfade and repeated battle return with one persistent manager. Normal-play mix balance remains open; no new Windows build.

@@ -49,8 +49,10 @@ public class SoundManager : MonoBehaviour
     public void CheckSceneSound()
     {
         string scene = transitionDestination ?? SceneManager.GetActiveScene().name;
-        bool exploration = scene == "StartScene" || scene == "TowerRoom" || scene == "TowerRoomPaper";
-        AudioClip clip = scene == "BattleScene" ? Clip("battle") : exploration ? Clip("courtyard") : null;
+        bool tower = scene == "TowerRoom" || scene == "TowerRoomPaper";
+        AudioClip clip = scene == "BattleScene" ? Clip("battle")
+            : scene == "StartScene" ? Clip("courtyard-storybook")
+            : tower ? Clip("courtyard") : null;
         if (clip == null)
         {
             if (crossfade != null) StopCoroutine(crossfade);

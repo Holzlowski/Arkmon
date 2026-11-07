@@ -348,3 +348,11 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Unregelmaessige Erdsaeume, schmale Fundamentschatten und Eingangsflaechen fuer Bewohnerhaeuser, Werkstatt und Stall verbinden.
 - [x] Weiche Wegschultern ergaenzen; Gartenweg und Szenenneustart stumm pruefen, Ansichten bei Marta und Ida beurteilen.
 - [ ] Uebergaenge beim normalen Hofrundgang gemeinsam beurteilen.
+
+
+## Hofmusik: ausgewaehlte Fantasy-Ensemblefassung
+
+- [x] Klavier, Harfe, Streicher und Floete mit Ruhephasen arrangieren; Quellen/Lizenzen und Renderwerkzeuge dokumentieren.
+- [x] Akzeptierte Fassung als 66.86-Sekunden-Loop in StartScene einbauen; Turm- und Kampfmusik erhalten.
+- [x] PCM-Import, Nahtstelle, Ueberblendung und wiederholte Kampf-Rueckkehr stumm pruefen (zwei Tests, 35.02 Sekunden).
+- [ ] Musik und Umgebungsgeraeusche beim normalen Hofrundgang gemeinsam beurteilen.

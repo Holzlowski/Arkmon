@@ -70,7 +70,7 @@ public class AtmosphereFlowTests
             Assert.That(GameObject.FindWithTag("Player").transform.position, Is.EqualTo(position));
             Assert.That(UnityEngine.Object.FindObjectsByType(T("SoundManager"), FindObjectsSortMode.None).Length, Is.EqualTo(1));
             Component audio = (Component)T("SoundManager").GetField("instance").GetValue(null);
-            Assert.That(audio.GetComponents<AudioSource>().Any(s => s.clip != null && s.clip.name == "courtyard" && s.loop), Is.True);
+            Assert.That(audio.GetComponents<AudioSource>().Any(s => s.clip != null && s.clip.name == "courtyard-storybook" && s.loop), Is.True);
             yield return null; // Destroy releases the transition overlay at the end of the frame.
             Assert.That(GameObject.Find("Lamp scene transition"), Is.Null);
         }
