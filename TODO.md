@@ -388,3 +388,10 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Kurze sattgoldene Sonnenstrahlen und feinen schwebenden Staub am Durchbruch ergaenzt.
 - [x] Sichtbarkeit, Deaktivierung und Neuladen stumm geprueft.
 - [ ] Lichtwirkung beim normalen Spielen gemeinsam beurteilen.
+
+
+## 0.39.0 — bring courtyard exploration and conversations closer
+
+- [x] Naehere Hofkamera und sanften Gespraechszoom samt Rueckfahrt eingebaut und geprueft.
+- [ ] Kameranaehe und Zoomtempo beim normalen Spielen beurteilen.
+- [ ] Erst nach dem Hof-Feinschliff die Ankunft der Arkanmeisterin beginnen.

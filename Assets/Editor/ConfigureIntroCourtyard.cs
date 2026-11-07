@@ -22,11 +22,15 @@ public static class ConfigureIntroCourtyard
         root.name="Intro courtyard layout";
         var opening=legacy.GetComponent<DemoOpening>();if(opening.GetComponent<CourtyardCamera>()==null)opening.gameObject.AddComponent<CourtyardCamera>();
         var cameraSettings=new SerializedObject(opening.GetComponent<CourtyardCamera>());
-        cameraSettings.FindProperty("distance").floatValue=30;
+        cameraSettings.FindProperty("distance").floatValue=19;
         cameraSettings.FindProperty("pitch").floatValue=25;
         cameraSettings.FindProperty("fieldOfView").floatValue=48;
-        cameraSettings.FindProperty("focusHeight").floatValue=3.2f;
-        cameraSettings.FindProperty("horizontalBounds").vector2Value=new Vector2(-30,52);
+        cameraSettings.FindProperty("focusHeight").floatValue=2.4f;
+        cameraSettings.FindProperty("horizontalBounds").vector2Value=new Vector2(-40,52);
+        cameraSettings.FindProperty("depthBounds").vector2Value=new Vector2(-16,11);
+        cameraSettings.FindProperty("forwardFocus").floatValue=1.7f;
+        cameraSettings.FindProperty("conversationDistance").floatValue=14;
+        cameraSettings.FindProperty("conversationEase").floatValue=.85f;
         cameraSettings.ApplyModifiedPropertiesWithoutUndo();
         var textureImporter=AssetImporter.GetAtPath(Art+"Aurenfeld illustrated limestone.png") as TextureImporter;
         if(textureImporter!=null)

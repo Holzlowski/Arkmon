@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.38.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.39.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2255,3 +2255,12 @@ Validation: Connected courtyard traversal and marker/reload checks passed during
 The breach shafts now end at 55% of their previous length, with a softer final fade before the tower. Their richer gold tint has less green and blue to avoid the previous pale glow. A broad feathered layer, restrained inner core and angled sheet still use three mesh renderers total. The presentation lift remains 15% during the lookout. A separate additive dust shader replaces seed-shaped motes with small soft round specks: at most 64 particles, slowly drifting through a compact region around the shorter shafts and dimming outside the light. Dust visibility fades together with the beams. Depth testing and outside-camera hiding preserve the clear panorama; meshes and materials are released on unload.
 
 Validation: Focused silent visibility/reload check passed in 16.27 seconds (Library/breach-sunrays-golden.xml); gameplay captures reviewed. Three ray renderers, 64-particle cap, no extra lights/colliders. No benchmark or new build.
+
+
+### 0.39.0 — bring courtyard exploration and conversations closer
+
+The authored StartScene camera now uses 19 units of distance instead of 25, retaining the 25-degree pitch and 48-degree field of view. Focus lead is reduced to 1.7 units and focus height to 2.4. Follow bounds extend west to -40 and south to -16 so the closer view still follows Elian at the breach and Marta's garden. `ConfigureIntroCourtyard` uses the same settings when regenerating the layout.
+
+Courtyard conversations ease towards a 14-unit view of Elian and the nearby conversation partner. Framing locks across speaker changes, reserves room above the lower dialogue panel and widens if needed for the pair on a narrow aspect ratio. Non-local speakers cannot pull the camera across the courtyard. Closing dialogue restores exploration smoothly; scenic camera overrides and their field of view retain priority. Dialogue event handlers are removed on disable.
+
+Validation: Three silent camera/lookout checks passed in 62.75 seconds (Library/courtyard-camera-close.xml). Four conversation compositions, stable partner, smooth return, western follow bounds, scenic priority and reload checked. No new build.

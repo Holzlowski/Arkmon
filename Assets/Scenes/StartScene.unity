@@ -192736,13 +192736,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c91ef770b5376a747833f4c3c6334aa1, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CourtyardCamera
-  horizontalBounds: {x: -30, y: 52}
-  depthBounds: {x: -9, y: 11}
-  distance: 25
+  horizontalBounds: {x: -40, y: 52}
+  depthBounds: {x: -16, y: 11}
+  distance: 19
   pitch: 25
   fieldOfView: 48
   damping: 0.28
-  focusHeight: 3.2
+  focusHeight: 2.4
+  forwardFocus: 1.7
+  conversationDistance: 14
+  conversationEase: 0.85
 --- !u!1 &1390349287
 GameObject:
   m_ObjectHideFlags: 0
