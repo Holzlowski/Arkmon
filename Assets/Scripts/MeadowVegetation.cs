@@ -180,8 +180,8 @@ public class MeadowVegetation : MonoBehaviour
                 float island = Mathf.PerlinNoise((world.x + 431) * .09f, (world.z + 173) * .09f);
                 float detail = Mathf.PerlinNoise((world.x + 79) * .38f, (world.z + 217) * .38f);
                 float fullness = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.20f, .65f, island));
-                bool ripeGrain = illustrated && (world.x < -54 || world.x > 53.5f);
-                float edgeGrowth = illustrated ? CourtyardEastFieldStyle.CropEdgeGrowth(world) : 1;
+                bool ripeGrain = illustrated && (world.x < -54 || world.x > 53.5f || CourtyardForeground.FieldWeight(world) > .95f);
+                float edgeGrowth = illustrated ? Mathf.Min(CourtyardEastFieldStyle.CropEdgeGrowth(world), CourtyardForeground.CropGrowth(world)) : 1;
                 bool stubble = ripeGrain && ((fullness < .14f && detail > .55f) || Sample(random) > Mathf.Lerp(.94f, .995f, fullness));
                 if (illustrated && !ripeGrain && (island < .20f || Sample(random) > Mathf.Lerp(.50f, .98f, fullness))) continue;
                 Color tip = Color.Lerp(new Color(.44f, .65f, .24f), new Color(.86f, .69f, .31f), gold).linear;

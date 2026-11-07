@@ -16,6 +16,7 @@ public sealed class CourtyardEastFieldStyle : MonoBehaviour
 
     public static Vector3 ExteriorPoint(Vector3 p)
     {
+        p = CourtyardForeground.Surface(p);
         if (p.x < 50 || p.x > 140 || p.z < -45 || p.z > 92) return p;
         float across = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(50, 57, p.x))
             * (1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(100, 140, p.x)));

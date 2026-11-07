@@ -230,7 +230,11 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             new Vector4(-30,-4.8f,3.0f,2.0f),new Vector4(-23,0,3.8f,1.9f),new Vector4(-17,-9.0f,5.2f,2.0f),
             new Vector4(-5.5f,-8.5f,4.6f,2.3f),new Vector4(6.5f,-6.8f,3.7f,1.9f),
             new Vector4(17.8f,-6.5f,3.6f,1.8f),new Vector4(18.2f,4.7f,2.5f,1.8f),
-            new Vector4(-17.5f,5.6f,2.0f,1.1f)};
+            new Vector4(-17.5f,5.6f,2.0f,1.1f),
+            // Small, low groups follow the inner foreground wall; keep the open lawn legible.
+            new Vector4(-31,-13.5f,2.5f,.85f),new Vector4(-18,-14.3f,2.8f,.9f),
+            new Vector4(-3,-13.8f,2.7f,.85f),new Vector4(14,-14.1f,2.8f,.9f),
+            new Vector4(29,-12.8f,2.4f,.85f)};
         for(int g=0;g<groups.Length;g++)
         {
             var area=groups[g];var center=new Vector3(area.x,0,area.y);
