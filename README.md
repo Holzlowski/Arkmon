@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.11`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.12`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2173,3 +2173,9 @@ Validation: Foreground and independent root-contact/reload checks passed. Final 
 Place the cottage at (24, 0, -8). CourtyardResidentLayout keeps work anchors, beds, can, bench, apple tree and planting exclusions together. Level the new plot in visible/collision meshes, redirect the curved garden approach and clear the castle forecourt. Reduce isolated path tufts and update route/capture targets. Intro-only placement runs once when StartScene loads; the authored source layout remains available.
 
 Validation: Watering/cancellation/reload, stable contacts and Marta doorway/facing/dialogue passed. Final connected traversal passed in 36.47 seconds.
+
+### 0.31.12 — define resident working yards
+
+Add a worn workshop apron and timber delivery area, a western stable paddock with feeding rack and trough, and a low kitchen-garden fence. Align openings with approaches and watering stations. Keep both existing horses and care interactions. Generated yard meshes/materials are released per scene.
+
+Validation: Yard traversal/reload, the complete garden task and stable contacts passed together in 67.16 seconds; gameplay captures were inspected.

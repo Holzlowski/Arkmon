@@ -23,6 +23,7 @@ public class IntroChapter : MonoBehaviour
         {
             CourtyardGardenPlace.PrepareBeds();
             CourtyardEastGroundStyle.PrepareTerrain();
+            CourtyardResidentPlaces.Install();
             CourtyardGarden.Install();
             CourtyardStableCare.Install();
             CourtyardWorkshopDetails.Install();
