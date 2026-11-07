@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.8`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.31.9`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2155,3 +2155,9 @@ Validation: The silent ramp regression and final tower traversal passed.
 Align the residence terrace extension with the tower platform in StartScene and its generator. Remove the coplanar overlap that flickered beside the door while preserving supported passage; extend the seam regression.
 
 Validation: The reported-issues regression verified the seam and ramp; tower-exit captures were inspected.
+
+### 0.31.9 — relocate Ida workshop to the western wall
+
+Move the complete workshop and work anchors to (-37.5, 0, -5), leaving the tower forecourt open. Redirect the narrow approach asset, retain the old level pad, and make vegetation exclusions follow the workshop. Update traversal checks and add a targeted path-refresh editor command.
+
+Validation: Three silent checks passed in 52.69 seconds: traversal/reload, door and bench clearance, and workpiece interaction with preserved garden progress.

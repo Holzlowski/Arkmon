@@ -61,8 +61,8 @@ public sealed class CourtyardBuildReview : MonoBehaviour
             }
             yield return new WaitForSeconds(1);yield return Measure("profile-baseline-repeat");Finish();yield break;
         }
-        Vector2[] route={new Vector2(-34,4.2f),new Vector2(-30,1.3f),new Vector2(-26,-1.7f),new Vector2(-23.4f,-1.6f),new Vector2(-23.4f,1.1f),
-            new Vector2(-23.4f,-1.6f),new Vector2(-18,-3),new Vector2(-16,-.7f),new Vector2(-10.8f,-.55f),new Vector2(-7,-1.15f),new Vector2(-3,-.95f),new Vector2(1,-.35f),new Vector2(3.95f,.25f),
+        Vector2[] route={new Vector2(-34,4.2f),new Vector2(-30,1.3f),new Vector2(-26,-1.7f),new Vector2(-25,-3.2f),new Vector2(-31,-7.5f),new Vector2(-33,-10.8f),new Vector2(-35.9f,-10.2f),new Vector2(-35.9f,-8.8f),
+            new Vector2(-35.9f,-10.2f),new Vector2(-33,-10.8f),new Vector2(-31,-7.5f),new Vector2(-25,-3.2f),new Vector2(-18,-3),new Vector2(-16,-.7f),new Vector2(-10.8f,-.55f),new Vector2(-7,-1.15f),new Vector2(-3,-.95f),new Vector2(1,-.35f),new Vector2(3.95f,.25f),
             new Vector2(4.35f,4.9f),new Vector2(4.55f,9.45f),new Vector2(7.1f,9.45f),new Vector2(9.7f,9.45f),new Vector2(12,8),new Vector2(12,11.3f),
             new Vector2(12,4),new Vector2(13,-1.8f),new Vector2(21,-2.9f),new Vector2(32,-4.1f),new Vector2(40.8f,-1),new Vector2(46,-1),new Vector2(57.3f,.8f),new Vector2(63,-.8f),new Vector2(40,-1)};
         var guard=FindFirstObjectByType<CourtyardGuard>();

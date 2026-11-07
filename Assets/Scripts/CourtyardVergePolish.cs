@@ -15,6 +15,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     readonly List<(Vector3 center,float width)> roadSections=new List<(Vector3,float)>();
     readonly List<(Vector3 at,Vector3 outside)> edges=new List<(Vector3,Vector3)>();
     IInteractableAsPlayer[] interactions;
+    Transform workshop;
     readonly List<Renderer> retiredGrowth=new List<Renderer>();
     float left,right;
     Bounds[] gardenBeds=new Bounds[0];
@@ -33,6 +34,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             .Where(r=>r.name=="Garden soil bed").OrderBy(r=>r.transform.position.x).Select(r=>r.bounds).ToArray();
         if(polish.gardenBeds.Length>0)polish.right=Mathf.Max(polish.right,polish.gardenBeds.Max(b=>b.max.x)+1.2f);
         polish.right=Mathf.Max(polish.right,43f);
+        polish.workshop=workshop;
         polish.interactions=FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IInteractableAsPlayer>().ToArray();
         Physics.SyncTransforms();
         polish.patrol=Resources.Load<CourtyardGuardRoute>("Guard/Patrol");
@@ -136,7 +138,8 @@ public sealed class CourtyardVergePolish : MonoBehaviour
     {
         // Keep the entire western stair flight and Ida's stone doorstep visibly free.
         if(point.x> -37.5f && point.x< -30.5f && point.z>3.7f)return false;
-        if(point.x> -24.4f && point.x< -22.4f && point.z> -1.8f && point.z<2.6f)return false;
+        var local=workshop.InverseTransformPoint(point);
+        if(local.x> -3.2f && local.x<2.6f && local.z> -6.8f && local.z< -2.0f)return false;
         // Worn kitchen-garden spine and the three watering approaches remain open.
         if(point.x>3.7f && point.x<4.95f && point.z>-.1f && point.z<10.1f)return false;
         foreach(var bed in gardenBeds)

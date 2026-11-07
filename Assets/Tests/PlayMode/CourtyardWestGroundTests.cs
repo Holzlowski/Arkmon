@@ -32,12 +32,19 @@ public class CourtyardWestGroundTests
         {
             var p=r.transform.position;
             Assert.That(p.x> -37.5f && p.x< -30.5f && p.z>3.7f,Is.False,"No plants on the tower stairs: "+p);
-            Assert.That(p.x> -24.4f && p.x< -22.4f && p.z> -1.8f && p.z<2.6f,Is.False,"Ida's doorstep stays visible: "+p);
+            var local=GameObject.Find("Ida workshop").transform.InverseTransformPoint(p);
+            Assert.That(local.x> -3.2f && local.x<2.6f && local.z> -6.8f && local.z< -2.0f,Is.False,"Ida's doorstep stays visible: "+p);
         }
         var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
         ((Behaviour)player.GetComponent(T("PlayerInteractionFocus"))).enabled=false;
         body.isKinematic=false;body.position=new Vector3(-34,2.4f,8);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
-        Vector3[] route={new Vector3(-34,0,4.2f),new Vector3(-30,0,1.3f),new Vector3(-26,0,-1.7f),new Vector3(-23.4f,0,-1.6f),new Vector3(-23.4f,0,1.1f)};
+        var house=GameObject.Find("Ida workshop").transform;
+        Assert.That(house.position.x,Is.LessThan(-33));
+        Assert.That(house.position.z,Is.LessThan(-2));
+        Assert.That(Physics.OverlapBox(new Vector3(-25,2,4.3f),new Vector3(4,1.2f,2.2f),Quaternion.identity,~0,QueryTriggerInteraction.Ignore)
+            .Any(c=>!c.CompareTag("Ground")),Is.False,"The old workshop footprint must be a clear forecourt.");
+        yield return new WaitForSeconds(1.1f);Capture("tower-forecourt-workshop-relocated");
+        Vector3[] route={new Vector3(-34,0,4.2f),new Vector3(-30,0,1.3f),new Vector3(-26,0,-1.7f),new Vector3(-25,0,-3.2f),new Vector3(-31,0,-7.5f),new Vector3(-33,0,-10.8f),new Vector3(-35.9f,0,-10.2f),new Vector3(-35.9f,0,-8.8f)};
         for(int step=0;step<route.Length;step++)
         {
             float distance=100;

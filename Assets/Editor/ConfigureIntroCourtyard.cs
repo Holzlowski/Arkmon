@@ -70,8 +70,7 @@ public static class ConfigureIntroCourtyard
         if(retained.TryGetValue("Outside gate",out var oldGate))Object.DestroyImmediate(oldGate.gameObject);
         CourtyardWestArchitecture.Build(root,retained["Player residence tower"],stone,oak,GroundHeight);
         CourtyardWorkshop.Build(root,retained["Workbench"],stone);
-        var workshop=CourtyardWorkshop.Position;
-        BuildPath(root,new Vector2(-25,-3.2f),new Vector2(workshop.x+1.5f,workshop.z-6),new Vector2(workshop.x+1.6f,workshop.z-4.2f));
+        BuildPath(root,CourtyardWorkshop.Approach);
         int detailStart=root.childCount;
         CourtyardDetails(root);
         ShiftGardenDetails(root,detailStart);
@@ -159,9 +158,10 @@ public static class ConfigureIntroCourtyard
             +Hill(-18,3,7,3.5f,1.1f)
             +Hill(-20,-11,10,5,1.2f)+Hill(0,-11,8,5,1.55f)
             +Hill(26,-10,10,6,1.25f)+Hill(37,5,4,4,.75f);
-        // A level working pad with a soft edge into the existing sloped meadow.
+        // Keep the cleared former workshop site level as part of the tower forecourt.
+        float forecourtEdge=Mathf.Max(Mathf.Abs(x+25)-4.3f,Mathf.Abs(z-3.3f)-4.3f);
         var workshop=CourtyardWorkshop.Position;
-        float edge=Mathf.Max(Mathf.Abs(x-workshop.x)-4.3f,Mathf.Abs(z-(workshop.z-1))-4.3f);
+        float edge=Mathf.Min(forecourtEdge,Mathf.Max(Mathf.Abs(x-workshop.x)-4.3f,Mathf.Abs(z-(workshop.z-1))-4.3f));
         float stableEdge=Mathf.Max(Mathf.Abs(x-CourtyardStable.Position.x)-4.5f,Mathf.Abs(z-(CourtyardStable.Position.z-1))-3.8f);
         return height*Mathf.SmoothStep(0,1,Mathf.Clamp01(edge/1.5f))*Mathf.SmoothStep(0,1,Mathf.Clamp01(stableEdge/1.2f));
     }
@@ -464,7 +464,8 @@ public static class ConfigureIntroCourtyard
             Vector2 across=new Vector2(-tangent.y,tangent.x).normalized;
             distance+=Vector2.Distance(previous,center);
             previous=center;
-            float halfWidth=(points.Length>3?2.05f:1.12f)+.24f*Mathf.Sin(distance*.34f)+.12f*Mathf.Sin(distance*1.13f);
+            bool workshopSpur=Vector2.Distance(points[0],new Vector2(-25,-3.2f))<.01f;
+            float halfWidth=(workshopSpur?.95f:points.Length>3?2.05f:1.12f)+.24f*Mathf.Sin(distance*.34f)+.12f*Mathf.Sin(distance*1.13f);
             int index=vertices.Count;
             for(int side=0;side<=acrossSegments;side++)
             {
@@ -485,10 +486,18 @@ public static class ConfigureIntroCourtyard
         if(mesh==null){mesh=new Mesh();AssetDatabase.CreateAsset(mesh,asset);}
         mesh.Clear();mesh.SetVertices(vertices);mesh.SetUVs(0,uvs);mesh.SetTriangles(triangles,0);
         mesh.RecalculateNormals();mesh.RecalculateBounds();EditorUtility.SetDirty(mesh);
+        if(root==null)return; // Refresh the existing asset without rebuilding unrelated scene objects.
         var road=new GameObject("Curved courtyard path",typeof(MeshFilter),typeof(MeshRenderer));
         road.transform.SetParent(root,false);
         road.GetComponent<MeshFilter>().sharedMesh=mesh;
         road.GetComponent<MeshRenderer>().sharedMaterial=path;
+    }
+
+    [MenuItem("Arkmon/Update workshop approach mesh")]
+    public static void UpdateWorkshopApproach()
+    {
+        BuildPath(null,CourtyardWorkshop.Approach);
+        AssetDatabase.SaveAssets();
     }
 
     static void EastCrossing(Transform root)

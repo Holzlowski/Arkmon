@@ -20,8 +20,8 @@ public class CourtyardConnectedRouteTests
         ((Behaviour)player.GetComponent(T("PlayerInteractionFocus"))).enabled=false;
         body.isKinematic=false;body.position=new Vector3(-34,2.4f,8);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
         Vector2[] route={
-            new Vector2(-34,4.2f),new Vector2(-30,1.3f),new Vector2(-26,-1.7f),new Vector2(-23.4f,-1.6f),new Vector2(-23.4f,1.1f),
-            new Vector2(-23.4f,-1.6f),new Vector2(-18,-3),new Vector2(-16,-.7f),new Vector2(-10.8f,-.55f),
+            new Vector2(-34,4.2f),new Vector2(-30,1.3f),new Vector2(-26,-1.7f),new Vector2(-25,-3.2f),new Vector2(-31,-7.5f),new Vector2(-33,-10.8f),new Vector2(-35.9f,-10.2f),new Vector2(-35.9f,-8.8f),
+            new Vector2(-35.9f,-10.2f),new Vector2(-33,-10.8f),new Vector2(-31,-7.5f),new Vector2(-25,-3.2f),new Vector2(-18,-3),new Vector2(-16,-.7f),new Vector2(-10.8f,-.55f),
             new Vector2(-7,-1.15f),new Vector2(-3,-.95f),new Vector2(1,-.35f),new Vector2(3.95f,.25f),
             new Vector2(4.35f,4.9f),new Vector2(4.55f,9.45f),new Vector2(7.1f,9.45f),
             new Vector2(9.7f,9.45f),new Vector2(12,8),new Vector2(12,11.3f),

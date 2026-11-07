@@ -6,7 +6,10 @@ using Object=UnityEngine.Object;
 public static class CourtyardWorkshop
 {
     const string Art="Assets/Art/Intro/";
-    public static readonly Vector3 Position=new Vector3(-25,0,4.3f);
+    public static readonly Vector3 Position=new Vector3(-37.5f,0,-5f);
+    public static Vector2[] Approach => new[]{new Vector2(-25,-3.2f),new Vector2(-31,-7.5f),
+        new Vector2(Position.x+4.5f,Position.z-5.8f),new Vector2(Position.x+1.6f,Position.z-5.2f),
+        new Vector2(Position.x+1.6f,Position.z-3.8f)};
     static Material wood, plaster, roof, stone, dark, iron, cutWood;
     public static void Build(Transform courtyard,Transform bench,Material masonry)
     {

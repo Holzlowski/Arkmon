@@ -13,6 +13,7 @@ public sealed class CourtyardWestGroundStyle : MonoBehaviour
     readonly List<(Vector3 at,float width)> paths=new List<(Vector3,float)>();
     MeshFilter oldGrass;Mesh originalGrass;
     IInteractableAsPlayer[] interactions;
+    Transform workshop;
     Material earth,contact;
 
     internal static void Install()
@@ -26,6 +27,7 @@ public sealed class CourtyardWestGroundStyle : MonoBehaviour
         style.earth=new Material(source){name="West courtyard worn earth"};style.materials.Add(style.earth);
         style.earth.SetColor("_BaseColor",new Color(.74f,.71f,.58f,.57f));
         style.contact=new Material(shader){name="West foundation soft contact"};style.materials.Add(style.contact);
+        style.workshop=workshop;
         style.interactions=FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IInteractableAsPlayer>().ToArray();
         Physics.SyncTransforms();style.ReadPaths();style.RetireOldGrowth();style.Doorways(workshop);style.Foundations(workshop);style.Growth();
     }
@@ -87,7 +89,8 @@ public sealed class CourtyardWestGroundStyle : MonoBehaviour
         if(!InSection(p))return false;
         // Stair flight, its approach and the lookout corridor remain visually legible.
         if(p.x> -37.5f && p.x< -30.5f && p.z>3.7f)return false;
-        if(p.x> -24.4f && p.x< -22.4f && p.z> -1.8f && p.z<2.6f)return false;
+        var local=workshop.InverseTransformPoint(p);
+        if(local.x> -3.2f && local.x<2.6f && local.z> -6.8f && local.z< -2.0f)return false;
         if(p.x< -39 && p.z>4.9f && p.z<8.7f)return false;
         foreach(var target in interactions)
         {var d=target.GetTransform()-p;d.y=0;if(d.sqrMagnitude<1.4f*1.4f)return false;}
