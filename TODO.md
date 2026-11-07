@@ -356,3 +356,12 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Akzeptierte Fassung als 66.86-Sekunden-Loop in StartScene einbauen; Turm- und Kampfmusik erhalten.
 - [x] PCM-Import, Nahtstelle, Ueberblendung und wiederholte Kampf-Rueckkehr stumm pruefen (zwei Tests, 35.02 Sekunden).
 - [ ] Musik und Umgebungsgeraeusche beim normalen Hofrundgang gemeinsam beurteilen.
+
+
+## Aurenfeld: Musik zur Aussicht
+
+- [x] Eigene Klavier-/Harfenmelodie mit Streichern und Floete fuer Anfahrt und Aussicht komponieren.
+- [x] Einmaligen Akzent mit der Texteinblendung synchronisieren; danach Aussichtsmelodie weiter loopen.
+- [x] Hofmusik bei Rueckkehr, Abbruch, Deaktivierung und Szenenwechsel wiederherstellen.
+- [x] Drei stumme Tests bestanden: Import/Loop, Textzeitpunkt und Lebenszyklus sowie bestehende Hof-Ueberblendung (27.33 Sekunden).
+- [ ] Musikbalance und Wirkung des Textakzents beim normalen Spielen gemeinsam beurteilen.

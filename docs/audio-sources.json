@@ -259,5 +259,79 @@
     },
     "import": "Stereo PCM, decompress on load, preload enabled, normalization disabled; preserve exact sample boundary.",
     "runtime": "StartScene only; existing 0.8-second transition crossfade and AudioSource.loop. Tower rooms retain courtyard.wav; BattleScene retains battle.wav."
+  },
+  "aurenfeld_lookout_music": {
+    "composition": "Original F-major Aurenfeld scenic cue for piano, harp, soft string sections and flute; no third-party melody or soundtrack recording.",
+    "runtime_files": {
+      "Assets/Resources/Audio/aurenfeld-approach.wav": {
+        "seconds": 8.0,
+        "peak": 0.1983642578125,
+        "seam_step": 9.1552734375e-05,
+        "sha256": "977e169378b84da12b579709c7a9c1f7c23c519041f1c057e0e6bdf7747f42df"
+      },
+      "Assets/Resources/Audio/aurenfeld-panorama.wav": {
+        "seconds": 32.0,
+        "peak": 0.260040283203125,
+        "seam_step": 0.000213623046875,
+        "sha256": "6377b17c70978d402d01651080c5ec25b0bee0282710a2619ddc5a27008d6398"
+      },
+      "Assets/Resources/Audio/aurenfeld-title.wav": {
+        "seconds": 5.0,
+        "peak": 0.35198974609375,
+        "seam_step": 6.103515625e-05,
+        "sha256": "f694f771f938f554fd580a35c387f7996e0aa37b8d100b99f5b3cd36437997d8"
+      }
+    },
+    "sources": [
+      {
+        "library": "VCSL",
+        "source": "https://github.com/sgossner/VCSL",
+        "revision": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+        "license": "CC0-1.0"
+      },
+      {
+        "library": "VSCO 2 Community Edition",
+        "source": "https://github.com/sgossner/VSCO-2-CE",
+        "revision": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+        "license": "CC0-1.0"
+      }
+    ],
+    "sample_sha256": {
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_E2_v1_rr1_Player.wav": "9fca1df9661fc3ea3cc32b5e5e605672a7d63bea56d5f04ca33e1d2eebf34b89",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_E3_v1_rr1_Player.wav": "3986177d766ad67acaeb8d0d53114c4380dea65bc1632938dc597006e5123771",
+      "VCSL\\Chordophones\\Composite Chordophones\\Concert Harp\\KSHarp_A4_mf1.wav": "3665f3975cad4a33f46784aa4f896f4b4319ba2b7831e892d975bc38c9f09f23",
+      "VSCO-2-CE\\Strings\\Viola Section\\susvib\\ViolaEns_susvib_B2_v1_1.wav": "ad96d747c5125adec8f069c49091ee3ba937efd4a5b909d3c4938f17e3c8513d",
+      "VSCO-2-CE\\Strings\\Cello Section\\susvib\\susvib_E1_v1_1.wav": "de31a61b02d4e1d5a79b8bc432b0f35fe2e434290ad34402cc0f2dd7dc278cde",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_C3_v1_rr1_Player.wav": "eb52431464cc160cb7c3576d5087b6cc67326fd903b620088c0874f6bcff4a8e",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_F#3_v1_rr1_Player.wav": "087e5826a7868cc3c923e6628869cc516ad690a4cbe69a8b4019be91f14b3a9b",
+      "VCSL\\Chordophones\\Composite Chordophones\\Concert Harp\\KSHarp_C5_mf1.wav": "7c8b862f6fd3f1442ed87537af976d84bda8c05a5b4900e8907d570b5202a517",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_F#1_v1_rr1_Player.wav": "1dfdca1c4c577dfd0a50a33b72cb22c3eb752235cc12e26432fc30db43d2dfdd",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_A#2_v1_rr1_Player.wav": "6653569508248cff83cffb5ab5448a37ada4e007036d947eaaf6c562c719db8b",
+      "VSCO-2-CE\\Strings\\Viola Section\\susvib\\ViolaEns_susvib_E2_v1_1.wav": "5c4c636583ce43b694583e8cbf7a14d1f3efcb0e871fe7dedff8a6b354c432bf",
+      "VSCO-2-CE\\Strings\\Violin Section\\susVib\\VlnEns_susVib_A3_v1.wav": "72817a53dfd2eb61eca94658c14e1cab6017629ca2f27bab8e394c6675bfaad7",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_C4_v1_rr1_Player.wav": "f921d4737ee847ecb55ce251a94e1841069b70e206b00342676954992ea7d0dc",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_A#3_v1_rr1_Player.wav": "d6b6618419031245603e88c3245f1f8a4442e39981b103a8fbe5eb5fd5cdd2c3",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_A1_v1_rr1_Player.wav": "a1e432f8ca90168e957b59d1777c0dcdadeef61ae4344843b1592f89d140a7cb",
+      "VSCO-2-CE\\Strings\\Cello Section\\susvib\\susvib_B1_v1_1.wav": "4f95c087c4b8d87ee591e9d39c3c9caf085c6f1b9125eac3ca9e4e637da628ee",
+      "VCSL\\Chordophones\\Composite Chordophones\\Concert Harp\\KSHarp_E5_mf1.wav": "95dd9ddb0bd15bee7687906e00f25aafcaa43020cc9501f0e8b6cabf0e9a53ec",
+      "VSCO-2-CE\\Strings\\Violin Section\\susVib\\VlnEns_susVib_C4_v1.wav": "c07edd5b2119fa1da2207aba996961b50dd616f69bbcf2300ab271bc6c16239f",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_C2_v1_rr1_Player.wav": "eba9adfb3977605a494830081d4e9e4ff0a4efd017439fe402a208aca9f11d7a",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_D3_v1_rr1_Player.wav": "af2195a00925e777ce32ede7e5fba4f4ea617fa6e7bf9147ba0ab8726f44e195",
+      "VSCO-2-CE\\Strings\\Viola Section\\susvib\\ViolaEns_susvib_D2_v1_1.wav": "49b09bcaec177f67382644913da5ca5582fe1d1d74a9f097edb6e0b5db43d35f",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_D4_v1_rr1_Player.wav": "1cff98cc70bbc9fdfc284cd30cc55450ed68a0cd6fc383b254f6c471fac1914e",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_D2_v1_rr1_Player.wav": "b573344ccba8ac6a0b7717f865da6d30df40a0574bb5884d9292206209316b79",
+      "VSCO-2-CE\\Strings\\Cello Section\\susvib\\susvib_D2_v1_1.wav": "e8640dec9febc6e39fcf06b19d2c95a85d5ff8c38f13c9879e69f551eaf38ab8",
+      "VSCO-2-CE\\Woodwinds\\Flute\\expvib\\LDFlute_expvib_A3_v1_1.wav": "6f7566797c5ac37172189ab375d28f0068232b74f5611e16da217055d3da6420",
+      "VSCO-2-CE\\Strings\\Cello Section\\susvib\\susvib_G1_v1_1.wav": "9e5d24e8e28d6c7f650f9bb2b33d43c13e341a8bd33124c64e23881378b181ba",
+      "VSCO-2-CE\\Woodwinds\\Flute\\expvib\\LDFlute_expvib_E3_v1_1.wav": "ceea6c5a734afa7764172191c34369f8266036acf58410cba066ae73554b7b3c",
+      "VCSL\\Chordophones\\Zithers\\Grand Piano, Kawai\\Sustains\\GPiano_sus_E4_v1_rr1_Player.wav": "2bbea3d9e280e7b87605eaa01853b9e81c8ce21eae1db61cfb6fa33b94ca449f",
+      "VCSL\\Chordophones\\Composite Chordophones\\Concert Harp\\KSHarp_F4_mf1.wav": "db27ebbb37334c10e06f2ae63f4d9ff555e4d11704fcc6f0bcf503863867e577",
+      "VCSL\\Chordophones\\Composite Chordophones\\Concert Harp\\KSHarp_G5_mf1.wav": "f2004dfc617997fbabc6f849add2af06f4f859361c44a8fca0f993dc7f999540",
+      "VCSL\\Chordophones\\Composite Chordophones\\Concert Harp\\KSHarp_B5_mf1.wav": "f2757b674c6b7301bed52e17a1ae3e3d34d628b3f7edc5773ebb25798d2541f7"
+    },
+    "recipe": "tools/render_aurenfeld_lookout_music.py --install",
+    "import": "Stereo PCM, 44100 Hz, preload enabled, Decompress On Load, normalization disabled.",
+    "sync": "CourtyardLookout requests one cue at progress 0.68. Panorama and title stem share a DSP scheduled start with a 50 ms lead; caption alpha derives from that same clock over 2.2 seconds. Batch-mode tests use an unscaled clock without playback.",
+    "lifecycle": "Approach and panorama loop; title chord plays once per visit. Ordinary courtyard music is ducked, never restarted. Return, disable and scene unload restore its level."
   }
 }

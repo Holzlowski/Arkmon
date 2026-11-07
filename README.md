@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.33.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.34.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2214,3 +2214,14 @@ python tools/build_courtyard_music_loop.py --install
 Download flags fetch bounded sample/license subsets under `Builds/sample-audio/natural-courtyard`; omit them for subsequent offline renders. The earlier GeneralUser sketch needs tinysoundfont and its licensed local SoundFont: `python tools/render_courtyard_morning_preview.py Builds/sample-audio/GeneralUser-GS.sf2`. No renderer triggers device playback.
 
 The loop recipe exports a seam audition, two-cycle audition and measurement report. Seam step 0.000366 (ordinary 99.9-percentile step 0.027008), peak 0.696, no clipped/non-finite samples. Two silent PlayMode tests passed in 35.02 seconds (`Library/courtyard-music-loop.xml`): exact imported frames/seam, tower-to-courtyard crossfade and repeated battle return with one persistent manager. Normal-play mix balance remains open; no new Windows build.
+
+
+### 0.34.0 — Aurenfeld lookout melody and synchronized title
+
+The western wall-break camera sequence now has an original piano/harp/string/flute cue. `CourtyardLookoutMusic` fades down the courtyard song without changing its playback position or the effects level. An 8-second approach loop gives way to a 32-second panorama loop. At camera progress 0.68, panorama and a separate five-second title chord share a DSP scheduled start with 50 ms preparation time; the caption fades from that same clock over 2.2 seconds. Frame hitches may delay drawing to the next frame but do not start an independent text timer. The title chord plays once per visit, never once per panorama loop.
+
+Return restores courtyard music; early cancel, disable, missing camera and scene changes release the mix. Missing audio falls back to existing caption timing. Silent batch tests use an unscaled logical clock without scenic playback; they do not measure audio-device latency or subjective musical quality.
+
+The three `Audio/aurenfeld-*` clips are preloaded stereo 44.1 kHz PCM (about 7.9 MB on disk / 15.9 MB decoded). Run `python tools/render_aurenfeld_lookout_music.py --install` using the cached samples and adjacent renderers from the courtyard pipeline; omit `--install` for previews only. `Builds/aurenfeld-lookout-music-preview.wav` demonstrates the reveal at 6.8 seconds. Runtime timing follows the actual reveal trigger. Source revisions, licenses and hashes are in `docs/audio-sources.json`.
+
+Validation: three silent PlayMode tests passed in 27.33 seconds (`Library/lookout-music.xml`): imported frame counts/loop seams, shared caption timing and single cue, early cancel, repeated entry, disable/unload recovery and the existing tower-to-courtyard crossfade. Installed WAV hashes match the renderer report; no clipped/non-finite samples. A normal in-game listening review and any further musical balancing remain open.

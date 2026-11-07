@@ -12,6 +12,15 @@ public class SoundManager : MonoBehaviour
     [Range(0, 1)] public float effectsVolume = .55f;
     private AudioSource music, outgoing, effects;
     private Coroutine crossfade;
+    private float musicLevel, outgoingLevel, musicDucking = 1f;
+    public float MusicDucking => musicDucking;
+    public void SetMusicDucking(float gain)
+    { musicDucking = Mathf.Clamp01(gain); ApplyMusicVolumes(); }
+    private void ApplyMusicVolumes()
+    {
+        if (music != null) music.volume = musicVolume * musicLevel * musicDucking;
+        if (outgoing != null) outgoing.volume = musicVolume * outgoingLevel * musicDucking;
+    }
     private string transitionDestination;
     public string CurrentMusicName => music != null && music.clip != null ? music.clip.name : "";
     public string LastEffectName { get; private set; }
@@ -59,28 +68,31 @@ public class SoundManager : MonoBehaviour
             music.Stop(); outgoing.Stop(); effects.Stop();
             music.clip = outgoing.clip = null;
             music.enabled = outgoing.enabled = effects.enabled = false;
+            musicLevel = outgoingLevel = 0; ApplyMusicVolumes();
             crossfade = null; return;
         }
         music.enabled = outgoing.enabled = effects.enabled = true;
         if (clip == music.clip) return;
         if (crossfade != null) StopCoroutine(crossfade);
+        outgoingLevel = musicLevel; musicLevel = 0;
         (music, outgoing) = (outgoing, music);
+        ApplyMusicVolumes();
         music.Stop(); music.clip = clip; music.volume = 0;
         if (clip != null) music.Play();
         crossfade = StartCoroutine(FadeMusic());
     }
     private IEnumerator FadeMusic()
     {
-        float oldVolume = outgoing.volume;
+        float oldLevel = outgoingLevel;
         for (float elapsed = 0; elapsed < .8f; elapsed += Time.unscaledDeltaTime)
         {
-            float t = elapsed / .8f; music.volume = musicVolume * t;
-            outgoing.volume = oldVolume * (1 - t); yield return null;
+            float t = elapsed / .8f; musicLevel = t;
+            outgoingLevel = oldLevel * (1 - t); ApplyMusicVolumes(); yield return null;
         }
-        outgoing.Stop(); outgoing.volume = 0; music.volume = musicVolume; crossfade = null;
+        outgoing.Stop(); outgoingLevel = 0; musicLevel = 1; ApplyMusicVolumes(); crossfade = null;
     }
     public void PlayMusic(int index)
-    { if (index >= 0 && index < sceneMusicClips.Count) { music.clip = sceneMusicClips[index]; music.volume = musicVolume; music.Play(); } }
+    { if (index >= 0 && index < sceneMusicClips.Count) { music.clip = sceneMusicClips[index]; musicLevel = 1; ApplyMusicVolumes(); music.Play(); } }
     public void PlayEffect(string name) => PlayEffect(name, 1f);
 
     public void PlayEffect(string name, float gain)

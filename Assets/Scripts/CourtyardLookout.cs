@@ -20,6 +20,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
     private Canvas objective, canvas;
     private CanvasGroup caption;
     private int startFrame;
+    private CourtyardLookoutMusic scenicMusic;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetSession() => active = null;
@@ -40,7 +41,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
 
     public void InteractWithPlayer()
     {
-        if (!isActiveAndEnabled || DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning
+        if (active != null || !isActiveAndEnabled || DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning
             || DialogueBoxController.instance != null && DialogueBoxController.instance.IsOpen) return;
         var player = GameObject.FindWithTag("Player");
         var controller = player != null ? player.GetComponent<PlayerController>() : null;
@@ -54,11 +55,13 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
         objective = GameObject.Find("Demo objective")?.GetComponent<Canvas>();
         if (objective != null) { objectiveWasEnabled = objective.enabled; objective.enabled = false; }
         BuildOverlay();
+        scenicMusic = GetComponent<CourtyardLookoutMusic>() ?? gameObject.AddComponent<CourtyardLookoutMusic>();
+        scenicMusic.Begin();
     }
 
     public void ReturnToCourtyard()
     {
-        if (active == this) returning = true;
+        if (active == this) { returning = true; scenicMusic?.End(); }
     }
 
     private void Update()
@@ -93,7 +96,9 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
             fov = Mathf.Lerp(53, 58, t);
         }
         follow.SetScenicView(position, rotation, fov);
-        caption.alpha = returning ? 0 : Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.68f, .9f, progress));
+        if (!returning && progress >= .68f) scenicMusic?.RevealCaption();
+        caption.alpha = returning ? 0 : scenicMusic != null && scenicMusic.IsAvailable
+            ? scenicMusic.CaptionAlpha : Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.68f, .9f, progress));
     }
 
     private void BuildOverlay()
@@ -119,6 +124,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
     private void Finish()
     {
         if (active != this) return;
+        scenicMusic?.StopImmediately();
         follow?.ClearScenicView();
         if (objective != null) objective.enabled = objectiveWasEnabled;
         if (canvas != null) { canvas.gameObject.SetActive(false); Destroy(canvas.gameObject); }
