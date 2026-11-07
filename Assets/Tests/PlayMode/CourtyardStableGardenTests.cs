@@ -11,7 +11,7 @@ public class CourtyardStableGardenTests
     static Type T(string n)=>AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType(n)).First(t=>t!=null);
     static IEnumerator Load()=>(IEnumerator)typeof(CourtyardGardenTaskTests).GetMethod("Load",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new object[]{true});
     static void Capture(string n)=>typeof(GameIntroTests).GetMethod("Capture",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new object[]{n});
-    [UnityTest]public IEnumerator CareToGarden_IsWalkable_PreservesBedsAndGroundContacts_OnReload()
+    [UnityTest]public IEnumerator CareToMainStreet_IsWalkable_PreservesBedsAndGroundContacts_OnReload()
     {
         yield return Load();
         var root=GameObject.Find("Stable garden connection");Assert.That(root,Is.Not.Null);
@@ -29,12 +29,12 @@ public class CourtyardStableGardenTests
         }
         var beds=UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name=="Garden soil bed").ToArray();
         Assert.That(beds.Length,Is.EqualTo(3));
-        Assert.That(beds.All(r=>r.bounds.max.x<10),Is.True,"The kitchen beds stay clear of the castle approach at x=12.");
+        Assert.That(beds.All(r=>r.bounds.min.x>27 && r.bounds.max.z< -4.5f),Is.True,"The kitchen beds stay clear of the castle approach at x=12.");
         var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
         var focus=(Behaviour)player.GetComponent(T("PlayerInteractionFocus"));focus.enabled=false;
         body.isKinematic=false;body.position=new Vector3(-10.8f,1,-.55f);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
         yield return new WaitForSeconds(.8f);Capture("stable-garden-route-0");
-        Vector3[] route={new Vector3(-7,0,-1.15f),new Vector3(-3,0,-.95f),new Vector3(1,0,-.35f),new Vector3(3.95f,0,.25f)};
+        Vector3[] route={new Vector3(-7,0,-1.15f),new Vector3(-5.5f,0,-3.2f),new Vector3(-3,0,-3.5f)};
         for(int step=0;step<route.Length;step++)
         {
             float distance=100;
@@ -50,8 +50,7 @@ public class CourtyardStableGardenTests
             yield return new WaitForSeconds(.8f);Capture("stable-garden-route-"+(step+1));
         }
         body.isKinematic=true;focus.enabled=true;yield return null;
-        var selected=focus.GetType().GetMethod("Refresh").Invoke(focus,null);
-        Assert.That(selected,Is.SameAs(GameObject.Find("Courtyard watering can").GetComponent(T("CourtyardGarden"))));
+        Assert.That(Vector3.Distance(player.transform.position,GameObject.Find("Courtyard watering can").transform.position),Is.GreaterThan(20),"The old shortcut ends on the main street, not at a stale watering-can anchor.");
         var old=root;yield return Load();Assert.That(old==null,Is.True);
         Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardStableGardenStyle"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
         LogAssert.NoUnexpectedReceived();

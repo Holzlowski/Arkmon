@@ -56,7 +56,7 @@ public sealed class CourtyardTreeStyle : MonoBehaviour
             style.retired.Add(old); old.enabled = false;
         }
         // Side of the garden cottage, clear of its beds and the castle facade.
-        style.Add(sprites[2], new Vector3(-4.6f, 0, 6.8f), 4.6f, "Garden apple tree");
+        style.Add(sprites[2], CourtyardResidentLayout.GardenPoint(new Vector3(-4.6f, 0, 6.8f)), 4.6f, "Garden apple tree");
         // Far bank, north of the bridge: crown does not cross its walkable deck.
         style.Add(sprites[3], new Vector3(52.2f, 0, 9.5f), 7.2f, "Stream willow");
     }

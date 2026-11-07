@@ -15,6 +15,7 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
         var beds = FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
             .Where(r => r.name == "Garden soil bed").OrderBy(r => r.transform.position.x).ToArray();
         if (beds.Length != 3 || GameObject.Find("Garden cottage") == null) return;
+        GameObject.Find("Garden cottage").transform.position = CourtyardResidentLayout.GardenPoint(new Vector3(1, 0, 9.6f));
         var centers = beds.Select(r => new Vector3(r.transform.position.x, 0, r.transform.position.z)).ToArray();
         var parts = FindObjectsByType<Transform>(FindObjectsSortMode.None).Where(t =>
             t.name == "Garden soil bed" || t.name == "Garden border" || t.name.StartsWith("Bean trellis") ||
@@ -26,7 +27,7 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
         {
             var group = new GameObject("Kitchen garden bed " + i).transform;
             group.SetParent(layout, false);
-            group.position = new Vector3(6.6f + i * .25f, 0, 2.9f + i * 4.3f);
+            group.position = CourtyardResidentLayout.GardenPoint(new Vector3(6.6f + i * .25f, 0, 3.7f + i * 3.7f));
             foreach (var part in parts)
             {
                 var nearest = Enumerable.Range(0, centers.Length).OrderBy(n =>
@@ -40,7 +41,7 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
         // Keep the seed bench beside Marta, outside the new first bed and the house approach.
         foreach (var part in FindObjectsByType<Transform>(FindObjectsSortMode.None))
             if (part.name == "Garden bench seat" || part.name == "Garden bench stone foot")
-                part.position += new Vector3(-2.35f, 0, -.3f);
+                part.position += new Vector3(-2.35f, 0, -.3f) + CourtyardResidentLayout.GardenOffset;
         var cottage=GameObject.Find("Garden cottage").transform;
         foreach(var part in cottage.GetComponentsInChildren<Transform>())
             if(part.name=="Garden potting table" || part.name=="Marta work spot")part.position+=Vector3.left*.45f;
@@ -89,14 +90,14 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
             place.trailEarth.SetColor("_BaseColor",new Color(.62f,.70f,.79f,.63f));
         }
         foreach(var herb in house.GetComponentsInChildren<SpriteRenderer>())
-            if(herb.name=="Illustrated garden herbs" && herb.transform.position.x>3.85f && herb.transform.position.z<10)
+            if(herb.name=="Illustrated garden herbs" && CourtyardResidentLayout.GardenOriginal(herb.transform.position).x>3.85f && CourtyardResidentLayout.GardenOriginal(herb.transform.position).z<10)
             {place.hiddenHerbs.Add(herb);herb.enabled=false;}
         // One narrow spine serves every bed; short branches mark the actual watering positions.
         place.Trail("Garden worn spine",new Vector3(3.95f,0,.35f),new Vector3(4.35f,0,4.9f),new Vector3(4.55f,0,9.6f),.53f);
         foreach(var bed in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name=="Garden soil bed"))
         {
-            float z=bed.transform.position.z-2.05f;
-            place.Trail("Garden watering approach",new Vector3(4.35f,0,z),new Vector3(5.2f,0,z-.10f),new Vector3(bed.transform.position.x,0,z),.48f);
+            float z=bed.transform.position.z-CourtyardResidentLayout.GardenOffset.z-2.05f;
+            place.Trail("Garden watering approach",new Vector3(4.35f,0,z),new Vector3(5.2f,0,z-.10f),new Vector3(bed.transform.position.x-CourtyardResidentLayout.GardenOffset.x,0,z),.48f);
         }
         place.Trail("Garden worktable connection",new Vector3(3.1f,0,5.35f),new Vector3(3.7f,0,5.05f),new Vector3(4.45f,0,5.15f),.48f);
     }
@@ -132,6 +133,7 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
     void Trail(string name,Vector3 a,Vector3 b,Vector3 c,float width)
     {
         var material=trailEarth;if(material==null)return;
+        a=CourtyardResidentLayout.GardenPoint(a);b=CourtyardResidentLayout.GardenPoint(b);c=CourtyardResidentLayout.GardenPoint(c);
         const int rows=40,across=9;var vertices=new List<Vector3>();var colors=new List<Color>();var triangles=new List<int>();
         for(int row=0;row<=rows;row++)
         {

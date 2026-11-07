@@ -86,21 +86,21 @@ public class CourtyardPolishTests
         Assert.That(marta.GetComponentInChildren<SpriteRenderer>()?.sprite,Is.Not.Null);
         Assert.That(marta.GetComponentInChildren<SpriteRenderer>().sprite.name,Is.EqualTo("Marta-Gardener"));
         Assert.That(GameObject.Find("Garden potting table").transform.IsChildOf(house),Is.True);
-        Assert.That(Physics.BoxCast(new Vector3(house.position.x,1,3),new Vector3(.32f,.75f,.32f),Vector3.forward,
+        Assert.That(Physics.BoxCast(house.position+new Vector3(0,1,-6.6f),new Vector3(.32f,.75f,.32f),Vector3.forward,
             out var blocked,Quaternion.identity,3.8f,~0,QueryTriggerInteraction.Ignore),Is.False,
             "The door approach must remain free: "+blocked.collider?.name);
 
         var player=GameObject.FindWithTag("Player");
         ((Behaviour)player.GetComponent(T("PlayerController"))).enabled=false;
         var body=player.GetComponent<Rigidbody>();
-        body.position=new Vector3(-.7f,1,1.7f);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
+        body.position=house.position+new Vector3(-1.7f,1,-7.9f);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
         yield return new WaitForSeconds(.8f);
         typeof(GameIntroTests).GetMethod("Capture",BindingFlags.NonPublic|BindingFlags.Static)
             .Invoke(null,new object[]{"intro-courtyard-marta"});
         // An additional close architectural view; gameplay camera settings are restored immediately.
         var camera=Camera.main;var savedPosition=camera.transform.position;var savedAngle=camera.transform.rotation;
-        camera.transform.position=new Vector3(.8f,8.3f,-5.3f);
-        camera.transform.LookAt(new Vector3(.8f,2.5f,8));
+        camera.transform.position=house.position+new Vector3(-.2f,8.3f,-14.9f);
+        camera.transform.LookAt(house.position+new Vector3(-.2f,2.5f,-1.6f));
         typeof(GameIntroTests).GetMethod("Capture",BindingFlags.NonPublic|BindingFlags.Static)
             .Invoke(null,new object[]{"intro-courtyard-marta-detail"});
         camera.transform.SetPositionAndRotation(savedPosition,savedAngle);

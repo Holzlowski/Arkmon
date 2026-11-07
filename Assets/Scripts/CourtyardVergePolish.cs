@@ -66,12 +66,14 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             if(gardenSpur)
                 for(int row=0;row<vertices.Length/Across;row++)
                 {
-                    int first=row*Across;var center=(vertices[first]+vertices[first+Across-1])*.5f;
-                    var across=(vertices[first+Across-1]-vertices[first]).normalized;
+                    int first=row*Across;float t=row/(float)(vertices.Length/Across-1);
+                    var center=CourtyardResidentLayout.GardenApproach(t);
+                    var tangent=(CourtyardResidentLayout.GardenApproach(Mathf.Min(1,t+.005f))-CourtyardResidentLayout.GardenApproach(Mathf.Max(0,t-.005f))).normalized;
+                    var across=new Vector3(tangent.z,0,-tangent.x);
                     for(int side=0;side<Across;side++)
                     {
-                        var point=center+(vertices[first+side]-center)*.60f+across*(.09f*Mathf.Sin(row*.33f));
-                        vertices[first+side]=filter.transform.InverseTransformPoint(Ground(filter.transform.TransformPoint(point))-Vector3.up*.005f);
+                        var point=center+across*((side/8f-1)*.85f+.08f*Mathf.Sin(row*.33f));
+                        vertices[first+side]=filter.transform.InverseTransformPoint(Ground(point)-Vector3.up*.005f);
                     }
                 }
             bool castleSpur=Vector2.Distance(new Vector2(start.x,start.z),new Vector2(11,-1))<.2f;
@@ -141,9 +143,9 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         var local=workshop.InverseTransformPoint(point);
         if(local.x> -3.2f && local.x<2.6f && local.z> -6.8f && local.z< -2.0f)return false;
         // Worn kitchen-garden spine and the three watering approaches remain open.
-        if(point.x>3.7f && point.x<4.95f && point.z>-.1f && point.z<10.1f)return false;
+        if(CourtyardResidentLayout.CastleSquare(point) || CourtyardResidentLayout.GardenWalkway(point))return false;
         foreach(var bed in gardenBeds)
-            if(point.x>3.7f && point.x<bed.center.x+.5f && Mathf.Abs(point.z-(bed.center.z-2.05f))<.65f)return false;
+            if(point.x>3.7f+CourtyardResidentLayout.GardenOffset.x && point.x<bed.center.x+.5f && Mathf.Abs(point.z-(bed.center.z-2.05f))<.65f)return false;
         // Preserve the newly opened castle approach and the guard's complete patrol corridor.
         if(point.x>10.55f && point.x<13.45f && point.z>-.8f && point.z<12.3f)return false;
         if(patrol!=null)
@@ -176,7 +178,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         string[] kinds={"Grass","Clover","Mixed","Grass","Fern","Clover","Flowers","Pebbles"};
         foreach(var edge in edges)
         {
-            if(edge.at.x<left+1 || edge.at.x>right-1 || random.NextDouble()<.46)continue;
+            if(edge.at.x<left+1 || edge.at.x>right-1 || random.NextDouble()<.72)continue;
             var at=edge.at+edge.outside*(.08f+(float)random.NextDouble()*.30f);
             if(!Clear(at))continue;
             Prop(kinds[random.Next(kinds.Length)],Ground(at),1.05f+(float)random.NextDouble()*.45f,random.Next(2)==0);
@@ -229,12 +231,12 @@ public sealed class CourtyardVergePolish : MonoBehaviour
         var groups=new[]{
             new Vector4(-30,-4.8f,3.0f,2.0f),new Vector4(-23,0,3.8f,1.9f),new Vector4(-17,-9.0f,5.2f,2.0f),
             new Vector4(-5.5f,-8.5f,4.6f,2.3f),new Vector4(6.5f,-6.8f,3.7f,1.9f),
-            new Vector4(17.8f,-6.5f,3.6f,1.8f),new Vector4(18.2f,4.7f,2.5f,1.8f),
+            new Vector4(15.8f,-7.0f,2.7f,1.7f),new Vector4(18.2f,4.7f,2.5f,1.8f),
             new Vector4(-17.5f,5.6f,2.0f,1.1f),
             // Small, low groups follow the inner foreground wall; keep the open lawn legible.
             new Vector4(-31,-13.5f,2.5f,.85f),new Vector4(-18,-14.3f,2.8f,.9f),
             new Vector4(-3,-13.8f,2.7f,.85f),new Vector4(14,-14.1f,2.8f,.9f),
-            new Vector4(29,-12.8f,2.4f,.85f)};
+            new Vector4(39,-13.0f,2.0f,.8f)};
         for(int g=0;g<groups.Length;g++)
         {
             var area=groups[g];var center=new Vector3(area.x,0,area.y);

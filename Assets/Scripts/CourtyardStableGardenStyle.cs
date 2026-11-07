@@ -23,7 +23,7 @@ public sealed class CourtyardStableGardenStyle : MonoBehaviour
         style.interactions=FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IInteractableAsPlayer>().ToArray();
         style.beds=FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name=="Garden soil bed").Select(r=>r.bounds).ToArray();
         var a=new Vector3(-10.8f,0,.50f);var b=new Vector3(-7.5f,0,-2.0f);
-        var c=new Vector3(-.5f,0,-.9f);var d=new Vector3(3.95f,0,.35f);
+        var c=new Vector3(-7.0f,0,-3.5f);var d=new Vector3(-5.5f,0,-3.2f);
         for(int i=0;i<=56;i++)
         {float t=i/56f,u=1-t;style.route.Add(u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d);}
         Physics.SyncTransforms();style.RetireObscuringPlants();style.Footpath();style.PlantMargins();

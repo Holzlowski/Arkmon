@@ -118,13 +118,13 @@ public class CourtyardGardenTaskTests
             Call(marta,"InteractWithPlayer");yield return new WaitForSeconds(.1f);
             Call(Dialogue,"SkipLine");yield return null;yield return null;
             Assert.That(State("ThanksReceived"),Is.True);Close();
-            Assert.That(State("ObjectiveText").ToString(),Does.Contain("zurück"));
+            Assert.That(State("ObjectiveText").ToString(),Does.Contain("zurÃ¼ck"));
             MoveTo(Station);Call(Station,"InteractWithPlayer");yield return WaitForPour();Close();yield return null;
             Assert.That(State("HasCan"),Is.False);Assert.That(State("ObjectiveText"),Is.Null);
             Assert.That(Vector3.Distance(GameObject.Find("Watering can model").transform.position,Station.transform.position),Is.LessThan(.7f));
             Capture("garden-task-complete");
-            yield return CloseUp("marta-garden-workspace",new Vector3(4.2f,1.2f,5.5f),9);
-            yield return CloseUp("marta-garden-beds",new Vector3(6.85f,.5f,7.2f),20);
+            yield return CloseUp("marta-garden-workspace",GameObject.Find("Garden potting table").transform.position+Vector3.up*.5f,9);
+            yield return CloseUp("marta-garden-beds",Beds[1].transform.position+new Vector3(0,.5f,2.05f),20);
             Call(marta,"InteractWithPlayer");yield return new WaitForSeconds(.1f);
             Assert.That(Dialogue.GetType().GetProperty("ActiveEmotion").GetValue(Dialogue).ToString(),Is.EqualTo("Friendly"));Close();
         }

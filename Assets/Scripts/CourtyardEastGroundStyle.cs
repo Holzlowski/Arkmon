@@ -45,7 +45,10 @@ public sealed class CourtyardEastGroundStyle : MonoBehaviour
         for(int i=0;i<v.Length;i++)
         {
             var world=meadow.transform.TransformPoint(v[i]);float change=style.Relief(world);
-            v[i]=meadow.transform.InverseTransformPoint(world+Vector3.up*change);
+            float plotEdge=Mathf.Max(Mathf.Max(19-world.x,world.x-33.5f),Mathf.Max(-17.4f-world.z,world.z+4.6f));
+            float plotWeight=1-Mathf.SmoothStep(0,1,Mathf.Clamp01(plotEdge/1.8f));
+            world.y=Mathf.Lerp(world.y+change,0,plotWeight);
+            v[i]=meadow.transform.InverseTransformPoint(world);
         }
         copy.vertices=v;copy.RecalculateNormals();copy.RecalculateBounds();style.meshes.Add(copy);style.terrainCopy=copy;
         meadow.sharedMesh=copy;meadow.GetComponent<MeshCollider>().sharedMesh=copy;Physics.SyncTransforms();

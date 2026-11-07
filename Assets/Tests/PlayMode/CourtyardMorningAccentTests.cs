@@ -35,12 +35,12 @@ public class CourtyardMorningAccentTests
         var plants = UnityEngine.Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None).Where(r=>r.name.StartsWith("Painted garden ")).ToArray();
         var plantColors = plants.Select(r=>r.color).ToArray();
         var player = GameObject.FindWithTag("Player");
-        player.transform.position = new Vector3(8.8f,1,1); player.GetComponent<Rigidbody>().position=player.transform.position;
+        player.transform.position = GameObject.Find("Courtyard watering can").transform.position+Vector3.up; player.GetComponent<Rigidbody>().position=player.transform.position;
         ((Behaviour)player.GetComponent(T("PlayerInteractionFocus"))).enabled=false;
         yield return new WaitForSeconds(1.3f); Capture("courtyard-garden-morning-gameplay");
         var rig = UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));
-        var positions = new[] { new Vector3(-34,7,-5), new Vector3(-31,7,-3), new Vector3(31,7,-12), new Vector3(3,8,-10) };
-        var centers = new[] { new Vector3(-34,5,10), new Vector3(-43,2.6f,7), new Vector3(43,3,-1), new Vector3(3,1,6) };
+        var positions = new[] { new Vector3(-34,7,-5), new Vector3(-31,7,-3), new Vector3(31,7,-12), new Vector3(26,8,-25) };
+        var centers = new[] { new Vector3(-34,5,10), new Vector3(-43,2.6f,7), new Vector3(43,3,-1), new Vector3(26,1,-9) };
         var names = new[] { "tower", "breach", "gate", "garden" };
         for (int index=0; index<names.Length; index++)
         {

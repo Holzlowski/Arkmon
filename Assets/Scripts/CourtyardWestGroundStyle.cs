@@ -71,14 +71,14 @@ public sealed class CourtyardWestGroundStyle : MonoBehaviour
             for(int i=0;i<source.Length;i+=3)
             {
                 var center=oldGrass.transform.TransformPoint((v[source[i]]+v[source[i+1]]+v[source[i+2]])/3);
-                if(!InSection(center) && !CourtyardForeground.IsInnerVerge(center) && !OnRoad(center))kept.AddRange(new[]{source[i],source[i+1],source[i+2]});
+                if(!InSection(center) && !CourtyardForeground.IsInnerVerge(center) && !CourtyardResidentLayout.CastleSquare(center) && !OnRoad(center))kept.AddRange(new[]{source[i],source[i+1],source[i+2]});
             }
             var copy=Instantiate(originalGrass);copy.name="Courtyard grass outside polished routes";copy.SetTriangles(kept,0);copy.RecalculateBounds();
             meshes.Add(copy);oldGrass.sharedMesh=copy;
         }
         foreach(var r in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
         {
-            var p=r.transform.position;if(!r.enabled || (!InSection(p) && !CourtyardForeground.IsInnerVerge(p)))continue;
+            var p=r.transform.position;if(!r.enabled || (!InSection(p) && !CourtyardForeground.IsInnerVerge(p) && !CourtyardResidentLayout.CastleSquare(p)))continue;
             bool groundLeaf=r.name=="Painted ivy leaf" && p.y<Ground(p).y+.65f;
             bool oldPatch=r.name=="Path edge grass" || r.name=="Windblown grass" || r.name=="Meadow color patch";
             if(groundLeaf || oldPatch){hidden.Add(r);r.enabled=false;}
