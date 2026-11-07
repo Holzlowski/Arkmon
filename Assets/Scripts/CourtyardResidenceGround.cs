@@ -18,15 +18,12 @@ public sealed class CourtyardResidenceGround : MonoBehaviour
         style.earth=new Material(source){name="Resident work ground"};
         style.earth.SetColor("_BaseColor",new Color(.70f,.67f,.53f,.38f));
         style.earth.SetFloat("_EdgeStart",.38f);style.earth.SetFloat("_EdgeBreakup",.11f);
-        foreach(string name in new[]{"Garden cottage","East cottage"})
-        {
-            var home=GameObject.Find(name)?.transform;if(home==null)continue;
-            float width=name=="Garden cottage"?2.65f:2.77f;
-            style.Patch(name+" worn doorway apron",home.TransformPoint(new Vector3(0,0,-3.0f)),1.05f,1.15f,false);
-            style.Patch(name+" facade contact",home.TransformPoint(new Vector3(0,0,-2.5f)),width,.35f,true);
-            for(int side=-1;side<=1;side+=2)
-                style.Patch(name+" side foundation contact",home.TransformPoint(new Vector3(side*width,0,0)),.35f,2.5f,true);
-        }
+        // A continuous irregular soil skirt joins each facade to its yard. Contacts stay
+        // narrow against the masonry; they must not look like floating dark ovals.
+        style.Home("Garden cottage",2.65f,2.5f,3.8f);
+        style.Home("East cottage",2.77f,2.5f,3.1f);
+        style.Home("Ida workshop",3.35f,2.15f,2.1f);
+        style.Home("Stable",3.85f,2.1f,2.4f);
         foreach(string name in new[]{"Garden potting table","Garden bench seat","Workshop offcut basket","Stable grooming caddy","Stable water bucket","Aurenfeld exterior waymarker","Forecourt verge stone"})
             foreach(var part in FindObjectsByType<Transform>(FindObjectsSortMode.None))
                 if(part.name==name)style.Patch(name+" settled contact",part.position,name.Contains("table")?1.0f:.45f,.42f,true);
@@ -34,6 +31,59 @@ public sealed class CourtyardResidenceGround : MonoBehaviour
         style.WorkPlace("Stable",new Vector3(1.05f,0,-4.1f),1.6f,.8f);
         var table=GameObject.Find("Garden potting table");
         if(table!=null)style.Patch("Marta potting work ground",table.transform.position+Vector3.back*.65f,1.15f,.8f,false);
+    }
+    void Home(string name,float width,float depth,float approach)
+    {
+        var home=GameObject.Find(name)?.transform;if(home==null)return;
+        // Keep all points in the building's frame, including rotated houses.
+        for(int face=0;face<3;face++)
+        {
+            Vector3 a,b,outward;
+            if(face==0){a=new Vector3(-width,0,-depth);b=new Vector3(width,0,-depth);outward=Vector3.back;}
+            else{float side=face==1?-1:1;a=new Vector3(side*width,0,-depth);b=new Vector3(side*width,0,depth);outward=Vector3.right*side;}
+            FoundationStrip(name+" settled soil "+face,home,a,b,outward,.85f,false);
+            FoundationStrip(name+" foundation contact "+face,home,a,b,outward,.30f,true);
+        }
+        // Broad near the doorway, softer towards the existing path/stepping stones.
+        const int rows=24,across=9;
+        var v=new List<Vector3>();var c=new List<Color>();var t=new List<int>();
+        for(int row=0;row<=rows;row++)for(int col=0;col<across;col++)
+        {
+            float along=row/(float)rows,side=col/4f-1;
+            float widthAt=Mathf.Lerp(1.15f,.85f,along)+.10f*Mathf.Sin(along*11);
+            var local=new Vector3(side*widthAt+.10f*Mathf.Sin(along*4),0,-depth-along*approach);
+            v.Add(Ground(home.TransformPoint(local))+Vector3.up*.047f);
+            float end=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.68f,1,along));
+            c.Add(new Color(Mathf.Max(Mathf.Abs(side),end),0,0,1));
+            if(row>0 && col>0){int n=row*across+col;t.AddRange(new[]{n-across-1,n,n-1,n-across-1,n-across,n});}
+        }
+        Surface(name+" joined doorway ground",v,c,t,earth);
+    }
+    void FoundationStrip(string name,Transform home,Vector3 a,Vector3 b,Vector3 outward,float depth,bool shadow)
+    {
+        int rows=Mathf.CeilToInt(Vector3.Distance(a,b)/.3f);const int across=6;
+        var v=new List<Vector3>();var c=new List<Color>();var t=new List<int>();
+        for(int row=0;row<=rows;row++)for(int col=0;col<across;col++)
+        {
+            float along=row/(float)rows,r=col/(float)(across-1);
+            float edge=1+.16f*Mathf.Sin(along*17)+.09f*Mathf.Cos(along*29);
+            var local=Vector3.Lerp(a,b,along)+outward*(r*depth*edge-.09f);
+            v.Add(Ground(home.TransformPoint(local))+Vector3.up*(shadow?.064f:.043f));
+            float ends=1-Mathf.SmoothStep(0,1,Mathf.Min(along,1-along)*10);
+            c.Add(new Color(Mathf.Max(r,ends),0,0,1));
+            if(row>0 && col>0){int n=row*across+col;t.AddRange(new[]{n-across-1,n,n-1,n-across-1,n-across,n});}
+        }
+        Surface(name,v,c,t,shadow?contact:earth);
+    }
+    void Surface(string name,List<Vector3> v,List<Color> c,List<int> t,Material material)
+    {
+        // Both windings are possible around a facade; render the ground patch from above.
+        for(int i=0;i<t.Count;i+=3)
+            if(Vector3.Cross(v[t[i+1]]-v[t[i]],v[t[i+2]]-v[t[i]]).y<0)
+            {int swap=t[i+1];t[i+1]=t[i+2];t[i+2]=swap;}
+        var mesh=new Mesh{name=name};meshes.Add(mesh);mesh.SetVertices(v);mesh.SetColors(c);mesh.SetTriangles(t,0);mesh.RecalculateNormals();mesh.RecalculateBounds();
+        var go=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(transform,false);
+        go.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.Off;
     }
     void WorkPlace(string name,Vector3 local,float width,float depth)
     {

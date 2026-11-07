@@ -31,8 +31,8 @@ Shader "Arkmon/Courtyard Soft Path"
    half4 Frag(V i):SV_Target
    {
     float region=smoothstep(_Region.x,_Region.x+2,i.world.x)*(1-smoothstep(_Region.y-2,_Region.y,i.world.x));
-    float irregular=.065*sin(i.world.x*1.7+i.world.z*1.1)+.025*sin(i.world.x*6.3-i.world.z*4.2);
-    float alpha=lerp(1,1-smoothstep(.58,1,i.edge+irregular),region);
+    float irregular=.085*sin(i.world.x*1.7+i.world.z*1.1)+.04*sin(i.world.x*6.3-i.world.z*4.2);
+    float alpha=lerp(1,1-smoothstep(.44,1,i.edge+irregular),region);
     Light sun=GetMainLight(TransformWorldToShadowCoord(i.world));
     half3 light=max(SampleSH(normalize(i.normal)),half3(.09,.11,.16));
     light+=sun.color*saturate(dot(normalize(i.normal),sun.direction))*sun.shadowAttenuation;

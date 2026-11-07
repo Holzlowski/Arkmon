@@ -108,6 +108,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
                     edges.Add((a,(a-center).normalized));edges.Add((b,(b-center).normalized));
                 }
             }
+            RoadShoulder(filter.transform,vertices);
             var copy=Instantiate(original);copy.name=original.name+" soft verges";meshes.Add(copy);
             copy.vertices=vertices;copy.RecalculateNormals();copy.RecalculateBounds();
             var colors=new Color[vertices.Length];
@@ -128,6 +129,36 @@ public sealed class CourtyardVergePolish : MonoBehaviour
             originals.Add((filter,original,renderer,renderer.sharedMaterials));
             filter.sharedMesh=copy;renderer.sharedMaterials=new[]{source,paint};
         }
+    }
+    void RoadShoulder(Transform path,Vector3[] source)
+    {
+        var template=Resources.Load<Material>("CourtyardStyle/Stable earth");if(template==null)return;
+        var paint=new Material(template){name="Worn grass and earth path shoulder"};materials.Add(paint);
+        paint.SetColor("_BaseColor",new Color(.72f,.67f,.53f,.34f));
+        paint.SetFloat("_EdgeStart",.48f);paint.SetFloat("_EdgeBreakup",.15f);
+        var v=new List<Vector3>();var c=new List<Color>();var t=new List<int>();
+        int rows=source.Length/Across;const int columns=9;
+        for(int row=0;row<rows;row++)
+        {
+            var a=path.TransformPoint(source[row*Across]);var b=path.TransformPoint(source[row*Across+Across-1]);
+            var center=(a+b)*.5f;var across=(b-a).normalized;
+            float half=Vector3.Distance(a,b)*.5f+.52f+.13f*Mathf.Sin(row*.37f);
+            float ends=1-Mathf.Clamp01(Mathf.Min(row,rows-1-row)/3f);
+            for(int col=0;col<columns;col++)
+            {
+                float side=col/4f-1;var at=center+across*side*half;
+                v.Add(Ground(at)+Vector3.up*.006f);
+                c.Add(new Color(Mathf.Max(Mathf.Abs(side),ends),0,0,1));
+                if(row>0 && col>0){int n=row*columns+col;t.AddRange(new[]{n-columns-1,n,n-1,n-columns-1,n-columns,n});}
+            }
+        }
+        for(int i=0;i<t.Count;i+=3)if(Vector3.Cross(v[t[i+1]]-v[t[i]],v[t[i+2]]-v[t[i]]).y<0)
+        {int swap=t[i+1];t[i+1]=t[i+2];t[i+2]=swap;}
+        var mesh=new Mesh{name="Ground-conforming worn path shoulder"};meshes.Add(mesh);
+        mesh.SetVertices(v);mesh.SetColors(c);mesh.SetTriangles(t,0);mesh.RecalculateNormals();mesh.RecalculateBounds();
+        var go=new GameObject("Soft courtyard path shoulder",typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(transform,false);
+        go.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=paint;
+        renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
     }
     void RetirePrimitiveVerge()
     {

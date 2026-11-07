@@ -342,3 +342,9 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [ ] Neue Hausposition, Zaunhoehen, Sichtachsen und Geraeuschbalance gemeinsam im normalen Spiel beurteilen. Danach die weitere Belebung planen.
 
 - [x] Versetzten Garten samt Giessen/Abbruch/Neuladen, Martas Tuerzugang/Dialog, Stallanschluss und Wachrunde pruefen; abschliessenden verbundenen Rundgang mit aktiver Wache erfolgreich abschliessen.
+
+## Haus-, Boden- und Weguebergaenge
+
+- [x] Unregelmaessige Erdsaeume, schmale Fundamentschatten und Eingangsflaechen fuer Bewohnerhaeuser, Werkstatt und Stall verbinden.
+- [x] Weiche Wegschultern ergaenzen; Gartenweg und Szenenneustart stumm pruefen, Ansichten bei Marta und Ida beurteilen.
+- [ ] Uebergaenge beim normalen Hofrundgang gemeinsam beurteilen.

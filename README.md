@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.32.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.32.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2185,3 +2185,9 @@ Validation: Yard traversal/reload, the complete garden task and stable contacts 
 Extend the guard patrol from the workshop past the stable and castle approach to the gate. Marta alternates attention between seedlings and beds while Elian is distant; greetings and dialogue take priority. Add occasional local orchard wind using the existing recording alongside existing workshop/horse foley. Preserve conversation pauses and silent tests. The diagnostic driver completes a grounded two-stage detour around the guard; player controls are unchanged.
 
 Validation: The full patrol and Marta dialogue/facing passed. Final traversal with the active guard passed in 36.47 seconds. No new Windows build or subjective audio/performance benchmark was made; visual/listening review remains open.
+
+### 0.32.1 — connect houses, ground and courtyard paths
+
+`CourtyardResidenceGround` joins the cottages, workshop and stable to their yards with irregular earth skirts, narrow foundation contacts and doorway aprons extending beneath existing stepping stones. Ground points follow each building's local frame. `CourtyardVergePolish` adds softly faded soil shoulders, and `CourtyardSoftPath` blends the dirt edges more gradually. No colliders are added; generated meshes and private materials are released on scene unload.
+
+Validation: the focused relocated-garden/working-yards PlayMode check passed silently in 25.37 seconds, including traversal and reload (`Library/residence-transitions.xml`). Fresh Marta and Ida gameplay captures were reviewed during implementation. This is not a new performance benchmark; normal-play visual review remains open.
