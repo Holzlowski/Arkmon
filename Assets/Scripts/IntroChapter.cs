@@ -44,6 +44,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardLookout.Install();
             CourtyardFieldAtmosphere.Install();
             CourtyardFieldParticles.Install();
+            CourtyardCloudSunrays.Install();
             CourtyardCellarEntranceStyle.Install();
             CourtyardEastCottageStyle.Install();
             CourtyardGuard.Install();

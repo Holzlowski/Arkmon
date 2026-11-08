@@ -26,9 +26,14 @@ half3 AurenfeldMorningLight(half3 color,float3 p,float tips)
     float weight=_AurenfeldMorning*smoothstep(48,78,-p.x);
     float foreground=1-smoothstep(78,142,-p.x);
     float farm=exp(-dot((p.xz-float2(-148,18))/float2(55,65),(p.xz-float2(-148,18))/float2(55,65)));
-    float cloud=AurenfeldCloud(p)*(1-farm*.18);
-    half3 tint=lerp(half3(1.06,1.015,.93),half3(.38,.49,.67),cloud);
-    tint*=1-foreground*.13+farm*.15;
+    float2 farmFocus=(p.xz-float2(-144,14))/float2(23,30);
+    float focus=exp(-dot(farmFocus,farmFocus));
+    float2 bendA=(p.xz-float2(-112,17))/float2(13,10);
+    float2 bendB=(p.xz-float2(-192,42))/float2(18,15);
+    float bends=max(exp(-dot(bendA,bendA)),exp(-dot(bendB,bendB)));
+    float cloud=AurenfeldCloud(p)*(1-focus*.28-bends*.13);
+    half3 tint=lerp(half3(1.06,1.015,.93),half3(.41,.46,.56),cloud);
+    tint*=1-foreground*.10+farm*.08+focus*.13+bends*.07;
     float wave=sin(p.x*.075+p.z*.052-_Time.y*.85);
     tint+=half3(.085,.063,.025)*pow(saturate(wave),3)*tips*(1-cloud);
     color*=lerp(half3(1,1,1),tint,weight);

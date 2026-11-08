@@ -2423,3 +2423,7 @@ Move the actual cloud painting continuously, restore courtyard clouds on return,
 ### Release 0.44.0 - feat(landscape): connect golden fields to the mountain foothills
 
 Build one continuous scenic surface beneath the distant mountain painting, keeping valleys and the road corridor covered. Blend rear shoulders toward the mountain palette and add low irregular woodland groups. Check actual triangle coverage and resource cleanup.
+
+### Release 0.45.0 - feat(lighting): add soft cloud-gap sunlight to the lookout
+
+Sample the shared moving cloud mask for softly feathered golden light between cloud shadows. Fade the effect with the scenic view and release its materials on reload. Soften cool field shade and gently emphasize the farm and road bends.
