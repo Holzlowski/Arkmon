@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.47.2`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.47.3`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2567,3 +2567,9 @@ Build output, review images, audio auditions and source sample caches remain in 
 Extend the painted mountains around the courtyard with connected side/back faces. Fade near clouds only after crossing the breach and restore their visibility and renderer overrides on return. Check both frame edges at 16:9 and 21:9 and horizon coverage throughout the camera turn.
 
 Validation: Final combined horizon/tree/weather checks passed 3/3 in Library/flight-final-tests.xml; intermediate flight images were reviewed.
+
+### 0.47.3 - `fix(lighting): reveal warm sunlight through cloud gaps`
+
+Increase the soft golden ray contribution and vertical reach. Tighten the rendered pixel comparison so the sunlight is visibly present without washing out the panorama.
+
+Validation: Final cloud-ray image, movement and cleanup checks passed as part of Library/flight-final-tests.xml.

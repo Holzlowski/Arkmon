@@ -36,8 +36,8 @@ Shader "Arkmon/Aurenfeld Cloud Sunrays"
     float ends=smoothstep(0,.24,i.uv.y)*(1-smoothstep(.64,1,i.uv.y));
     float sides=smoothstep(0,.12,i.uv.x)*(1-smoothstep(.88,1,i.uv.x));
     float softDetail=.87+.13*AurenfeldCloudNoise(i.ground.xz*.035);
-    float alpha=.13*_Visibility*_AurenfeldMorning*saturate(_AurenfeldClouds.z)*i.weight*gap*ends*sides*softDetail;
-    return half4(1.35,.94,.36,alpha);
+    float alpha=.38*_Visibility*_AurenfeldMorning*saturate(_AurenfeldClouds.z)*i.weight*gap*ends*sides*softDetail;
+    return half4(1.65,1.12,.42,alpha);
    }
    ENDHLSL
   }

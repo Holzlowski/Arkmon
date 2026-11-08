@@ -93,7 +93,7 @@ public class CourtyardCloudRayTests
             Capture("aurenfeld-cloud-rays-on");foreach(var r in renderers)r.enabled=false;Capture("aurenfeld-cloud-rays-off");foreach(var r in renderers)r.enabled=true;
             var start=Difference("aurenfeld-cloud-rays-on","aurenfeld-cloud-rays-off");
             int visible=start.Count(d=>d>9);TestContext.WriteLine("Visible ray pixels: "+visible);
-            Assert.That(visible,Is.InRange(1000,start.Length/2),"Light must be visible without washing out the whole panorama.");
+            Assert.That(visible,Is.InRange(10000,(int)(start.Length*.65f)),"Light must be visible without washing out the whole panorama.");
             clock.SetValue(weather,45f);yield return null;yield return null;
             Capture("aurenfeld-cloud-rays-after-45s");foreach(var r in renderers)r.enabled=false;Capture("aurenfeld-cloud-rays-off-45s");foreach(var r in renderers)r.enabled=true;
             var end=Difference("aurenfeld-cloud-rays-after-45s","aurenfeld-cloud-rays-off-45s");

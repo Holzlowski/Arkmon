@@ -17,8 +17,8 @@ public sealed class CourtyardCloudSunrays : MonoBehaviour
         if(meadow==null || shader==null)return;
         var effect=new GameObject("Aurenfeld cloud-gap sunlight").AddComponent<CourtyardCloudSunrays>();
         effect.material=new Material(shader){name="Soft golden cloud-gap light"};
-        effect.Build(meadow,-155,62,.95f);
-        effect.Build(meadow,-245,79,.72f);
+        effect.Build(meadow,-155,90,.95f);
+        effect.Build(meadow,-245,118,.72f);
     }
     void Build(MeadowVegetation meadow,float x,float height,float strength)
     {
