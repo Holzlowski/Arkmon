@@ -456,3 +456,7 @@ Die Aurenfeld-Kamerafahrt gefaellt; ihre Komposition bewahren. Die technischen u
 
 - [x] Goldene Morgensonne, kuehlere Schatten, begrenzte Senkenaufhellung und deutlich wandernde Wolkenschatten fuer westliche Felder, Wege und Papiervegetation umgesetzt (0.41.0).
 - [ ] Neue Aurenfeld-Lichtstimmung und Bildrate im Testbuild gemeinsam beurteilen.
+
+- [x] Dezentes Tilt-Shift und warmes Post-Processing in die echte Aussicht eingebaut; Vordergrund abgeschwaecht, Bauernhofband und Overlaytext scharf (0.42.0).
+- [x] Stumme Bildpruefungen fuer Unterschaerfe-Ausrichtung, Wolkenschattenbewegung, Rueckkehr und Szenenwechsel bestanden.
+- [ ] Windows-Hof-Test 0.42.0 durch Nutzer pruefen: Licht, Unschärfe, Wolkenschatten, Bildrate und normales Spielgefuehl.

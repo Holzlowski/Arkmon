@@ -21,6 +21,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
     private CanvasGroup caption;
     private int startFrame;
     private CourtyardLookoutMusic scenicMusic;
+    private CourtyardLookoutFocus scenicFocus;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetSession() => active = null;
@@ -57,6 +58,8 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
         BuildOverlay();
         scenicMusic = GetComponent<CourtyardLookoutMusic>() ?? gameObject.AddComponent<CourtyardLookoutMusic>();
         scenicMusic.Begin();
+        scenicFocus=GetComponent<CourtyardLookoutFocus>() ?? gameObject.AddComponent<CourtyardLookoutFocus>();
+        scenicFocus.Begin(view);
     }
 
     public void ReturnToCourtyard()
@@ -96,6 +99,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
             fov = Mathf.Lerp(53, 58, t);
         }
         follow.SetScenicView(position, rotation, fov);
+        scenicFocus?.Present(progress);
         if (!returning && progress >= .68f) scenicMusic?.RevealCaption();
         caption.alpha = returning ? 0 : scenicMusic != null && scenicMusic.IsAvailable
             ? scenicMusic.CaptionAlpha : Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.68f, .9f, progress));
@@ -125,6 +129,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
     {
         if (active != this) return;
         scenicMusic?.StopImmediately();
+        scenicFocus?.End();
         follow?.ClearScenicView();
         if (objective != null) objective.enabled = objectiveWasEnabled;
         if (canvas != null) { canvas.gameObject.SetActive(false); Destroy(canvas.gameObject); }

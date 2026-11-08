@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.41.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.42.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2395,3 +2395,19 @@ Four staggered curved hedgerows echo the tower-window panorama. Existing rounded
 Irregular cloud banks with clear sunlight gaps drift at (-0.55, +0.70) metres/second across X/Z. The stronger cool shade follows soil, crops, roads and paper scenery together. It is a stylized procedural pattern, not a literal shadow map of the painted sky. The landscape mask fades in west of the courtyard; the changed sun and ambient fill also affect the courtyard itself. There are no extra shadow-casting lights. Disable and subsystem reset clear the weather globals.
 
 Validation before commit: silent morning render/lifecycle check passed in 31.11 seconds; final frozen-scene cloud comparison passed in 20.64 seconds (`Library/aurenfeld-cloud-shadows-final.xml`). Shadows-off/on and 30-second drift show visible changes; weather disable/re-enable passed with no shader errors or unexpected logs. Courtyard and lookout images were inspected. The combined integration tests are included with the following camera commit. Standalone performance still needs playtest review.
+
+### 0.42.0 - feat(camera): enable gentle scenic tilt-shift and warm post-processing
+
+The preferred gentle tilt-shift now runs on the actual lookout camera. `CourtyardLookoutFocus` enqueues a scene-owned URP 17 Render Graph pass only for its active game camera. A protected sharp band follows the farm; foreground strength is 55% of the upper-image blend. The resolution-scaled 3-pixel kernel replaces physical DoF so transparent paper art retains predictable focus. The extra pass uses 13 colour samples outside the protected band and is absent during normal exploration. Shared renderer assets are unchanged; shader resources ship via Resources. The project's enabled Render Graph mode is required.
+
+A temporary volume blends to contrast 10, saturation 4, subtly cooler shadows, warm highlights, bloom intensity 0.24 and threshold 1.08. Exposure and tonemapping remain inherited. The finish fades in after passing the breach and out on return; overlay captions stay sharp. End/disable unsubscribes the camera callback; destruction releases the pass material, volume components and runtime profile. Historical review shaders remain in Tests for comparison, not gameplay.
+
+Validation: focused silent camera check passed in 31.67 seconds (`Library/aurenfeld-postprocessing-orientation.xml`), including actual image changes, protected farm band, correct foreground orientation, return, disable and reload. Cloud shade/motion checks passed in 20.64 seconds. The Windows diagnostic now submits complete render requests so volume updates and the real camera pass are included, and returns the borrowed can before leaving the garden.
+
+Windows playtest build command (Unity must be closed):
+
+```powershell
+& 'C:/Program Files/Unity/Hub/Editor/6000.3.26f1-x86_64/Editor/Unity.exe' -batchmode -quit -disableAudio -projectPath 'C:/Users/Holz/Documents/Unity/Arkmon' -executeMethod CreateDemoBuild.Run -arkmonReviewBuild -arkmonBuildPath 'C:/Users/Holz/Documents/Unity/Arkmon/Builds/Arkmon-Hof-Test-0.42.0-2026-11-08/Arkmon.exe' -logFile 'C:/Users/Holz/Documents/Unity/Arkmon/Library/hof-build-0.42.0.log'
+```
+
+This development playtest starts in TowerRoom and includes StartScene and BattleScene. Normal launch retains audio; diagnostics run only with explicit command-line flags. Packaging and its source commit are recorded in the ignored build folder. Visual preference, normal-play frame rate and audio balance remain user playtest items.

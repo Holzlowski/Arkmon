@@ -1,5 +1,13 @@
 {
   "name": "Arkmon.PlayMode.Tests",
-  "references": ["Unity.InputSystem", "Unity.InputSystem.TestFramework", "Unity.TextMeshPro"],
-  "optionalUnityReferences": ["TestAssemblies"]
+  "references": [
+    "Unity.InputSystem",
+    "Unity.InputSystem.TestFramework",
+    "Unity.TextMeshPro",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
 }

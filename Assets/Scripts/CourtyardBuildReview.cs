@@ -111,6 +111,8 @@ public sealed class CourtyardBuildReview : MonoBehaviour
         var bed=FindObjectsByType<CourtyardGarden>(FindObjectsSortMode.None).First(c=>c.name=="Garden watering point");
         yield return PlacePlayer(bed.transform.position+Vector3.up);bed.InteractWithPlayer();yield return WaitGarden();DialogueBoxController.instance?.CloseDialogue();
         if(CourtyardGarden.WateredCount!=1)errors.Add("Pour did not complete");
+        yield return PlacePlayer(station.transform.position+Vector3.up);station.InteractWithPlayer();yield return WaitGarden();DialogueBoxController.instance?.CloseDialogue();
+        if(CourtyardGarden.HasCan)errors.Add("Can return failed before leaving garden");
         var lookout=FindFirstObjectByType<CourtyardLookout>();yield return PlacePlayer(new Vector3(-40.9f,1,7));
         lookout.InteractWithPlayer();yield return new WaitForSeconds(10.3f);if(!CourtyardLookout.IsPresenting)errors.Add("Lookout did not open");
         yield return Measure("western-lookout");Capture("western-lookout");yield return null;
@@ -156,7 +158,7 @@ public sealed class CourtyardBuildReview : MonoBehaviour
         try
         {
             camera.targetTexture=target;camera.aspect=1600f/900;
-            RenderPipeline.SubmitRenderRequest(camera,new UniversalRenderPipeline.SingleCameraRequest{destination=target});
+            RenderPipeline.SubmitRenderRequest(camera,new RenderPipeline.StandardRequest{destination=target});
         }
         finally{camera.targetTexture=previous;camera.aspect=aspect;}
     }
