@@ -15,7 +15,7 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
         var beds = FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
             .Where(r => r.name == "Garden soil bed").OrderBy(r => r.transform.position.x).ToArray();
         if (beds.Length != 3 || GameObject.Find("Garden cottage") == null) return;
-        GameObject.Find("Garden cottage").transform.position = CourtyardResidentLayout.GardenPoint(new Vector3(1, 0, 9.6f));
+        GameObject.Find("Garden cottage").transform.position = CourtyardResidentLayout.GardenPoint(new Vector3(.2f, 0, 9.6f));
         var centers = beds.Select(r => new Vector3(r.transform.position.x, 0, r.transform.position.z)).ToArray();
         var parts = FindObjectsByType<Transform>(FindObjectsSortMode.None).Where(t =>
             t.name == "Garden soil bed" || t.name == "Garden border" || t.name.StartsWith("Bean trellis") ||
@@ -96,8 +96,8 @@ public sealed class CourtyardGardenPlace : MonoBehaviour
         place.Trail("Garden worn spine",new Vector3(3.95f,0,.35f),new Vector3(4.35f,0,4.9f),new Vector3(4.55f,0,9.6f),.53f);
         foreach(var bed in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name=="Garden soil bed"))
         {
-            float z=bed.transform.position.z-CourtyardResidentLayout.GardenOffset.z-2.05f;
-            place.Trail("Garden watering approach",new Vector3(4.35f,0,z),new Vector3(5.2f,0,z-.10f),new Vector3(bed.transform.position.x-CourtyardResidentLayout.GardenOffset.x,0,z),.48f);
+            float z=bed.transform.position.z-CourtyardResidentLayout.GardenOffset.z;
+            place.Trail("Garden watering approach",new Vector3(4.35f,0,z),new Vector3(5.2f,0,z-.10f),new Vector3(bed.bounds.min.x-CourtyardResidentLayout.GardenOffset.x-1f,0,z),.48f);
         }
         place.Trail("Garden worktable connection",new Vector3(3.1f,0,5.35f),new Vector3(3.7f,0,5.05f),new Vector3(4.45f,0,5.15f),.48f);
     }

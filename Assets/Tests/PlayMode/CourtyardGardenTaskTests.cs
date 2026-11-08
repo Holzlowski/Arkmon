@@ -118,7 +118,7 @@ public class CourtyardGardenTaskTests
             Call(marta,"InteractWithPlayer");yield return new WaitForSeconds(.1f);
             Call(Dialogue,"SkipLine");yield return null;yield return null;
             Assert.That(State("ThanksReceived"),Is.True);Close();
-            Assert.That(State("ObjectiveText").ToString(),Does.Contain("zurÃ¼ck"));
+            Assert.That(State("ObjectiveText").ToString(),Does.Contain("zur\u00fcck"));
             MoveTo(Station);Call(Station,"InteractWithPlayer");yield return WaitForPour();Close();yield return null;
             Assert.That(State("HasCan"),Is.False);Assert.That(State("ObjectiveText"),Is.Null);
             Assert.That(Vector3.Distance(GameObject.Find("Watering can model").transform.position,Station.transform.position),Is.LessThan(.7f));

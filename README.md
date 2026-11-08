@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.39.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.39.4`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2285,3 +2285,9 @@ Validation: focused near-view and connected-route checks passed, including promp
 Group Hannes and the care horse locally for consistent layering from either side. Lift the articulated brushing arm while preserving the shoulder and idle pose.
 
 Validation: both grooming viewpoints inspected in the silent courtyard review.
+
+### 0.39.4 - fix(garden): water beds from the side and return the borrowed can
+
+Place the can visibly beside the garden aisle and water from the side of each bed. Remind Elian at the garden boundary and limit outward movement while keeping return movement available; suppress repeated reminders.
+
+Validation: pickup, three pours, thanks, return and boundary behavior passed. Correct the return-text test encoding.

@@ -115,6 +115,7 @@ public class PlayerController : MonoBehaviour
         if (isJumping) return;
         Vector3 movement = new Vector3(input.x, 0, input.y) * speed;
         if (movement.sqrMagnitude > speed * speed) movement = movement.normalized * speed;
+        movement = CourtyardGarden.ConstrainToolMovement(transform.position, movement, Time.fixedDeltaTime);
         rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
     }
 
