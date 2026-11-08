@@ -24,8 +24,14 @@ Shader "Arkmon/Courtyard Sun Shaft"
    {
     float edge=pow(saturate(sin(i.uv.x*3.14159265)),1.8);
     float ends=smoothstep(0,.07,i.uv.y)*(1-smoothstep(.55,1,i.uv.y));
-    float filaments=.78+.14*sin(i.uv.x*33+i.uv.y*2)+.08*sin(i.uv.x*71);
-    float drift=.94+.06*sin(_Time.y*.21+i.uv.y*4);
+    float phase=i.world.z*.73+i.world.x*.11;
+    float width=.80+.12*sin(_Time.y*.33+phase);
+    float centre=.5+.035*sin(_Time.y*.27+phase);
+    edge=pow(saturate(1-abs(i.uv.x-centre)*2/width),1.35);
+    float filaments=.76+.15*sin(i.uv.x*33+i.uv.y*2+_Time.y*.18)+.09*sin(i.uv.x*71-_Time.y*.24);
+    float cloud=.5+.5*sin(_Time.y*.22+phase+.45*sin(_Time.y*.13+phase*2));
+    float drift=.48+.52*smoothstep(.1,.9,cloud);
+    drift*=.72+.28*smoothstep(-.55,.7,sin(i.uv.y*8-_Time.y*.38+phase));
     float nearFade=smoothstep(.3,2.4,distance(i.world,_WorldSpaceCameraPos));
     return half4(_BaseColor.rgb,_BaseColor.a*i.weight*edge*ends*filaments*drift*nearFade);
    }

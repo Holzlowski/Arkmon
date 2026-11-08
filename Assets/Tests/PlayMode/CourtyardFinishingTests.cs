@@ -76,7 +76,7 @@ public class CourtyardFinishingTests
     {
         yield return Load();
         var root=GameObject.Find("Breach golden sunrays");Assert.That(root,Is.Not.Null);
-        var rays=root.GetComponentsInChildren<MeshRenderer>();Assert.That(rays.Length,Is.EqualTo(3));
+        var rays=root.GetComponentsInChildren<MeshRenderer>();Assert.That(rays.Length,Is.EqualTo(9));
         Assert.That(rays.All(r=>r.sharedMaterial.shader.isSupported),Is.True);
         Assert.That(root.GetComponentsInChildren<Collider>(),Is.Empty);
         Assert.That(root.GetComponentsInChildren<Light>(),Is.Empty);

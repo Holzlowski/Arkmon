@@ -7,6 +7,8 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
 {
     readonly List<Mesh> meshes = new List<Mesh>();
     readonly List<MeshRenderer> rays = new List<MeshRenderer>();
+    readonly List<Vector4> beamStarts=new List<Vector4>();
+    readonly List<Vector4> beamEnds=new List<Vector4>();
     Material sunlight, dustMaterial;
     ParticleSystem dust;
     Transform player;
@@ -20,15 +22,28 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
         var style=new GameObject("Breach golden sunrays").AddComponent<CourtyardBreachSunrays>();
         style.sunlight=new Material(shader){name="Golden breach light"};
         style.player=GameObject.FindWithTag("Player")?.transform;style.view=Camera.main;
-        // Start above the low broken crown, within the clear centre of the opening.
-        for(int i=0;i<3;i++)
-            style.Ray(new Vector3(-43.45f,5.8f+i*.37f,6.1f+i*.8f),
-                new Vector3(-35.94f+i*.50f,2.87f+i*.17f,7.42f+i*.91f),.30f+i*.07f,1.0f+i*.15f);
+        // Three depth banks with three shafts each: steep descending light, not a flat stripe.
+        // Authored length/width pairs avoid a repeating staircase pattern or random changes on reload.
+        var proportions=new[]{new Vector2(.58f,1.25f),new Vector2(1f,.55f),new Vector2(.78f,.9f),
+            new Vector2(.90f,.65f),new Vector2(.52f,1.4f),new Vector2(.74f,.8f),
+            new Vector2(.63f,.5f),new Vector2(.85f,1.1f),new Vector2(1f,.7f)};
+        for(int bank=0;bank<3;bank++)
+            for(int shaft=0;shaft<3;shaft++)
+            {
+                float z=5.0f+bank*1.65f+shaft*.42f;
+                var start=new Vector3(-43.3f+shaft*.20f,7.1f+shaft*.48f+bank*.18f,z);
+                var end=new Vector3(-38.7f+shaft*.66f+bank*.18f,.85f+shaft*.22f,z+.65f+bank*.48f);
+                var proportion=proportions[bank*3+shaft];
+                end=Vector3.Lerp(start,end,proportion.x);
+                style.Ray(start,end,(.12f+shaft*.025f)*proportion.y,(.48f+shaft*.10f)*proportion.y,.78f+bank*.10f);
+            }
         style.Dust();
     }
-    void Ray(Vector3 start,Vector3 end,float narrow,float wide)
+    void Ray(Vector3 start,Vector3 end,float narrow,float wide,float strength)
     {
         // Broad glow, a bright fine core and an angled inner sheet remain one draw per shaft.
+        beamStarts.Add(new Vector4(start.x,start.y,start.z,narrow));
+        beamEnds.Add(new Vector4(end.x,end.y,end.z,wide));
         var axis=(end-start).normalized;
         var side=Vector3.Cross(axis,Vector3.up).normalized;
         var vertices=new List<Vector3>();var uv=new List<Vector2>();var colors=new List<Color>();var triangles=new List<int>();
@@ -39,7 +54,7 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
             int first=vertices.Count;
             vertices.AddRange(new[]{start-across*narrow*width,start+across*narrow*width,end+across*wide*width,end-across*wide*width});
             uv.AddRange(new[]{Vector2.zero,Vector2.right,Vector2.one,Vector2.up});
-            var color=new Color(1,1,1,layer==0?.72f:layer==1?.82f:.40f);
+            var color=new Color(1,1,1,strength*(layer==0?.72f:layer==1?.82f:.40f));
             for(int i=0;i<4;i++)colors.Add(color);
             triangles.AddRange(new[]{first,first+1,first+2,first,first+2,first+3});
         }
@@ -54,17 +69,20 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
     {
         var shader=Resources.Load<Shader>("CourtyardSunDust");if(shader==null)return;
         dustMaterial=new Material(shader){name="Breach floating golden motes"};
+        dustMaterial.SetVectorArray("_BeamStarts",beamStarts);
+        dustMaterial.SetVectorArray("_BeamEnds",beamEnds);
         var go=new GameObject("Breach sunlit motes",typeof(ParticleSystem));go.transform.SetParent(transform,false);
-        go.transform.position=new Vector3(-39.5f,4.3f,7.5f);dust=go.GetComponent<ParticleSystem>();
+        go.transform.position=new Vector3(-40.5f,4.1f,7.7f);dust=go.GetComponent<ParticleSystem>();
         dust.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);dust.useAutoRandomSeed=false;dust.randomSeed=4307;
         var main=dust.main;main.playOnAwake=false;main.loop=true;main.duration=10;main.prewarm=true;main.maxParticles=64;
         main.simulationSpace=ParticleSystemSimulationSpace.World;main.startLifetime=new ParticleSystem.MinMaxCurve(6,10);
         main.startSpeed=.025f;main.startSize=new ParticleSystem.MinMaxCurve(.035f,.065f);
         main.startColor=new Color(1.6f,.94f,.26f,.9f);
-        var shape=dust.shape;shape.shapeType=ParticleSystemShapeType.Box;shape.scale=new Vector3(5.2f,2.4f,2.5f);
+        var shape=dust.shape;shape.shapeType=ParticleSystemShapeType.Box;shape.scale=new Vector3(4.7f,5.1f,4.8f);
         var emission=dust.emission;emission.rateOverTime=7;
         var velocity=dust.velocityOverLifetime;velocity.enabled=true;velocity.space=ParticleSystemSimulationSpace.World;
         velocity.x=.06f;velocity.y=.025f;velocity.z=.025f;
+        var noise=dust.noise;noise.enabled=true;noise.strength=.10f;noise.frequency=.35f;noise.scrollSpeed=.12f;noise.damping=true;
         var fade=dust.colorOverLifetime;fade.enabled=true;var gradient=new Gradient();
         gradient.SetKeys(new[]{new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},
             new[]{new GradientAlphaKey(0,0),new GradientAlphaKey(1,.2f),new GradientAlphaKey(1,.7f),new GradientAlphaKey(0,1)});fade.color=gradient;

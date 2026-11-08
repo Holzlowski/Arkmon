@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.39.4`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2291,3 +2291,9 @@ Validation: both grooming viewpoints inspected in the silent courtyard review.
 Place the can visibly beside the garden aisle and water from the side of each bed. Remind Elian at the garden boundary and limit outward movement while keeping return movement available; suppress repeated reminders.
 
 Validation: pickup, three pours, thanks, return and boundary behavior passed. Correct the return-text test encoding.
+
+### 0.40.0 - feat(lighting): animate varied golden breach rays and dust
+
+Arrange nine individually sized golden shafts in three depth banks. Animate width, filaments and cloud occlusion at staggered phases; let dust drift and follow changing illumination. Retain local visibility and existing particle cap without extra lights.
+
+Validation: focused light visibility/reload checks passed and rendered views inspected; no frame-rate benchmark.
