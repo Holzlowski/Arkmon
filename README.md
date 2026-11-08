@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.51.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.51.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2560,7 +2560,96 @@ Recent targeted checks: farm/foothill/audio regression 4/4 passed; revised birds
 
 Build output, review images, audio auditions and source sample caches remain in ignored `Builds/`. The packaged source commit and build result are stored with the Windows build. Local editor-only whitespace changes are preserved outside these commits.
 
-## Courtyard follow-up source releases
+
+## Historical implementation notes for the 0.51.1 source release
+
+The following development notes are retained for their implementation and validation details. Their pending/proposed-version wording is historical and superseded by the release record below.
+
+### Pending panorama fixes after the 0.47.1 playtest
+
+The mountain backdrop now extends its outer edges with mirrored geometry while preserving the central composition. Cloud-gap rays reach farther into the sky and have stronger soft golden illumination. The shared crop/field palette is richer honey-gold again, retaining ochre and straw variation without grading the sky or greenery. Targeted review checks the frame edges at 16:9 and 21:9 and compares actual rendered ray visibility over time.
+
+Suggested separate commits (not yet committed): `fix(landscape): cover the panoramic mountain edges` (next version 0.47.2), `fix(lighting): reveal soft sunlight through cloud gaps`, and `fix(landscape): restore warm golden harvest colors`. Increment the patch version once per actual commit.
+
+Validation: CourtyardCloudRayTests passed (34.93 seconds, silent PlayMode). Actual image comparisons at weather times 0 and 45 seconds confirm visible changing light; camera-ray checks cover both mountain edges at 16:9 and 21:9. Reviewed images are in ignored Builds/panorama-edge-rays-review. Existing Windows build 0.47.1 is unchanged.
+
+
+### Courtyard-to-lookout continuity and tree breeze (pending)
+
+The mountain painting now surrounds the courtyard with connected mirrored side/back faces, retaining the main western composition throughout the camera turn. Near courtyard clouds fade only after crossing the breach, then restore their previous visibility and renderer overrides on return/disable. Trees now receive the existing GPU plant-wind treatment after species styling and shadow setup: subdivided shared sprites, stationary lower trunks, and flexible crowns driven by the same gust phase as the grain. Birch and willow are more flexible than oak/apple. Tree textures, tint, colliders and imported resources remain unchanged. The existing terrain-conforming tree shadow silhouettes remain static; this is crown motion, not individually simulated leaves.
+
+Suggested commits: `fix(landscape): keep the horizon continuous during lookout turns` (surrounding geometry and reversible cloud fade) and `feat(environment): sway tree crowns with the field breeze` (tree setup, shader and regression checks). These join the pending 0.47.1 follow-ups above; the next proposed version is still 0.47.2, with a version increment only when each commit is created. No new build or push yet.
+
+Validation: tree/plant GPU motion and planted-root image checks passed; final horizon, tree-style and weather return/reload checks passed 3/3 (Library/flight-final-tests.xml). Review frames cover seven intermediate flight positions plus the settled courtyard and panorama in Builds/flight-wind-after. All checks ran with audio disabled.
+
+### Weathered western breach masonry (pending)
+
+The exposed ruin edges now use individual, staggered 3D stone courses. Each stone has asymmetric bevels and corner chips, a warm single-stone pigment pattern and recessed mortar instead of the repeating full-wall texture. The new shader mode is opt-in; intact castle surfaces keep their existing painted atlas. Low, irregular moss stains and reduced rubble piles anchor both sides of the breach while leaving the approach clear. The existing low-wall collider remains in place underneath the new visible masonry.
+
+Runtime meshes and the cloned stone material are released on scene reload. The breach regression checks outward-facing chip geometry, approach traversal, the courtyard boundary, supported materials and reload cleanup. Silent review captures include the approach, normal gameplay camera and a close-up. This is local geometry and shading polish, not a replacement of the entire castle wall mesh.
+
+Suggested commit: `fix(environment): rebuild breach edges with weathered individual stones` - `CourtyardBreachStyle.cs`, `CourtyardIllustratedSurface.shader`, `CourtyardBreachTests.cs` and this README section. Existing panorama/tree changes remain separate. Next proposed version is 0.47.2 for the first pending commit; version metadata is unchanged and no commit, push or Windows build has been made for this change.
+
+Validation: breach and panorama regression passed 2/2 (Library/breach-stone-tests.xml); after the final pigment/bevel refinement, the focused breach test passed again 1/1 (Library/breach-stone-final.xml). Reviewed close-up and approach images are in ignored Builds/breach-stone-final. All Unity checks ran with audio disabled.
+
+
+### Breach and castle material matching (pending refinement)
+
+The breach now samples three slightly different crops inside one stone from the existing castle masonry atlas and inherits the adjacent wall tint. This supersedes the separate procedural pigment palette described above. Courses are 0.44 m tall, close to the atlas stone scale; one continuous course grid replaces overlapping low-wall and tall-edge blocks. Shallow staggered transition stones extend onto the intact wall and blend back into its identical world-projected texture. Existing castle buildings, windows and their materials are not globally replaced. Bevels, moss and the clear approach remain.
+
+Suggested commit: `fix(environment): match breach masonry to the castle palette` - breach construction, opt-in single-stone atlas shading and documentation. Next proposed version remains 0.47.2 for the first pending commit. No version change, commit, push or new build yet.
+
+Validation: the final silent CourtyardBreachTests run passed 1/1 (Library/breach-palette-tests.xml), covering approach traversal, boundary collision, stone geometry and resource cleanup on scene reload. Close-up and normal-camera images were reviewed in Builds/breach-palette-approved. Targeted diff formatting checks passed.
+
+### Continuous courtyard wall relief (pending)
+
+`CourtyardWallRelief` replaces the visible meshes of all six enclosing wall sections, active north/side battlements and gate piers with staggered, bevelled stone faces. Inner/outer faces, ends and wall tops receive real geometry. Stones project roughly 2.5-7.5 cm, with small irregular chips, varied tilt and recessed mortar. Their atlas UVs use the same painted stone interior as the breach. The earlier flat-wall blending strips at the breach are removed. The curved masonry above the eastern gate is consolidated and dressed without filling the arch opening; the dressed arch surround remains distinct.
+
+Each authored wall object retains its renderer, shared material, collision and camera-cutaway overrides. Stones are combined into one mesh per object, not individual GameObjects or colliders. The renderer opts into single-stone vertex UV/color shading; building facades and other atlas users keep their existing rendering. Runtime meshes are restored/released when the relief component is destroyed. The increased geometry is intentional; frame rate on tester hardware has not been benchmarked.
+
+Suggested commit: `feat(environment): add continuous stone relief to courtyard walls` - `CourtyardWallRelief.cs` and metadata, installation in `IntroChapter.cs`, batched atlas support in `CourtyardIllustratedSurface.shader`, removal of obsolete breach blending, focused PlayMode checks and this documentation. Proposed version for this feature is 0.48.0; metadata remains unchanged until an actual commit. Earlier pending panorama and tree changes stay separate. No commit, push or new Windows build performed.
+
+Validation: wall relief and breach traversal/reload tests passed 2/2 (Library/wall-relief-final.xml). After dressing the two exposed gate ends, the focused wall test passed again 1/1 (Library/wall-relief-complete.xml), including checks for both end faces, retained colliders and foreground cutaway, and released runtime meshes. Normal courtyard, garden, gate and breach images were reviewed in Builds/wall-relief-complete and Builds/wall-relief-final. All checks ran with audio disabled; no performance benchmark or new standalone build was run.
+
+### Crafted courtyard buildings and ground edges (pending)
+
+The courtyard's existing 3D architecture now has shallow physical details in its painted palette. `CourtyardCraftMesh` builds deterministic, clipped masonry/paving courses, lapped roof tiles and bevelled box parts. `CourtyardBuildingCraft` applies those surfaces after the courtyard layout and palette setup: castle/tower facades and battlements, residence roofs, cottage/workshop/stable roofs, terraces and approach stones. Window/recess footprints are kept clear. Existing projecting corner stones, sills and wood framing receive softened edges; large plaster surfaces keep their painted finish. Dark wooden pegs articulate house posts. Drawbridge boards, rails and existing metal straps/rivets receive restrained bevels.
+
+`CourtyardGroundCraft` places sparse, terrain-following stones around home footings and short exposed roots at the courtyard oak, apple tree and stream willow. Door approaches and work areas remain open. Decorative relief, pegs, stones and roots add no colliders; the original authored collision surfaces and interaction anchors remain in place. Objects use scene-owned meshes/materials, with original bevelled meshes restored and generated resources released on teardown. The additions appear when StartScene enters Play Mode, alongside the existing runtime styling.
+
+Roof/stone detail is combined per source surface; footing stones and roots are batched per location. This adds visible geometry and renderers, so performance on tester hardware still needs measurement. It is a stylized relief pass, not destructible architecture or individual physical roof tiles. Scene layout, NPC tasks and the painted character art are unchanged.
+
+Suggested commits:
+- `feat(environment): give courtyard architecture painted physical relief` — surface mesh helper, building treatment, installation and relevant coverage/documentation.
+- `feat(environment): settle courtyard foundations into the terrain` — footing stones, tree roots, installation and relevant cleanup/collision coverage.
+
+Next proposed feature version: **0.48.0**. Version metadata remains at 0.47.1 until a commit is requested; every actual commit will receive its own version increment. No commit, push or standalone build was performed for this pass.
+
+Validation: the existing close-route regression passed at all eleven courtyard positions (CourtyardNearViewTests in Library/building-craft-final.xml). After the final small-canopy inclusion, the focused geometry/collision/teardown test passed 1/1 (Library/building-craft-approved.xml). It verifies the original colliders survive, generated objects add no colliders, valid relief meshes are present and owned geometry/pegs are released. Six final gameplay images were captured in Builds/building-craft-approved; representative building, roof and garden views were visually reviewed across the final passes. All Unity checks ran with audio disabled. Current building detail totals: 119 combined relief surfaces / 609,350 vertices and 733 softened original parts; no frame-rate benchmark was performed.
+
+### Courtyard surface variation and lived-in edges (pending refinement)
+
+Stone courses now vary in width, projection, bevel wear, pigment crop and subtle warmth. Roof tiles use gently varying row spacing, overlap and corner wear; non-collidable ridge caps have small reversible offsets. Source geometry stays closed beneath the relief. Building seeds derive from hierarchy and position, so reloads do not reshuffle their treatment based on Unity instance IDs. Enclosing wall courses use the same restrained width/pigment variation.
+
+Foundation dressing now adds narrow sandy deposits, sheltered moss, small gravel and sparse grass groups around the four resident buildings and stair feet. Local wear is tied to the actual work areas: wood remnants/scuffs at Ida's bench, hoof marks at the stable and loose soil/grit at Marta's potting table. Ground patches follow the collision terrain; they add no colliders. Central-square/garden-walkway exclusions keep new grass out of the principal routes. Ground dressing is installed before plant-wind registration, so its grass participates in the existing breeze. Soil, moss, wear, gravel and wood remnants are each batched rather than rendered as hundreds of separate objects.
+
+Validation: all four silent PlayMode checks passed (Library/courtyard-refinement-after.xml): generated architecture/terrain contacts and cleanup, eleven-position close route and interaction framing, enclosing-wall collision/cutaway/reload, and a fixed-resolution frame comparison. Gameplay captures are in Builds/courtyard-refinement-after. Building relief remains at 119 combined surfaces, now 609,635 vertices versus 609,350 before this refinement.
+
+The comparison used Unity 6000.3.26f1 on an NVIDIA GeForce RTX 3070 Ti, a 1920x1080 camera render target, VSync/target-frame cap disabled, 45 warmup frames and 240 sampled frame intervals per position. It includes editor/OS overhead and is not a standalone GPU benchmark or a guaranteed speedup.
+
+| Fixed view | Median before / after (ms) | P95 before / after (ms) |
+| --- | --- | --- |
+| Tower | 7.75 / 7.32 | 9.38 / 8.08 |
+| Workshop | 11.08 / 9.70 | 15.46 / 10.75 |
+| Garden | 17.04 / 12.12 | 26.51 / 12.81 |
+
+No regression appeared in this comparison; the lower after-values should be treated cautiously because editor/background activity varies. Machine-readable reports are in Builds/courtyard-refinement-before/frame-review.json and Builds/courtyard-refinement-after/frame-review.json. The reusable CourtyardFrameReviewTests harness writes to ARKMON_REVIEW_OUTPUT and restores time scale, resolution target, UI camera state and frame settings after measurement.
+
+Suggested commits: `feat(environment): vary courtyard stone courses and roof tiles` (surface builders/ridge variation), `feat(environment): add grounded courtyard work-area details` (foundation transitions, grass and work traces), and `test(environment): add repeatable courtyard frame review` (measurement harness and evidence). Keep related documentation and tests with their changes. Proposed next feature version remains 0.48.0; metadata is unchanged and no commits, push or standalone build were performed.
+
+## Courtyard source release 0.51.1 - 2026-11-08
+
+This release supersedes pending/proposed-version and uncommitted-status notes above. The following eight commits each increment PlayerSettings.bundleVersion once. The latest packaged Windows build remains 0.47.1; these source improvements require a new build for standalone testing.
 
 ### 0.47.2 - `fix(landscape): keep the horizon continuous during lookout turns`
 
@@ -2603,3 +2692,9 @@ Validation: The completed building and route checks passed in Library/courtyard-
 Add terrain-following footing stones, short roots, sand, sheltered moss and sparse grass around homes and stairs. Place wood traces at Ida, hoof marks at the stable and soil at Marta. Batch decorative surfaces, preserve open routes and register new grass before wind setup. No new colliders are added.
 
 Validation: Final generated geometry/contact/cleanup, eleven-position route and wall checks passed in Library/courtyard-refinement-after.xml; all four checks including the frame review passed with audio disabled.
+
+### 0.51.1 - `test(environment): add repeatable courtyard frame comparisons`
+
+Measure fixed tower, workshop and garden views at 1920x1080 with 45 warmup and 240 sampled frames. Report median/P95 intervals to ARKMON_REVIEW_OUTPUT and restore render target, UI camera state, time scale and frame settings. Consolidate release documentation and measured results.
+
+Validation: Final silent PlayMode run passed 4/4 in Library/courtyard-refinement-after.xml. No regression appeared in the editor comparison; editor/OS variation prevents claiming a guaranteed speedup. No new standalone build was created.
