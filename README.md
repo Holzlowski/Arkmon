@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.47.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.47.4`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2573,3 +2573,9 @@ Validation: Final combined horizon/tree/weather checks passed 3/3 in Library/fli
 Increase the soft golden ray contribution and vertical reach. Tighten the rendered pixel comparison so the sunlight is visibly present without washing out the panorama.
 
 Validation: Final cloud-ray image, movement and cleanup checks passed as part of Library/flight-final-tests.xml.
+
+### 0.47.4 - `fix(landscape): restore warm golden harvest colors`
+
+Restore richer ochre, honey and straw variation to the field palette while retaining the existing sky and greenery treatment.
+
+Validation: Reviewed panorama and flight captures from the final silent scene checks; this is a palette-only change.

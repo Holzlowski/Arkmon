@@ -46,7 +46,7 @@ public static class AurenfeldLandscape
         }
         float blend=.5f*(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(0,.065f,second-first)));
         float variety=Mathf.Lerp(tone,other,blend);
-        Color ochre=new Color(.72f,.50f,.22f), honey=new Color(.89f,.69f,.31f), straw=new Color(.96f,.83f,.51f);
+        Color ochre=new Color(.83f,.57f,.16f), honey=new Color(.97f,.73f,.24f), straw=new Color(1f,.86f,.40f);
         return (variety<.5f ? Color.Lerp(ochre,honey,variety*2) : Color.Lerp(honey,straw,(variety-.5f)*2)).linear;
     }
 }
