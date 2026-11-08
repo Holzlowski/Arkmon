@@ -191,7 +191,10 @@ public class MeadowVegetation : MonoBehaviour
                 {
                     tip = Color.Lerp(new Color(.57f,.70f,.28f), new Color(.96f,.78f,.36f), gold).linear;
                     root = Color.Lerp(new Color(.13f,.27f,.075f), new Color(.36f,.28f,.09f), gold).linear;
-                    float tint = Mathf.Lerp(.88f, 1.06f, detail); tip *= tint; root *= tint;
+                    float composition=AurenfeldLandscape.Weight(world);
+                    tip=Color.Lerp(tip,AurenfeldLandscape.Harvest(world),composition);
+                    root=Color.Lerp(root,tip*.40f,composition);
+                    float tint = Mathf.Lerp(Mathf.Lerp(.88f,.94f,composition), Mathf.Lerp(1.06f,1.04f,composition), detail); tip *= tint; root *= tint;
                     height *= Mathf.Lerp(.80f, 1.25f, fullness) * Mathf.Lerp(.85f, 1.12f, detail);
                 }
                 if (ripeGrain && CourtyardFarmApproach.IsHarvested(world)) stubble = true;

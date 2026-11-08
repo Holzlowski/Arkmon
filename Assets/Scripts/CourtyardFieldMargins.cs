@@ -34,8 +34,9 @@ public sealed class CourtyardFieldMargins : MonoBehaviour
     {
         float field = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.32f, .68f,
             Mathf.PerlinNoise((p.x + 400) * .009f, (p.z + 200) * .009f)));
-        return Color.Lerp(new Color(.63f, .46f, .19f), new Color(.80f, .65f, .32f), field).linear
+        var original = Color.Lerp(new Color(.63f, .46f, .19f), new Color(.80f, .65f, .32f), field).linear
             * Mathf.Lerp(.94f, 1.05f, Mathf.PerlinNoise(p.x * .045f + 50, p.z * .045f + 50));
+        return Color.Lerp(original, AurenfeldLandscape.Harvest(p), AurenfeldLandscape.Weight(p));
     }
     public static bool IsBarePath(Vector3 p) => Weight(p) > .95f && Mathf.Abs(p.z - VergeZ(p.x)) < PathHalfWidth(p.x) * .67f;
 

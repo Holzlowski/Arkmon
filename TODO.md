@@ -395,3 +395,59 @@ Bei jedem Arbeitsschritt betroffene Aufgaben aktualisieren. Teilweise fertige Au
 - [x] Naehere Hofkamera und sanften Gespraechszoom samt Rueckfahrt eingebaut und geprueft.
 - [ ] Kameranaehe und Zoomtempo beim normalen Spielen beurteilen.
 - [ ] Erst nach dem Hof-Feinschliff die Ankunft der Arkanmeisterin beginnen.
+
+
+## Nahansicht und Hof-Testbuild
+
+- [x] Elf Hofstellen mit der nahen Spielkamera aufgenommen und geprueft.
+- [x] Verdecken der Figur an der vorderen Gartenmauer und durch Interaktionshinweise korrigiert.
+- [x] Dekorative Trittsteine an Hauseingaengen und Keller an das Gelaende angepasst.
+- [x] Finalen Hofrundgang und Windows-Build geprueft; ZIP mit Startanleitung und Testergebnissen bereitgestellt.
+- [x] Nutzerfeedback zu Kamera, goldenen Strahlen, Musik und Hofdetails gesammelt; offene Korrekturen siehe unten.
+
+- [x] God Rays zu neun steileren goldenen Strahlen in drei Z-Ebenen auffaechern; Staubbeleuchtung an die einzelnen Lichtbahnen binden.
+
+- [x] Laengen und Breiten der neun Sonnenstrahlen einzeln variieren; feste Komposition beim Neuladen beibehalten.
+
+- [x] Neuen Windows-Testbuild mit den individuell langen/breiten God Rays erstellt, Start und ZIP geprueft; Testpaket mit Godrays im Dateinamen bereitgestellt.
+
+
+## Hof-Testfeedback vom 08.11.2026
+
+Die Aurenfeld-Kamerafahrt gefaellt; ihre Komposition bewahren. Die technischen und visuellen Korrekturen sind umgesetzt; Dialogtexte und ein neuer Build bleiben separat offen.
+
+- [x] Eingaben vollstaendig auf das bereits installierte Input System umstellen; erst danach Legacy Input Manager deaktivieren. Bewegung, Interaktion, Dialoge, Kampf-UI und Abbruch pruefen.
+- [x] Hof, Mauerfuss und Aussenlandschaft geometrisch lueckenlos verbinden; besonders Vordergrund, Burgvorplatz und Anschluss an Zugbruecke/Burgtor. Hoehen, Materialien und begehbare Uebergaenge gemeinsam pruefen.
+- [x] Wege sandiger gestalten, weich in Randbewuchs uebergehen lassen und den ins Leere fuehrenden Weg bei Hannes sinnvoll anschliessen.
+- [x] Alte funktionslose Huette an der Burg entfernen oder bewusst integrieren; abruptes Terrassenende am Turm mit passendem Abschluss gestalten.
+- [x] Burgbewuchs gezielt an Sockeln und geschlossenen Mauerflaechen platzieren; Fenster, Tueren und Zierleisten freihalten.
+- [x] Aurenfeld-Banner zwischen den Fenstern platzieren und ihre Breite an die freien Fassadenflaechen anpassen.
+- [x] Aurenfeld um gruppierte gruene Hecken und Buesche an Feldraendern ergaenzen, passend zur Turmfenster-Aussicht; goldene Felder bleiben praegend.
+- [x] Hannes und Pflegepferd aus beiden Blickrichtungen pruefen: Arm/Buerste korrekt schichten und Buerstenkontakt am Pferderuecken statt vor der Flanke herstellen.
+- [x] Giesskanne an einer sichtbaren Garten-Ablagestelle platzieren, die nicht von der vorderen Mauer verdeckt wird.
+- [x] Giesspositionen an die Seiten der Beete legen; Pose, Ausrichtung und Wasserstrahl darauf abstimmen.
+- [x] Beim Entfernen mit der Kanne Martas Erinnerung ausloesen: "Prinz Elian, bitte lasst die Giesskanne hier. Die brauche ich noch." Wiederholungen unterdruecken; Kanne soll im Garten bleiben. Rueckgabeablauf und Grenzverhalten umsetzen und pruefen.
+- [x] God Rays lebendiger gestalten: langsame, versetzte Intensitaets- und Breitenwechsel, bewegte weiche Lichtunterbrechungen sowie dezenter Staubdrift. Gemeinsame Sonnenrichtung bewahren; Staubbeleuchtung an veraenderte Strahlen anpassen.
+- [ ] Dialoge persoenlicher gestalten, sobald die Textideen des Nutzers vorliegen.
+- [x] Problemstellen aus mehreren Kamerapositionen kontrolliert: Pferdepflege, Garten, Burgportal, Terrasse, Vordergrundmauer und Zugbruecke; Aurenfeld-Komposition erhalten.
+- [ ] Neuen Windows-Testbuild mit diesen Korrekturen erstellen, wenn angefragt. Der vorhandene Godrays-Build vom 07.11. enthaelt sie noch nicht.
+
+
+## Aurenfeld an die Fensteraussicht angleichen
+
+- [x] Senke beim Bauernhof und drei versetzte Feldhuegel ueber ein gemeinsames Hoehenprofil anlegen.
+- [x] Boden und Getreide in unregelmaessige ocker-, honig- und strohfarbene Aecker gliedern.
+- [x] Gruenere Baumgruppen und unterbrochene Hecken in der mittleren Entfernung ergaenzen.
+- [x] Ferne Halme schrittweise in strukturierte gemalte Flaechen uebergehen lassen; kuehlere Fuellfarbe im Feldlicht, ohne mehr Nebel.
+- [x] Weg, Bauernhof und Bewuchs an die neuen Hoehen binden; Kamera und Bergkulisse erhalten.
+- [ ] Landschaftsaufteilung anhand desselben Blickwinkels gemeinsam beurteilen, bevor weitere Siedlungsdetails hinzukommen.
+
+### Rueckmeldung: ferne Felder zu kahl
+
+- [x] Frueheres Hoehenprofil staerker erhalten; neue breite Huegel auf 25 Prozent Beimischung reduzieren.
+- [x] Getreide spaeter ausblenden und vereinfachte Halme weiter in die Ferne reichen lassen.
+- [x] Gemalte Aehrenstruktur fuer entfernte Feldoberflaechen einbinden; Hecken niedriger und heller abstimmen.
+- [x] Stumme Kamerafahrt-Pruefung bestanden; Zwischenansicht und Endansicht mit vorheriger Fassung verglichen.
+- [ ] Vollere Feldansicht vom Nutzer beurteilen lassen; Leistung auf dem Testrechner vergleichen.
+
+- [x] Hof-, Eingabe-, Garten-, Licht- und Landschaftskorrekturen in sieben fachliche Commits mit Beschreibungen und Versionen aufgeteilt (bis 0.40.2). Neuer Testbuild bleibt offen.

@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.2`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2266,6 +2266,80 @@ Courtyard conversations ease towards a 14-unit view of Elian and the nearby conv
 Validation: Three silent camera/lookout checks passed in 62.75 seconds (Library/courtyard-camera-close.xml). Four conversation compositions, stable partner, smooth return, western follow bounds, scenic priority and reload checked. No new build.
 
 
+### Courtyard near-view polish and Windows playtest (pending)
+
+The foreground cutaway wall now uses the existing illustrated-surface view cutout around Elian near the garden edge. The cutout eases in/out and restores its property override when disabled; wall collisions remain intact. It is limited to the front wall and does not modify the gate presentation or distant scenery. Interaction hints update after the exploration camera, stay above visible player sprites and remain inside the screen margins.
+
+Decorative approach flagstones at the workshop, garden cottage, eastern cottage and cellar conform to the final terrain at each vertex. Their lower faces sit below the soil and their tops clear the thin dirt overlays; walking colliders and architecture remain unchanged. Generated meshes are restored/released on unload.
+
+The local Windows playtest package starts in TowerRoom and includes StartScene and BattleScene. It is a development build for testing, with diagnostics active only when explicitly requested on the command line. Normal launch retains music and sound. The package records the base commit and local source hashes so these uncommitted polish fixes can be distinguished from the pushed 0.39.0 release. Build output is ignored by Git.
+
+Suggested commit: `fix(courtyard): keep close-view interactions and entrances readable`. No commit or version bump yet; next proposed patch version is **0.39.1**. Test and build results are recorded below once complete.
+
+Near-view validation: both focused silent checks passed in 58.06 seconds (`Library/courtyard-near-final.xml`): continuous tower/workshop/stable/garden/castle/gate traversal, eleven camera viewpoints, interaction-hint clearance, front-wall collision and cutout reset, and approach-stone ground contact. The final garden, tower and eastern entrance captures were visually reviewed.
+
+Windows validation: `CreateDemoBuild.Run` produced the development playtest with zero build errors (679,113,065 bytes reported by Unity). The standalone silent rendered review passed with an empty error list: full courtyard/bridge traversal, can pickup, completed pour, lookout entry/return and scene reload (`Builds/Hof-Test-0.39.0-review/review.json`). The tested ZIP is `Builds/Arkmon-Hof-Test-0.39.0-2026-11-07.zip`, with German start/test notes, source hashes and a SHA-256 sidecar. Normal-play sound and subjective camera feel still need user review; combat was not replayed in this pass.
+
+
+### Steeper breach light fan (pending)
+
+The current breach effect expands from three shafts to nine narrower golden shafts arranged in three depth banks. They descend from roughly 7-8.5 metres toward the ground, with a stronger downward diagonal and differing Z offsets. They still end locally at the opening, fade at their tips and hide when the scenic camera passes outside. Each shaft retains its layered core/glow; no new lights or colliders are introduced. The 64-speck dust cap remains; the dust shader receives the actual nine beam endpoints so illumination follows the deeper fan instead of a hard-coded single axis.
+
+Suggested commit: `style(lighting): fan golden breach rays across depth`. No commit/version bump yet; next proposed patch version remains **0.39.1** pending the earlier near-view fixes. The existing 2026-11-07 Windows test ZIP predates this light-fan revision.
+
+Light-fan validation: the focused silent visibility/reload check passed in 16.49 seconds (`Library/breach-ray-fan.xml`), with no shader errors. The gameplay capture was reviewed for steeper descent, separated gold cores and Z-depth distribution. Nine ray renderers and the existing 64-particle cap; no frame-rate benchmark or rebuilt Windows ZIP in this pass.
+
+The nine breach shafts now have individually authored length/width pairs: lengths range from 52% to 100% of their bank direction, and width factors from 0.5 to 1.4. Short broad glows alternate with longer fine shafts without a repeating size order; the layout remains stable across scene reloads. Dust uses the revised endpoints automatically. Suggested commit: `style(lighting): vary breach ray lengths and widths`. No commit/version bump or Windows ZIP rebuild; next proposed patch remains 0.39.1.
+
+Varied-shaft validation: the focused silent visibility/reload check passed in 15.77 seconds (`Library/breach-ray-variety.xml`). The updated gameplay image was reviewed; nine rays and the 64-particle cap remain unchanged.
+
+Updated God-Ray Windows package: `Builds/Arkmon-Hof-Test-0.39.0-Godrays-2026-11-07.zip` now includes the nine depth-layered, individually sized shafts and all preceding uncommitted courtyard fixes. Unity reported a successful development build with zero errors (679,114,883 bytes). A short silent standalone startup completed without crashes, exceptions or shader errors; ZIP integrity and source-manifest hashes were verified. The existing focused light lifecycle test passed in 15.77 seconds; full traversal was not rerun for this light-only build update. German instructions/results and a SHA-256 sidecar are provided. Project version remains 0.39.0; no commit or push was made.
+
+
+### Courtyard playtest corrections (pending, November 2026)
+
+The introduction now uses only the Input System package. `ExplorationInput` preserves WASD/arrow movement, E release for interaction, Space, C and Escape; battle camera actions keep their existing action asset. The three exploration scenes now use `InputSystemUIInputModule`, including the alternate painted tower room. A missing keyboard or mouse is handled without an exception.
+
+`CourtyardFeedbackPolish` removes the obsolete west cottage, closes the terrace railing at its east end, excludes ivy from castle window surrounds, narrows/repositions the banners, adds grouped field-edge hedges and gives dirt paths a sandy finish. The bank uses the surrounding field's material and colours. The landscape cutout follows the actual wall centres; the foreground surface is flattened before it reaches the near wall to prevent coarse triangles intersecting masonry. The stable spur meets the main courtyard road.
+
+Hannes and the care horse share a local sorting group so the grooming arm stays visible across camera angles without making all courtyard characters globally foreground objects. `CourtyardGroomPose` raises the painted forearm/brush using a small mesh while preserving the shoulder and lower body. The idle/dialogue sprite remains available.
+
+The garden cottage moves 0.8 metres west to keep the side aisle clear. Watering points sit beside the beds, and the can is visible by the middle of the garden aisle. Water aims into each bed from the side. While carrying the borrowed can, outward movement is limited at the garden boundary; Marta reminds Elian to return it. A separate inner reset boundary prevents repeated reminders while standing at the exit. Returning inward and putting the can down remain possible. Existing pickup/pour cancellation and scene-state behaviour are preserved.
+
+The nine golden shafts retain their authored direction/lengths. Their visible widths, filaments and cloud occlusion change slowly at different phases; particle noise provides gentle drift, and dust brightness follows the cloud modulation. No extra real-time lights are added.
+
+Suggested coherent commits (not created): `fix(input): migrate exploration and scene UI to input system`; `fix(courtyard): connect terrain and tidy castle presentation`; `fix(stable): align grooming arm and horse layering`; `fix(garden): water from the side and return borrowed can`; `feat(lighting): animate golden breach light and dust`. Next proposed version is 0.39.1 for the first commit; subsequent versions are assigned only when commits are actually made. Current project version remains 0.39.0. No new Windows build is included in this pass.
+
+
+Playtest-correction validation (08 November 2026): the garden pickup, three side pours, return, boundary reminder and repeat suppression passed (`Library/courtyard-feedback-checked.xml`, garden case). The tower, alternate painted tower, courtyard and battle scene UI modules loaded without legacy-input/runtime errors (`Library/courtyard-input-checked.xml`, scene-loading case). The isolated keyboard test passed using Unity's InputTestFixture (`Library/courtyard-keyboard.xml`): normalized WASD diagonals, arrow movement, E press and release. Earlier attempts to simulate keys through the unfocused batch editor failed; those were test routing failures, corrected by using the package's isolated input runtime. The completed garden/thanks/return test and connected tower/workshop/stable/garden/castle/gate route also passed (`Library/courtyard-feedback-final.xml`, corresponding cases). The focused light visibility/reload check passed in `Library/courtyard-feedback-tests-2.xml`. These were targeted checks, not the entire combat regression suite or a frame-rate benchmark.
+
+Eight rendered viewpoints were inspected, including grooming from both sides, garden visibility, castle banners, terrace return, foreground wall, bridge and the Aurenfeld panorama. Visual review found and corrected orphan cottage details, banner animation restoring old positions, oversized green ground rectangles outside the walls, and a rising terrain triangle at the eastern bank. The golden terrain now reaches the wall bases, and the eastern flattening starts before the riverbank seam. Animated banner origins are rebased after placement. Green hedgerows are tall enough to remain visible above the grain. No new Windows package, commit or push was produced; the existing 07 November Godrays ZIP predates these corrections.
+
+
+### Aurenfeld landscape composition (pending, November 2026)
+
+The western lookout now uses `AurenfeldLandscape` as a shared terrain and harvest-colour profile. A shallow near valley opens the view toward the farm; three offset broad rises layer the middle and far fields. The transition begins outside the castle approach. Meadow roots, scenery, the distant mesh and winding road sample the same surface, replacing the former independent distant-height adjustment. The courtyard and eastern gate keep their elevations.
+
+Irregular curved parcels share ochre, honey and straw tones across soil and crops. Western tree tints retain more green; broken middle-distance hedgerows separate the golden fields. The farm remains beside its existing access lane and follows the new ground. Mountain scale, lookout camera route and field layout at the eastern gate are retained. Individual distant grain tufts retire progressively into the matching painted surface; grain texture and cooler field fill light reduce hard repetitive detail without adding fog. Existing wind, nearby grass contact shadows and near real shadows remain.
+
+The earlier fixed-camera image is preserved in `Builds/Aurenfeld-composition-before/feedback-review-fields.png`; its matching new view is `Builds/aurenfeld-composition-after.png`. Three camera-flight captures use the `aurenfeld-composition-flight-` prefix. Review images are local ignored output, not shipped assets. This remains an initial landscape composition for visual review, not a claim to reproduce every detail of the window painting.
+
+Suggested commit: `feat(landscape): compose layered Aurenfeld fields` — shared rolling terrain, coordinated harvest palettes, green field divisions and calmer distant grain. Include the landscape profile, its callers, meadow shaders, focused composition test and this documentation. No commit/push or version bump; next proposed version remains 0.39.1, pending the earlier uncommitted courtyard corrections. No new Windows build in this pass.
+
+Composition validation: both focused silent PlayMode checks passed (`Library/aurenfeld-composition-final.xml`): terrain slope bounds and unchanged courtyard/gate elevations, farm grounding, the full scenic flight, early cancellation, repeat entry, return camera/input/HUD restoration, and supported scenery shaders. Three flight stages and the matching fixed-camera before/after view were visually inspected. No full combat suite, standalone build or frame-rate benchmark was run.
+
+### Fuller distant harvest (visual feedback, November 2026)
+
+The first landscape revision made the far hills look too bare. The western terrain now blends 75% of the earlier height composition with 25% of the new broad hills, retaining more of the previously preferred relief. Grain visibility fades between 170 and 330 metres instead of 85 and 185; six transition bands extend the simplified grain to x=-286. The far ground uses the new generated painted wheat-canopy asset (`Resources/CourtyardStyle/PaintedWheatCanopy.png`) at two blended scales, preserving the parcel palette. Smaller, lighter distant hedges sit within the harvest rather than dominating the skyline. Camera and mountains are unchanged.
+
+The focused silent composition PlayMode check passed in 21.96 seconds (`Library/aurenfeld-canopy.xml`), including terrain continuity, farm grounding and the complete camera flight. The final and intermediate flight captures were inspected against the previous revision, saved under `Builds/Aurenfeld-canopy-before`. No performance benchmark or new standalone build was run. Longer grain visibility adds rendering work; the final appearance still needs user review.
+
+Suggested commit: `fix(landscape): restore fuller distant golden fields` — restore more of the earlier relief, extend grain visibility and add painted distant wheat. Include the landscape profile, distant-field builder, meadow shaders, texture and binding, plus this documentation. No commit, push or version bump; next proposed version remains 0.39.1.
+
+
+The pending courtyard, light and landscape work described above is now recorded in the seven review commits below. Historical proposed versions and pre-commit status notes are superseded by this release record. Current source version is 0.40.2; the existing Windows ZIP predates these changes.
+
+
 ## Courtyard review commits - 08 November 2026
 
 ### 0.39.1 - fix(input): migrate exploration and scene UI to input system
@@ -2303,3 +2377,9 @@ Validation: focused light visibility/reload checks passed and rendered views ins
 Align exterior ground with courtyard walls and stream bank, connect the stable spur and soften sandy paths. Remove the obsolete cottage, close the terrace end, clear ivy from windows and rebase narrower banners. Add grouped field-edge hedges.
 
 Validation: connected courtyard route and garden/view checks passed; castle, foreground wall and bridge captures inspected.
+
+### 0.40.2 - fix(landscape): restore fuller distant golden fields
+
+Share western terrain and harvest palettes across ground, grain, scenery and road. Retain most of the earlier relief, extend visible grain, add painted distant wheat and balance green hedgerows against golden fields. Preserve the scenic camera and mountains.
+
+Validation: silent composition test passed in 21.96 seconds; flight stages and before/after captures reviewed. Prior repeat/cancel/return checks passed. No new standalone build or performance benchmark.

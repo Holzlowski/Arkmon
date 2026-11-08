@@ -45,7 +45,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
     // Close the old cut-out terrain edge and let the near meadow rise gradually towards the fields.
     public static Vector3 ExteriorPoint(Vector3 p)
     {
-        p=CourtyardEastFieldStyle.ExteriorPoint(p);
+        p=AurenfeldLandscape.Surface(CourtyardEastFieldStyle.ExteriorPoint(p));
         if(p.x<=-74 || p.x>=-36 || Mathf.Abs(p.z-7)>=24)return p;
         float west=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-74,-45,p.x));
         float inside=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-28,-34,p.x));
@@ -73,6 +73,8 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
             landscape.Add((filter,original));meshes.Add(copy);filter.sharedMesh=copy;
             var seamless = new Material(renderer.sharedMaterial) { name = "Aurenfeld wall-aligned landscape" };
             seamless.SetVector("_ClearArea",new Vector4(-43,-17,50,19));
+            seamless.SetTexture("_HarvestCanopy",Resources.Load<Texture2D>("CourtyardStyle/PaintedWheatCanopy"));
+            seamless.SetFloat("_CanopyStrength",1);
             materials.Add(seamless);renderer.sharedMaterial=seamless;
         }
         if(exterior==null)return;

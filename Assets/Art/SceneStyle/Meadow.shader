@@ -1,6 +1,6 @@
 Shader "Arkmon/Meadow"
 {
-    Properties { _FieldTexture("Painted grain texture",Range(0,1))=0  _FogStrength("Distance haze strength",Range(0,1))=1 _SunResponse("Scene sunlight",Range(0,1))=0  _ClearArea("Clear world rectangle: min X/Z, max X/Z", Vector) = (0,0,0,0) }
+    Properties { _HarvestCanopy("Painted wheat canopy",2D)="white" {} _CanopyStrength("Painted canopy strength",Range(0,1))=0  _FieldTexture("Painted grain texture",Range(0,1))=0  _FogStrength("Distance haze strength",Range(0,1))=1 _SunResponse("Scene sunlight",Range(0,1))=0  _ClearArea("Clear world rectangle: min X/Z, max X/Z", Vector) = (0,0,0,0) }
     SubShader
     {
         Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" }
@@ -16,8 +16,9 @@ Shader "Arkmon/Meadow"
             struct Attributes { float4 positionOS:POSITION; float3 normalOS:NORMAL; half4 color:COLOR; };
             struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; half fog:TEXCOORD0; float2 world:TEXCOORD1; float3 positionWS:TEXCOORD2; };
             CBUFFER_START(UnityPerMaterial)
-            float4 _ClearArea; float _SunResponse; float _FogStrength; float _FieldTexture;
+            float4 _ClearArea; float _CanopyStrength; float _SunResponse; float _FogStrength; float _FieldTexture;
             CBUFFER_END
+            TEXTURE2D(_HarvestCanopy); SAMPLER(sampler_HarvestCanopy);
             Varyings Vert(Attributes input)
             {
                 Varyings output;
@@ -28,7 +29,7 @@ Shader "Arkmon/Meadow"
                 Light sun=GetMainLight();
                 half3 morning=half3(.56,.61,.66)+sun.color*(.64*saturate(dot(normal,sun.direction)));
                 float field = _FieldTexture*smoothstep(46,58,-output.world.x);
-                half3 directionalMorning=half3(.43,.46,.53)+sun.color*(.88*saturate(dot(normal,sun.direction)));
+                half3 directionalMorning=half3(.50,.54,.62)+sun.color*(.70*saturate(dot(normal,sun.direction)));
                 float distant=smoothstep(175,220,-output.world.x);
                 directionalMorning=lerp(directionalMorning,half3(.55,.56,.58)+sun.color*(.72*saturate(dot(normal,sun.direction))),distant);
                 morning=lerp(morning,directionalMorning,field);
@@ -61,7 +62,9 @@ Shader "Arkmon/Meadow"
                     float stroke=dot(p,float2(sin(angle),cos(angle)))*3.5+sin(p.x*.04)*8+FieldNoise(p*.08)*2;
                     float resolved=1-smoothstep(.8,2.4,fwidth(stroke));
                     float rows=sin(stroke)*resolved;
-                    float grainShade=.94+(broad-.5)*.20+rows*.028;
+                    float brush=FieldNoise(float2(p.x*.32+sin(p.y*.045),p.y*.95));
+                    float brushAA=1-smoothstep(.8,2.0,max(fwidth(p.x*.32),fwidth(p.y*.95)));
+                    float grainShade=.97+(broad-.5)*.13+rows*.012+(brush-.5)*.22*brushAA;
                     // In the distance, use clustered painted texture rather than long regular ribs.
                     float farField=smoothstep(175,230,-p.x);
                     float2 grainUV=float2(p.x*.68+sin(p.y*.024)*2,p.y*1.15+input.positionWS.y*.16);
@@ -73,6 +76,15 @@ Shader "Arkmon/Meadow"
                     distantGrain+=gust*.012;
                     grainShade=lerp(grainShade,distantGrain,farField);
                     lit*=lerp(1,grainShade,smoothstep(46,58,-p.x));
+                    // Painted ears replace bare soil beyond the standing-grain foreground.
+                    // Two softly warped scales prevent a conspicuous repeating tile grid.
+                    float2 canopyUV=p*.062+float2(sin(p.y*.027),sin(p.x*.023))*.10;
+                    half3 canopyA=SAMPLE_TEXTURE2D(_HarvestCanopy,sampler_HarvestCanopy,canopyUV).rgb;
+                    half3 canopyB=SAMPLE_TEXTURE2D(_HarvestCanopy,sampler_HarvestCanopy,canopyUV*1.37+float2(.37,.61)).rgb;
+                    half value=dot(lerp(canopyA,canopyB,.28),half3(.30,.59,.11));
+                    half textureShade=clamp(value/.49,.62,1.55);
+                    float canopyWeight=_CanopyStrength*smoothstep(105,170,-p.x);
+                    lit*=lerp(1,textureShade,canopyWeight);
                 }
                 return half4(lerp(lit,MixFog(lit,input.fog),_FogStrength),1);
             }

@@ -46,7 +46,7 @@ public sealed class CourtyardTreeStyle : MonoBehaviour
             tree.sprite = sprites[kind]; tree.sharedMaterial = style.paper;
             // Only the western field groves receive the olive/gold palette; retain the painted highlights.
             tree.color = tree.name == "Western field tree"
-                ? Color.Lerp(new Color(.84f, .87f, .67f), new Color(.94f, .92f, .80f), Mathf.InverseLerp(-80, -175, p.x))
+                ? Color.Lerp(new Color(.73f, .86f, .68f), new Color(.85f, .91f, .79f), Mathf.InverseLerp(-80, -175, p.x))
                 : Color.white;
         }
         foreach (var old in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)

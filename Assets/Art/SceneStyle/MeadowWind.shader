@@ -44,11 +44,11 @@ Shader "Arkmon/Meadow Wind"
             #pragma multi_compile_fog
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
-            struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; half fog:TEXCOORD0; float3 positionWS:TEXCOORD1; };
+            struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; half fog:TEXCOORD0; float3 positionWS:TEXCOORD1; float phase:TEXCOORD2; };
             Varyings Vert(Attributes input)
             {
                 Varyings output;float3 position=MeadowPosition(input);
-                output.positionCS=TransformWorldToHClip(position);output.positionWS=position;
+                output.positionCS=TransformWorldToHClip(position);output.positionWS=position;output.phase=input.uv.x;
                 Light sun=GetMainLight();
                 half3 morning=half3(.44,.50,.60)+sun.color*(.48*lerp(.55,1,input.uv.y));
                 float field=_FieldStyle*smoothstep(46,58,-position.x);
@@ -64,6 +64,10 @@ Shader "Arkmon/Meadow Wind"
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(input.positionCS);
                 #endif
+                // Retire whole distant tufts into the matching painted field surface.
+                float western=_FieldStyle*smoothstep(68,95,-input.positionWS.x);
+                float detailFade=1-smoothstep(170,330,distance(input.positionWS,_WorldSpaceCameraPos));
+                clip(lerp(1,detailFade-max(.001,input.phase),western));
                 half shadow=GetMainLight(TransformWorldToShadowCoord(input.positionWS)).shadowAttenuation;
                 half field=_FieldStyle*smoothstep(46,58,-input.positionWS.x);
                 half3 shade=lerp(half3(.58,.58,.58),half3(.46,.53,.65),field);
