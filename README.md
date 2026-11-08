@@ -2412,38 +2412,150 @@ Windows playtest build command (Unity must be closed):
 
 This development playtest starts in TowerRoom and includes StartScene and BattleScene. Normal launch retains audio; diagnostics run only with explicit command-line flags. Packaging and its source commit are recorded in the ignored build folder. Visual preference, normal-play frame rate and audio balance remain user playtest items.
 
-### Release 0.42.1 - fix(courtyard): close the terrace pit and clear gallery windows
+### Pending - terrace safety and slower field weather
 
-Extend the residence terrace beneath the gallery and move its windows clear of the projecting castle wing. Keep the editor generator aligned with the saved scene. Add floor-ray and walk-in/walk-out regression coverage.
+The west residence terrace now extends to the connecting gallery, with a visible masonry surface and the same continuous solid collider. Its front edge and stair access remain in place. Three gallery windows are redistributed on the exposed wall, clear of the projecting residence. Both the saved StartScene and `CourtyardWestArchitecture` generator carry this correction.
 
-### Release 0.43.0 - feat(weather): animate the painted sky and breathing golden rays
+Breach rays gently change length independently over 12/19-second cycles, between 55 and 100 percent of their authored length. Sources stay fixed and existing mesh bounds contain all motion. The shaft and dust shaders share the same length function, so illuminated motes follow the shortened shafts without allocating or rebuilding meshes each frame.
 
-Move the actual cloud painting continuously, restore courtyard clouds on return, and synchronize moving field shade. Enlarge and soften breach rays with shared length animation for illuminated dust. Add visible motes and stronger crop motion while retaining the requested absence of wind ribbons.
+The western cloud painting now moves continuously on three adjoining panels (2.8125 metres/second at the distant backdrop), with wrapping outside the view instead of a stationary sinusoidal turning point. Old foreground cloud sprites are hidden only during the lookout and restored afterwards. World-space cloud shadows drift at about 1.21 metres/second; smaller 38/17 metre noise scales and darker shaded colours make their travel readable. These are coordinated decorative effects, not literal shadow projections of individual painted clouds. Crop gusts are roughly 40-75 percent stronger in the western fields; their roots and corresponding shadow geometry remain fixed/aligned. The drawn wind ribbons were removed after playtest feedback; crop motion and luminous dust remain. A bounded pool of 128 luminous gold motes emits at 11/second above the near fields; larger particles, a soft additive halo and the existing bloom make the dust visible. Seed drift follows the same direction. The dust stops outside the lookout. All new runtime materials are released on scene teardown; no new image assets or global post-processing changes are needed.
 
-### Release 0.44.0 - feat(landscape): connect golden fields to the mountain foothills
+Proposed next version: **0.42.1** for the terrace correction; metadata stays at 0.42.0 until a commit is requested. Suggested separate commits: `fix(courtyard): close terrace pit and align gallery windows`, `feat(lighting): slowly vary breach ray lengths`, and `feat(landscape): add gentle cloud drift and illustrated field gusts`. Version each actual commit once when preparing it.
 
-Build one continuous scenic surface beneath the distant mountain painting, keeping valleys and the road corridor covered. Blend rear shoulders toward the mountain palette and add low irregular woodland groups. Check actual triangle coverage and resource cleanup.
+Validation: three targeted silent PlayMode checks passed in 61.46 seconds (`Library/terrace-weather-tests.xml`). They physically walk the player into and out of the repaired terrace, sample its floor coverage, check window clearance, compare frozen-scene cloud shadows, measure 45-second cloud/shadow drift, and verify wind strokes stop on return and do not duplicate on reload. Reviewed captures: `Builds/terrace-repaired-gameplay.png`, `Builds/aurenfeld-weather-start.png` and `Builds/aurenfeld-weather-after-45s.png`. No new Windows build or push was requested for these pending changes.
 
-### Release 0.45.0 - feat(lighting): add soft cloud-gap sunlight to the lookout
+The focused sunray visibility/lifecycle check also passed in 23.20 seconds (`Library/breach-length-tests.xml`). Fixed-camera captures before and after 40 game seconds were reviewed; rays remain confined to the breach, dust clears when disabled, and scene reload creates one owner. Total: four targeted tests passed, audio disabled.
 
-Sample the shared moving cloud mask for softly feathered golden light between cloud shadows. Fade the effect with the scenic view and release its materials on reload. Soften cool field shade and gently emphasize the farm and road bends.
+Follow-up visibility review: the previous small moving cloud was part of the original courtyard decoration, not the large painted background. The lookout now suppresses that decoration explicitly. Weather regression checks include actual rendered wind/dust pixel changes, particle population, continued cloud movement after five minutes, and restoration on return. Visual intensity remains a user-review item.
 
-### Release 0.45.1 - fix(landscape): vary grain and reveal the farm approach
+Visibility follow-up validation: frozen-scene cloud shading/motion passed (`Library/aurenfeld-readable-weather-tests.xml`, cloud test). After correcting the return-path visibility restore, the focused weather integration test passed in 30.93 seconds (`Library/aurenfeld-readable-weather-final.xml`). Wind and dust affect 6,139 rendered pixels above the test contrast threshold. Continued backdrop motion beyond five minutes, suppression/restoration of old cloud sprites, particle cleanup, and one owner after reload were verified. Stronger air-effects and shadow captures were reviewed. Suggested commit: `fix(landscape): make scenic weather clearly visible` - continuous painted-cloud drift, clearer travelling shade, cross-view wind ribbons and luminous dust. No commit, version increment, push or new build performed.
 
-Break up regular grain spacing with warped sampling, overlapping stems and broad growth variation. Use one clearing mask for the farm lane, building foot and low shoulders so grain cannot hide the access. Widen the visible worn lane and soften ground contact; test the complete lane centreline.
+Latest playtest refinement: remove the wind-ribbon component, shader and installation hook completely. Increase both painted-cloud and world-space shadow drift by 25 percent while keeping the existing dust, crop sway and shadow contrast. The existing weather regression check now covers dust and absence of ribbons. Static reference/diff checks only for this small revision; Unity was open, so no new PlayMode run was started. Suggested commit: `fix(landscape): remove wind ribbons and quicken cloud drift`. Proposed next version remains 0.42.1; no commit or metadata bump performed.
 
-### Release 0.45.2 - fix(landscape): join shrubs into irregular field hedges
+Latest timing refinement: breach ray length now combines 25- and 40-second cycles over a 55-100 percent range, still shared with the dust-lighting shader. Painted clouds and their world-space shade drift another 25 percent faster. Static range/reference/diff checks performed; no new PlayMode run while the editor is open. Suggested commit: `fix(lighting): make ray breathing and cloud drift more noticeable`. Next proposed version remains 0.42.1; no version bump or commit made.
 
-Form longer overlapping hedge sections with occasional openings instead of scattered equal-sized islands. Vary widths and heights while reducing depth scatter and preserving road and farm clearances.
+Latest ray-size refinement: expand authored shafts by 35 percent in width and up to 20 percent in length, clamping the lower endpoint above y=0.4. Mesh bounds and dust beam endpoints are generated from these enlarged dimensions. Shared length cycles now take 12/19 seconds; base ray opacity decreases from 0.40 to 0.30. Fixed source positions and the 55-100 percent deformation range remain. Static range/reference/diff checks only; no new PlayMode run. Suggested commit: `fix(lighting): enlarge and soften faster breathing godrays`. Next proposed version remains 0.42.1, without changing metadata or committing.
 
-### Release 0.46.0 - feat(audio): add an emotional piano harp and violin lookout theme
+Panorama framing refinement: raise the western mountain painting from authored y=62 to y=76 (37.1 world units after backdrop depth scaling), including a further six-unit lift after visual feedback, preserving its proportions and width. This exposes more of the mountain range above the rolling fields. Static diff check only; visual confirmation remains in the next Play Mode session. Suggested commit: `fix(landscape): raise the distant mountain range`. Next proposed version remains 0.42.1; metadata unchanged.
 
-Replace the approach and panorama with an original sampled piano, harp and violin arrangement and a 53.76-second loop. Preserve the approved title accent byte-for-byte and its caption timing. Record sample provenance, renderer and loop-data checks.
+### Pending - field-to-mountain transition
 
-### Release 0.46.1 - fix(audio): disable field wind and retain a quiet breeze audition
+`CourtyardFoothills` shapes two irregular rolling ridges on one continuous ground mesh behind the western farmland (19,642 vertices total), with warmer olive-gold nearer slopes and lighter, cooler distant slopes. Their toes overlap beneath the existing ground; broad paint variation avoids fine aliasing. Both ridges preserve a fourteen-metre minimum corridor around the distant road, opening into a wider shallow pass. Six separated grove groups reuse existing oak, birch and shrub illustrations with deterministic height/width/spacing variations; the road corridor is also kept clear of planting.
 
-Keep field wind disabled following listening feedback. Replace the old cloth and park-recording placeholders with reproducible voice-free air and provide a separate, much quieter breeze audition. Preserve music and use independent effects volume and return cleanup if wind is enabled later.
+`CourtyardLookoutLandscape` owns a cloned mountain material whose low-base haze blends slightly towards a warm, muted olive colour. This uses the existing height-limited painting shader: no global fog increase, peak tint changes or edits to the tower-window source image. Foothill meshes, materials and the mountain clone are released on scene teardown; distant scenery has no colliders. The playable courtyard and the camera path retain their existing layout.
 
-### Release 0.47.0 - feat(audio): add sparse natural birdsong to the lookout
+Suggested commit: `feat(landscape): blend golden fields into distant mountains` - two staggered foothill ranges, interrupted grove groups and local mountain-base colour blending. Proposed feature version: 0.43.0; project metadata remains 0.42.0 pending requested commits (the earlier terrace fix is still proposed separately as 0.42.1).
 
-Alternate two recorded CC0 bird calls after arrival with 10-18 seconds of silence. Give birds a separate effects-controlled source and fade on return without enabling wind. Include source attribution, repeatable preparation, imported-audio and mute/scheduling/reload checks.
+
+Foothill validation: the focused silent PlayMode test passed after visual refinement (1/1, 29.72 seconds; `Library/aurenfeld-foothills-tests.xml`). It checks upward mesh faces, supported shaders, the unobstructed road corridor, mountain-material isolation and cleanup on scene reload. Final-view and mid-flight screenshots were inspected (`Builds/aurenfeld-foothills-after.png`, `Builds/aurenfeld-foothills-flight.png`), with a matching baseline capture available. The hills reuse the existing painted wheat-canopy texture, convert authored colours to linear space, and use lower profiles with a wider pass to avoid pale, smooth wall-like ridges. No new build, version increment, commit or push performed.
+
+
+Pending foothill seam correction: replace the separate strips with one continuous surface from x=-178 to -420 and z=-300 to 340. The field-side edge sits beneath existing terrain, while the far end extends under the mountain painting; open valleys and lateral margins now have ground rather than exposed background. Existing ridge profiles, road clearance and planting remain. The focused regression test probes actual mesh triangles across valleys/margins and checks overlap beneath the mountain plane. Suggested commit: `fix(landscape): close gaps beneath the foothills`. Proposed patch after the pending feature release: 0.43.1; no version metadata changed.
+
+Seam-fix validation: silent focused PlayMode test passed (1/1, 30.50 seconds; `Library/aurenfeld-foothill-gaps-tests.xml`). Actual downward mesh probes cover the transition and its lateral margins, with an additional mountain-plane overlap assertion. Final and mid-flight images were inspected; the exposed blue sliver below the right-hand foothill is closed. Road-clearance and reload-cleanup checks also passed.
+
+
+### Pending - soft sunlight through moving cloud gaps
+
+`CourtyardCloudSunrays` installs two low-cost, world-space light sheets for the western lookout. `AurenfeldCloudSunrays.shader` samples the exact `AurenfeldCloud` mask and shared drift used by the field shadows at each beam footprint; sunny gaps produce light while overcast patches suppress it. The geometry follows the scene sun direction. Additive warm gold, broad feathered edges and height fades keep this an illustrated atmospheric effect rather than hard laser-like streaks. It is not physically simulated volumetric cloud lighting; the painted sky retains its separate backdrop drift.
+
+The light fades in only as the lookout camera passes outside the breach, fades out on return, disables immediately with its owner, and releases scene-owned meshes/materials on reload. It has no colliders or new textures. Existing breach rays and dust keep their independent behaviour. The mountain painting is raised from authored y=76 to y=80 (10.6 world units after backdrop scaling), preserving proportions and the continuous terrain underneath.
+
+Suggested commits: `feat(lighting): add soft sunlight in moving cloud gaps` (new effect/shader, lookout installation, focused regression test and documentation); `fix(landscape): lift the mountain backdrop slightly` (mountain placement). Next proposed feature version remains 0.43.0; actual version metadata stays at 0.42.0 until commits are requested. No commit or push performed.
+
+Cloud-gap validation: the light/lifecycle test and continuous-ground test passed together (2/2, 63.31 seconds; `Library/aurenfeld-cloud-rays-tests.xml`). After adding a five-sample spatial blur to the aperture mask and reducing opacity to 0.13, the light test passed again (1/1, 34.24 seconds; `Library/aurenfeld-cloud-rays-soft-tests.xml`). The final shader visibly changes 199,566 pixels above the comparison threshold; independently rendered on/off pairs confirm the light pattern changes after 45 seconds of weather drift. Current and advanced-weather captures were visually inspected. Disable, return and reload cleanup passed. Tests were silent. No frame-rate benchmark or new Windows build was performed.
+
+
+### Pending - left foothills and emotional lookout arrangement
+
+The left-hand ridge now tapers into lower, staggered shoulders instead of a long even crest. Its rear slopes transition towards the blue-green mountain foot with reduced grain-texture contrast; thirteen small, irregularly spaced tree silhouettes soften that boundary. The continuous ground remains intact and the road corridor is preserved.
+
+`tools/render_aurenfeld_emotional_music.py --install` renders an original 16-bar, 53.76-second F-major panorama loop and an 8-second approach using the existing recorded Kawai piano, concert harp and bowed violin-section samples. Piano and violin trade the melody, with lighter cadences and no flute/cello/viola events in this revision. It uses only cached CC0 instruments; provenance and rendered hashes are in `docs/audio-sources.json`. This is a sampled arrangement, not a live ensemble recording. The renderer performs no playback or downloads.
+
+The approved five-second `aurenfeld-title.wav` is never rewritten: SHA-256 `f694f771f938f554fd580a35c387f7996e0aa37b8d100b99f5b3cd36437997d8` is checked before and after installation. Its volume and shared caption/DSP timing remain unchanged. Only approach/panorama receive a 0.82 mix multiplier. Existing field rustle increases from 0.14 to 0.34 times effects volume (0.20 during the short title interval), with a smooth volume ramp and normal cleanup on return. Global user music/effects settings remain respected.
+
+The listening preview `Builds/aurenfeld-emotional-lookout-preview.wav` includes the current wind/music balance and the original accent at 6.8 seconds. It applies a shared 3x preview-only gain; game assets are not boosted by that amount. The instrumental loop's measured sample peak is 0.3754 and seam step is 0.000214, with no non-finite values or clipping.
+
+Suggested commits: `fix(landscape): soften the left foothill transition` (terrain/profile/colour, shader and geometry regression); `feat(audio): add an emotional Aurenfeld lookout arrangement` (renderer, approach/panorama WAVs, provenance, mix and music regression). Next proposed feature version remains 0.43.0; version metadata is unchanged. No commit, push or new player build performed.
+
+Validation: terrain continuity/road clearance/lifecycle and the PCM loop-data check passed in the first targeted run. The new return-mix assertion exposed delayed wind fade-out; `CourtyardFieldAtmosphere` now starts fading when `IsReturning` becomes true. Both audio tests then passed (2/2, 23.40 seconds; `Library/aurenfeld-emotional-mix-final.xml`). The name-cue SHA-256 was rechecked unchanged. Final-view and mid-flight captures were inspected. Audio was rendered and checked for levels, finite samples and loop boundaries without device playback; subjective musical balance remains for user listening.
+
+
+### Pending - gentle wind with slow swells
+
+`field-rustle.wav` is now an original 48-second stereo wind loop made offline from softly filtered broadband noise. The earlier cloth placeholder and subsequent park recording were rejected for rattling and a background voice. This replacement contains no recordings, voices or incidental outdoor sounds. `tools/render_field_rustle.py --install` produces the asset without downloads or playback, plus a 24-second **wind-only** preview at `Builds/aurenfeld-gentle-wind-preview.wav`. Numpy/soundfile are loaded from `Builds/audio-tools`.
+
+Overlapping eight-, twelve- and forty-eight-second volume swells gently rise and fall, with reduced low rumble, softened high frequencies and restrained stereo width. The 48-second cycle has no silent seam. The file averages RMS 0.0500, peaks at 0.3271 or below, and its half-second loud/quiet percentile ratio is 2.07. Provenance and output hashes are in `docs/audio-sources.json`; there are no third-party samples in this revision.
+
+Runtime wind remains a separate effects-controlled AudioSource with the existing title duck and return fade. Approach/panorama music and the title accent are checked byte-for-byte unchanged. No runtime synthesis or additional playback cost is introduced. Subjective sound quality still needs user listening; technical checks do not replace it.
+
+Suggested commit: `fix(audio): soften field wind into slow voice-free swells` - replace the wind asset and reproducible renderer, update provenance and document the separate preview. Proposed patch version is 0.43.1 if committed after the pending 0.43.0 feature work. Actual metadata remains 0.42.0. No commit, push or player build performed.
+
+Validation for the gentle-wind revision: generated PCM passed finite-value, peak, duration, seamless-endpoint and measured slow-swell checks. Music hashes remain unchanged; git diff --check passed for this change. The attempted silent PlayMode run did not start because the project was open in the user editor; previous passing audio tests predate this new asset. No Unity test pass is claimed for this revision.
+
+Current listening decision: additional field wind audio is disabled by default (`CourtyardFieldAtmosphere.enableWindAudio = false`). The sample and renderer remain for later auditions. Bird/vegetation/cloud motion, music and title cue are unaffected. The existing audio regression now expects silence from the wind source. No new Unity test run was performed for this small follow-up. Suggested commit: `fix(audio): disable optional lookout wind ambience`; proposed patch remains 0.43.1 after pending 0.43.0 work, without changing metadata or committing.
+
+### Pending - natural grain, grounded farm and quieter panorama composition
+
+The western lookout now warps the grain sampling pattern and spreads stems around each clump in a disk, with broad patches of varied growth. It retains the existing number of LOD chunks and near-shadow budget, and checks each spread stem against the path/farm clearing. New sampling applies only to the western StartScene fields; battle vegetation keeps its previous layout.
+
+The farm access lane, forecourt and illustrated fence/building foot share one clearing-distance mask. A two-metre shoulder tapers standing grain into short growth, revealing the widened worn lane and soft ground contact rather than leaving the farm behind a wall of crops. Lane-centre clearance is checked in the existing farm regression.
+
+Field hedges now form longer overlapping runs with occasional openings, shallower depth scatter, and varied silhouette widths/heights. Six small woodland groups soften the rear field-to-mountain boundary; the distant blue-green colour and quieter surface texture extend to the right-hand shoulders too. Continuous terrain, the road corridor and mountain elevation are preserved. Western cloud shadows retain their motion but have lighter cool shade; warm emphasis around the farm and two road bends helps the eye follow the lane without global fog or stronger bloom.
+
+`tools/render_field_rustle.py --breeze-preview` creates a separate, **uninstalled** audition at `Builds/aurenfeld-breeze-preview.wav`: 24 seconds of much quieter, softer broadband air, with 16/24/48-second overlapping swells. Measured RMS is 0.0115 versus 0.0500 for the rejected wind (about 12.8 dB lower); sample peak is 0.0626 and loop seam step is zero. It contains no recordings or voices. Preview mode cannot be combined with `--install`. The in-game wind remains disabled pending listening feedback; music/title assets are not changed.
+
+Suggested coherent commits (each should receive its own version increment only when actually requested):
+- `fix(landscape): break up regular grain spacing` - western sampling, spread, growth and path exclusion in MeadowVegetation.
+- `fix(landscape): ground the farm and clear its approach` - common clearing/shoulder mask, lane width, ground contacts and lane regression. CropGrowth integration in MeadowVegetation belongs with this commit so the previous commit remains buildable.
+- `fix(landscape): soften the mountain foothill boundary` - low woodland groups and rear shoulder palette/texture.
+- `fix(landscape): guide the lookout with softer sunlight` - farm/road light emphasis and gentler moving cloud shade.
+- `fix(landscape): join shrubs into irregular field hedges` - connected hedge runs and varied silhouettes.
+- `chore(audio): add a quiet breeze audition` - preview-only mode, no runtime audio change.
+
+Version metadata remains 0.42.0. The next proposed release for the accumulated feature work is 0.43.0; later separately requested fix commits follow the project's patch-increment convention. No commit, push or Windows build is performed for this iteration.
+
+Validation: all four targeted PlayMode tests passed with audio disabled (72.37 seconds; `Library/aurenfeld-polish-tests.xml`): farm lane clearance/smoke/reload, continuous foothill coverage and open distant road, music/title synchronization and disabled wind, plus imported audio data. Final panorama, mid-flight and farm close-up captures were visually inspected; copies are in `Builds/aurenfeld-polish-review`. `git diff --check` passed for the edited files. No new performance benchmark or player build was run.
+
+### Pending - quiet natural birdsong at the Aurenfeld lookout
+
+`CourtyardBirdsong` is owned by the field-atmosphere object in StartScene and uses a separate, non-looping AudioSource controlled by the user's effects volume. It alternates two short original-speed bird calls, with restrained left/right panning and 10-18 seconds of silence after each call. The first call waits until the scenic camera has arrived (progress >= 0.98) and then another 3.5 seconds, after the usual title accent. Returning from the lookout fades the birds; disabling/unloading stops them. The optional wind remains disabled and all music/title assets remain byte-identical. Silent test mode exercises scheduling without playing sound.
+
+Source: syncopika, **Bird chirping sounds**, https://opengameart.org/content/bird-chirping-sounds, CC0-1.0. The original three-second recording is cached outside Assets. `tools/render_aurenfeld_birds.py --download --install` verifies its SHA-256, extracts two short phrases (1.5/1.25 seconds), gently reduces low rumble and high frequencies, applies conservative gain and edge fades, and installs the mono 32 kHz clips. It does not alter pitch or generate synthetic chirps. Attribution, exact excerpts and hashes are in `docs/audio-sources.json`.
+
+`Builds/aurenfeld-birds-preview.wav` is a 28-second birds-only audition with two calls and a long quiet gap. Audition gain is 0.50 so the source is easier to assess; runtime gain is 0.20 times the effects slider. No wind or music is mixed into this preview. No automatic device playback or subjective listening verification is performed.
+
+Suggested commit: `feat(audio): add sparse natural birdsong to the lookout` - scene-owned bird scheduler, two recorded calls/import settings, reproducible preparation and provenance, lifecycle/mute/data regression. Next proposed release remains 0.43.0 for the accumulated feature work; version metadata is unchanged. No commit, push or new Windows build performed.
+
+Birdsong validation: both focused PlayMode tests passed with audio disabled (2/2, 22.65 seconds; Library/aurenfeld-birdsong-tests.xml). Checks cover no calls during the normal title interval, delayed first call, alternating clips and bounded quiet gaps, effects mute, return fade, scene reload ownership, imported clip duration/levels/fades, and unchanged music behavior. File formatting checks also passed. Subjective listening remains for the audition.
+
+## Aurenfeld panorama playtest 0.47.1 - 2026-11-08
+
+This release record supersedes historical pending/proposed-version notes above. The build includes the repaired tower terrace/gallery, moving painted sky and cloud shadows, breathing golden rays and luminous dust, continuous mountain foothills, irregular grain and connected farm approach/hedges, and the piano/harp/violin lookout theme with sparse natural bird calls. The approved title accent stays unchanged. Wind audio is **disabled**; the very quiet breeze remains a separate audition only.
+
+The source changes are split into these reviewable commits. Every commit increments `PlayerSettings.bundleVersion` once:
+
+| Version | Commit purpose |
+| --- | --- |
+| 0.42.1 | `fix(courtyard): close the terrace pit and clear gallery windows` |
+| 0.43.0 | `feat(weather): animate the painted sky and breathing golden rays` |
+| 0.44.0 | `feat(landscape): connect golden fields to the mountain foothills` |
+| 0.45.0 | `feat(lighting): add soft cloud-gap sunlight to the lookout` |
+| 0.45.1 | `fix(landscape): vary grain and reveal the farm approach` |
+| 0.45.2 | `fix(landscape): join shrubs into irregular field hedges` |
+| 0.46.0 | `feat(audio): add an emotional piano harp and violin lookout theme` |
+| 0.46.1 | `fix(audio): disable field wind and retain a quiet breeze audition` |
+| 0.47.0 | `feat(audio): add sparse natural birdsong to the lookout` |
+| 0.47.1 | `docs(release): prepare the Aurenfeld panorama playtest` |
+
+Build prerequisites: Unity 6000.3.26f1 with Windows build support; close this project's editor before running batch builds. Runtime scenes are TowerRoom, StartScene and BattleScene, in that order. Generate a Windows x64 playtest with:
+
+```powershell
+& 'C:/Program Files/Unity/Hub/Editor/6000.3.26f1-x86_64/Editor/Unity.exe' -batchmode -quit -disableAudio -projectPath 'C:/Users/Holz/Documents/Unity/Arkmon' -executeMethod CreateDemoBuild.Run -arkmonReviewBuild -arkmonBuildPath 'C:/Users/Holz/Documents/Unity/Arkmon/Builds/Arkmon-Hof-Test-0.47.1-2026-11-08/Arkmon.exe' -logFile 'C:/Users/Holz/Documents/Unity/Arkmon/Library/hof-build-0.47.1.log'
+```
+
+`-disableAudio` silences only the build process. Launching `Arkmon.exe` normally retains music and effects. The development review hooks activate only with explicit diagnostic arguments. To test the view, leave the tower room, approach the broken western wall and interact; E/Escape returns to the courtyard. Expect the original name accent and sparse bird calls after settling into the view, with wind absent. Do not move the EXE away from its adjacent data folder and DLLs; extract the full ZIP first.
+
+Recent targeted checks: farm/foothill/audio regression 4/4 passed; revised birdsong scheduling, effects mute, return/reload and imported audio checks 2/2 passed. The final terrace/weather/light release checks also passed (4/4, 100.31 seconds; Library/aurenfeld-release-tests.xml). Standalone build results are recorded alongside the ignored build output. Panorama, farm close-up and mid-flight frames were visually reviewed. This is a prototype playtest, not a full combat regression or a guarantee of frame rate on other hardware. Scenic light shafts are illustrated approximations; cloud-painted motion and world-space shade are coordinated rather than physically projected clouds. The musical arrangement uses recorded instrument samples, not a live orchestra.
+
+Build output, review images, audio auditions and source sample caches remain in ignored `Builds/`. The packaged source commit and build result are stored with the Windows build. Local editor-only whitespace changes are preserved outside these commits.

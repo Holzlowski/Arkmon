@@ -460,3 +460,95 @@ Die Aurenfeld-Kamerafahrt gefaellt; ihre Komposition bewahren. Die technischen u
 - [x] Dezentes Tilt-Shift und warmes Post-Processing in die echte Aussicht eingebaut; Vordergrund abgeschwaecht, Bauernhofband und Overlaytext scharf (0.42.0).
 - [x] Stumme Bildpruefungen fuer Unterschaerfe-Ausrichtung, Wolkenschattenbewegung, Rueckkehr und Szenenwechsel bestanden.
 - [ ] Windows-Hof-Test 0.42.0 durch Nutzer pruefen: Licht, Unschärfe, Wolkenschatten, Bildrate und normales Spielgefuehl.
+
+
+### Hof-Test 0.42.0: Terrasse und lebendigere Witterung
+
+- [x] Vertiefung zwischen Turmterrasse und Verbindungsgalerie mit durchgehendem begehbarem Steinboden schliessen; Generator und gespeicherte Szene anpassen.
+- [x] Drei Galeriefenster auf der freien Wandflaeche verteilen, ohne verdecktes Fenster am Burgfluegel.
+- [x] Godray-Laengen langsam und individuell variieren; beleuchteten Staub daran koppeln.
+- [x] Gemalte Hintergrundwolken sichtbar und langsam ziehen lassen; Wolkenschatten verlangsamen.
+- [x] Staerkere Getreideboeen, wenige geschwungene Windlinien und passende Samenbewegung fuer die Aussicht ergaenzen.
+- [ ] Windlinien, Wolkentempo und Strahlenlaengen im bewegten Spiel vom Nutzer beurteilen lassen.
+
+- [x] Vier gezielte stumme Tests bestanden: Terrassenweg und Fensterfreiheit, langsame Wolken/Schatten, Windlinien bei Rueckkehr/Reload und Lichtstrahlen inklusive zeitversetzter Bildpruefung.
+
+
+### Rueckmeldung: Wind, Staub und Wolkenbewegung zu unauffaellig
+
+- [x] Grosses gemaltes Wolkenband gleichmaessig ziehen lassen; drei aneinanderliegende Ebenen verhindern Stillstand am Wendepunkt.
+- [x] Alte einzelne Vordergrundwolken waehrend der Aussicht ausblenden, danach ihren Zustand wiederherstellen.
+- [x] Deutlichere und kleinere wandernde Schattenflaechen statt sehr breiter, kaum bewegter Abdunklung.
+- [x] Sechs breitere Windboegen quer zur Blickrichtung; dichterer goldleuchtender Staub mit weichem Lichtsaum.
+- [ ] Staerke und Tempo der ueberarbeiteten Effekte im laufenden Spiel vom Nutzer beurteilen lassen.
+
+- [x] Sichtbarkeit mit/ohne Windeffekte im gerenderten Bild geprueft; langsame Wolkenbewegung nach fuenf Minuten und korrektes Wiederanzeigen der Hofwolken nach Rueckkehr bestaetigt.
+
+### Letzte Wetterkorrektur nach Spieltest
+
+- [x] Gezeichnete Windboegen vollstaendig entfernt; Getreidebewegung und leuchtenden Staub beibehalten.
+- [x] Gemalte Hintergrundwolken und Wolkenschatten um 25 Prozent beschleunigt.
+- [ ] Neues Wolkentempo im Spiel beurteilen.
+
+- [x] Godray-Laengenwechsel auf 25/40-Sekunden-Zyklen und 55-100 Prozent Laenge verstaerkt; Wolken und Schatten nochmals 25 Prozent schneller.
+
+- [x] Godrays nochmals angepasst: 12/19-Sekunden-Zyklen, 35 Prozent breiter, bis zu 20 Prozent laenger und 25 Prozent weniger Deckkraft; untere Enden bleiben ueber dem Boden.
+
+- [x] Bergkette in der Aurenfeld-Aussicht etwas angehoben, damit mehr Gipfel ueber den vorderen Huegeln sichtbar sind; visuelle Rueckmeldung offen.
+
+
+### Uebergang von den Feldern zur Bergkette
+
+- [x] Zwei unregelmaessige Vorhuegel mit warmer vorderer und kuehlerer hinterer Ebene ergaenzen.
+- [x] Lockere, unterschiedlich grosse Baum- und Strauchgruppen entlang der hinteren Felder setzen.
+- [x] Nur den Bergfuss farblich sanfter an die Landschaft anbinden; Gipfel klar lassen.
+- [x] Fernen Weg durch eine offene Senke fuehren, ohne die vorhandene Weggeometrie zu verdecken.
+- [ ] Zusammenspiel von Vorhuegeln, Bergkette und Feldern im Spiel vom Nutzer beurteilen lassen.
+
+- [x] Vorhuegel mit vorhandener gemalter Feldtextur verfeinert; stummer PlayMode-Test und Bildpruefung von Aussicht/Kamerafahrt abgeschlossen (1/1, 29.72 s).
+
+- [x] Getrennte Vorhuegel durch zusammenhaengenden Boden bis unter die Bergkulisse verbunden; offene Tal- und Seitenanschluesse geschlossen.
+
+
+### Weiche Sonnenstrahlen ueber Aurenfeld
+
+- [x] Goldene, weich auslaufende Lichtstrahlen an die sonnigen Luecken der wandernden Wolkenschatten koppeln.
+- [x] Sichtbarkeit auf die Aussicht begrenzen, sanft ein-/ausblenden und beim Szenenwechsel aufraeumen.
+- [x] Bergkulisse nochmals etwas hoeher setzen; Anschlussflaeche beibehalten.
+- [ ] Staerke und Stimmung der neuen Sonnenstrahlen vom Nutzer im Spiel beurteilen lassen.
+
+- [x] Weiche Wolkenstrahlen in Vergleichsbildern und nach 45 Sekunden Wetterbewegung geprueft; Sichtbarkeit, Abschaltung, Szenenwechsel und geschlossene Gelaendeanschluesse getestet.
+
+
+### Linker Horizont und Aussichtsmusik
+
+- [x] Linken Huegelruecken niedriger und unregelmaessiger formen; hintere Farben an den Bergfuss annaehren.
+- [x] Kleine versetzte Baumgruppen am linken Uebergang ergaenzen, durchgehenden Boden erhalten.
+- [x] Neue Klavier-/Harfen-/Geigenfassung als Loop einbauen; Namensklang bytegleich erhalten.
+- [x] Windrauschen gegenueber der Musik deutlicher mischen, auch waehrend der Namenseinblendung hoerbar lassen.
+- [ ] Emotionalitaet und Windbalance im Spiel vom Nutzer beurteilen lassen.
+
+- [x] Linken Horizont in Aussicht und Kamerafahrt geprueft; Gelaendetest bestanden. Musikdaten, Namenssynchronisierung, Windpegel und Rueckkehr-Ausblendung stumm getestet (abschliessend 2/2 Audiotests bestanden).
+
+- [x] Wind nach Nutzerfeedback erneut ersetzt: stimmenfreies weiches Rauschen mit langsamen Lautstaerkewellen, 48-Sekunden-Loop und separate 24-Sekunden-Hoerprobe. Musik und Namensklang bytegleich beibehalten.
+
+- [x] Zusaetzliche Windspur auf Nutzerwunsch vorerst deaktiviert; Musik und visueller Wind bleiben bestehen.
+
+### Aussicht - Getreide und Bauernhof abrunden
+
+- [x] Westliches Getreide unregelmaessiger verteilen, Halme ueberlappen lassen und Wuchshoehen variieren.
+- [x] Bauernhof mit freier Zufahrt, niedrigem Randbewuchs und breiterem Bodenkontakt verankern.
+- [x] Hintere Huegel durch niedrige Baumgruppen und zur Bergkulisse passende Farben verbinden.
+- [x] Hof und Wegkurven sanft hervorheben; bewegte Wolkenschatten weniger dunkel mischen.
+- [x] Buschreihen zu laengeren, unregelmaessigen Hecken mit Luecken verbinden.
+- [x] Sehr leise Brisen-Probe mit langsameren Boeen erzeugen; bisherige Windspur ausgeschaltet lassen.
+- [ ] Brisen-Probe vom Nutzer beurteilen lassen, bevor sie im Spiel aktiviert wird.
+
+- [x] Ruhige natuerliche Vogelrufe in der Aussicht: eigene Effektspur, lange Pausen, kein Dauergeloop, Ausblenden bei Rueckkehr.
+- [ ] Vogel-Hoerprobe und dezente Spiel-Lautstaerke vom Nutzer beurteilen lassen.
+
+### Teststand 0.47.1
+
+- [x] Aussicht, Wetter, Terrasse und separate Audioaenderungen in passenden Commit-Gruppen fuer den Teststand vorbereitet.
+- [ ] Neuen Windows-Teststand vom Nutzer auf Aussicht, Vogel-Lautstaerke und Kamerafahrt pruefen lassen.
+- [ ] Sehr leise Brise erst nach Hoerfeedback im Spiel aktivieren.
