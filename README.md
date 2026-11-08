@@ -2427,3 +2427,7 @@ Build one continuous scenic surface beneath the distant mountain painting, keepi
 ### Release 0.45.0 - feat(lighting): add soft cloud-gap sunlight to the lookout
 
 Sample the shared moving cloud mask for softly feathered golden light between cloud shadows. Fade the effect with the scenic view and release its materials on reload. Soften cool field shade and gently emphasize the farm and road bends.
+
+### Release 0.45.1 - fix(landscape): vary grain and reveal the farm approach
+
+Break up regular grain spacing with warped sampling, overlapping stems and broad growth variation. Use one clearing mask for the farm lane, building foot and low shoulders so grain cannot hide the access. Widen the visible worn lane and soften ground contact; test the complete lane centreline.

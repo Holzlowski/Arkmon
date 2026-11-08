@@ -35,19 +35,25 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         }
         return points;
     }
-    public static bool IsBareGround(Vector3 point)
+    static float ClearingDistance(Vector3 point)
     {
-        if(point.x < -149 || point.x > -120 || point.z < 7 || point.z > 30) return false;
-        var delta=point-Forecourt;delta.y=0;
-        if(Mathf.Pow(Vector3.Dot(delta,Right)/3.4f,2)+Mathf.Pow(Vector3.Dot(delta,Front)/2.7f,2)<1) return true;
+        if(point.x < -156 || point.x > -117 || point.z < -2 || point.z > 36) return 100;
+        var delta=point-Forecourt;
+        float distance=(new Vector2(Vector3.Dot(delta,Right)/3.6f,Vector3.Dot(delta,Front)/2.8f).magnitude-1)*2.8f;
+        delta=point-(Gate-Front*.35f);
+        // A low strip along the illustrated building/fence foot keeps its contact visible.
+        float footing=(new Vector2(Vector3.Dot(delta,Right)/10.4f,Vector3.Dot(delta,Front)/1.45f).magnitude-1)*1.45f;
+        distance=Mathf.Min(distance,footing);
         for(int i=1;i<Lane.Length;i++)
         {
             var a=Lane[i-1];var segment=Lane[i]-a;var d=point-a;d.y=0;
             float t=Mathf.Clamp01(Vector3.Dot(d,segment)/segment.sqrMagnitude);
-            if((d-segment*t).sqrMagnitude < 1.1f*1.1f) return true;
+            distance=Mathf.Min(distance,(d-segment*t).magnitude-1.30f);
         }
-        return false;
+        return distance;
     }
+    public static bool IsBareGround(Vector3 point) => ClearingDistance(point)<0;
+    public static float CropGrowth(Vector3 point) => Mathf.SmoothStep(0,1,Mathf.Clamp01(ClearingDistance(point)/2.1f));
     internal static void Install(Transform farm, MeadowVegetation meadow)
     {
         var source=Resources.Load<Material>("CourtyardStyle/Stable earth");if(source==null)return;
@@ -59,7 +65,7 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         style.contact=new Material(Resources.Load<Shader>("CourtyardFarmContact")){name="Farm soft ground contacts"};
         style.paper=new Material(Resources.Load<Shader>("AurenfeldScenicPaper")){name="Farm orchard illustrations"};
         style.BuildLane();style.BuildForecourt();style.BuildHarvestYard();
-        style.Contact(Gate-Front*.1f,9.4f,1.7f,"Farm building foot contact");
+        style.Contact(Gate-Front*.1f,10.8f,2.3f,"Farm building foot contact");
         style.Contact(Gate-Right*10.8f-Front*1.6f,2.8f,1.6f,"Orchard root contact");
         style.Fence(Gate-Right*9+Front*.5f,Gate-Right*10.4f+Front*5.2f);
         style.Fence(Gate+Right*8.6f+Front*.6f,Gate+Right*10.1f+Front*4.4f);
@@ -101,7 +107,7 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         {
             var tangent=Lane[Mathf.Min(row+1,Lane.Length-1)]-Lane[Mathf.Max(0,row-1)];
             var side=Vector3.Cross(Vector3.up,tangent).normalized;
-            float width=1.55f+.12f*Mathf.Sin(row*.43f);
+            float width=1.9f+.18f*Mathf.Sin(row*.43f);
             for(int col=0;col<columns;col++)
             {
                 float across=col/(float)(columns-1)*2-1;
@@ -120,7 +126,7 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         for(int ring=0;ring<=rings;ring++)for(int side=0;side<sides;side++)
         {
             float a=side*Mathf.PI*2/sides,r=ring/(float)rings;
-            var p=Forecourt+(Right*Mathf.Cos(a)*4.1f+Front*Mathf.Sin(a)*3.3f)*r*(1+.05f*Mathf.Sin(a*5));
+            var p=Forecourt+(Right*Mathf.Cos(a)*4.6f+Front*Mathf.Sin(a)*3.6f)*r*(1+.05f*Mathf.Sin(a*5));
             v.Add(Ground(p)+Vector3.up*.004f);c.Add(new Color(r,0,0,1));
             if(ring==0)continue;
             int n=ring*sides+side,prev=n-sides,next=(side+1)%sides;

@@ -16,7 +16,7 @@ Shader "Arkmon/Farm Ground Contact"
    struct A {float4 positionOS:POSITION;float4 color:COLOR;};
    struct V {float4 positionCS:SV_POSITION;float edge:TEXCOORD0;};
    V Vert(A i){V o;o.positionCS=TransformObjectToHClip(i.positionOS.xyz);o.edge=i.color.r;return o;}
-   half4 Frag(V i):SV_Target {half shade=1-.28*pow(1-smoothstep(0,1,i.edge),2);return half4(shade,shade,shade,1);}
+   half4 Frag(V i):SV_Target {half shade=.34*pow(1-smoothstep(0,1,i.edge),1.6);return half4(1-shade,1-shade*.94,1-shade*.82,1);}
    ENDHLSL
   }
  }

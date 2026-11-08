@@ -26,6 +26,14 @@ public class CourtyardDistantFarmTests
         Assert.That(approach.GetComponentsInChildren<SpriteRenderer>().Count(r=>r.name=="Farm tied hay bundle"),Is.EqualTo(3));
         Assert.That(approach.GetComponentsInChildren<MeshRenderer>().Count(r=>r.name=="Farm depth fence post"),Is.EqualTo(6));
         Assert.That(GameObject.Find("Farm building foot contact"),Is.Not.Null);
+        var accessType=T("CourtyardFarmApproach");
+        var lane=(Vector3[])accessType.GetField("Lane",BindingFlags.NonPublic|BindingFlags.Static).GetValue(null);
+        foreach(var p in lane)
+        {
+            Assert.That((bool)accessType.GetMethod("IsBareGround").Invoke(null,new object[]{p}),Is.True,"The entire farm lane must clear standing grain.");
+            Assert.That((float)accessType.GetMethod("CropGrowth").Invoke(null,new object[]{p}),Is.Zero);
+        }
+        Assert.That((float)accessType.GetMethod("CropGrowth").Invoke(null,new object[]{new Vector3(-100,0,80)}),Is.EqualTo(1),"Only the farm shoulders should be cut low.");
         var art = farm.transform.Find("Painted Aurenfeld farm").GetComponent<SpriteRenderer>(); Assert.That(art, Is.Not.Null);
         Assert.That(art.sprite, Is.EqualTo(Resources.Load<Sprite>("CourtyardStyle/Farm/AurenfeldFarm")));
         var road = GameObject.Find("Western winding field path").GetComponent<MeshFilter>().sharedMesh;

@@ -167,6 +167,14 @@ public class MeadowVegetation : MonoBehaviour
             {
                 float wx = x + Sample(random) * step, wz = z + Sample(random) * step;
                 Vector3 world = transform.TransformPoint(new Vector3(wx, 0, wz));
+                bool westernGrain = illustrated && world.x < -64;
+                if (westernGrain)
+                {
+                    // Warp the sampling cells as well as jittering them: no parallel bands of tufts.
+                    wx += (Mathf.PerlinNoise(world.x*.12f+21,world.z*.12f+8)-.5f)*step*1.7f;
+                    wz += (Mathf.PerlinNoise(world.x*.12f+83,world.z*.12f+35)-.5f)*step*1.7f;
+                    world = transform.TransformPoint(new Vector3(wx,0,wz));
+                }
                 if (clearWorldArea.width > 0 && clearWorldArea.Contains(new Vector2(world.x, world.z))) continue;
                 // The entire board, its walls and a small margin remain clear.
                 if (wx > 4.8f && wx < 32.4f && wz > -2 && wz < 25) continue;
@@ -197,6 +205,13 @@ public class MeadowVegetation : MonoBehaviour
                     float tint = Mathf.Lerp(Mathf.Lerp(.88f,.94f,composition), Mathf.Lerp(1.06f,1.04f,composition), detail); tip *= tint; root *= tint;
                     height *= Mathf.Lerp(.80f, 1.25f, fullness) * Mathf.Lerp(.85f, 1.12f, detail);
                 }
+                if (westernGrain)
+                {
+                    // Broad patches of growth, with overlapping stems rather than taller clones.
+                    float patch=Mathf.PerlinNoise(world.x*.16f+63,world.z*.16f+17);
+                    height*=Mathf.Lerp(.78f,1.16f,patch);
+                    edgeGrowth=Mathf.Min(edgeGrowth,CourtyardFarmApproach.CropGrowth(world));
+                }
                 if (ripeGrain && CourtyardFarmApproach.IsHarvested(world)) stubble = true;
                 if (illustrated && edgeGrowth < .85f)
                 {
@@ -207,7 +222,7 @@ public class MeadowVegetation : MonoBehaviour
                 int bladeCount = illustrated ? (detailed ? 3 + Mathf.RoundToInt(fullness * 2) : 3) : 3;
                 if (ripeGrain) bladeCount = stubble ? 2 : (detailed ? 5 + Mathf.RoundToInt(fullness * 2) : 3);
                 if (illustrated && detailed)
-                    rootContacts?.Add(new Vector3(wx + .125f, y, wz + .125f), .28f + bladeCount * .025f);
+                    rootContacts?.Add(new Vector3(wx + (westernGrain ? 0 : .125f), y, wz + (westernGrain ? 0 : .125f)), westernGrain ? step*.40f : .28f + bladeCount*.025f);
                 tuftPhase = illustrated ? Mathf.Repeat(world.x * .731f + world.z * .317f, 1) : 0;
                 float clusterHeight = height;
                 for (int blade = 0; blade < bladeCount; blade++)
@@ -216,6 +231,15 @@ public class MeadowVegetation : MonoBehaviour
                     float angle = Sample(random) * Mathf.PI * 2;
                     Vector3 side = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
                     Vector3 basePoint = new Vector3(wx + Sample(random) * (ripeGrain ? .55f : .25f), y, wz + Sample(random) * (ripeGrain ? .55f : .25f));
+                    if (westernGrain)
+                    {
+                        float spread=Mathf.Sqrt(Sample(random))*step*.62f;
+                        float bearing=Sample(random)*Mathf.PI*2;
+                        basePoint=new Vector3(wx+Mathf.Cos(bearing)*spread,y,wz+Mathf.Sin(bearing)*spread);
+                        var bladeWorld=transform.TransformPoint(basePoint);
+                        if(CourtyardFieldMargins.IsBarePath(bladeWorld) || CourtyardFarmApproach.IsBareGround(bladeWorld))continue;
+                        height*=Mathf.Lerp(.42f,1,CourtyardFarmApproach.CropGrowth(bladeWorld));
+                    }
                     if(Application.isPlaying && gameObject.scene.name=="StartScene")
                         basePoint=transform.InverseTransformPoint(CourtyardBreachStyle.ExteriorPoint(transform.TransformPoint(basePoint)));
                     if (illustrated) basePoint = rootContacts.Root(basePoint);
