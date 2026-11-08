@@ -117,19 +117,19 @@ public sealed class CourtyardDistantFields : MonoBehaviour
         float length=Vector3.Distance(start,end),distance=0;
         while(distance<length)
         {
-            int count=random.Next(3,7);
+            int count=random.Next(7,12);
             float groupHeight=Mathf.Lerp(.72f,1.24f,(float)random.NextDouble());
-            float groupDepth=Mathf.Lerp(-2.3f,2.3f,(float)random.NextDouble());
+            float groupDepth=Mathf.Lerp(-.8f,.8f,(float)random.NextDouble());
             for(int i=0;i<count && distance<length;i++)
             {
                 float t=distance/length;
                 var p=Vector3.Lerp(start,end,t);
-                p.x+=Mathf.Sin(t*Mathf.PI)*bend+groupDepth+Mathf.Lerp(-1.2f,1.2f,(float)random.NextDouble());
+                p.x+=Mathf.Sin(t*Mathf.PI)*bend+groupDepth+Mathf.Lerp(-.55f,.55f,(float)random.NextDouble());
                 p.z+=Mathf.Lerp(-.65f,.65f,(float)random.NextDouble());
                 float ends=Mathf.SmoothStep(0,1,Mathf.Min(t,1-t)*9);
                 int kind=random.Next(0,5);kind=kind<3?0:kind-2;
                 kind=Mathf.Min(kind,shrubs.Length-1);
-                float size=height*groupHeight*Mathf.Lerp(.60f,1.32f,(float)random.NextDouble())
+                float size=height*groupHeight*Mathf.Lerp(.74f,1.23f,(float)random.NextDouble())
                     *Mathf.Lerp(.66f,1,ends)*(kind==2?.68f:1);
                 if(!CourtyardFarmApproach.IsBareGround(p))
                 {
@@ -137,15 +137,15 @@ public sealed class CourtyardDistantFields : MonoBehaviour
                     if(plant!=null)
                     {
                         var scale=plant.transform.localScale;
-                        scale.x*=Mathf.Lerp(.78f,1.22f,(float)random.NextDouble());
+                        scale.x*=Mathf.Lerp(1.08f,1.44f,(float)random.NextDouble());
                         plant.transform.localScale=scale;
                         plant.flipX=random.Next(2)==0;
                         plant.color=Color.Lerp(new Color(.54f,.70f,.44f),new Color(.84f,.91f,.66f),(float)random.NextDouble());
                     }
                 }
-                distance+=Mathf.Lerp(2.5f,4.3f,(float)random.NextDouble());
+                distance+=Mathf.Lerp(1.9f,2.9f,(float)random.NextDouble());
             }
-            distance+=Mathf.Lerp(5.5f,10.5f,(float)random.NextDouble());
+            distance+=Mathf.Lerp(4.8f,7.2f,(float)random.NextDouble());
         }
     }
     SpriteRenderer AddPlant(MeadowVegetation meadow, Sprite sprite, Vector3 point, float height, string label)

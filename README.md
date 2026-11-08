@@ -2431,3 +2431,7 @@ Sample the shared moving cloud mask for softly feathered golden light between cl
 ### Release 0.45.1 - fix(landscape): vary grain and reveal the farm approach
 
 Break up regular grain spacing with warped sampling, overlapping stems and broad growth variation. Use one clearing mask for the farm lane, building foot and low shoulders so grain cannot hide the access. Widen the visible worn lane and soften ground contact; test the complete lane centreline.
+
+### Release 0.45.2 - fix(landscape): join shrubs into irregular field hedges
+
+Form longer overlapping hedge sections with occasional openings instead of scattered equal-sized islands. Vary widths and heights while reducing depth scatter and preserving road and farm clearances.
