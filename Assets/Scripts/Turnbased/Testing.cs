@@ -12,7 +12,7 @@ public class Testing : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (ExplorationInput.Pressed(UnityEngine.InputSystem.Key.T))
         {
 
         }

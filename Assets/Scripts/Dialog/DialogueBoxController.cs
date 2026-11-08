@@ -262,7 +262,7 @@ public class DialogueBoxController : MonoBehaviour
 
     private void Update()
     {
-        if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) CloseDialogue();
+        if (IsOpen && ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Escape)) CloseDialogue();
     }
 
     private void OnDestroy()

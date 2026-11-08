@@ -58,7 +58,7 @@ public class BattleResultPanel : MonoBehaviour
     }
     private void Update()
     {
-        if (IsOpen && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape))) Continue();
+        if (IsOpen && (ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Enter) || ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Escape))) Continue();
     }
     private void OnDisable()
     {

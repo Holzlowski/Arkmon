@@ -29,6 +29,6 @@ public class DemoCompletionPanel : MonoBehaviour
         button.onClick.AddListener(Close);
     }
     public void Close(){if(current==this)current=null;Destroy(gameObject);}
-    private void Update(){if(current==this && Input.GetKeyDown(KeyCode.Escape))Close();}
+    private void Update(){if(current==this && ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Escape))Close();}
     private void OnDestroy(){if(current==this)current=null;}
 }

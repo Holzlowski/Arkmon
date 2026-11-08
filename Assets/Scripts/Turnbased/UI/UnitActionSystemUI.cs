@@ -234,7 +234,7 @@ public class UnitActionSystemUI : MonoBehaviour
         actionsTab.interactable = ready && unit != null && !unit.IsDead;
         attacksTab.interactable = actionsTab.interactable && !unit.IsKnockedDown;
         if (backButton != null) backButton.interactable = ready;
-        if (ready && categoryOpen && Input.GetKeyDown(KeyCode.Escape)) BackToCategories();
+        if (ready && categoryOpen && ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Escape)) BackToCategories();
     }
     private void BattleStateChanged(object sender, EventArgs e)
     {

@@ -42,12 +42,12 @@ public class PlayerController : MonoBehaviour
         if (SceneLoadManager.IsTransitioning || DemoOpening.IsPresenting || inConversation)
         {
             moveInput = Vector2.zero; jumpRequested = false;
-            if (inConversation && Input.GetKeyUp(KeyCode.E)) TryInteract();
+            if (inConversation && ExplorationInput.Released(UnityEngine.InputSystem.Key.E)) TryInteract();
             return;
         }
-        moveInput = Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1);
-        jumpRequested |= Input.GetKeyDown(KeyCode.Space);
-        if (Input.GetKeyUp(KeyCode.E))
+        moveInput = ExplorationInput.Movement;
+        jumpRequested |= ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Space);
+        if (ExplorationInput.Released(UnityEngine.InputSystem.Key.E))
         {
             TryInteract();
         }
@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
     private void ToggleObject()
     {
         // Objekte wechseln
-        if (Input.GetKeyDown(KeyCode.C))
+        if (ExplorationInput.Pressed(UnityEngine.InputSystem.Key.C))
         {
             TogglePlayerObjects();
         }

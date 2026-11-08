@@ -69,7 +69,7 @@ public sealed class CourtyardLookout : MonoBehaviour, IInteractableAsPlayer
         if (active != this) return;
         if (SceneLoadManager.IsTransitioning || follow == null || !follow.isActiveAndEnabled || view == null) { Finish(); return; }
         // Ignore the E release which opened this interaction, regardless of script Update order.
-        if (Time.frameCount > startFrame && (Input.GetKeyUp(KeyCode.E) || Input.GetKeyDown(KeyCode.Escape))) ReturnToCourtyard();
+        if (Time.frameCount > startFrame && (ExplorationInput.Released(UnityEngine.InputSystem.Key.E) || ExplorationInput.Pressed(UnityEngine.InputSystem.Key.Escape))) ReturnToCourtyard();
     }
 
     private void LateUpdate()
