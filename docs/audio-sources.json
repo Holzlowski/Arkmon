@@ -169,12 +169,29 @@
     "processing": "Two 0.5-second excerpts from the public HQ preview at 5.2s and 5.9s; DC removal, 35ms fade-in, 85ms fade-out, peak 0.65, mono PCM16 at 32kHz. Alternated on forward cuts only; player-distance attenuation and dialogue interruption. No synthesis."
   },
   "field_rustle": {
-    "source_file": "Assets/Resources/Audio/Stable/straw-rustle.ogg",
-    "original": "Kenney RPG Audio cloth4.ogg (CC0-1.0), already documented under stable_ambience.foley",
+    "title": "Aurenfeld gentle wind - slow swells",
+    "source_type": "Original offline sound design; deterministic filtered noise, no sampled recordings",
+    "third_party_sources": [],
+    "seed": 8112026,
     "runtime_file": "Assets/Resources/Audio/field-rustle.wav",
-    "recipe": "tools/render_field_rustle.py",
-    "processing": "24-second stereo circular overlap of slowed recorded cloth rustle, softened transients, no generated noise/oscillators. Peak 0.42. Foley approximation of wind in grain, not a field recording.",
-    "runtime": "Fades in during the optional lookout, follows effectsVolume, fades out on return/transition, stops on disable and scene unload. No playback in batch mode."
+    "seconds": 48,
+    "sample_rate": 32000,
+    "channels": 2,
+    "sample_peak": 0.3270263671875,
+    "rms": 0.04999759025026457,
+    "seam_step": 0.0,
+    "half_second_rms_p90_to_p10": 2.0689404095239965,
+    "maximum_half_second_level_step_relative_to_mean": 0.19410886342196773,
+    "sha256": "aa44b05bb77f73ec487f7211323ced9d17510abcc5759bd2c29bf20ffafb23b2",
+    "processing": "Soft broad pink-noise bands; rumble and high-frequency rolloff; 8/12/48-second smooth overlapping swells; restrained stereo; 48-second periodic loop. No voices, foley, field recordings, melody or tonal oscillators.",
+    "previous_source": "Replaces Thimras Park ambiences recording because the user heard a voice and found its character unsuitable.",
+    "recipe": "tools/render_field_rustle.py --install",
+    "preview": "Builds\\aurenfeld-gentle-wind-preview.wav",
+    "protected_music_sha256": {
+      "aurenfeld-title.wav": "f694f771f938f554fd580a35c387f7996e0aa37b8d100b99f5b3cd36437997d8",
+      "aurenfeld-panorama.wav": "07cadf90eff84d68a07f4f31a563c2918c694dc1daadf48385994f08381f00ca",
+      "aurenfeld-approach.wav": "c6bccf9f2af7b7afdd2a306b4d1903a3e63b29709b58ee7b5597171ad0546604"
+    }
   },
   "courtyard_storybook_music": {
     "runtime_file": "Assets/Resources/Audio/courtyard-storybook.wav",

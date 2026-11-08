@@ -2439,3 +2439,7 @@ Form longer overlapping hedge sections with occasional openings instead of scatt
 ### Release 0.46.0 - feat(audio): add an emotional piano harp and violin lookout theme
 
 Replace the approach and panorama with an original sampled piano, harp and violin arrangement and a 53.76-second loop. Preserve the approved title accent byte-for-byte and its caption timing. Record sample provenance, renderer and loop-data checks.
+
+### Release 0.46.1 - fix(audio): disable field wind and retain a quiet breeze audition
+
+Keep field wind disabled following listening feedback. Replace the old cloth and park-recording placeholders with reproducible voice-free air and provide a separate, much quieter breeze audition. Preserve music and use independent effects volume and return cleanup if wind is enabled later.

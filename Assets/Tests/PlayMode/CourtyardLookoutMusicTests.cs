@@ -63,11 +63,20 @@ public class CourtyardLookoutMusicTests
         Assert.That(sources.Single(s => s.clip.name == "aurenfeld-title").loop, Is.False);
         Assert.That(sources.Where(s => s.clip.name != "aurenfeld-title").All(s => s.loop), Is.True);
         Assert.That(sources.All(s => s.spatialBlend == 0), Is.True);
+        var wind=GameObject.Find("Aurenfeld field atmosphere").GetComponent<AudioSource>();
+        Assert.That(wind.clip.name,Is.EqualTo("field-rustle"));
+        yield return new WaitForSecondsRealtime(.8f);
+        Assert.That(wind.volume,Is.Zero,"Additional wind audio is disabled by default.");
+        Assert.That(wind.isPlaying,Is.False);
+        float musicGain=(float)T("SoundManager").GetField("musicVolume").GetValue(Manager);
+        Assert.That(sources.Single(s=>s.clip.name=="aurenfeld-title").volume,Is.EqualTo(musicGain).Within(.001f),"Keep the name accent at its approved level.");
+        Assert.That(sources.Single(s=>s.clip.name=="aurenfeld-panorama").volume,Is.EqualTo(musicGain*.82f).Within(.001f));
         Assert.That(Music, Is.SameAs(original));
         Call(point, "ReturnToCourtyard");
         yield return new WaitForSecondsRealtime(3.6f);
         Assert.That(Get(Manager, "MusicDucking"), Is.EqualTo(1f));
         Assert.That(sources.All(s => !s.isPlaying && s.volume == 0), Is.True);
+        Assert.That(wind.volume,Is.Zero,"Field wind fades out on return.");
         Assert.That(Music.volume, Is.EqualTo((float)T("SoundManager").GetField("musicVolume").GetValue(Manager)).Within(.001f));
 
         Call(point, "InteractWithPlayer");
@@ -88,20 +97,21 @@ public class CourtyardLookoutMusicTests
     [Test]
     public void LookoutClips_KeepExactLoopBoundariesAndUnclippedSamples()
     {
-        string[] names = { "aurenfeld-approach", "aurenfeld-panorama", "aurenfeld-title" };
-        float[] seconds = { 8, 53.76f, 5 };
+        string[] names = { "aurenfeld-approach", "aurenfeld-panorama", "aurenfeld-title", "field-rustle" };
+        float[] seconds = { 8, 53.76f, 5, 48 };
+        int[] rates = { 44100, 44100, 44100, 32000 };
         for (int i = 0; i < names.Length; i++)
         {
             var clip = Resources.Load<AudioClip>("Audio/" + names[i]);
             Assert.That(clip, Is.Not.Null);
             Assert.That(clip.channels, Is.EqualTo(2));
-            Assert.That(clip.frequency, Is.EqualTo(44100));
-            Assert.That(clip.samples, Is.EqualTo(Mathf.RoundToInt(seconds[i] * 44100)));
+            Assert.That(clip.frequency, Is.EqualTo(rates[i]));
+            Assert.That(clip.samples, Is.EqualTo(Mathf.RoundToInt(seconds[i] * rates[i])));
             clip.LoadAudioData();
             var data = new float[clip.samples * 2];
             Assert.That(clip.GetData(data, 0), Is.True);
             Assert.That(data.All(v => !float.IsNaN(v) && !float.IsInfinity(v) && Mathf.Abs(v) < .85f), Is.True);
-            if (i < 2)
+            if (names[i] != "aurenfeld-title")
                 for (int c = 0; c < 2; c++) Assert.That(Mathf.Abs(data[c] - data[data.Length - 2 + c]), Is.LessThan(.003f));
         }
     }

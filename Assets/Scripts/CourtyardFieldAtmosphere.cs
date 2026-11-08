@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-// A bounded scenic flock and quiet field rustle; owned entirely by StartScene.
+// A bounded scenic flock and optional wind audio; owned entirely by StartScene.
 public sealed class CourtyardFieldAtmosphere : MonoBehaviour
 {
     readonly Transform[] birds = new Transform[3];
@@ -9,6 +9,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
     readonly Vector3[] vertices = new Vector3[9];
     Material ink;
     AudioSource rustle;
+    [SerializeField] bool enableWindAudio = false;
     float age;
     CourtyardLookout lookout;
 
@@ -39,7 +40,6 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
         rustle=gameObject.AddComponent<AudioSource>();
         rustle.playOnAwake=false;rustle.loop=true;rustle.spatialBlend=0;rustle.volume=0;
         rustle.clip=Resources.Load<AudioClip>("Audio/field-rustle");
-        if (!Application.isBatchMode && rustle.clip!=null) rustle.Play();
     }
     void Update()
     {
@@ -63,12 +63,19 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
             wings[i].vertices=vertices;
         }
         if(rustle==null)return;
-        bool presenting=CourtyardLookout.IsPresenting && !SceneLoadManager.IsTransitioning;
+        // Paused by art direction; retain the source for later sound auditions.
+        if (!enableWindAudio)
+        {
+            rustle.volume = 0;
+            if (rustle.isPlaying) rustle.Stop();
+            return;
+        }
+        bool presenting=CourtyardLookout.IsPresenting && lookout!=null && !lookout.IsReturning && !SceneLoadManager.IsTransitioning;
         float gain=SoundManager.instance!=null?SoundManager.instance.effectsVolume:.55f;
         // Leave room for the one-time title chord, then let the fields breathe again.
         bool title = lookout != null && lookout.Progress >= .68f && lookout.Progress < .84f;
-        float target = presenting ? (title ? .07f : .14f) * gain : 0;
-        rustle.volume=Mathf.MoveTowards(rustle.volume,target,Time.unscaledDeltaTime*.10f);
+        float target = presenting ? (title ? .20f : .34f) * gain : 0;
+        rustle.volume=Mathf.MoveTowards(rustle.volume,target,Time.unscaledDeltaTime*.18f);
         if(!Application.isBatchMode && presenting && !rustle.isPlaying && rustle.clip!=null)rustle.Play();
         if(!presenting && rustle.volume<=0 && rustle.isPlaying)rustle.Stop();
     }
