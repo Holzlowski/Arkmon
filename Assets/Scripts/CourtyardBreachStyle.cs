@@ -11,6 +11,9 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
     readonly List<Material> materials=new List<Material>();
     readonly List<Transform> plants=new List<Transform>();
     Material stone,earth;
+    Color limestoneTint;
+    MeshRenderer boundaryRenderer;
+    bool boundaryWasVisible;
     readonly List<(MeshRenderer renderer,float world)> mappedWalls=new List<(MeshRenderer,float)>();
     MeadowVegetation exterior;
     readonly List<(MeshFilter filter,Mesh original)> landscape=new List<(MeshFilter,Mesh)>();
@@ -20,7 +23,10 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
         var wall=GameObject.Find("West wall near");var boundary=GameObject.Find("Broken west wall base");
         if(wall==null || boundary==null || GameObject.Find("Illustrated west breach")!=null)return;
         var root=new GameObject("Illustrated west breach");var style=root.AddComponent<CourtyardBreachStyle>();
-        style.stone=wall.GetComponent<MeshRenderer>().sharedMaterial;
+        style.stone=new Material(wall.GetComponent<MeshRenderer>().sharedMaterial){name="Individual breach limestone"};
+        style.stone.SetFloat("_SingleStone",1);style.stone.SetFloat("_WorldMasonry",0);
+        style.limestoneTint=style.stone.GetColor("_BaseColor");
+        style.materials.Add(style.stone);
         var oldNames=new HashSet<string>{"Fallen limestone","Broken masonry edge","Moss on fallen stone",
             "Breach foliage","Breach wildflower","Breach grass blade","Ivy along broken masonry"};
         foreach(var item in FindObjectsByType<Transform>(FindObjectsSortMode.None))
@@ -38,6 +44,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
             style.mappedWalls.Add((r,b.GetFloat("_WorldMasonry")));
             b.SetFloat("_WorldMasonry",1);r.SetPropertyBlock(b);
         }
+        style.boundaryRenderer=surface;style.boundaryWasVisible=surface.enabled;surface.enabled=false;
         style.BlendExterior();
         style.BrokenEdges();style.Rubble();style.Forecourt();style.ExteriorRubble();style.Vegetation();
         Physics.SyncTransforms();
@@ -88,26 +95,35 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
     }
     void BrokenEdges()
     {
-        // Different heights on either side frame the opening instead of a symmetrical doorway.
-        float[] heights={7.65f,5.55f,3.5f,1.8f};
-        for(int side=0;side<2;side++)for(int col=0;col<heights.Length;col++)
+        // Actual courses bridge the full wall to the fractured ends; the joints are
+        // geometry, not an unrelated masonry texture cut by a cube silhouette.
+        const float course=.44f; // Five painted courses per 2.27 m atlas repeat.
+        // One continuous grid avoids overlapping low-wall and tall-edge stones.
+        float[] heights={7.9f,6.1f,4.1f,2.3f,1.32f,1.32f,1.32f,2.3f,4.1f,6.1f,7.9f};
+        for(int col=0;col<heights.Length;col++)
         {
-            float height=heights[col]-(side==1 && col>0?.35f:0);
-            float z=side==0?3.62f+col*.59f:10.38f-col*.62f;
-            int courses=Mathf.CeilToInt(height/.78f);float course=height/courses;
+            int courses=Mathf.RoundToInt(heights[col]/course);
+            float z=3.35f+col*.73f;
+            Block("Breach mortar core",new Vector3(-43,courses*course*.5f,z),
+                new Vector3(1.22f,courses*course-.12f,.46f),Vector3.zero,880+col,false);
             for(int row=0;row<courses;row++)
-                Block("Breach standing masonry",new Vector3(-43+(row%2)*.035f,course*(row+.5f),z),
-                    new Vector3(1.36f,course+.025f,.76f),new Vector3(0,(row%2==0?1:-1)*3,0),side*101+col*19+row,true);
+            {
+                float stagger=row%2==0?-.045f:.045f;
+                Block("Breach standing masonry",new Vector3(-43+(row%2)*.025f,course*.5f+row*course,z+stagger),
+                    new Vector3(1.48f,course-.01f,.76f),new Vector3(0,(row%2==0?1:-1)*1.4f,0),col*37+row,true);
+            }
         }
-        for(int i=0;i<8;i++)
-            Block("Breach irregular wall crown",new Vector3(-43,1.31f+(i%3)*.045f,4.0f+i*.83f),
-                new Vector3(1.42f,.30f+(i%2)*.12f,.88f),new Vector3(0,i%2==0?6:-4,0),200+i,false);
+        // Retain the existing invisible physical boundary; dress its two visible faces.
+        Block("Breach mortar core",new Vector3(-43,.60f,7),new Vector3(1.22f,1.15f,6.75f),Vector3.zero,901,false);
+        for(int i=0;i<7;i++)
+            Block("Breach irregular wall crown",new Vector3(-43,1.34f+(i%3)*.028f,4.3f+i*.85f),
+                new Vector3(1.38f,.20f+(i%2)*.09f,.70f),new Vector3(0,i%2==0?6:-4,0),200+i,false);
     }
     void Rubble()
     {
         var random=new System.Random(381);
         // Two piles at the fractured ends leave a clear viewing place in the middle.
-        for(int pile=0;pile<2;pile++)for(int i=0;i<13;i++)
+        for(int pile=0;pile<2;pile++)for(int i=0;i<8;i++)
         {
             float x=-42.4f+(float)random.NextDouble()*.45f;
             float z=(pile==0?4.1f:9.5f)+((float)random.NextDouble()-.5f)*1.45f;
@@ -123,7 +139,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
         if(shader!=null){contact=new Material(shader){name="Breach rubble contact"};materials.Add(contact);}
         var random=new System.Random(672);
         // Low fragments continue the broken courses outside, leaving the centre of the view open.
-        for(int side=0;side<2;side++)for(int i=0;i<9;i++)
+        for(int side=0;side<2;side++)for(int i=0;i<6;i++)
         {
             float spread=(float)random.NextDouble();
             var p=Ground(new Vector3(-44.1f-spread*2.3f,0,(side==0?3.7f:10.4f)+((float)random.NextDouble()-.5f)*1.6f));
@@ -139,13 +155,54 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
             ((i/2)%2==0?-1:1)*(.43f+(float)random.NextDouble()*.07f),(i<4?-1:1)*(.45f+(float)random.NextDouble()*.05f));
         int[][] faces={new[]{0,2,3,1},new[]{4,5,7,6},new[]{0,4,6,2},new[]{1,3,7,5},new[]{0,1,5,4},new[]{2,6,7,3}};
         var vertices=new List<Vector3>();var triangles=new List<int>();
-        foreach(var face in faces){int n=vertices.Count;vertices.AddRange(face.Select(i=>corners[i]));triangles.AddRange(new[]{n,n+1,n+2,n,n+2,n+3});}
+        var inset=new Vector3[6][];
+        var cornerFaces=new List<Vector3>[8];for(int i=0;i<8;i++)cornerFaces[i]=new List<Vector3>();
+        var edgeFaces=new Dictionary<(int,int),List<Vector3>>();
+        for(int f=0;f<faces.Length;f++)
+        {
+            var face=faces[f];Vector3 center=Vector3.zero;foreach(int i in face)center+=corners[i]*.25f;
+            inset[f]=new Vector3[4];
+            for(int j=0;j<4;j++)
+            {
+                // Unequal bevel widths produce small chips rather than perfectly machined edges.
+                inset[f][j]=Vector3.Lerp(corners[face[j]],center,.17f+(float)random.NextDouble()*.16f);
+                cornerFaces[face[j]].Add(inset[f][j]);
+            }
+            Polygon(inset[f],vertices,triangles);
+            for(int j=0;j<4;j++)
+            {
+                int a=face[j],b=face[(j+1)%4];var key=(Mathf.Min(a,b),Mathf.Max(a,b));
+                if(!edgeFaces.TryGetValue(key,out var list)){list=new List<Vector3>();edgeFaces.Add(key,list);}
+                list.Add(inset[f][j]);list.Add(inset[f][(j+1)%4]);
+            }
+        }
+        foreach(var list in edgeFaces.Values)Polygon(list.ToArray(),vertices,triangles);
+        foreach(var list in cornerFaces)Polygon(list.ToArray(),vertices,triangles);
         var mesh=new Mesh{name="Weathered breach block"};mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();meshes.Add(mesh);
         var obj=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));obj.transform.SetParent(transform,false);
         obj.transform.SetPositionAndRotation(at,Quaternion.Euler(angles));obj.transform.localScale=size;
         obj.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=obj.GetComponent<MeshRenderer>();renderer.sharedMaterial=stone;
-        var block=new MaterialPropertyBlock();block.SetVector("_ObjectScale",size);block.SetFloat("_WorldMasonry",1);renderer.SetPropertyBlock(block);
+        var block=new MaterialPropertyBlock();block.SetVector("_ObjectScale",size);
+        float tone=.97f+(float)random.NextDouble()*.06f;
+        block.SetColor("_BaseColor",name=="Breach mortar core"?new Color(.25f,.25f,.22f):limestoneTint*tone);
+        // A crop wholly inside one painted atlas stone retains the castle's brushwork.
+        Vector4 patch=seed%3==0?new Vector4(.16f,.065f,.63f,.405f):
+            seed%3==1?new Vector4(.12f,.05f,.65f,.415f):new Vector4(.14f,.055f,.64f,.408f);
+        block.SetVector("_StonePatch",patch);
+        block.SetVector("_StoneWallJoin",Vector4.zero);
+        block.SetFloat("_WorldMasonry",0);
+        block.SetVector("_FootMoss",new Vector4(-.05f,.75f,.65f,seed*.37f));renderer.SetPropertyBlock(block);
         if(solid)obj.AddComponent<MeshCollider>().sharedMesh=mesh;
+    }
+    static void Polygon(Vector3[] points,List<Vector3> vertices,List<int> triangles)
+    {
+        Vector3 center=Vector3.zero;foreach(var p in points)center+=p/points.Length;
+        var normal=center.normalized;
+        var axis=(points[0]-center).normalized;var across=Vector3.Cross(normal,axis).normalized;
+        var ordered=points.OrderBy(p=>Mathf.Atan2(Vector3.Dot(p-center,across),Vector3.Dot(p-center,axis))).ToArray();
+        if(Vector3.Dot(Vector3.Cross(ordered[1]-ordered[0],ordered[2]-ordered[0]),normal)<0)System.Array.Reverse(ordered);
+        int first=vertices.Count;vertices.AddRange(ordered);
+        for(int i=1;i<ordered.Length-1;i++){triangles.Add(first);triangles.Add(first+i);triangles.Add(first+i+1);}
     }
     void Forecourt()
     {
@@ -214,6 +271,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
     void LateUpdate(){if(Camera.main!=null)foreach(var plant in plants)plant.rotation=Camera.main.transform.rotation;}
     void OnDestroy()
     {
+        if(boundaryRenderer!=null)boundaryRenderer.enabled=boundaryWasVisible;
         foreach(var item in mappedWalls)if(item.renderer!=null)
         {var b=new MaterialPropertyBlock();item.renderer.GetPropertyBlock(b);b.SetFloat("_WorldMasonry",item.world);item.renderer.SetPropertyBlock(b);}
         foreach(var item in landscape)if(item.filter!=null)item.filter.sharedMesh=item.original;

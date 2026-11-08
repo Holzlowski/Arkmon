@@ -8,6 +8,10 @@ Shader "Arkmon/Courtyard Illustrated Surface"
   _ObjectScale("Object metres",Vector)=(1,1,1,0)
   _Wood("Align wood grain",Float)=0 _GrainAxis("Long axis",Float)=1
   _EdgeWidth("Ink edge metres",Float)=0
+  _SingleStone("Individual painted stone",Float)=0
+  _StoneMeshUV("Batched relief atlas UV",Float)=0
+  _StonePatch("Single atlas stone: size and offset",Vector)=(.16,.065,.63,.405)
+  _StoneWallJoin("Stone to wall: edge, direction, span, enabled",Vector)=(0,0,1,0)
   _WorldMasonry("World-scale masonry projection",Float)=0
   _FaceAlignedMasonry("Face-aligned wall projection",Float)=0
   _FootMoss("Moss: ground height, reach, strength, variation",Vector)=(0,1,0,0)
@@ -45,6 +49,10 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    UNITY_DEFINE_INSTANCED_PROP(float, _ShadowFloor)
    UNITY_DEFINE_INSTANCED_PROP(float, _FaceAlignedMasonry)
    UNITY_DEFINE_INSTANCED_PROP(float, _MorningAccentStrength)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _StonePatch)
+   UNITY_DEFINE_INSTANCED_PROP(float4, _StoneWallJoin)
+   UNITY_DEFINE_INSTANCED_PROP(float, _StoneMeshUV)
+   UNITY_DEFINE_INSTANCED_PROP(float, _SingleStone)
    UNITY_DEFINE_INSTANCED_PROP(float, _WorldMasonry)
   UNITY_INSTANCING_BUFFER_END(PaintProps)
   #define _BaseColor UNITY_ACCESS_INSTANCED_PROP(PaintProps, _BaseColor)
@@ -64,6 +72,10 @@ Shader "Arkmon/Courtyard Illustrated Surface"
   #define _ShadowFloor UNITY_ACCESS_INSTANCED_PROP(PaintProps, _ShadowFloor)
   #define _FaceAlignedMasonry UNITY_ACCESS_INSTANCED_PROP(PaintProps, _FaceAlignedMasonry)
   #define _MorningAccentStrength UNITY_ACCESS_INSTANCED_PROP(PaintProps, _MorningAccentStrength)
+  #define _StonePatch UNITY_ACCESS_INSTANCED_PROP(PaintProps, _StonePatch)
+  #define _StoneWallJoin UNITY_ACCESS_INSTANCED_PROP(PaintProps, _StoneWallJoin)
+  #define _StoneMeshUV UNITY_ACCESS_INSTANCED_PROP(PaintProps, _StoneMeshUV)
+  #define _SingleStone UNITY_ACCESS_INSTANCED_PROP(PaintProps, _SingleStone)
   #define _WorldMasonry UNITY_ACCESS_INSTANCED_PROP(PaintProps, _WorldMasonry)
   void ClipViewCutaway(float3 world)
   {
@@ -85,14 +97,14 @@ Shader "Arkmon/Courtyard Illustrated Surface"
    #pragma multi_compile_fog
    #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
    #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
-   struct A { float4 positionOS:POSITION;float3 normalOS:NORMAL; UNITY_VERTEX_INPUT_INSTANCE_ID };
-   struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 local:TEXCOORD1;float3 normal:TEXCOORD2;float3 normalOS:TEXCOORD3;float fog:TEXCOORD4; UNITY_VERTEX_INPUT_INSTANCE_ID };
+   struct A { float4 positionOS:POSITION;float3 normalOS:NORMAL;float2 uv:TEXCOORD0;float4 color:COLOR; UNITY_VERTEX_INPUT_INSTANCE_ID };
+   struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 local:TEXCOORD1;float3 normal:TEXCOORD2;float3 normalOS:TEXCOORD3;float fog:TEXCOORD4;float2 uv:TEXCOORD5;half4 color:COLOR; UNITY_VERTEX_INPUT_INSTANCE_ID };
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
 
    V Vert(A i)
    {
     V o;UNITY_SETUP_INSTANCE_ID(i);UNITY_TRANSFER_INSTANCE_ID(i,o);o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);
-    o.local=i.positionOS.xyz;o.normal=TransformObjectToWorldNormal(i.normalOS);o.normalOS=i.normalOS;o.fog=ComputeFogFactor(o.positionCS.z);return o;
+    o.uv=i.uv;o.color=i.color;o.local=i.positionOS.xyz;o.normal=TransformObjectToWorldNormal(i.normalOS);o.normalOS=i.normalOS;o.fog=ComputeFogFactor(o.positionCS.z);return o;
    }
    half3 Paint(float2 uv)
    {
@@ -124,7 +136,26 @@ Shader "Arkmon/Courtyard Illustrated Surface"
      float3 wn=abs(normalize(i.normal));
      uv=wn.x>wn.y && wn.x>wn.z?i.world.zy:wn.y>wn.z?i.world.xz:i.world.xy;
     }
-    half3 paint=Paint(uv*_TextureScale)*_BaseColor.rgb;
+    half3 paint;
+    if(_SingleStone>.5)
+    {
+     // Sample one stone from the castle atlas without repeating its mortar grid.
+     float2 faceUV=an.x>an.y && an.x>an.z?i.local.zy:an.y>an.z?i.local.xz:i.local.xy;
+     float2 at=_StoneMeshUV>.5?i.uv:_StonePatch.zw+saturate(faceUV+.5)*_StonePatch.xy;
+     paint=SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,at).rgb*_BaseColor.rgb;
+     float face=max(an.x,max(an.y,an.z));
+     paint*=_StoneMeshUV>.5?i.color.rgb:lerp(.68,1,smoothstep(.72,.97,face)).xxx;
+     if(_StoneWallJoin.w>.5)
+     {
+      float intoBreach=(i.world.z-_StoneWallJoin.x)*_StoneWallJoin.y;
+      float joined=1-smoothstep(-_StoneWallJoin.z,.12,intoBreach);
+      // Identical projection to the adjoining western wall; no floating texture islands.
+      float3 wn=abs(normalize(i.normal));
+      float2 wallUV=wn.x>wn.y && wn.x>wn.z?i.world.zy:wn.y>wn.z?i.world.xz:i.world.xy;
+      paint=lerp(paint,Paint(wallUV*_TextureScale)*_BaseColor.rgb,joined);
+     }
+    }
+    else paint=Paint(uv*_TextureScale)*_BaseColor.rgb;
     // Preserve the original painted colors, then add modest local contrast in linear light.
     paint=max(0,lerp(dot(paint,half3(.2126,.7152,.0722)).xxx,paint,_Saturation));
     paint=max(0,(paint-.18)*_Contrast+.18);

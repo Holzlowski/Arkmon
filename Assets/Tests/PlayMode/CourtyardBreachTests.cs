@@ -25,6 +25,22 @@ public class CourtyardBreachTests
             .First(f=>f.sharedMesh!=null && f.sharedMesh.name=="Western fields gentle transition");
         Assert.That(ground.sharedMesh.vertices.Select(v=>ground.transform.TransformPoint(v)).Where(v=>v.x>-47 && v.x<-42 && v.z>2 && v.z<12)
             .All(v=>v.y<.15f),Is.True,"Flatten the clipped ground edge and its neighboring vertices consistently.");
+        var blocks=ruin.GetComponentsInChildren<MeshFilter>().Where(f=>f.sharedMesh.name=="Weathered breach block").ToArray();
+        Assert.That(blocks.Length,Is.GreaterThan(50));
+        foreach(var filter in blocks)
+        {
+            Assert.That(filter.GetComponent<Renderer>().sharedMaterial.GetFloat("_SingleStone"),Is.EqualTo(1),"One physical stone must not display a wall of smaller bricks.");
+            var mesh=filter.sharedMesh;Assert.That(mesh.vertexCount,Is.GreaterThan(24),"Chipped edge faces must be real geometry.");
+            var v=mesh.vertices;var t=mesh.triangles;
+            for(int i=0;i<t.Length;i+=3)
+            {
+                var va=v[t[i]];var vb=v[t[i+1]];var vc=v[t[i+2]];
+                Assert.That(Vector3.Dot(Vector3.Cross(vb-va,vc-va),(va+vb+vc)/3),Is.GreaterThan(0),"All bevel faces must point outward.");
+            }
+        }
+        Assert.That(GameObject.Find("Broken west wall base").GetComponent<Renderer>().enabled,Is.False,"Hide the old multi-stone texture while retaining its collider.");
+        var ownedStone=blocks[0].GetComponent<Renderer>().sharedMaterial;
+        var ownedMeshes=blocks.Select(f=>f.sharedMesh).ToArray();
         var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
         ((Behaviour)player.GetComponent(T("PlayerInteractionFocus"))).enabled=false;
         body.isKinematic=false;body.position=new Vector3(-40.3f,1.4f,1.5f);body.linearVelocity=Vector3.zero;Physics.SyncTransforms();
@@ -50,6 +66,7 @@ public class CourtyardBreachTests
         finally{camera.transform.SetPositionAndRotation(pos,rotation);camera.fieldOfView=fov;follow.enabled=f;if(brain!=null)brain.enabled=b;}
         yield return Load();Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardBreachStyle"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
         Assert.That(GameObject.Find("Broken west wall base").GetComponent<Collider>().enabled,Is.True);
+        Assert.That(ownedStone==null && ownedMeshes.All(m=>m==null),Is.True,"Reload must release the runtime stone meshes and material.");
         LogAssert.NoUnexpectedReceived();
     }
 }
