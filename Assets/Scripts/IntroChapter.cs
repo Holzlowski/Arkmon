@@ -61,6 +61,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardResidenceGround.Install();
             CourtyardTreeStyle.Install();
             CourtyardTreeShadows.Install();
+            CourtyardGroundCraft.Install();
             CourtyardPlantWind.Install();
             CourtyardFurnitureShadows.Install();
             CourtyardArchitecturePalette.Install();
