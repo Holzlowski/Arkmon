@@ -2435,3 +2435,7 @@ Break up regular grain spacing with warped sampling, overlapping stems and broad
 ### Release 0.45.2 - fix(landscape): join shrubs into irregular field hedges
 
 Form longer overlapping hedge sections with occasional openings instead of scattered equal-sized islands. Vary widths and heights while reducing depth scatter and preserving road and farm clearances.
+
+### Release 0.46.0 - feat(audio): add an emotional piano harp and violin lookout theme
+
+Replace the approach and panorama with an original sampled piano, harp and violin arrangement and a 53.76-second loop. Preserve the approved title accent byte-for-byte and its caption timing. Record sample provenance, renderer and loop-data checks.

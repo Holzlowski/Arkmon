@@ -69,8 +69,8 @@ public sealed class CourtyardLookoutMusic : MonoBehaviour
         if (manager == null) return;
         float themeBlend = revealed ? Mathf.Clamp01((float)(Clock - RevealTime) / .65f) : 0;
         float volume = manager.musicVolume * blend;
-        approach.volume = volume * (1 - themeBlend);
-        panorama.volume = volume * themeBlend;
+        approach.volume = volume * .82f * (1 - themeBlend);
+        panorama.volume = volume * .82f * themeBlend;
         title.volume = volume;
         if (themeBlend >= 1 && approach.isPlaying) approach.Stop();
         manager.SetMusicDucking(1 - blend);

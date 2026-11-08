@@ -89,14 +89,14 @@ public class CourtyardLookoutMusicTests
     public void LookoutClips_KeepExactLoopBoundariesAndUnclippedSamples()
     {
         string[] names = { "aurenfeld-approach", "aurenfeld-panorama", "aurenfeld-title" };
-        int[] seconds = { 8, 32, 5 };
+        float[] seconds = { 8, 53.76f, 5 };
         for (int i = 0; i < names.Length; i++)
         {
             var clip = Resources.Load<AudioClip>("Audio/" + names[i]);
             Assert.That(clip, Is.Not.Null);
             Assert.That(clip.channels, Is.EqualTo(2));
             Assert.That(clip.frequency, Is.EqualTo(44100));
-            Assert.That(clip.samples, Is.EqualTo(seconds[i] * 44100));
+            Assert.That(clip.samples, Is.EqualTo(Mathf.RoundToInt(seconds[i] * 44100)));
             clip.LoadAudioData();
             var data = new float[clip.samples * 2];
             Assert.That(clip.GetData(data, 0), Is.True);
