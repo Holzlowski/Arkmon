@@ -2419,3 +2419,7 @@ Extend the residence terrace beneath the gallery and move its windows clear of t
 ### Release 0.43.0 - feat(weather): animate the painted sky and breathing golden rays
 
 Move the actual cloud painting continuously, restore courtyard clouds on return, and synchronize moving field shade. Enlarge and soften breach rays with shared length animation for illuminated dust. Add visible motes and stronger crop motion while retaining the requested absence of wind ribbons.
+
+### Release 0.44.0 - feat(landscape): connect golden fields to the mountain foothills
+
+Build one continuous scenic surface beneath the distant mountain painting, keeping valleys and the road corridor covered. Blend rear shoulders toward the mountain palette and add low irregular woodland groups. Check actual triangle coverage and resource cleanup.
