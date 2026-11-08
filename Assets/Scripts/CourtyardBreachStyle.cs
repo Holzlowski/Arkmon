@@ -48,7 +48,7 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
         p=CourtyardEastFieldStyle.ExteriorPoint(p);
         if(p.x<=-74 || p.x>=-36 || Mathf.Abs(p.z-7)>=24)return p;
         float west=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-74,-45,p.x));
-        float inside=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-36,-40,p.x));
+        float inside=Mathf.SmoothStep(0,1,Mathf.InverseLerp(-28,-34,p.x));
         float side=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(12,24,Mathf.Abs(p.z-7)));
         p.y=Mathf.Lerp(p.y,-.05f,west*inside*side);return p;
     }
@@ -71,6 +71,9 @@ public sealed class CourtyardBreachStyle : MonoBehaviour
             }
             copy.vertices=vertices;copy.colors=colors;copy.RecalculateNormals();copy.RecalculateBounds();
             landscape.Add((filter,original));meshes.Add(copy);filter.sharedMesh=copy;
+            var seamless = new Material(renderer.sharedMaterial) { name = "Aurenfeld wall-aligned landscape" };
+            seamless.SetVector("_ClearArea",new Vector4(-43,-17,50,19));
+            materials.Add(seamless);renderer.sharedMaterial=seamless;
         }
         if(exterior==null)return;
         foreach(var prop in horizon.GetComponentsInChildren<Transform>())

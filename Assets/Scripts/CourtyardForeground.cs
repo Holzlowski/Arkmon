@@ -14,7 +14,7 @@ public static class CourtyardForeground
 
     public static Vector3 Surface(Vector3 p)
     {
-        float weight = Across(p) * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-14, -19, p.z))
+        float weight = Across(p) * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-7, -11, p.z))
             * (1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-65, -100, p.z)));
         float distantRise = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-42, -65, p.z));
         float height = -.05f + distantRise * (.15f + .25f * Mathf.PerlinNoise(p.x * .035f + 73, p.z * .028f + 41));

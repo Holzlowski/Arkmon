@@ -4,7 +4,8 @@ public sealed class CourtyardSceneryMotion : MonoBehaviour
 {
     private Vector3 origin;
 
-    private void Awake() => origin = transform.localPosition;
+    private void Awake() => Rebase();
+    public void Rebase() => origin = transform.localPosition;
 
     private void Update()
     {

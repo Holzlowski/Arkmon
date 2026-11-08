@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.1`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2297,3 +2297,9 @@ Validation: pickup, three pours, thanks, return and boundary behavior passed. Co
 Arrange nine individually sized golden shafts in three depth banks. Animate width, filaments and cloud occlusion at staggered phases; let dust drift and follow changing illumination. Retain local visibility and existing particle cap without extra lights.
 
 Validation: focused light visibility/reload checks passed and rendered views inspected; no frame-rate benchmark.
+
+### 0.40.1 - fix(courtyard): connect terrain and tidy castle surroundings
+
+Align exterior ground with courtyard walls and stream bank, connect the stable spur and soften sandy paths. Remove the obsolete cottage, close the terrace end, clear ivy from windows and rebase narrower banners. Add grouped field-edge hedges.
+
+Validation: connected courtyard route and garden/view checks passed; castle, foreground wall and bridge captures inspected.

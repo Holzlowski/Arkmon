@@ -6,6 +6,7 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
   _EdgeStart("Edge fade begins",Range(0,1))=.62
   _EdgeBreakup("Irregular edge",Range(0,.2))=.04
   _WheelRuts("Worn cart tracks",Range(0,1))=0
+  _SandBlend("Sandy path finish",Range(0,1))=0
   _FogStrength("Distance haze strength",Range(0,1))=1
   _Tile("Atlas scale and offset",Vector)=(.5,.5,0,0) _TextureScale("World repeats",Float)=.4
  }
@@ -29,7 +30,7 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
    struct V {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float edge:TEXCOORD1;float fog:TEXCOORD2;float across:TEXCOORD3;};
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
    CBUFFER_START(UnityPerMaterial)
-   float4 _BaseColor,_Tile;float _TextureScale,_FogStrength,_WheelRuts,_EdgeStart,_EdgeBreakup;
+   float4 _BaseColor,_Tile;float _TextureScale,_FogStrength,_WheelRuts,_EdgeStart,_EdgeBreakup,_SandBlend;
    CBUFFER_END
    V Vert(A i){V o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);o.edge=i.color.r;o.across=i.color.g*2-1;o.fog=ComputeFogFactor(o.positionCS.z);return o;}
    half4 Frag(V i):SV_Target
@@ -37,6 +38,8 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
     float2 uv=i.world.xz*_TextureScale;
     float2 at=(.01+frac(uv)*.98)*_Tile.xy+_Tile.zw;
     half3 paint=SAMPLE_TEXTURE2D_GRAD(_BaseMap,sampler_BaseMap,at,clamp(ddx(uv)*_Tile.xy,-.002,.002),clamp(ddy(uv)*_Tile.xy,-.002,.002)).rgb*_BaseColor.rgb;
+    float grain=dot(paint,float3(.3,.59,.11));
+    paint=lerp(paint,float3(.63,.49,.30)*(.72+grain*.75),_SandBlend);
     float irregular=_EdgeBreakup*(.65*sin(i.world.x*2.7+i.world.z*1.6)+.35*sin(i.world.x*8+i.world.z*4))+_WheelRuts*.055*sin(i.world.x*.9+i.world.z*.8);
     float track=exp(-pow((abs(i.across)-.51)/.13,2));
     float worn=.92+.08*sin(i.world.x*.7+i.world.z*.6);

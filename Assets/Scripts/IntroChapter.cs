@@ -65,6 +65,7 @@ public class IntroChapter : MonoBehaviour
             CourtyardWayfinding.Install();
             CourtyardBreachSunrays.Install();
             CourtyardNearView.Install();
+            CourtyardFeedbackPolish.Install();
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

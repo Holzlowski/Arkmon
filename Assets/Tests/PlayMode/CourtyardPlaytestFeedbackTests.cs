@@ -38,6 +38,51 @@ public class CourtyardPlaytestFeedbackTests
         }
         finally{input.TearDown();}
     }
+    [UnityTest] public IEnumerator GardenBoundary_SidePourReturnAndCourtyardViews()
+    {
+        yield return Load();
+        Assert.That(GameObject.Find("West cottage"),Is.Null);
+        Assert.That(UnityEngine.Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None).Count(r=>r.name=="Aurenfeld field-edge green hedge"),Is.GreaterThan(15));
+        Assert.That(GameObject.Find("Terrace east return handrail"),Is.Not.Null);
+        Assert.That(UnityEngine.Object.FindObjectsByType<UnityEngine.EventSystems.StandaloneInputModule>(FindObjectsSortMode.None),Is.Empty);
+        Assert.That(UnityEngine.Object.FindFirstObjectByType<InputSystemUIInputModule>(),Is.Not.Null);
+        var station=GameObject.Find("Courtyard watering can").GetComponent(T("CourtyardGarden"));
+        Assert.That(station.transform.position.z,Is.GreaterThan(-13));
+        Call(station,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();
+        Assert.That(T("CourtyardGarden").GetProperty("HasCan").GetValue(null),Is.True);
+        var beds=UnityEngine.Object.FindObjectsByType(T("CourtyardGarden"),FindObjectsSortMode.None).Cast<Component>().Where(c=>c.name=="Garden watering point").OrderBy(c=>c.transform.position.x).ToArray();
+        foreach(var bed in beds)
+        {
+            var soil=(Renderer)bed.GetType().GetField("soil",Hidden).GetValue(bed);
+            Assert.That(bed.transform.position.x,Is.LessThan(soil.bounds.min.x-.8f));
+            CourtyardGardenTaskTests.MoveTo(bed);yield return null;Call(bed,"InteractWithPlayer");
+            Assert.That(T("CourtyardGarden").GetProperty("IsWatering").GetValue(null),Is.True);
+            yield return CourtyardGardenTaskTests.WaitForPour();
+        }
+        var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
+        var exit=new Vector3(34.4f,1,-12);body.position=exit;player.transform.position=exit;Physics.SyncTransforms();yield return null;yield return null;
+        Assert.That(Dialogue.GetType().GetProperty("IsOpen").GetValue(Dialogue),Is.True,"Marta reminds Elian at the garden boundary.");
+        Call(Dialogue,"CloseDialogue");yield return null;yield return null;
+        Assert.That(Dialogue.GetType().GetProperty("IsOpen").GetValue(Dialogue),Is.False,"Reminder must not reopen every frame.");
+        var filter=T("CourtyardGarden").GetMethod("ConstrainToolMovement");
+        var blocked=(Vector3)filter.Invoke(null,new object[]{new Vector3(34.99f,1,-12),Vector3.right*5,.02f});Assert.That(blocked.x,Is.Zero);
+        var back=(Vector3)filter.Invoke(null,new object[]{new Vector3(34.99f,1,-12),Vector3.left*5,.02f});Assert.That(back.x,Is.LessThan(0));
+        CourtyardGardenTaskTests.MoveTo(station);yield return null;Call(station,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();
+        Assert.That(T("CourtyardGarden").GetProperty("HasCan").GetValue(null),Is.False);
+        foreach(var component in UnityEngine.Object.FindObjectsByType(T("CourtyardCamera"),FindObjectsSortMode.None).Cast<Behaviour>())component.enabled=false;
+        foreach(var component in Camera.main.GetComponents<MonoBehaviour>())component.enabled=false;
+        var camera=Camera.main;
+        Vector3[] targets={new Vector3(-11,1.3f,1),new Vector3(-11,1.3f,1),new Vector3(27,1,-10),new Vector3(12,4,13),new Vector3(-6,2,11),new Vector3(-38,0,-17),new Vector3(53,0,-1)};
+        for(int i=0;i<targets.Length;i++)
+        {
+            camera.transform.position=targets[i]+(i==6?new Vector3(9,8,-10):new Vector3(i==0?-4:i==1?4:0,5,-11));camera.transform.LookAt(targets[i]);camera.fieldOfView=48;
+            yield return new WaitForSeconds(.2f);Capture("feedback-review-"+i);
+        }
+        // Same scenic composition used for the Aurenfeld review.
+        camera.transform.position=new Vector3(-61,11,7);camera.transform.rotation=Quaternion.LookRotation(new Vector3(-1,-.06f,.08f));camera.fieldOfView=52;
+        yield return null;Capture("feedback-review-fields");
+        LogAssert.NoUnexpectedReceived();
+    }
     [UnityTest] public IEnumerator InputOnlyScenes_LoadWithoutLegacyErrors()
     {
         foreach(string scene in new[]{"TowerRoom","TowerRoomPaper","StartScene","BattleScene"})
