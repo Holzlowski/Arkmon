@@ -21,7 +21,8 @@ Shader "Arkmon/Courtyard Plant Wind"
    #pragma fragment Frag
    #pragma multi_compile_instancing
    struct Attributes { COMMON_2D_INPUTS half4 color:COLOR; };
-   struct Varyings { COMMON_2D_OUTPUTS half4 color:COLOR; };
+   struct Varyings { COMMON_2D_OUTPUTS half4 color:COLOR; float3 world:TEXCOORD4; };
+   #include "../Art/SceneStyle/AurenfeldMorning.hlsl"
    #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/2DCommon.hlsl"
    CBUFFER_START(UnityPerMaterial)
     half4 _Color;
@@ -45,10 +46,11 @@ Shader "Arkmon/Courtyard Plant Wind"
     // The planted edge never moves. Extra geometry bends stems instead of rotating the whole card.
     input.positionOS.x+=height*height*bend/scale;
     Varyings output=CommonUnlitVertex(input);
+    output.world=TransformObjectToWorld(input.positionOS);
     output.color=input.color*_Color*unity_SpriteColor;
     return output;
    }
-   half4 Frag(Varyings input):SV_Target { return CommonUnlitFragment(input,input.color); }
+   half4 Frag(Varyings input):SV_Target { half4 c=CommonUnlitFragment(input,input.color); c.rgb=AurenfeldMorningLight(c.rgb,input.world,.2); return c; }
    ENDHLSL
   }
  }

@@ -13,7 +13,7 @@ public sealed class CourtyardFieldParticles : MonoBehaviour
         var shader=Resources.Load<Shader>("CourtyardFieldSeed");
         if(meadow==null || shader==null)return;
         var root=new GameObject("Western sunlit seeds",typeof(ParticleSystem));
-        root.transform.position=meadow.SurfacePoint(new Vector3(-55,0,7))+Vector3.up*4.2f;
+        root.transform.position=meadow.SurfacePoint(new Vector3(-70,0,7))+Vector3.up*4.2f;
         var style=root.AddComponent<CourtyardFieldParticles>();
         style.Build(shader);
     }
@@ -27,10 +27,10 @@ public sealed class CourtyardFieldParticles : MonoBehaviour
         main.startSize=new ParticleSystem.MinMaxCurve(.065f,.13f);
         main.startRotation=new ParticleSystem.MinMaxCurve(-.7f,.7f);
         main.startColor=new ParticleSystem.MinMaxGradient(new Color(.92f,.78f,.48f,.5f),new Color(1,.93f,.72f,.7f));
-        main.maxParticles=28;main.simulationSpace=ParticleSystemSimulationSpace.World;
+        main.maxParticles=24;main.simulationSpace=ParticleSystemSimulationSpace.World;
         main.cullingMode=ParticleSystemCullingMode.PauseAndCatchup;
         var shape=seeds.shape;shape.enabled=true;shape.shapeType=ParticleSystemShapeType.Box;shape.scale=new Vector3(22,5,16);
-        var emission=seeds.emission;emission.rateOverTime=2;
+        var emission=seeds.emission;emission.rateOverTime=1.5f;
         var velocity=seeds.velocityOverLifetime;velocity.enabled=true;velocity.space=ParticleSystemSimulationSpace.World;
         velocity.x=.20f;velocity.y=.045f;velocity.z=.09f;
         var noise=seeds.noise;noise.enabled=true;noise.strength=.16f;noise.frequency=.22f;noise.scrollSpeed=.12f;noise.quality=ParticleSystemNoiseQuality.Low;

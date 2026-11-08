@@ -21,6 +21,7 @@ public class IntroChapter : MonoBehaviour
     {
         if (gameObject.scene.name == "StartScene")
         {
+            CourtyardScenicMorning.Install();
             CourtyardGardenPlace.PrepareBeds();
             CourtyardEastGroundStyle.PrepareTerrain();
             CourtyardResidentPlaces.Install();

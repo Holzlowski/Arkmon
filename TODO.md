@@ -453,3 +453,6 @@ Die Aurenfeld-Kamerafahrt gefaellt; ihre Komposition bewahren. Die technischen u
 - [x] Hof-, Eingabe-, Garten-, Licht- und Landschaftskorrekturen in sieben fachliche Commits mit Beschreibungen und Versionen aufgeteilt (bis 0.40.2). Neuer Testbuild bleibt offen.
 
 - [x] Vier geschwungene gruene Feldgrenzen mit wechselnden Pflanzenformen, Groessen und unregelmaessigen Gruppen umgesetzt und stumm geprueft (0.40.3).
+
+- [x] Goldene Morgensonne, kuehlere Schatten, begrenzte Senkenaufhellung und deutlich wandernde Wolkenschatten fuer westliche Felder, Wege und Papiervegetation umgesetzt (0.41.0).
+- [ ] Neue Aurenfeld-Lichtstimmung und Bildrate im Testbuild gemeinsam beurteilen.

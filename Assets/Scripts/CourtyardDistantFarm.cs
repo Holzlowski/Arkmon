@@ -19,7 +19,7 @@ public sealed class CourtyardDistantFarm : MonoBehaviour
         var art = new GameObject("Painted Aurenfeld farm", typeof(SpriteRenderer)); art.transform.SetParent(root.transform, false);
         art.transform.rotation = Quaternion.LookRotation(new Vector3(-69, 0, 20));
         art.transform.localScale = Vector3.one * (20 / sprite.bounds.size.x);
-        farm.paper = new Material(Shader.Find("Sprites/Default")) { name = "Painted distant farm" };
+        farm.paper = new Material(Resources.Load<Shader>("AurenfeldScenicPaper")) { name = "Painted distant farm" };
         var renderer = art.GetComponent<SpriteRenderer>(); renderer.sprite = sprite; renderer.sharedMaterial = farm.paper;
         renderer.color = new Color(.94f, .94f, .89f);
         // Anchor at the illustrated chimney mouth (normalized texture coordinates, bottom origin).
@@ -32,6 +32,7 @@ public sealed class CourtyardDistantFarm : MonoBehaviour
     {
         var shader = Resources.Load<Shader>("CourtyardFarmSmoke"); if (shader == null) return;
         smokeMaterial = new Material(shader) { name = "Warm distant chimney smoke" };
+        smokeMaterial.SetColor("_Tint", new Color(.83f,.73f,.56f,.85f));
         var go = new GameObject("Farm chimney smoke", typeof(ParticleSystem)); go.transform.SetParent(transform, false); go.transform.position = position;
         var particles = go.GetComponent<ParticleSystem>(); particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         particles.useAutoRandomSeed = false; particles.randomSeed = 724;

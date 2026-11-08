@@ -84,7 +84,7 @@ public sealed class CourtyardDistantFields : MonoBehaviour
     }
     void AddFieldLandmarks(MeadowVegetation meadow)
     {
-        foliageMaterial = new Material(Shader.Find("Sprites/Default")) { name = "Distant field illustrations" };
+        foliageMaterial = new Material(Resources.Load<Shader>("AurenfeldScenicPaper")) { name = "Distant field illustrations" };
         var oak = Resources.Load<Sprite>("CourtyardStyle/Trees/Oak");
         var birch = Resources.Load<Sprite>("CourtyardStyle/Trees/Birch");
         var hedge = Resources.Load<Sprite>("CourtyardStyle/Mixed");

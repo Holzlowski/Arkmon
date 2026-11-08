@@ -13,6 +13,7 @@ Shader "Arkmon/Meadow"
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "AurenfeldMorning.hlsl"
             struct Attributes { float4 positionOS:POSITION; float3 normalOS:NORMAL; half4 color:COLOR; };
             struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; half fog:TEXCOORD0; float2 world:TEXCOORD1; float3 positionWS:TEXCOORD2; };
             CBUFFER_START(UnityPerMaterial)
@@ -86,6 +87,7 @@ Shader "Arkmon/Meadow"
                     float canopyWeight=_CanopyStrength*smoothstep(105,170,-p.x);
                     lit*=lerp(1,textureShade,canopyWeight);
                 }
+                lit=AurenfeldMorningLight(lit,input.positionWS,0.35);
                 return half4(lerp(lit,MixFog(lit,input.fog),_FogStrength),1);
             }
             ENDHLSL

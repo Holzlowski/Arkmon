@@ -27,7 +27,7 @@ public sealed class CourtyardTreeStyle : MonoBehaviour
         if (sprites.Any(s => s == null)) return;
         var style = new GameObject("Aurenfeld tree varieties").AddComponent<CourtyardTreeStyle>();
         // SpriteRenderer supplies each texture. Do not reuse the old fixed tree material.
-        style.paper = new Material(Shader.Find("Sprites/Default")) { name = "Aurenfeld painted tree sprites" };
+        style.paper = new Material(Resources.Load<Shader>("AurenfeldScenicPaper")) { name = "Aurenfeld painted tree sprites" };
         var trees = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None)
             .Where(r => r.name == "Meadow tree" || r.name == "Western field tree" || r.transform.parent?.name == "Meadow tree")
             .OrderBy(r => r.transform.position.x).ThenBy(r => r.transform.position.z).ToArray();

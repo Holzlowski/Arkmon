@@ -26,6 +26,7 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
    #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
    #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+   #include "AurenfeldMorning.hlsl"
    struct A {float4 positionOS:POSITION;float4 color:COLOR;};
    struct V {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float edge:TEXCOORD1;float fog:TEXCOORD2;float across:TEXCOORD3;};
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
@@ -47,7 +48,8 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
     float alpha=(1-smoothstep(_EdgeStart,1,i.edge+irregular))*_BaseColor.a;
     Light sun=GetMainLight(TransformWorldToShadowCoord(i.world));
     half3 light=max(SampleSH(half3(0,1,0)),half3(.09,.11,.16))+sun.color*saturate(sun.direction.y)*sun.shadowAttenuation;
-    return half4(lerp(paint*light,MixFog(paint*light,i.fog),_FogStrength),alpha);
+    half3 lit=AurenfeldMorningLight(paint*light,i.world,0);
+    return half4(lerp(lit,MixFog(lit,i.fog),_FogStrength),alpha);
    }
    ENDHLSL
   }

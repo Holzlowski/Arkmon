@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.3`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.41.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2387,3 +2387,11 @@ Validation: silent composition test passed in 21.96 seconds; flight stages and b
 ### 0.40.3 - fix(landscape): vary green field boundaries
 
 Four staggered curved hedgerows echo the tower-window panorama. Existing rounded shrubs, mixed foliage and ferns form irregular groups with varied height, width, spacing, depth and olive/sage tints. Seeded placement is stable across reloads, with the main road and farm access clear. No new art assets. Focused silent composition validation passed in 22.16 seconds (`Library/aurenfeld-hedgerow-variety.xml`); the final view was inspected.
+
+### 0.41.0 - feat(landscape): add layered golden morning atmosphere
+
+`CourtyardScenicMorning` owns the courtyard's 18-degree sun, cooler ambient fill and cloned warm-horizon sky. Disable restores the original settings and unload disposes the runtime sky. `AurenfeldMorning.hlsl` shares world-space lighting across western terrain, grain, paper vegetation, farm and field paths: a quieter foreground, a broad sunlit farm area and warm highlights coupled to wind waves. Two low swales receive a restrained surface-haze tint; the mountain artwork gets no additional fog. Sparse seeds now sit ahead of the lookout camera and chimney smoke is warmer.
+
+Irregular cloud banks with clear sunlight gaps drift at (-0.55, +0.70) metres/second across X/Z. The stronger cool shade follows soil, crops, roads and paper scenery together. It is a stylized procedural pattern, not a literal shadow map of the painted sky. The landscape mask fades in west of the courtyard; the changed sun and ambient fill also affect the courtyard itself. There are no extra shadow-casting lights. Disable and subsystem reset clear the weather globals.
+
+Validation before commit: silent morning render/lifecycle check passed in 31.11 seconds; final frozen-scene cloud comparison passed in 20.64 seconds (`Library/aurenfeld-cloud-shadows-final.xml`). Shadows-off/on and 30-second drift show visible changes; weather disable/re-enable passed with no shader errors or unexpected logs. Courtyard and lookout images were inspected. The combined integration tests are included with the following camera commit. Standalone performance still needs playtest review.

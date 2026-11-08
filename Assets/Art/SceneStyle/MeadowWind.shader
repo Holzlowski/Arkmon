@@ -13,6 +13,7 @@ Shader "Arkmon/Meadow Wind"
         Cull Off
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+        #include "AurenfeldMorning.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
         CBUFFER_START(UnityPerMaterial)
             float _WindStrength, _SunResponse, _FieldStyle;
@@ -71,7 +72,8 @@ Shader "Arkmon/Meadow Wind"
                 half shadow=GetMainLight(TransformWorldToShadowCoord(input.positionWS)).shadowAttenuation;
                 half field=_FieldStyle*smoothstep(46,58,-input.positionWS.x);
                 half3 shade=lerp(half3(.58,.58,.58),half3(.46,.53,.65),field);
-                return half4(MixFog(input.color.rgb*lerp(half3(1,1,1),lerp(shade,half3(1,1,1),shadow),_SunResponse),input.fog),1);
+                half3 lit=input.color.rgb*lerp(half3(1,1,1),lerp(shade,half3(1,1,1),shadow),_SunResponse);
+                return half4(MixFog(AurenfeldMorningLight(lit,input.positionWS,1),input.fog),1);
             }
             ENDHLSL
         }

@@ -57,7 +57,7 @@ public sealed class CourtyardFarmApproach : MonoBehaviour
         style.earth.SetColor("_BaseColor",new Color(.81f,.78f,.66f,.96f));
         style.earth.renderQueue=2972;style.earth.SetFloat("_WheelRuts",1);
         style.contact=new Material(Resources.Load<Shader>("CourtyardFarmContact")){name="Farm soft ground contacts"};
-        style.paper=new Material(Shader.Find("Sprites/Default")){name="Farm orchard illustrations"};
+        style.paper=new Material(Resources.Load<Shader>("AurenfeldScenicPaper")){name="Farm orchard illustrations"};
         style.BuildLane();style.BuildForecourt();style.BuildHarvestYard();
         style.Contact(Gate-Front*.1f,9.4f,1.7f,"Farm building foot contact");
         style.Contact(Gate-Right*10.8f-Front*1.6f,2.8f,1.6f,"Orchard root contact");
