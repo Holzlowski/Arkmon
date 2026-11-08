@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.39.1`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.39.2`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2273,3 +2273,9 @@ Validation: Three silent camera/lookout checks passed in 62.75 seconds (Library/
 Preserve WASD/arrows, E release, Space, C and Escape through a shared input facade. Replace exploration scene UI modules and remove legacy fallbacks; handle missing devices.
 
 Validation: isolated keyboard fixture and scene-loading checks passed. Full combat regression suite was not rerun.
+
+### 0.39.2 - fix(camera): keep nearby interactions and ground contacts readable
+
+Keep prompts above Elian and inside the screen; reveal him through the foreground wall without removing collision. Fit approach stones to the terrain instead of leaving corners unsupported.
+
+Validation: focused near-view and connected-route checks passed, including prompt placement, wall cutaway reset and stone contact.

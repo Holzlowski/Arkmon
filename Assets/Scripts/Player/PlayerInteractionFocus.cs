@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 // Selection and the visible prompt use exactly the same collider/range rules.
+[DefaultExecutionOrder(10000)]
 [DisallowMultipleComponent]
 public class PlayerInteractionFocus : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class PlayerInteractionFocus : MonoBehaviour
     private TextMeshProUGUI label;
     private LineRenderer ring;
     private Material ringMaterial;
+    private readonly List<SpriteRenderer> visibleSprites = new List<SpriteRenderer>();
     private void Awake()
     {
         controller = GetComponent<PlayerController>();
@@ -80,6 +83,20 @@ public class PlayerInteractionFocus : MonoBehaviour
         var canvasRect = (RectTransform)canvas.transform;
         Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screen, uiCamera, out Vector2 local);
+        // Keep the paper hint above Elian rather than covering his face in the closer view.
+        GetComponentsInChildren(false, visibleSprites);
+        float halfWidth=panel.rect.width*.5f, halfHeight=panel.rect.height*.5f;
+        foreach(var sprite in visibleSprites)
+        {
+            if(!sprite.enabled || sprite.forceRenderingOff || sprite.sprite==null)continue;
+            var bounds=sprite.bounds;
+            var top=Camera.main.WorldToScreenPoint(bounds.center+Vector3.up*bounds.extents.y);
+            if(top.z<=0)continue;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect,top,uiCamera,out Vector2 head);
+            if(Mathf.Abs(local.x-head.x)<halfWidth+24)local.y=Mathf.Max(local.y,head.y+halfHeight+14);
+        }
+        local.x=Mathf.Clamp(local.x,canvasRect.rect.xMin+halfWidth+12,canvasRect.rect.xMax-halfWidth-12);
+        local.y=Mathf.Clamp(local.y,canvasRect.rect.yMin+halfHeight+12,canvasRect.rect.yMax-halfHeight-12);
         panel.anchoredPosition = local;
         var prop = Current as DemoInteractable;
         ring.enabled = prop == null || prop.kind != DemoInteractable.Kind.Wardrobe;

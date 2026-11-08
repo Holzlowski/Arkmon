@@ -8,6 +8,7 @@ public sealed class CourtyardResidenceGround : MonoBehaviour
     readonly List<Mesh> meshes=new List<Mesh>();
     readonly List<Renderer> hidden=new List<Renderer>();
     Material contact,earth;
+    readonly List<(MeshFilter filter,Mesh original)> fittedStones=new List<(MeshFilter,Mesh)>();
     internal static void Install()
     {
         if(GameObject.Find("Resident doorstep details")!=null)return;
@@ -27,10 +28,33 @@ public sealed class CourtyardResidenceGround : MonoBehaviour
         foreach(string name in new[]{"Garden potting table","Garden bench seat","Workshop offcut basket","Stable grooming caddy","Stable water bucket","Aurenfeld exterior waymarker","Forecourt verge stone"})
             foreach(var part in FindObjectsByType<Transform>(FindObjectsSortMode.None))
                 if(part.name==name)style.Patch(name+" settled contact",part.position,name.Contains("table")?1.0f:.45f,.42f,true);
+        style.FitApproachStones();
         style.WorkPlace("Ida workshop",new Vector3(-1.85f,0,-4.4f),1.45f,.72f);
         style.WorkPlace("Stable",new Vector3(1.05f,0,-4.1f),1.6f,.8f);
         var table=GameObject.Find("Garden potting table");
         if(table!=null)style.Patch("Marta potting work ground",table.transform.position+Vector3.back*.65f,1.15f,.8f,false);
+    }
+    void FitApproachStones()
+    {
+        // Thin decorative slabs must sit above dirt overlays and follow the final terrain,
+        // including their corners. Their bases are buried; walking colliders stay untouched.
+        foreach(var filter in FindObjectsByType<MeshFilter>(FindObjectsSortMode.None))
+        {
+            if(filter.name!="East cottage approach stone" && filter.name!="Cellar approach flagstone"
+                && filter.name!="Workshop approach stone" && filter.name!="Worn approach flagstone")continue;
+            if(filter.sharedMesh==null)continue;
+            var original=filter.sharedMesh;var copy=Instantiate(original);copy.name=filter.name+" terrain fitted";
+            var vertices=copy.vertices;float center=copy.bounds.center.y;
+            for(int i=0;i<vertices.Length;i++)
+            {
+                bool top=vertices[i].y>center;
+                var world=filter.transform.TransformPoint(vertices[i]);
+                world.y=Ground(world).y+(top?.085f:-.025f);
+                vertices[i]=filter.transform.InverseTransformPoint(world);
+            }
+            copy.vertices=vertices;copy.RecalculateNormals();copy.RecalculateBounds();
+            fittedStones.Add((filter,original));meshes.Add(copy);filter.sharedMesh=copy;
+        }
     }
     void Home(string name,float width,float depth,float approach)
     {
@@ -120,5 +144,5 @@ public sealed class CourtyardResidenceGround : MonoBehaviour
         var go=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(transform,false);
         go.GetComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.GetComponent<MeshRenderer>();renderer.sharedMaterial=shadow?contact:earth;renderer.shadowCastingMode=ShadowCastingMode.Off;
     }
-    void OnDestroy(){foreach(var r in hidden)if(r!=null)r.enabled=true;foreach(var m in meshes)if(m!=null)Destroy(m);if(contact!=null)Destroy(contact);if(earth!=null)Destroy(earth);}
+    void OnDestroy(){foreach(var stone in fittedStones)if(stone.filter!=null)stone.filter.sharedMesh=stone.original;foreach(var r in hidden)if(r!=null)r.enabled=true;foreach(var m in meshes)if(m!=null)Destroy(m);if(contact!=null)Destroy(contact);if(earth!=null)Destroy(earth);}
 }
