@@ -68,6 +68,38 @@ public class CourtyardLookoutMusicTests
         yield return new WaitForSecondsRealtime(.8f);
         Assert.That(wind.volume,Is.Zero,"Additional wind audio is disabled by default.");
         Assert.That(wind.isPlaying,Is.False);
+        var birdObject=GameObject.Find("Aurenfeld quiet birdsong");
+        var birds=birdObject.GetComponent(T("CourtyardBirdsong"));
+        var birdSource=birdObject.GetComponent<AudioSource>();
+        var birdCount=T("CourtyardBirdsong").GetField("callCount",Hidden);
+        Assert.That((int)birdCount.GetValue(birds),Is.Zero,"No birds interrupt the name accent.");
+        Assert.That(birdSource.volume,Is.Zero);
+        T("CourtyardLookout").GetField("progress",Hidden).SetValue(point,.999f);
+        yield return null;yield return null;
+        var nextCall=T("CourtyardBirdsong").GetField("nextCallAt",Hidden);
+        Assert.That((float)nextCall.GetValue(birds),Is.GreaterThan(Time.unscaledTime+3));
+        nextCall.SetValue(birds,Time.unscaledTime-1);
+        yield return null;yield return null;
+        Assert.That((int)birdCount.GetValue(birds),Is.EqualTo(1));
+        Assert.That(birdSource.clip.name,Is.EqualTo("aurenfeld-bird-1"));
+        Assert.That(birdSource.loop,Is.False);
+        Assert.That(birdSource.volume,Is.GreaterThan(0).And.LessThanOrEqualTo(effects*.20f+.001f));
+        Assert.That((float)nextCall.GetValue(birds)-Time.unscaledTime-birdSource.clip.length,Is.InRange(9.8f,18.1f));
+        nextCall.SetValue(birds,Time.unscaledTime-1);
+        yield return null;yield return null;
+        Assert.That((int)birdCount.GetValue(birds),Is.EqualTo(2));
+        Assert.That(birdSource.clip.name,Is.EqualTo("aurenfeld-bird-2"));
+        var effectsField=T("SoundManager").GetField("effectsVolume");
+        try
+        {
+            effectsField.SetValue(Manager,0f);
+            nextCall.SetValue(birds,Time.unscaledTime-1);
+            yield return null;yield return null;
+            Assert.That(birdSource.volume,Is.Zero,"Effects mute must silence birds independently of music.");
+            Assert.That((int)birdCount.GetValue(birds),Is.EqualTo(2));
+        }
+        finally { effectsField.SetValue(Manager,effects); }
+
         float musicGain=(float)T("SoundManager").GetField("musicVolume").GetValue(Manager);
         Assert.That(sources.Single(s=>s.clip.name=="aurenfeld-title").volume,Is.EqualTo(musicGain).Within(.001f),"Keep the name accent at its approved level.");
         Assert.That(sources.Single(s=>s.clip.name=="aurenfeld-panorama").volume,Is.EqualTo(musicGain*.82f).Within(.001f));
@@ -77,6 +109,7 @@ public class CourtyardLookoutMusicTests
         Assert.That(Get(Manager, "MusicDucking"), Is.EqualTo(1f));
         Assert.That(sources.All(s => !s.isPlaying && s.volume == 0), Is.True);
         Assert.That(wind.volume,Is.Zero,"Field wind fades out on return.");
+        Assert.That(birdSource.volume,Is.Zero);Assert.That(birdSource.isPlaying,Is.False);
         Assert.That(Music.volume, Is.EqualTo((float)T("SoundManager").GetField("musicVolume").GetValue(Manager)).Within(.001f));
 
         Call(point, "InteractWithPlayer");
@@ -91,6 +124,8 @@ public class CourtyardLookoutMusicTests
         Assert.That(Get(Manager, "MusicDucking"), Is.EqualTo(1f));
         Assert.That(Get(Manager, "CurrentMusicName"), Is.EqualTo("courtyard-storybook"));
         Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardLookoutMusic"), FindObjectsSortMode.None), Is.Empty);
+        Assert.That(birdObject==null,Is.True,"Old scene birds must be released.");
+        Assert.That(UnityEngine.Object.FindObjectsByType(T("CourtyardBirdsong"),FindObjectsSortMode.None).Length,Is.EqualTo(1));
         LogAssert.NoUnexpectedReceived();
     }
 
@@ -113,6 +148,15 @@ public class CourtyardLookoutMusicTests
             Assert.That(data.All(v => !float.IsNaN(v) && !float.IsInfinity(v) && Mathf.Abs(v) < .85f), Is.True);
             if (names[i] != "aurenfeld-title")
                 for (int c = 0; c < 2; c++) Assert.That(Mathf.Abs(data[c] - data[data.Length - 2 + c]), Is.LessThan(.003f));
+        }
+        foreach(string name in new[]{"aurenfeld-bird-1","aurenfeld-bird-2"})
+        {
+            var clip=Resources.Load<AudioClip>("Audio/"+name);
+            Assert.That(clip,Is.Not.Null);Assert.That(clip.channels,Is.EqualTo(1));
+            Assert.That(clip.frequency,Is.EqualTo(32000));Assert.That(clip.length,Is.InRange(1.2f,1.6f));
+            clip.LoadAudioData();var samples=new float[clip.samples];Assert.That(clip.GetData(samples,0),Is.True);
+            Assert.That(samples.All(v=>!float.IsNaN(v)&&!float.IsInfinity(v)&&Mathf.Abs(v)<.25f),Is.True);
+            Assert.That(Mathf.Abs(samples[0])+Mathf.Abs(samples[samples.Length-1]),Is.LessThan(.002f));
         }
     }
 

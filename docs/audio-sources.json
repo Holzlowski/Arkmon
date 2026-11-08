@@ -410,5 +410,45 @@
     "preview_title_seconds": 6.8,
     "preview_gain": 3,
     "recipe": "tools/render_aurenfeld_emotional_music.py --install"
+  },
+  "aurenfeld_birdsong": {
+    "author": "syncopika",
+    "title": "Bird chirping sounds",
+    "page": "https://opengameart.org/content/bird-chirping-sounds",
+    "source_url": "https://opengameart.org/sites/default/files/birdchirping071414.wav",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_sha256": "bc6e28bd823b653b2abf3384d4147718603af6bcd98e26166345df71a61eeb08",
+    "source_cache": "Builds\\sample-audio\\aurenfeld-birds\\birdchirping071414.wav",
+    "recipe": "tools/render_aurenfeld_birds.py --download --install",
+    "sample_rate": 32000,
+    "channels": 1,
+    "processing": "Two short original-speed calls; mono, gentle rumble/high-frequency reduction, conservative gain and 75ms fades. No pitch changes or added synthetic bird calls.",
+    "runtime": "Separate effects-controlled source, no loop; first call after arrival/title, then 10-18 seconds of silence between calls. Wind remains disabled.",
+    "preview": "Builds/aurenfeld-birds-preview.wav; birds only at audition gain 0.50, louder than in game; no wind/music mixed in.",
+    "clips": [
+      {
+        "file": "Assets\\Resources\\Audio\\aurenfeld-bird-1.wav",
+        "source_seconds": [
+          0.15,
+          1.65
+        ],
+        "seconds": 1.5,
+        "peak": 0.20001220703125,
+        "rms": 0.020399381212820304,
+        "sha256": "4d08d260d5ad07a0404b29f72ba646dde1398060f6fe3a2850bf59ebff110d58"
+      },
+      {
+        "file": "Assets\\Resources\\Audio\\aurenfeld-bird-2.wav",
+        "source_seconds": [
+          1.75,
+          3
+        ],
+        "seconds": 1.25,
+        "peak": 0.20001220703125,
+        "rms": 0.02114758584072174,
+        "sha256": "dcfaddf440215f8db0315f737b1103a1ee66601f2f5672a9ec9e2406a3bda6c6"
+      }
+    ]
   }
 }

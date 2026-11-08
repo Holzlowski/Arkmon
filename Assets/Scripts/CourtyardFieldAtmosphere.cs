@@ -40,6 +40,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
         rustle=gameObject.AddComponent<AudioSource>();
         rustle.playOnAwake=false;rustle.loop=true;rustle.spatialBlend=0;rustle.volume=0;
         rustle.clip=Resources.Load<AudioClip>("Audio/field-rustle");
+        CourtyardBirdsong.Install(transform, lookout);
     }
     void Update()
     {

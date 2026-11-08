@@ -2443,3 +2443,7 @@ Replace the approach and panorama with an original sampled piano, harp and violi
 ### Release 0.46.1 - fix(audio): disable field wind and retain a quiet breeze audition
 
 Keep field wind disabled following listening feedback. Replace the old cloth and park-recording placeholders with reproducible voice-free air and provide a separate, much quieter breeze audition. Preserve music and use independent effects volume and return cleanup if wind is enabled later.
+
+### Release 0.47.0 - feat(audio): add sparse natural birdsong to the lookout
+
+Alternate two recorded CC0 bird calls after arrival with 10-18 seconds of silence. Give birds a separate effects-controlled source and fade on return without enabling wind. Include source attribution, repeatable preparation, imported-audio and mute/scheduling/reload checks.
