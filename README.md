@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.42.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.47.2`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2559,3 +2559,11 @@ Build prerequisites: Unity 6000.3.26f1 with Windows build support; close this pr
 Recent targeted checks: farm/foothill/audio regression 4/4 passed; revised birdsong scheduling, effects mute, return/reload and imported audio checks 2/2 passed. The final terrace/weather/light release checks also passed (4/4, 100.31 seconds; Library/aurenfeld-release-tests.xml). Standalone build results are recorded alongside the ignored build output. Panorama, farm close-up and mid-flight frames were visually reviewed. This is a prototype playtest, not a full combat regression or a guarantee of frame rate on other hardware. Scenic light shafts are illustrated approximations; cloud-painted motion and world-space shade are coordinated rather than physically projected clouds. The musical arrangement uses recorded instrument samples, not a live orchestra.
 
 Build output, review images, audio auditions and source sample caches remain in ignored `Builds/`. The packaged source commit and build result are stored with the Windows build. Local editor-only whitespace changes are preserved outside these commits.
+
+## Courtyard follow-up source releases
+
+### 0.47.2 - `fix(landscape): keep the horizon continuous during lookout turns`
+
+Extend the painted mountains around the courtyard with connected side/back faces. Fade near clouds only after crossing the breach and restore their visibility and renderer overrides on return. Check both frame edges at 16:9 and 21:9 and horizon coverage throughout the camera turn.
+
+Validation: Final combined horizon/tree/weather checks passed 3/3 in Library/flight-final-tests.xml; intermediate flight images were reviewed.

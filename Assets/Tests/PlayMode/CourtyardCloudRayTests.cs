@@ -27,6 +27,23 @@ public class CourtyardCloudRayTests
         for(int i=0;i<a.Length;i++)delta[i]=Math.Abs(a[i].r-b[i].r)+Math.Abs(a[i].g-b[i].g)+Math.Abs(a[i].b-b[i].b);
         return delta;
     }
+    static bool Covered(MeshFilter surface,Ray ray,float far)
+    {
+        var v=surface.sharedMesh.vertices.Select(surface.transform.TransformPoint).ToArray();
+        var indices=surface.sharedMesh.triangles;
+        for(int i=0;i<indices.Length;i+=3)
+        {
+            var a=v[indices[i]];var b=v[indices[i+1]];var c=v[indices[i+2]];
+            var normal=Vector3.Cross(b-a,c-a);
+            var plane=new Plane(a,b,c);
+            if(!plane.Raycast(ray,out float distance) || distance>far)continue;
+            var hit=ray.GetPoint(distance);
+            if(Vector3.Dot(Vector3.Cross(b-a,hit-a),normal)>=-.01f &&
+               Vector3.Dot(Vector3.Cross(c-b,hit-b),normal)>=-.01f &&
+               Vector3.Dot(Vector3.Cross(a-c,hit-c),normal)>=-.01f)return true;
+        }
+        return false;
+    }
     [UnityTest] public IEnumerator CloudGapLight_IsVisibleMovesAndCleansUp()
     {
         yield return (IEnumerator)typeof(CourtyardGardenTaskTests).GetMethod("Load",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new object[]{true});
@@ -36,12 +53,37 @@ public class CourtyardCloudRayTests
         Assert.That(renderers.All(r=>!r.enabled && r.sharedMaterial.shader.isSupported),Is.True);
         var material=renderers[0].sharedMaterial;var meshes=root.GetComponentsInChildren<MeshFilter>().Select(f=>f.sharedMesh).ToArray();
         var point=GameObject.Find("Western field lookout").GetComponent(T("CourtyardLookout"));
-        CourtyardGardenTaskTests.MoveTo(point);yield return null;
+        CourtyardGardenTaskTests.MoveTo(point);yield return new WaitForSeconds(2);
+        Capture("flight-00-courtyard");
         point.GetType().GetMethod("InteractWithPlayer").Invoke(point,null);
         float deadline=Time.realtimeSinceStartup+18;
-        while((float)point.GetType().GetProperty("Progress").GetValue(point)<.999f && Time.realtimeSinceStartup<deadline)yield return null;
+        int stage=1;
+        while((float)point.GetType().GetProperty("Progress").GetValue(point)<.999f && Time.realtimeSinceStartup<deadline)
+        {
+            if((float)point.GetType().GetProperty("Progress").GetValue(point)>stage*.12f && stage<=7)
+            { Capture("flight-"+stage.ToString("D2")); stage++; }
+            yield return null;
+        }
         Assert.That((float)point.GetType().GetProperty("Progress").GetValue(point),Is.GreaterThan(.99f));
         yield return new WaitForSeconds(2);
+        // Check the actual camera rays at both display edges, including ultrawide.
+        var camera=Camera.main;
+        var mountain=GameObject.Find("Western painted mountains").GetComponent<MeshFilter>();
+        float aspect=camera.aspect;
+        try
+        {
+            foreach(float ratio in new[]{16f/9f,21f/9f})
+            {
+                camera.aspect=ratio;
+                foreach(float edge in new[]{0f,1f})
+                    Assert.That(Covered(mountain,camera.ViewportPointToRay(new Vector3(edge,.5f,0)),camera.farClipPlane),Is.True,"Mountain scenery must cover both frame edges.");
+            }
+            // The turning camera can face any direction between courtyard and lookout.
+            foreach(var origin in new[]{new Vector3(-40,30,0),new Vector3(-61,30,7)})
+                for(int yaw=0;yaw<360;yaw+=5)
+                    Assert.That(Covered(mountain,new Ray(origin,Quaternion.Euler(0,yaw,0)*Vector3.forward),camera.farClipPlane),Is.True,"Missing horizon during turn at "+yaw);
+        }
+        finally{camera.aspect=aspect;}
         var weather=GameObject.Find("Aurenfeld scenic morning").GetComponent(T("CourtyardScenicMorning"));
         var clock=weather.GetType().GetField("weatherTime",BindingFlags.NonPublic|BindingFlags.Instance);
         float previous=Time.timeScale;Time.timeScale=0;
