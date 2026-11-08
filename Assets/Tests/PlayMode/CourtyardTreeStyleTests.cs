@@ -19,7 +19,7 @@ public class CourtyardTreeStyleTests
         Assert.That(sprites.Select(s => s.texture).Distinct().Count(), Is.EqualTo(4));
         var trees = GameObject.Find("Western field margins").GetComponentsInChildren<SpriteRenderer>().Where(r => r.name == "Western field tree").ToArray();
         Assert.That(trees.Length, Is.EqualTo(12));
-        Assert.That(trees.All(r => sprites.Contains(r.sprite)), Is.True);
+        Assert.That(trees.All(r => sprites.Any(s=>s.texture==r.sprite.texture && s.rect==r.sprite.rect)), Is.True);
         Assert.That(trees.Select(r => r.sprite).Distinct().Count(), Is.EqualTo(2));
         var casters = GameObject.Find("Western grove morning shadows").GetComponentsInChildren<MeshRenderer>()
             .Where(r => r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly);
@@ -27,8 +27,8 @@ public class CourtyardTreeStyleTests
             "Shadow silhouettes must use the new tree textures.");
         var root = GameObject.Find("Aurenfeld tree varieties");
         Assert.That(root.GetComponentsInChildren<Collider>(), Is.Empty);
-        Assert.That(GameObject.Find("Garden apple tree").GetComponent<SpriteRenderer>().sprite, Is.EqualTo(sprites[2]));
-        Assert.That(GameObject.Find("Stream willow").GetComponent<SpriteRenderer>().sprite, Is.EqualTo(sprites[3]));
+        Assert.That(GameObject.Find("Garden apple tree").GetComponent<SpriteRenderer>().sprite.texture, Is.EqualTo(sprites[2].texture));
+        Assert.That(GameObject.Find("Stream willow").GetComponent<SpriteRenderer>().sprite.texture, Is.EqualTo(sprites[3].texture));
         var follow = UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));
         var view = T("CourtyardCamera").GetMethod("SetScenicView");
         var angle = Quaternion.Euler(27, 0, 0);

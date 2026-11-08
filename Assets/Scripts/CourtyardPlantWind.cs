@@ -27,6 +27,11 @@ public sealed class CourtyardPlantWind : MonoBehaviour
             var sprite = Resources.Load<Sprite>("CourtyardStyle/" + kind);
             if (sprite != null) allowed[sprite] = kind == "Clover" ? .025f : kind == "Fern" ? .06f : .045f;
         }
+        foreach (var kind in new[] { "Oak", "Birch", "Apple", "Willow" })
+        {
+            var tree = Resources.Load<Sprite>("CourtyardStyle/Trees/" + kind);
+            if(tree!=null)allowed[tree]=kind=="Willow"?.30f:kind=="Birch"?.24f:.18f;
+        }
         foreach (var renderer in FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
         {
             var source = renderer.sprite;
@@ -35,7 +40,7 @@ public sealed class CourtyardPlantWind : MonoBehaviour
             {
                 sprite = Subdivide(source); style.sprites.Add(source, sprite);
                 var material = new Material(shader) { name = "Gentle wind " + source.name };
-                material.SetVector("_PlantShape", new Vector4(source.bounds.min.y, source.bounds.size.y, strength, 0));
+                material.SetVector("_PlantShape", new Vector4(source.bounds.min.y, source.bounds.size.y, strength, strength>.1f?1:0));
                 style.materials.Add(source, material);
             }
             var bounds = renderer.localBounds;

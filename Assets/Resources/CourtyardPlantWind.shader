@@ -43,6 +43,16 @@ Shader "Arkmon/Courtyard Plant Wind"
     float wave=sin(_Time.y*1.35+phase)+.18*sin(_Time.y*2.15+phase*1.7);
     float direction=dot(right/scale,normalize(float3(.8,0,.6)));
     float bend=min(_PlantShape.z,worldHeight*.075)*gust*wave*direction;
+    if(_PlantShape.w>.5)
+    {
+        // Same broad gust phase as MeadowWind; flexible crowns lag behind the wheat.
+        float sweep=sin(origin.x*.075+origin.z*.052-_Time.y*.85-.35);
+        float swell=.55+.45*sin(origin.x*.028-origin.z*.035-_Time.y*.32);
+        float crown=smoothstep(.22,.85,height);
+        float flutter=sin(_Time.y*2.1+input.positionOS.x*4+phase)*.12*crown;
+        bend=_PlantShape.z*((.35+sweep*(.85+swell*.45))*direction+flutter);
+        height=crown;
+    }
     // The planted edge never moves. Extra geometry bends stems instead of rotating the whole card.
     input.positionOS.x+=height*height*bend/scale;
     Varyings output=CommonUnlitVertex(input);

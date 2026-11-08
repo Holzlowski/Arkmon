@@ -39,8 +39,10 @@ public class CourtyardPlantWindTests
         var plants = UnityEngine.Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None)
             .Where(r => r.sharedMaterial != null && r.sharedMaterial.shader.name == "Arkmon/Courtyard Plant Wind").ToArray();
         Assert.That(plants.Length, Is.GreaterThan(20));
-        Assert.That(plants.Select(r => r.sprite).Distinct().Count(), Is.LessThanOrEqualTo(5), "Share subdivided resources across plants.");
+        Assert.That(plants.Select(r => r.sprite).Distinct().Count(), Is.LessThanOrEqualTo(9), "Share subdivided resources across plants.");
         Assert.That(plants.All(r => r.sharedMaterial.shader.isSupported), Is.True);
+        var trees=plants.Where(r=>r.sharedMaterial.GetVector("_PlantShape").w>.5f).ToArray();
+        Assert.That(trees.Length,Is.GreaterThan(10),"Tree species must receive wind after tree styling.");
         var fern = plants.First(r => r.sprite.name == "Fern wind mesh");
         var position = fern.transform.position; var scale = fern.transform.localScale;
         var oldSprite = fern.sprite; var oldMaterial = fern.sharedMaterial;
@@ -83,6 +85,19 @@ public class CourtyardPlantWindTests
             }
             Assert.That(tipChange, Is.GreaterThan(10000), "The GPU must actually bend the visible upper leaves.");
             Assert.That(rootChange / 16f, Is.LessThan(tipChange / 200f * .2f), "The planted edge should stay visually stable.");
+            var oak=trees.First(r=>r.sprite.name=="Oak wind mesh");
+            illustration.sprite=oak.sprite;illustration.sharedMaterial=oak.sharedMaterial;
+            specimen.transform.localScale=Vector3.one/Resources.Load<Sprite>("CourtyardStyle/Trees/Oak").bounds.size.y;
+            var treeFirst=Render(camera,target);long crownChange=0,trunkChange=0;
+            for(int i=0;i<12;i++)
+            {
+                yield return new WaitForSeconds(.15f);
+                var frame=Render(camera,target,Path.Combine(directory,"tree-"+i.ToString("D2")+".png"));
+                crownChange=Math.Max(crownChange,Difference(treeFirst,frame,640,210,400));
+                trunkChange=Math.Max(trunkChange,Difference(treeFirst,frame,640,70,130));
+            }
+            Assert.That(crownChange,Is.GreaterThan(10000),"Tree crown must visibly move.");
+            Assert.That(trunkChange/60f,Is.LessThan(crownChange/190f*.2f),"Tree base must remain planted.");
             Assert.That(fern.transform.position, Is.EqualTo(position)); Assert.That(fern.transform.localScale, Is.EqualTo(scale));
             Assert.That(source.vertices.Length, Is.EqualTo(originalVertices), "Never rewrite the imported sprite.");
         }
