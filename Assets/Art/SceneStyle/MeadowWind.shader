@@ -30,7 +30,9 @@ Shader "Arkmon/Meadow Wind"
             float flutter=sin(_Time.y*2.1+input.uv.x*6.283+p.x*.2)*.12;
             float wave=lerp(oldWave,.35+sweep*(.85+swell*.45)+flutter,_FieldStyle);
             float field=_FieldStyle*smoothstep(46,58,-p.x);
-            float bend=wave*_WindStrength*lerp(1,1.3,field)*input.uv.y*input.uv.y;
+            // Stronger rolling gusts only in the western fields; roots and shadow geometry agree.
+            float gust=.5+.5*sin(p.x*.028-p.z*.035-_Time.y*.32);
+            float bend=wave*_WindStrength*lerp(1,1.85+gust*.45,field)*input.uv.y*input.uv.y;
             p.x+=bend;p.z+=bend*lerp(.3,.42,_FieldStyle);
             return p;
         }

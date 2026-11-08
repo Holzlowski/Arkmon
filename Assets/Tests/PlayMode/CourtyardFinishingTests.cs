@@ -92,6 +92,15 @@ public class CourtyardFinishingTests
         yield return new WaitForSeconds(.5f);
         Assert.That(rays.All(r=>r.enabled),Is.True);
         Capture("courtyard-breach-godrays-on");
+        // Review the slow GPU length deformation at the same camera after 40 game seconds.
+        float previousTimeScale=Time.timeScale;
+        try
+        {
+            Time.timeScale=8;
+            yield return new WaitForSeconds(40);
+        }
+        finally { Time.timeScale=previousTimeScale; }
+        Capture("courtyard-breach-godrays-after-40s");
         var style=(Behaviour)root.GetComponent(T("CourtyardBreachSunrays"));style.enabled=false;yield return null;
         Assert.That(rays.All(r=>!r.enabled),Is.True);Assert.That(motes.particleCount,Is.Zero);
         Capture("courtyard-breach-godrays-off");style.enabled=true;yield return null;

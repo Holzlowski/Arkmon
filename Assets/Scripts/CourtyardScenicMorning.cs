@@ -10,7 +10,7 @@ public sealed class CourtyardScenicMorning : MonoBehaviour
     float intensity;
     Material originalSky, morningSky;
     bool ready;
-    [SerializeField, Range(0,1)] float cloudShadowStrength=.9f;
+    [SerializeField, Range(0,1)] float cloudShadowStrength=.96f;
     float weatherTime;
 
     internal static void Install()
@@ -62,7 +62,7 @@ public sealed class CourtyardScenicMorning : MonoBehaviour
     }
     void UpdateClouds()
     {
-        Shader.SetGlobalVector("_AurenfeldClouds",new Vector4(-weatherTime*.55f,weatherTime*.70f,cloudShadowStrength,0));
+        Shader.SetGlobalVector("_AurenfeldClouds",new Vector4(weatherTime*.65625f,weatherTime*1.015625f,cloudShadowStrength,0));
     }
     void OnEnable() => Apply();
     void OnDisable()

@@ -14,6 +14,7 @@ Shader "Arkmon/Courtyard Sun Dust"
    #pragma vertex Vert
    #pragma fragment Frag
    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+   #include "CourtyardSunMotion.hlsl"
    struct A { float4 positionOS:POSITION; float2 uv:TEXCOORD0; half4 color:COLOR; };
    struct V { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; half4 color:COLOR; float3 world:TEXCOORD1; };
    CBUFFER_START(UnityPerMaterial)
@@ -33,9 +34,10 @@ Shader "Arkmon/Courtyard Sun Dust"
     float beam=0;
     [unroll] for(int n=0;n<9;n++)
     {
-     float3 axis=_BeamEnds[n].xyz-_BeamStarts[n].xyz;
+     float lengthScale=BreachRayLength(_BeamStarts[n].xyz,_Time.y);
+     float3 axis=(_BeamEnds[n].xyz-_BeamStarts[n].xyz)*lengthScale;
      float along=saturate(dot(i.world-_BeamStarts[n].xyz,axis)/max(.001,dot(axis,axis)));
-     float width=lerp(_BeamStarts[n].w,_BeamEnds[n].w,along)+.25;
+     float width=lerp(_BeamStarts[n].w,_BeamEnds[n].w,along)*lengthScale+.25;
      float lit=1-smoothstep(width*.35,width+.5,distance(i.world,_BeamStarts[n].xyz+along*axis));
      float phase=_BeamStarts[n].z*.73+_BeamStarts[n].x*.11;
      float cloud=.5+.5*sin(_Time.y*.22+phase+.45*sin(_Time.y*.13+phase*2));

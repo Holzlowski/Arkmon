@@ -5,7 +5,7 @@ Shader "Arkmon/Field Seed"
         Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Transparent" "RenderType"="Transparent" }
         Pass
         {
-            Blend SrcAlpha OneMinusSrcAlpha
+            Blend SrcAlpha One
             ZWrite Off
             Cull Off
             HLSLPROGRAM
@@ -26,8 +26,9 @@ Shader "Arkmon/Field Seed"
                 float2 p=i.uv*2-1;
                 float seed=1-smoothstep(.25,1,length(p*float2(2.2,1.3)));
                 float tuft=(1-smoothstep(.1,.85,length((p-float2(0,.32))*float2(1.6,2.1))))*.28;
-                float visibility=smoothstep(1,3,i.distance)*(1-smoothstep(32,45,i.distance));
-                return half4(MixFog(i.color.rgb,i.fog),max(seed,tuft)*i.color.a*visibility);
+                float halo=(1-smoothstep(.05,1,length(p)))*.22;
+                float visibility=smoothstep(1.5,4,i.distance)*(1-smoothstep(45,65,i.distance));
+                return half4(MixFog(i.color.rgb,i.fog),max(max(seed,tuft),halo)*i.color.a*visibility);
             }
             ENDHLSL
         }

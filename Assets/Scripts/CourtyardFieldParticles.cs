@@ -13,7 +13,7 @@ public sealed class CourtyardFieldParticles : MonoBehaviour
         var shader=Resources.Load<Shader>("CourtyardFieldSeed");
         if(meadow==null || shader==null)return;
         var root=new GameObject("Western sunlit seeds",typeof(ParticleSystem));
-        root.transform.position=meadow.SurfacePoint(new Vector3(-70,0,7))+Vector3.up*4.2f;
+        root.transform.position=meadow.SurfacePoint(new Vector3(-80,0,17))+Vector3.up*7.5f;
         var style=root.AddComponent<CourtyardFieldParticles>();
         style.Build(shader);
     }
@@ -24,21 +24,21 @@ public sealed class CourtyardFieldParticles : MonoBehaviour
         seeds.useAutoRandomSeed=false;seeds.randomSeed=2591;
         var main=seeds.main;main.playOnAwake=false;main.loop=true;main.duration=12;main.prewarm=true;
         main.startSpeed=0;main.startLifetime=new ParticleSystem.MinMaxCurve(8,12);
-        main.startSize=new ParticleSystem.MinMaxCurve(.065f,.13f);
+        main.startSize=new ParticleSystem.MinMaxCurve(.12f,.25f);
         main.startRotation=new ParticleSystem.MinMaxCurve(-.7f,.7f);
-        main.startColor=new ParticleSystem.MinMaxGradient(new Color(.92f,.78f,.48f,.5f),new Color(1,.93f,.72f,.7f));
-        main.maxParticles=24;main.simulationSpace=ParticleSystemSimulationSpace.World;
+        main.startColor=new ParticleSystem.MinMaxGradient(new Color(2.1f,1.45f,.55f,.7f),new Color(3.0f,2.3f,1.1f,.95f));
+        main.maxParticles=128;main.simulationSpace=ParticleSystemSimulationSpace.World;
         main.cullingMode=ParticleSystemCullingMode.PauseAndCatchup;
-        var shape=seeds.shape;shape.enabled=true;shape.shapeType=ParticleSystemShapeType.Box;shape.scale=new Vector3(22,5,16);
-        var emission=seeds.emission;emission.rateOverTime=1.5f;
+        var shape=seeds.shape;shape.enabled=true;shape.shapeType=ParticleSystemShapeType.Box;shape.scale=new Vector3(28,8,36);
+        var emission=seeds.emission;emission.rateOverTime=11f;
         var velocity=seeds.velocityOverLifetime;velocity.enabled=true;velocity.space=ParticleSystemSimulationSpace.World;
-        velocity.x=.20f;velocity.y=.045f;velocity.z=.09f;
+        velocity.x=.45f;velocity.y=.07f;velocity.z=.8f;
         var noise=seeds.noise;noise.enabled=true;noise.strength=.16f;noise.frequency=.22f;noise.scrollSpeed=.12f;noise.quality=ParticleSystemNoiseQuality.Low;
         var fade=seeds.colorOverLifetime;fade.enabled=true;
         var gradient=new Gradient();gradient.SetKeys(new[]{new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},
             new[]{new GradientAlphaKey(0,0),new GradientAlphaKey(1,.2f),new GradientAlphaKey(.8f,.75f),new GradientAlphaKey(0,1)});fade.color=gradient;
         var renderer=GetComponent<ParticleSystemRenderer>();renderer.sharedMaterial=material;renderer.renderMode=ParticleSystemRenderMode.Billboard;
-        renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;renderer.maxParticleSize=.008f;
+        renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;renderer.maxParticleSize=.014f;
     }
     void Update()
     {

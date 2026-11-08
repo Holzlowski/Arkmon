@@ -18,8 +18,8 @@ float AurenfeldCloud(float3 p)
     // A moving world-space pattern, shared by soil, crops and paper vegetation.
     // Two scales form rounded cloud banks with irregular edges and clear sunlight gaps.
     float2 q=p.xz-_AurenfeldClouds.xy+float2(43,18);
-    float cover=AurenfeldCloudNoise(q/61)*.78+AurenfeldCloudNoise(q/27+13.7)*.22;
-    return smoothstep(.42,.60,cover)*_AurenfeldClouds.z;
+    float cover=AurenfeldCloudNoise(q/38)*.78+AurenfeldCloudNoise(q/17+13.7)*.22;
+    return smoothstep(.43,.59,cover)*_AurenfeldClouds.z;
 }
 half3 AurenfeldMorningLight(half3 color,float3 p,float tips)
 {

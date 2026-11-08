@@ -1,6 +1,6 @@
 Shader "Arkmon/Courtyard Sun Shaft"
 {
- Properties { _BaseColor("Warm sunlight", Color)=(1.3,.67,.14,.4) }
+ Properties { _BaseColor("Warm sunlight", Color)=(1.3,.67,.14,.4) _BeamOrigin("Beam source",Vector)=(0,0,0,0) }
  SubShader
  {
   Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Transparent+5" "RenderType"="Transparent" }
@@ -14,12 +14,14 @@ Shader "Arkmon/Courtyard Sun Shaft"
    #pragma vertex Vert
    #pragma fragment Frag
    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+   #include "CourtyardSunMotion.hlsl"
    struct A { float4 positionOS:POSITION; float2 uv:TEXCOORD0; half4 color:COLOR; };
    struct V { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; float3 world:TEXCOORD1; half weight:TEXCOORD2; };
    CBUFFER_START(UnityPerMaterial)
    half4 _BaseColor;
+   float4 _BeamOrigin;
    CBUFFER_END
-   V Vert(A i) { V o; o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);o.uv=i.uv;o.weight=i.color.a;return o; }
+   V Vert(A i) { V o; o.world=TransformObjectToWorld(i.positionOS.xyz);o.world=_BeamOrigin.xyz+(o.world-_BeamOrigin.xyz)*BreachRayLength(_BeamOrigin.xyz,_Time.y);o.positionCS=TransformWorldToHClip(o.world);o.uv=i.uv;o.weight=i.color.a;return o; }
    half4 Frag(V i):SV_Target
    {
     float edge=pow(saturate(sin(i.uv.x*3.14159265)),1.8);

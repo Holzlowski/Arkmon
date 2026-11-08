@@ -34,8 +34,10 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
                 var start=new Vector3(-43.3f+shaft*.20f,7.1f+shaft*.48f+bank*.18f,z);
                 var end=new Vector3(-38.7f+shaft*.66f+bank*.18f,.85f+shaft*.22f,z+.65f+bank*.48f);
                 var proportion=proportions[bank*3+shaft];
-                end=Vector3.Lerp(start,end,proportion.x);
-                style.Ray(start,end,(.12f+shaft*.025f)*proportion.y,(.48f+shaft*.10f)*proportion.y,.78f+bank*.10f);
+                // Enlarge the authored beam, but keep its lower endpoint above the ground.
+                end=Vector3.LerpUnclamped(start,end,proportion.x*1.2f);
+                end.y=Mathf.Max(.4f,end.y);
+                style.Ray(start,end,(.12f+shaft*.025f)*proportion.y*1.35f,(.48f+shaft*.10f)*proportion.y*1.35f,.78f+bank*.10f);
             }
         style.Dust();
     }
@@ -64,6 +66,7 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
         var go=new GameObject("Golden sunlight through breach",typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(transform,false);
         go.GetComponent<MeshFilter>().sharedMesh=mesh;var r=go.GetComponent<MeshRenderer>();
         r.sharedMaterial=sunlight;r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=false;rays.Add(r);
+        var properties=new MaterialPropertyBlock();properties.SetVector("_BeamOrigin",start);r.SetPropertyBlock(properties);
     }
     void Dust()
     {
@@ -97,7 +100,7 @@ public sealed class CourtyardBreachSunrays : MonoBehaviour
         float inside=view!=null?Mathf.SmoothStep(0,1,Mathf.InverseLerp(-48,-43.8f,view.transform.position.x)):0;
         Visibility=SceneLoadManager.IsTransitioning?0:proximity*inside;
         presentationGlow=Mathf.MoveTowards(presentationGlow,CourtyardLookout.IsPresenting?1.15f:1,Time.unscaledDeltaTime*.2f);
-        sunlight.SetColor("_BaseColor",new Color(1.3f,.67f,.14f,.40f*Visibility*presentationGlow));
+        sunlight.SetColor("_BaseColor",new Color(1.3f,.67f,.14f,.30f*Visibility*presentationGlow));
         foreach(var r in rays)r.enabled=Visibility>.001f;
         if(dust!=null)
         {

@@ -58,4 +58,54 @@ public class CourtyardTerraceWeatherTests
         yield return new WaitForSeconds(.6f);Capture("terrace-repaired-gameplay");
         LogAssert.NoUnexpectedReceived();
     }
+    [UnityTest] public IEnumerator Weather_DriftsContinuously_AndDustReleasesAfterLookout()
+    {
+        yield return Load();
+        var oldClouds=UnityEngine.Object.FindObjectsByType(T("CloudDrift"),FindObjectsSortMode.None).Cast<Component>()
+            .SelectMany(c=>c.GetComponentsInChildren<Renderer>()).Select(r=>(renderer:r,enabled:r.enabled)).ToArray();
+        var point=GameObject.Find("Western field lookout").GetComponent(T("CourtyardLookout"));
+        CourtyardGardenTaskTests.MoveTo(point);yield return null;
+        point.GetType().GetMethod("InteractWithPlayer").Invoke(point,null);
+        float deadline=Time.realtimeSinceStartup+16;
+        while((float)point.GetType().GetProperty("Progress").GetValue(point)<.999f && Time.realtimeSinceStartup<deadline)yield return null;
+        Assert.That((float)point.GetType().GetProperty("Progress").GetValue(point),Is.GreaterThan(.99f));
+        Assert.That(oldClouds.All(c=>!c.renderer.enabled),Is.True,"The old foreground cloud must not cover the painted panorama.");
+        var seeds=GameObject.Find("Western sunlit seeds").GetComponent<ParticleSystem>();
+        Assert.That(seeds.particleCount,Is.GreaterThan(30),"The lookout needs a visible population of sunlit motes.");
+        var sky=GameObject.Find("Western painted horizon").GetComponent(T("CourtyardLookoutLandscape"));
+        var cloudClock=sky.GetType().GetField("cloudTime",BindingFlags.NonPublic|BindingFlags.Instance);
+        var cloud=GameObject.Find("Western drifting clouds").transform;
+        var weather=GameObject.Find("Aurenfeld scenic morning").GetComponent(T("CourtyardScenicMorning"));
+        var weatherClock=weather.GetType().GetField("weatherTime",BindingFlags.NonPublic|BindingFlags.Instance);
+        Assert.That(GameObject.Find("Aurenfeld wind strokes"),Is.Null,"Drawn wind ribbons were removed.");
+        float old=Time.timeScale;Time.timeScale=0;
+        try
+        {
+            cloudClock.SetValue(sky,0f);weatherClock.SetValue(weather,0f);
+            yield return null;yield return null;
+            Vector3 start=cloud.position;Vector4 shade=Shader.GetGlobalVector("_AurenfeldClouds");
+            Capture("aurenfeld-weather-start");
+            var seedRenderer=seeds.GetComponent<ParticleSystemRenderer>();seedRenderer.enabled=false;
+            Capture("aurenfeld-weather-no-air-effects");
+            seedRenderer.enabled=true;
+            Assert.That(ChangedAirPixels(),Is.GreaterThan(500),"Luminous dust must be visibly rendered, not merely an active component.");
+            cloudClock.SetValue(sky,45f);weatherClock.SetValue(weather,45f);
+            yield return null;yield return null;Capture("aurenfeld-weather-after-45s");
+            Assert.That(Vector3.Distance(start,cloud.position),Is.InRange(110f,145f),"Painted clouds need visible but gentle drift over 45 seconds.");
+            var motion=Shader.GetGlobalVector("_AurenfeldClouds")-shade;
+            Assert.That(new Vector2(motion.x,motion.y).magnitude,Is.InRange(45f,65f),"Field shadows must drift slowly rather than race across crops.");
+            cloudClock.SetValue(sky,300f);yield return null;
+            var fiveMinutes=Camera.main.WorldToScreenPoint(cloud.position);
+            cloudClock.SetValue(sky,310f);yield return null;
+            float pixels=(Camera.main.WorldToScreenPoint(cloud.position)-fiveMinutes).magnitude;
+            Assert.That(pixels,Is.GreaterThan(10),"Background cloud movement must remain visible after several minutes, without a stationary turnaround.");
+        }
+        finally{Time.timeScale=old;}
+        point.GetType().GetMethod("ReturnToCourtyard").Invoke(point,null);yield return new WaitForSeconds(4);
+        Assert.That(oldClouds.All(c=>c.renderer.enabled==c.enabled),Is.True,"Return must restore the previous courtyard clouds.");
+        Assert.That(seeds.particleCount,Is.Zero);
+        yield return Load();
+        Assert.That(GameObject.Find("Aurenfeld wind strokes"),Is.Null);
+        LogAssert.NoUnexpectedReceived();
+    }
 }

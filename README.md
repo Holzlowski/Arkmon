@@ -2415,3 +2415,7 @@ This development playtest starts in TowerRoom and includes StartScene and Battle
 ### Release 0.42.1 - fix(courtyard): close the terrace pit and clear gallery windows
 
 Extend the residence terrace beneath the gallery and move its windows clear of the projecting castle wing. Keep the editor generator aligned with the saved scene. Add floor-ray and walk-in/walk-out regression coverage.
+
+### Release 0.43.0 - feat(weather): animate the painted sky and breathing golden rays
+
+Move the actual cloud painting continuously, restore courtyard clouds on return, and synchronize moving field shade. Enlarge and soften breach rays with shared length animation for illuminated dust. Add visible motes and stronger crop motion while retaining the requested absence of wind ribbons.
