@@ -451,3 +451,5 @@ Die Aurenfeld-Kamerafahrt gefaellt; ihre Komposition bewahren. Die technischen u
 - [ ] Vollere Feldansicht vom Nutzer beurteilen lassen; Leistung auf dem Testrechner vergleichen.
 
 - [x] Hof-, Eingabe-, Garten-, Licht- und Landschaftskorrekturen in sieben fachliche Commits mit Beschreibungen und Versionen aufgeteilt (bis 0.40.2). Neuer Testbuild bleibt offen.
+
+- [x] Vier geschwungene gruene Feldgrenzen mit wechselnden Pflanzenformen, Groessen und unregelmaessigen Gruppen umgesetzt und stumm geprueft (0.40.3).

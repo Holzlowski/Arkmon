@@ -97,26 +97,70 @@ public sealed class CourtyardDistantFields : MonoBehaviour
             for(int j=0;j<11;j++)
                 AddPlant(meadow, hedge, p + new Vector3(Mathf.Sin(j*.45f)*3,0,(j-5)*2.1f), 1.9f+Mathf.Sin(j*1.1f)*.35f, "Distant field hedge");
         }
-        // Short curved hedges separate fields in depth; breaks preserve open views and the road.
-        for(int band=0;band<2;band++)for(int j=0;j<17;j++)
+        var horizon=GameObject.Find("Castle horizon and golden fields");
+        var thistle=horizon?.GetComponentsInChildren<SpriteRenderer>(true)
+            .FirstOrDefault(r=>r.sprite!=null && (r.name=="Meadow thistles" || r.transform.parent?.name=="Meadow thistles"))?.sprite;
+        var shrubs=new[]{thistle,hedge,Resources.Load<Sprite>("CourtyardStyle/Fern")}
+            .Where(sprite=>sprite!=null).ToArray();
+        // Staggered field boundaries echo the green ribbons in the window panorama.
+        // Keep the current golden terrain and leave the farm, its lane and distant road open.
+        AddHedgerow(meadow,shrubs,new Vector3(-154,0,-61),new Vector3(-166,0,3),8,2.9f,0);
+        AddHedgerow(meadow,shrubs,new Vector3(-173,0,43),new Vector3(-192,0,113),-9,3.2f,1);
+        AddHedgerow(meadow,shrubs,new Vector3(-235,0,-68),new Vector3(-249,0,48),12,3.7f,2);
+        AddHedgerow(meadow,shrubs,new Vector3(-300,0,59),new Vector3(-323,0,153),-13,3.9f,3);
+    }
+    void AddHedgerow(MeadowVegetation meadow,Sprite[] shrubs,Vector3 start,Vector3 end,float bend,float height,int row)
+    {
+        if(shrubs.Length==0)return;
+        // Stable per-row randomness gives each group its own rhythm across scene reloads.
+        var random=new System.Random(6419+row*137);
+        float length=Vector3.Distance(start,end),distance=0;
+        while(distance<length)
         {
-            if(j==5 || j==12)continue;
-            float z=-20+j*3.7f+band*37;
-            float x=-204-band*76+Mathf.Sin(j*.19f+band)*9;
-            var p=new Vector3(x,0,z);
-            AddPlant(meadow,hedge,p,2.3f+Mathf.Sin(j*.83f)*.35f,"Distant field hedge");
+            int count=random.Next(3,7);
+            float groupHeight=Mathf.Lerp(.72f,1.24f,(float)random.NextDouble());
+            float groupDepth=Mathf.Lerp(-2.3f,2.3f,(float)random.NextDouble());
+            for(int i=0;i<count && distance<length;i++)
+            {
+                float t=distance/length;
+                var p=Vector3.Lerp(start,end,t);
+                p.x+=Mathf.Sin(t*Mathf.PI)*bend+groupDepth+Mathf.Lerp(-1.2f,1.2f,(float)random.NextDouble());
+                p.z+=Mathf.Lerp(-.65f,.65f,(float)random.NextDouble());
+                float ends=Mathf.SmoothStep(0,1,Mathf.Min(t,1-t)*9);
+                int kind=random.Next(0,5);kind=kind<3?0:kind-2;
+                kind=Mathf.Min(kind,shrubs.Length-1);
+                float size=height*groupHeight*Mathf.Lerp(.60f,1.32f,(float)random.NextDouble())
+                    *Mathf.Lerp(.66f,1,ends)*(kind==2?.68f:1);
+                if(!CourtyardFarmApproach.IsBareGround(p))
+                {
+                    var plant=AddPlant(meadow,shrubs[kind],p,size,"Aurenfeld green field boundary");
+                    if(plant!=null)
+                    {
+                        var scale=plant.transform.localScale;
+                        scale.x*=Mathf.Lerp(.78f,1.22f,(float)random.NextDouble());
+                        plant.transform.localScale=scale;
+                        plant.flipX=random.Next(2)==0;
+                        plant.color=Color.Lerp(new Color(.54f,.70f,.44f),new Color(.84f,.91f,.66f),(float)random.NextDouble());
+                    }
+                }
+                distance+=Mathf.Lerp(2.5f,4.3f,(float)random.NextDouble());
+            }
+            distance+=Mathf.Lerp(5.5f,10.5f,(float)random.NextDouble());
         }
     }
-    void AddPlant(MeadowVegetation meadow, Sprite sprite, Vector3 point, float height, string label)
+    SpriteRenderer AddPlant(MeadowVegetation meadow, Sprite sprite, Vector3 point, float height, string label)
     {
-        if(sprite==null || Mathf.Abs(point.z-CourtyardFieldMargins.VergeZ(point.x))<6) return;
+        if(sprite==null || Mathf.Abs(point.z-CourtyardFieldMargins.VergeZ(point.x))<6) return null;
         var go = new GameObject(label,typeof(SpriteRenderer));go.transform.SetParent(transform,false);
         go.transform.position=Surface(meadow,point)+Vector3.up*.025f;
         go.transform.localScale=Vector3.one*(height/sprite.bounds.size.y);
         go.transform.position-=Vector3.up*(sprite.bounds.min.y*go.transform.localScale.y);
         var renderer=go.GetComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.sharedMaterial=foliageMaterial;
-        renderer.color=label == "Distant field tree" ? new Color(.78f,.87f,.76f) : new Color(.70f,.80f,.58f);renderer.flipX=foliage.Count%2==0;
+        renderer.color=label == "Distant field tree" ? new Color(.78f,.87f,.76f)
+            : label == "Aurenfeld green field boundary" ? new Color(.68f,.83f,.53f) : new Color(.70f,.80f,.58f);
+        renderer.flipX=foliage.Count%2==0;
         foliage.Add(go.transform);
+        return renderer;
     }
     void LateUpdate()
     {

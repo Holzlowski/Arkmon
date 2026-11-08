@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.2`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.40.3`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2383,3 +2383,7 @@ Validation: connected courtyard route and garden/view checks passed; castle, for
 Share western terrain and harvest palettes across ground, grain, scenery and road. Retain most of the earlier relief, extend visible grain, add painted distant wheat and balance green hedgerows against golden fields. Preserve the scenic camera and mountains.
 
 Validation: silent composition test passed in 21.96 seconds; flight stages and before/after captures reviewed. Prior repeat/cancel/return checks passed. No new standalone build or performance benchmark.
+
+### 0.40.3 - fix(landscape): vary green field boundaries
+
+Four staggered curved hedgerows echo the tower-window panorama. Existing rounded shrubs, mixed foliage and ferns form irregular groups with varied height, width, spacing, depth and olive/sage tints. Seeded placement is stable across reloads, with the main road and farm access clear. No new art assets. Focused silent composition validation passed in 22.16 seconds (`Library/aurenfeld-hedgerow-variety.xml`); the final view was inspected.
