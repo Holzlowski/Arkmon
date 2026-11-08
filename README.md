@@ -41,7 +41,7 @@ These mechanics are currently in **concept and design** and represent the **core
 
 ## Development setup
 
-The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.49.0`).
+The project version is stored as `bundleVersion` in `ProjectSettings/ProjectSettings.asset` (currently `0.50.0`).
 
 1. Install Unity Hub and **Unity 6.3 LTS, editor 6000.3.26f1**, including the build support for your target platform. On this machine the editor is installed at `C:\Program Files\Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe`; use Locate in Unity Hub if it is not listed automatically.
 2. Add this repository as a project in Unity Hub and open it. Allow Unity to import assets and restore the packages listed in `Packages/manifest.json`.
@@ -2591,3 +2591,9 @@ Validation: Final tree, plant motion and weather return/reload checks passed 3/3
 Dress the breach and enclosing walls with staggered chipped stone courses in the castle palette, including exposed ends and gate piers. Add opt-in batched atlas UV/color support and restrained stone variation. Retain authored collisions and camera cutaways, keep the gate open and release generated meshes on teardown.
 
 Validation: Breach palette/traversal checks passed 1/1; wall/breach checks passed 2/2. The final wall collision, cutaway and reload check also passed in Library/courtyard-refinement-after.xml.
+
+### 0.50.0 - `feat(environment): give courtyard buildings painted physical detail`
+
+Add deterministic clipped stone and paving courses, overlapping roof tiles, softened wood/metal parts and small joinery pegs. Keep windows and recesses clear. Vary pigment, wear and non-collidable ridge caps subtly; restore source meshes/transforms and release owned resources on teardown. Original collision remains unchanged.
+
+Validation: The completed building and route checks passed in Library/courtyard-refinement-after.xml. Integrated building/ground coverage is included with the following ground-detail commit. Final relief totals: 119 surfaces, 609635 vertices and 733 softened original parts.
