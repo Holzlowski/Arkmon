@@ -85,7 +85,8 @@ public static class CourtyardWestArchitecture
         int bays=Mathf.Max(1,Mathf.FloorToInt(width/3.4f));
         for(int i=0;i<bays;i++)
         {
-            float x=-width*.5f+(i+.5f)*width/bays;
+            // The east end of the gallery is behind the projecting west residence.
+            float x=name=="Tower connecting wing"?Mathf.Lerp(-4.4f,2.8f,i/(float)Mathf.Max(1,bays-1)):-width*.5f+(i+.5f)*width/bays;
             Window(house,new Vector3(x,lowGallery?.80f:wallHeight*.50f,front-.055f),lowGallery?1.10f:1.35f,lowGallery?1.75f:wallHeight>9?3.4f:2.6f);
             if(width>8 && !lowGallery)Window(house,new Vector3(x,.85f,front-.055f),1.15f,2.1f);
         }
@@ -166,7 +167,7 @@ public static class CourtyardWestArchitecture
     {
         var root=Root(parent,"Aurenfeld raised approach",Vector3.zero);
         Box(root,"Raised tower terrace",new Vector3(-34,.7f,12.4f),new Vector3(10,1.4f,9),masonry,true).tag="Ground";
-        Box(root,"Residence terrace extension",new Vector3(-17.5f,.7f,10.1f),new Vector3(23,1.4f,4.4f),masonry,true).tag="Ground";
+        Box(root,"Residence terrace extension",new Vector3(-17.5f,.7f,12f),new Vector3(23,1.4f,8.2f),masonry,true).tag="Ground";
         // Pale coping makes the retaining wall legible against the darker planting below it.
         foreach(var span in new[]{new Vector2(-37.95f,2.1f),new Vector2(-18.55f,25.1f)})
         {

@@ -2411,3 +2411,7 @@ Windows playtest build command (Unity must be closed):
 ```
 
 This development playtest starts in TowerRoom and includes StartScene and BattleScene. Normal launch retains audio; diagnostics run only with explicit command-line flags. Packaging and its source commit are recorded in the ignored build folder. Visual preference, normal-play frame rate and audio balance remain user playtest items.
+
+### Release 0.42.1 - fix(courtyard): close the terrace pit and clear gallery windows
+
+Extend the residence terrace beneath the gallery and move its windows clear of the projecting castle wing. Keep the editor generator aligned with the saved scene. Add floor-ray and walk-in/walk-out regression coverage.
