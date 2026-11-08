@@ -7,6 +7,7 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
     private SpriteRenderer illustration;
     private Sprite idle;
     private Sprite[] work;
+    private CourtyardGroomPose groom;
     private Camera view;
     private bool engaged;
     private float workTime,reactionTime=1,resumeAt;
@@ -42,6 +43,9 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
             Resources.Load<Sprite>("Hannes/GroomBack"),Resources.Load<Sprite>("Hannes/GroomMiddle")};
         paper=new GameObject("Hannes illustrated stablekeeper",typeof(SpriteRenderer)).transform;paper.SetParent(transform,false);
         illustration=paper.GetComponent<SpriteRenderer>();illustration.sprite=idle;
+        illustration.sortingOrder=1;
+        if(GetComponent<UnityEngine.Rendering.SortingGroup>()==null)gameObject.AddComponent<UnityEngine.Rendering.SortingGroup>();
+        groom=paper.gameObject.AddComponent<CourtyardGroomPose>();
         PaperGroundShadow.Attach(gameObject,illustration);
         foley=gameObject.AddComponent<StableLocalFoley>();brush=Resources.Load<AudioClip>("Audio/Stable/saddle-brush");
     }
@@ -95,6 +99,8 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
             if(player!=null && Mathf.Abs(player.position.x-transform.position.x)>.18f)
                 illustration.flipX=player.position.x<transform.position.x;
         }
+        if(horse!=null)horse.GetComponent<CourtyardHorse>()?.PairWith(transform);
+        groom.Present(illustration,IsWorking && !IsCheckingHorse);
         reactionTime+=Time.deltaTime;
         float wave=engaged?Mathf.Sin(Mathf.Clamp01(reactionTime/.6f)*Mathf.PI):0;
         float breath=Mathf.Sin(Time.time*1.9f)*.005f;

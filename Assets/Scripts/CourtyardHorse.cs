@@ -28,6 +28,12 @@ public sealed class CourtyardHorse : MonoBehaviour
         if(foley!=null)foley.Play(snort,.18f,1.03f);
     }
     public bool IsFeeding => feeding;
+    public void PairWith(Transform owner)
+    {
+        if (feeding || paper == null) return;
+        paper.SetParent(owner,true);
+        paper.GetComponent<MeshRenderer>().sortingOrder = 0;
+    }
     public float MotionTime { get; private set; }
 
     public void Configure(Sprite sprite,bool eats,float offset)
@@ -85,6 +91,7 @@ public sealed class CourtyardHorse : MonoBehaviour
         if(paper==null)return;
         if(view==null)view=Camera.main;
         if(view!=null)paper.rotation=view.transform.rotation;
+        paper.position=transform.position;
         MotionTime=Time.time+phaseOffset;
         float t=MotionTime;
         float breath=Mathf.Sin(t*1.35f)*.009f;
