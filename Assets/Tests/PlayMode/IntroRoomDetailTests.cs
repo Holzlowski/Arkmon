@@ -48,20 +48,20 @@ public class IntroRoomDetailTests
         var present = rig.GetType().GetMethod("Present");
         var near = player.GetComponentsInChildren<Transform>(true).First(t => t.name == "Near leg");
         var far = player.GetComponentsInChildren<Transform>(true).First(t => t.name == "Far leg");
-        present.Invoke(rig, new object[] { true, true, false, Mathf.PI / 2 });
+        present.Invoke(rig, new object[] { true, true, false, Mathf.PI / 2 , true, 1f});
         float first = Mathf.DeltaAngle(0, near.localEulerAngles.z);
         Assert.That(first * Mathf.DeltaAngle(0, far.localEulerAngles.z), Is.LessThan(0));
         Capture("elian-walk-near-step");
-        present.Invoke(rig, new object[] { true, true, false, Mathf.PI * 1.5f });
+        present.Invoke(rig, new object[] { true, true, false, Mathf.PI * 1.5f , true, 1f});
         Assert.That(first * Mathf.DeltaAngle(0, near.localEulerAngles.z), Is.LessThan(0), "Opposite half-cycle swaps the leading leg.");
         Capture("elian-walk-far-step");
         for (int i = 0; i < 16; i++)
         {
-            present.Invoke(rig, new object[] { true, true, false, i * Mathf.PI / 8 });
+            present.Invoke(rig, new object[] { true, true, false, i * Mathf.PI / 8 , true, 1f});
             Assert.That(near.GetComponent<Renderer>().bounds.min.y, Is.GreaterThan(.012f));
             Assert.That(far.GetComponent<Renderer>().bounds.min.y, Is.GreaterThan(.012f));
         }
-        present.Invoke(rig, new object[] { true, false, true, Mathf.PI / 2 });
+        present.Invoke(rig, new object[] { true, false, true, Mathf.PI / 2 , true, 1f});
         Assert.That(near.parent.localScale.x, Is.LessThan(0));
         Assert.That(player.GetComponentsInChildren<SpriteRenderer>().Any(s => s.sprite != null && s.sprite.name == "Elian-Walk-Room"), Is.True);
         rig.GetType().GetMethod("Hide").Invoke(rig, null);

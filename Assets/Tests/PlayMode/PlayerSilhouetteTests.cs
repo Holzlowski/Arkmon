@@ -53,13 +53,13 @@ public class PlayerSilhouetteTests
         ((Behaviour)visual).enabled=false;
         foreach(bool family in new[]{false,true})
         {
-            present.Invoke(rig,new object[]{true,family,false,Mathf.PI*.5f});
+            present.Invoke(rig,new object[]{true,family,false,Mathf.PI*.5f, true, 1f});
             var near=player.GetComponentsInChildren<Transform>().First(t=>t.name=="Near arm");
             var far=player.GetComponentsInChildren<Transform>().First(t=>t.name=="Far arm");
             float angle=Mathf.DeltaAngle(0,near.localEulerAngles.z);
             Assert.That(angle*Mathf.DeltaAngle(0,far.localEulerAngles.z),Is.LessThan(0));
             Capture(family?"elian-family-arm-step":"elian-room-arm-step");
-            present.Invoke(rig,new object[]{true,family,true,Mathf.PI*1.5f});
+            present.Invoke(rig,new object[]{true,family,true,Mathf.PI*1.5f, true, 1f});
             Assert.That(angle*Mathf.DeltaAngle(0,near.localEulerAngles.z),Is.LessThan(0));
             Assert.That(near.parent.localScale.x,Is.LessThan(0));
         }

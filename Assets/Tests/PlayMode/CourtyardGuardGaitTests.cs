@@ -51,8 +51,8 @@ public class CourtyardGuardGaitTests
         Assert.That(facingRight*facingLeft,Is.LessThan(0),"Facing left must mirror the entire gait.");
         camera.transform.SetPositionAndRotation(cameraPosition,cameraAngle);
         visual.enabled=true;yield return new WaitForSeconds(.25f);
-        Assert.That(rig.gameObject.activeSelf,Is.False,"A stationary guard must settle back to idle.");
-        Assert.That(paper.GetComponent<SpriteRenderer>().forceRenderingOff,Is.False);
+        Assert.That(rig.gameObject.activeSelf,Is.True,"Talking and resting retain the same puppet proportions.");
+        Assert.That(paper.GetComponent<SpriteRenderer>().forceRenderingOff,Is.True);
         LogAssert.NoUnexpectedReceived();
     }
     private static float FootX(Transform leg)

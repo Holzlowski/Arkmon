@@ -75,7 +75,7 @@ public class CourtyardStableTests
     {
         yield return Load();
         Call(Hannes,"InteractWithPlayer");
-        foreach(string emotion in new[]{"Friendly","Neutral","Worried","Elian","Surprised","Friendly"})
+        foreach(string emotion in new[]{"Friendly","Neutral","Elian","Friendly","Elian","Friendly"})
         {
             yield return null;
             Assert.That((bool)P(Visual,"IsWorking"),Is.False,"Work must stay paused during Elian's reply too.");

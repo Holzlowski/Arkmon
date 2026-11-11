@@ -64,10 +64,9 @@ public class CourtyardLookoutMusicTests
         Assert.That(sources.Where(s => s.clip.name != "aurenfeld-title").All(s => s.loop), Is.True);
         Assert.That(sources.All(s => s.spatialBlend == 0), Is.True);
         var wind=GameObject.Find("Aurenfeld field atmosphere").GetComponent<AudioSource>();
-        Assert.That(wind.clip.name,Is.EqualTo("field-rustle"));
+        Assert.That(wind.clip.name,Is.EqualTo("field-breeze"));
         yield return new WaitForSecondsRealtime(.8f);
-        Assert.That(wind.volume,Is.Zero,"Additional wind audio is disabled by default.");
-        Assert.That(wind.isPlaying,Is.False);
+        Assert.That(wind.volume,Is.GreaterThan(0).And.LessThanOrEqualTo(effects*.78f+.001f),"A separate gentle breeze must be audible at the lookout.");
         var birdObject=GameObject.Find("Aurenfeld quiet birdsong");
         var birds=birdObject.GetComponent(T("CourtyardBirdsong"));
         var birdSource=birdObject.GetComponent<AudioSource>();
@@ -96,6 +95,7 @@ public class CourtyardLookoutMusicTests
             nextCall.SetValue(birds,Time.unscaledTime-1);
             yield return null;yield return null;
             Assert.That(birdSource.volume,Is.Zero,"Effects mute must silence birds independently of music.");
+            Assert.That(wind.volume,Is.Zero,"Effects mute also silences the independent breeze.");
             Assert.That((int)birdCount.GetValue(birds),Is.EqualTo(2));
         }
         finally { effectsField.SetValue(Manager,effects); }
@@ -132,7 +132,7 @@ public class CourtyardLookoutMusicTests
     [Test]
     public void LookoutClips_KeepExactLoopBoundariesAndUnclippedSamples()
     {
-        string[] names = { "aurenfeld-approach", "aurenfeld-panorama", "aurenfeld-title", "field-rustle" };
+        string[] names = { "aurenfeld-approach", "aurenfeld-panorama", "aurenfeld-title", "field-breeze" };
         float[] seconds = { 8, 53.76f, 5, 48 };
         int[] rates = { 44100, 44100, 44100, 32000 };
         for (int i = 0; i < names.Length; i++)

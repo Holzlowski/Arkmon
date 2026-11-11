@@ -43,12 +43,19 @@ public class CourtyardMusicTests
         var courtyardSource = Music;
         Assert.That(courtyardSource, Is.Not.SameAs(oldSource));
         Assert.That(courtyardSource.clip, Is.SameAs(clip));
+        yield return new WaitForSecondsRealtime(.25f);
+        Assert.That(oldSource.volume,Is.GreaterThan(0),"The tower track must continue into the passage.");
+        Assert.That(courtyardSource.volume,Is.GreaterThan(0),"The courtyard must fade in under the tower track.");
         Assert.That(courtyardSource.loop, Is.True);
         Assert.That(courtyardSource.spatialBlend, Is.Zero);
         deadline = Time.realtimeSinceStartup + 20;
         while (Transitioning && Time.realtimeSinceStartup < deadline) yield return null;
         Assert.That(Transitioning, Is.False);
-        yield return new WaitForSecondsRealtime(1);
+        yield return new WaitForSecondsRealtime(3.5f);
+        // The arrival greeting intentionally ducks the music; close it before checking full gain.
+        var dialogue=T("DialogueBoxController").GetField("instance").GetValue(null);
+        T("DialogueBoxController").GetMethod("CloseDialogue").Invoke(dialogue,null);
+        yield return new WaitForSecondsRealtime(1.3f);
         Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("StartScene"));
         Assert.That(Music, Is.SameAs(courtyardSource), "Scene load must not restart the source selected at transition start.");
         Assert.That(oldSource.volume, Is.Zero.Within(.001f));

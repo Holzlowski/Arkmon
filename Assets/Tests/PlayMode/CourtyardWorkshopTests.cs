@@ -66,7 +66,7 @@ public class CourtyardWorkshopTests
     {
         yield return Load();
         Call(Ida,"InteractWithPlayer");
-        foreach(string emotion in new[]{"Friendly","Neutral","Worried","Elian","Surprised","Friendly"})
+        foreach(string emotion in new[]{"Friendly","Neutral","Elian","Friendly","Elian","Friendly"})
         {
             yield return null;
             Assert.That((bool)P(Visual,"IsWorking"),Is.False,"Work must stay paused during Elian's reply too.");
@@ -173,16 +173,16 @@ public class CourtyardWorkshopTests
             .Where(c=>!c.transform.IsChildOf(player.transform) && c.transform!=player.transform).Select(c=>c.name).ToArray();
         Assert.That(blockers,Is.Empty,"The workpiece must be reachable without entering furniture.");
         Assert.That(Call(player.GetComponent(T("PlayerInteractionFocus")),"Refresh"),Is.SameAs(point));
-        Assert.That(P(point,"Label"),Is.EqualTo("Werkstück ansehen"));
+        Assert.That(P(point,"Label").ToString(),Does.Contain("Schaufelstiel"));
         Call(point,"InteractWithPlayer");
-        Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo("Elian"));
+        Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo("Ida"));
         Assert.That((bool)P(Visual,"IsCutting"),Is.False);
         yield return null;
         Assert.That((bool)P(Visual,"IsWorking"),Is.False,"Ida pauses before her own first reply.");
         Call(Dialogue,"CloseDialogue");yield return new WaitForSeconds(.6f);
         Assert.That((bool)P(Visual,"IsWorking"),Is.True);
         Call(point,"InteractWithPlayer");
-        foreach(string speaker in new[]{"Elian","Ida","Elian","Ida","Elian","Ida"})
+        foreach(string speaker in new[]{"Ida","Ida","Elian","Ida","Elian","Ida"})
         {
             yield return null;
             Assert.That(P(Dialogue,"ActiveSpeaker"),Is.EqualTo(speaker));

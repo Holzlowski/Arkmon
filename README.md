@@ -90,6 +90,8 @@ Also verify the following in Play Mode:
 
 ## Current prototype limitations
 
+The current intro includes the [carriage arrival at the outer gate](#arkanmeisterin-arrival-at-the-outer-gate). The hood gesture is in pose review and the arrival currently ends with the greeting.
+
 Victory and defeat currently return to the previous scene through the same transition; an outcome panel waits for confirmation; there is no penalty, reward or persisted battle result. BattleDeployment provides the readiness signal for the staged team summons; arbitrary mid-battle reinforcements are not implemented. Melee approach scoring uses grid distance and is a simple heuristic, so it can make poor choices around obstacles. Ability assets configure existing actions rather than dynamically granting new ones. Automated PlayMode checks cover repeated scene transitions and action endpoints; subjective presentation and interactive low-frame-rate behavior still require manual checks.
 
 Original Unity migration validation on `6000.3.26f1`: all seven then-existing EditMode tests and both PlayMode tests passed. Asset checks loaded two scenes, 65 prefabs, and 72 materials without missing scripts or invalid shader references. A Windows x64 development build succeeded with zero build errors. Validation ran in batch mode; visual appearance, interactive combat, victory/defeat transitions, and low-frame-rate behavior still need the manual Play Mode checks above.
@@ -1225,6 +1227,8 @@ The workshop group moved from (-23, 0, 4.3) to (-27, 0, -8.3): four units west a
 The existing courtyard checks and screenshots are reused for this layout change; workshop checks resolve their positions relative to the building. Validation: 8/8 courtyard PlayMode cases passed (Library/ida-relocation-tests.xml), and the west gameplay and workshop views were visually reviewed. The gameplay camera itself is unchanged.
 
 ### Expanded west courtyard and Hannes' stable
+
+The stable approach uses the base-color maps from [Stylized Grass & Dirt by JulioVII](https://juliovii.itch.io/ftpgrass-dirt), licensed CC BY. The grass is tinted olive in Unity, and both materials blend into the existing ground around the stable.
 
 The temporary southwest workshop placement has been superseded. The west residence and upper residence now sit ten units farther east, while the tower keeps its original position, staircase and return point. A lower, longer rear connecting wing links the buildings. The terrace extension and facade ivy follow the new architecture. Ida is back in the west terrace area at (-25, 0, 4.3), with a short entrance branch from the main path. Her former foreground site returns to meadow.
 
@@ -2698,3 +2702,372 @@ Validation: Final generated geometry/contact/cleanup, eleven-position route and 
 Measure fixed tower, workshop and garden views at 1920x1080 with 45 warmup and 240 sampled frames. Report median/P95 intervals to ARKMON_REVIEW_OUTPUT and restore render target, UI camera state, time scale and frame settings. Consolidate release documentation and measured results.
 
 Validation: Final silent PlayMode run passed 4/4 in Library/courtyard-refinement-after.xml. No regression appeared in the editor comparison; editor/OS variation prevents claiming a guaranteed speedup. No new standalone build was created.
+
+
+### Hof playtest feedback: outfit, audio and garden (uncommitted)
+
+Elian now uses the existing matching paper puppet for both ordinary idle and walking in his room/family outfits, with a shared fixed scale. Outfit changes retain the same limb/head proportions instead of switching to unrelated full-body idle drawings. Wake/summon poses and dialogue portraits keep their existing dedicated assets; this is not a new art generation pass.
+
+Exploration music now crossfades over 3.2 seconds with equal-power gains. The outgoing track remains present through scene loading; clamped fade advancement prevents a long activation frame from skipping its tail. Battle transitions keep their shorter fade. The lookout has a separate 48-second quiet `field-breeze` loop, taken from the existing voice-free breeze audition. It follows effects volume, softens during the unchanged name accent and fades out when returning. Music files and the existing garden rustle are unchanged. Subjective audio balance still needs listening in normal play.
+
+Marta's apple tree has an upright, scene-owned trunk capsule independent of the camera-facing canopy. The carried can and paper garden limbs are sorted as one assembly; facing changes the can depth relative to the arms and torso, and putting it down restores ordinary world-depth sorting. A small non-colliding wooden drip stand marks the return spot even when empty. The watering rose uses fewer, thinner streams and smaller drops.
+
+Proposed coherent commits (each with its own version increment when requested):
+- `fix(character): keep Elian consistent through outfit and idle changes` — paper character/walk rig and intro checks.
+- `fix(audio): preserve music across tower and courtyard transitions` — SoundManager and scene music checks.
+- `fix(audio): restore a separate gentle lookout breeze` — field atmosphere, breeze clip/import settings, source manifest and lookout audio checks.
+- `fix(courtyard): block the garden apple tree trunk` — tree setup and collision/reload checks.
+- `fix(garden): correct can depth and clarify its return spot` — garden rig, station, water effect and garden lifecycle checks.
+
+Next proposed version: **0.51.2** for the first correction commit. Metadata remains **0.51.1** until committing. The existing Windows ZIP does not include these uncommitted corrections. The well and Ida delivery quest are documented below; borrowed-tool boundaries remain unchanged.
+
+Validation: silent PlayMode checks passed 6/6 in Library/hof-feedback-verified.xml (garden lifecycle, outfit continuity and scene music); the two lookout audio checks and apple-tree collision/reload check also passed in Library/hof-feedback-tests.xml. All nine targeted checks pass across those runs. Reviewed updated pickup/pour/return and outfit screenshots. No new standalone build or audible mix review was performed.
+
+
+### Courtyard draw well and Ida delivery (uncommitted)
+
+A stone draw well with staggered limestone courses, oak supports, pitched roof, winding axle, rope and crank now stands between the stable and kitchen garden, off the main road. The rim and supports have solid collision; the southern approach offers an inspection interaction. It is installed once per courtyard scene and removed with that scene. Filling a can or bucket is not part of this step; the existing watering and borrowed-can boundaries are unchanged.
+
+Ida now asks Elian to deliver Marta's repaired shovel handle. Reaching Ida's handover line gives the handle and displays the delivery objective. Marta accepts it in a separate conversation before her existing gardening dialogue; returning to Ida acknowledges the delivery. Earlier conversation cancellation leaves the exchange pending. Delivery progress survives tower/courtyard scene changes for the current session and resets with a new intro. This is a quest item tracked in the objective, without a new carrying animation or persistent save-game storage.
+
+Suggested commits:
+- `feat(courtyard): add a roofed draw well between garden and stable` — well geometry, collision, approach and inspection prompt.
+- `feat(quests): deliver Ida's repaired shovel handle to Marta` — handovers, delivery objective, session lifecycle and dialogue regression coverage.
+
+Next proposed version remains **0.51.2** for the next actual commit; project metadata remains **0.51.1**. No commit, push or standalone build was created.
+
+Validation: silent PlayMode checks passed 3/3 in Library/well-delivery-tests.xml (delivery cancellation/reload/reset and independent garden progress, Ida conversation presentation, well collision/access/reload). After water/surface polish the well check passed again 1/1 in Library/well-visual-tests.xml. Reviewed Builds/courtyard-well.png in the courtyard camera. The changed source/document files pass the scoped whitespace check; existing unrelated serialized changes were preserved.
+
+
+### Well water errands and pickup animation (uncommitted)
+
+Hannes asks Elian to take the existing empty bucket beside the stable, fill it at the draw well, pour it into the horse trough and return the bucket. Hannes acknowledges the finished job. A full bucket survives courtyard reloads; partial filling or pouring does not commit on cancellation or scene teardown. The trough surface rises after successful delivery. Pickup, filling and pouring temporarily lock exploration, support Esc cancellation, and release their visual/audio resources afterward. Water audio is local and follows effects volume; automated runs remain silent.
+
+The watering can starts empty. The same well interaction fills it with three bed portions. Completed watering consumes one portion; cancelled watering consumes none. A partly full can can be topped up. The bucket and can cannot be carried together. Each borrowed tool stays in its own work area: the can may move between the garden and well (x 7..35, z -17.5..-2), the bucket between stable and well (x -17..13, z -12.5..6.5). Both areas allow a few steps beyond the well. Movement slides along their edges; Marta/Hannes remind Elian once on approach, rearming after moving back inside. Returning the tool releases the limit. Interacting with an exit also asks for its return. This extends the former garden-only limit to include the well. Task hints prioritize the carried tool, and the existing handle delivery and gardening thank-you conversations remain available.
+
+The garden rig now preserves the actual handle contact position across attachment, so grabbing no longer teleports the can to an estimated point. The crouch retains more leg length and uses a gentler torso bend. Existing artwork is reused. Progress is session-scoped, without a new save-game format.
+
+Suggested coherent commits:
+- `feat(quests): fetch well water for Hannes and the garden` — bucket/trough task, shared well filling, can portions, tool exclusivity, owner/well work areas and regression coverage.
+- `fix(character): smooth watering can pickup and preserve leg proportions` — contact alignment, crouch and visual regression checks.
+
+Next proposed version: **0.51.2** for the next actual commit. Metadata remains **0.51.1**; no commit, push or standalone build was created.
+
+Validation: final silent checks passed 5/5 in Library/water-area-tests.xml (both tool areas, single reminders, unrestricted movement after return, bucket workflow, can portions and partial-fill scene unload). Water and grip checks also passed 5/5 in Library/water-final-tests.xml, including mirrored pickup and cancellation after courtyard reload; the remaining full garden/thank-you/physics checks passed in Library/water-task-verified.xml and Hannes dialogue presentation passed in Library/water-task-tests.xml. Reviewed pickup/placement closeups and well/trough screenshots in Builds/water-final-review. Removed a redundant grounded-movement clamp after validation; the shared FixedUpdate clamp also covers jumping. Source whitespace checks passed. Existing unrelated serialized changes were preserved. No audible mix review or standalone build was performed.
+
+Final grip follow-up: reaching/placement now retains the explicitly chosen facing direction so the last approach step cannot turn Elian away from the handle. The mirrored pickup, reload, placement/cancellation and direction check passed 1/1 in Library/water-grip-final.xml; reviewed the corrected placement in Builds/water-grip-final. No further code changes followed this run.
+
+
+### Current Windows courtyard test build — 2026-11-08
+
+Created `Builds/Arkmon-Hof-Test-0.51.1-2026-11-08-Wasseraufgaben/Arkmon.exe` and its matching ZIP from the complete current working tree, including the uncommitted courtyard repairs, draw well, Ida delivery, Hannes water task, can filling, owner/well work-area limits and final grip/facing corrections. The earlier same-day build is preserved. Version metadata remains 0.51.1; next proposed commit version remains 0.51.2. No commit or push was performed.
+
+Built with Unity 6000.3.26f1-x86_64 via `CreateDemoBuild.Run`, targeting StandaloneWindows64 with the enabled TowerRoom, StartScene and BattleScene scenes. Release build succeeded with zero build errors. A 20-second silent startup remained running with no managed runtime exceptions in the startup log; this is a startup smoke check, not a manual standalone playthrough of the quests. Normal launching retains music and effects. The preceding targeted PlayMode checks remain recorded above.
+
+The ZIP contains all required runtime files plus German `TESTHINWEISE.txt` and `BUILDINFO.json`; Burst debug information marked DoNotShip is excluded. ZIP entries/CRC were verified, and an adjacent SHA-256 file records the archive checksum. Extract the entire archive before running Arkmon.exe. Logs: Library/windows-water-test-build.log and Library/windows-water-test-startup.log.
+
+
+### Second courtyard playtest repairs (uncommitted)
+
+The wake presentation now explicitly hides the complete player puppet while the sleeping/seated bed illustration is active. Per-frame rig updates can no longer turn hidden mesh parts back on. Normal presentation and cancellation restore the player. Idle uses a staggered hip/boot stance instead of freezing both legs at the walk cycle’s zero phase. The guard walking silhouette is slightly narrower and 8% longer, retaining scaled foot contact.
+
+The tower meadow and its path are levelled locally before furnishings sample terrain, with matching mesh collision and a soft outer transition. Stair approach soil ends before the ramp/treads. The old broad stable dead-end path is retired in favor of the existing narrow, faded stable connection; the overlapping extra hoof patch is removed. Source meshes and authored assets are preserved.
+
+The bucket now uses a render-time empty/full contents material: the empty interior is dark wood, while a full bucket retains the original painted water. Source atlas pixels are unchanged. Returning a full bucket to its station is now accepted by Hannes, completes the water job, refreshes the trough and triggers thanks. Directly pouring into the trough remains supported.
+
+The workshop inspection now opens Ida’s actual errand conversation. Her final line offers the repaired handle on the bench; a clearly labelled [E] pickup gives the quest item and hides the bench illustration. The pickup can be retried after cancelling, survives scene reload, and requires free hands. Marta accepts the carried handle as before. This remains an objective-tracked quest item without a new hand-carry animation.
+
+Suggested coherent commits:
+- `fix(character): hide wake puppet and restore staggered idle stance` — player presentation visibility and idle leg placement.
+- `fix(courtyard): clear tower steps and soften stable approach` — local ground/collision adjustment and path overlap removal.
+- `fix(quests): show bucket contents and acknowledge full returns` — empty/full rendering and Hannes handover completion.
+- `fix(quests): make Ida shovel handle explicitly collectible` — workbench offer, labelled pickup and delivery state.
+- `fix(character): lengthen guard walking silhouette` — proportion adjustment with grounded boots.
+
+Next proposed version remains **0.51.2** for the next actual commit; metadata remains **0.51.1**. The previously delivered Windows water-task ZIP does not contain these second-playtest repairs. No new build, commit or push was created for this pass.
+
+Validation: all 13 distinct targeted PlayMode checks passed across Library/latest-feedback-tests.xml, Library/latest-feedback-verified.xml and Library/latest-feedback-bucket.xml. Coverage includes bed-pose exclusivity, staggered idle, outfit/exit, connected courtyard traversal, guard gait/foot contact, stable path/collision/reload, empty/full bucket rendering and Hannes acceptance, direct trough delivery, cancellation/work-area/reload behavior, actual workbench focus/pickup and Marta delivery. The first delivery fixture emitted a kinematic-body velocity warning; disabling its test-controlled player movement resolved the fixture issue, and the actual focus/pickup/reload check passed. Reviewed the visible sleeping/seated/idle frames, tower steps, stable path, guard and final empty/full bucket screenshots. No new build or audible test was run. Scoped source/document whitespace checks passed.
+
+
+### Windows repair test build — 2026-11-08
+
+Created `Builds/Arkmon-Hof-Test-0.51.1-2026-11-08-Reparaturen/Arkmon.exe` and matching ZIP from the complete current working tree, including all second-playtest repairs documented above and the earlier water tasks, work-area limits, delivery and presentation/audio fixes. The earlier water-task build and archive are preserved. Version remains 0.51.1; next proposed commit version remains 0.51.2. No commit or push was made.
+
+Unity 6000.3.26f1-x86_64 / CreateDemoBuild.Run / StandaloneWindows64 release build succeeded with zero build errors. TowerRoom, StartScene and BattleScene remain enabled in that order. A 20-second silent standalone startup stayed running without managed runtime exceptions; the recurring D3D12 info-queue diagnostic is not a game exception. This startup check does not replace playing the courtyard quests in the standalone build; their 13 preceding targeted PlayMode checks are recorded above. Normal launching retains audio.
+
+The archive contains required runtime files, updated German TESTHINWEISE.txt and BUILDINFO.json; DoNotShip debug information is excluded. All ZIP entries/CRC were verified and the adjacent .zip.sha256 file records its checksum. Extract the entire ZIP before starting Arkmon.exe. Build/startup logs: Library/windows-repairs-test-build.log and Library/windows-repairs-test-startup.log.
+
+Suggested documentation commit: `docs(build): record current courtyard repair test build` — record the delivered build, validation and playtest instructions.
+
+
+### Third courtyard feedback: connected limbs, clear steps and water choreography (uncommitted)
+
+Player walking arms now counter-swing from the shoulder crop anchors. Resting hips are closer together; feet keep fixed hip attachments while the whole puppet follows its lowest boot. The player paper foot plane follows walkable ground under the body, with sloped contact shadows. Carrying uses the existing complete bent-arm illustrations instead of assembling visibly cut elbow pieces. The hand remains aligned to the tool in depth and updates its world position after ground correction. Can/bucket sorting stays in front of the torso in both directions. No source atlas pixels were edited.
+
+The remaining stair coverage came from the later verge pass resampling the path onto the invisible stair collision ramp. Its path vertices now end before the first tread. The existing early terrain preparation also levels the horse paddock with matching collision; a hay bundle occupies its rear feeding area. The bridle is shifted inboard to leave the trough action clearer. The guard retains the same taller puppet when stopping or talking instead of switching to a compact idle illustration.
+
+The well has a scene-owned wooden draw bucket with rope and crank motion: lower, lift, bring forward to the side, tip and pour into the held tool. There is no masonry-origin stream. Cancellation removes temporary water/audio and resets the drawing rig without committing a fill. Trough delivery tilts the carried bucket visibly and pours from its lip into the trough. Returning a full bucket now includes this pour before placement and Hannes’ thanks. Finished water/bed states still commit only when their respective action completes; stopping after a completed pour retains that valid delivery and leaves the borrowed bucket to return.
+
+A quiet original four-note sampled-harp cue plays once when completing Ida’s delivery, Marta’s three beds or Hannes’ water delivery. Repeat conversations do not replay it. The 2.1-second clip is normalized to a 0.24 peak before the existing effects-volume gain (0.45); batch tests remain silent. Audio source/license attribution is in docs/audio-sources.json. Re-render with tools/render_quest_completion.py using Python 3.12, the existing Builds/audio-tools packages and Builds/sample-audio/GeneralUser-GS.sf2. The reusable generator preserves the imported clip GUID.
+
+Suggested coherent commits:
+- `fix(character): connect player gait and carry limbs` — shoulder anchors, resting hips, whole carrying arms and two-direction grip/sorting.
+- `fix(character): ground player feet and slope shadows` — shared foot placement and hillside presentation without changing collision physics.
+- `fix(courtyard): keep paths off tower stairs and level paddock` — corrected late path projection, flat horse yard and hay.
+- `fix(character): preserve guard proportions during conversations` — one puppet for patrol, stopping and speech.
+- `feat(audio): add gentle courtyard task completion motif` — original harp cue, source attribution and once-per-completion triggers.
+- `feat(water): animate well drawing and trough delivery` — physical draw bucket, valid pour origins, full return animation and cancellation cleanup.
+
+Version remains **0.51.1**. Next proposed version is **0.51.2** for the next actual commit. No commit, push or standalone build was created; the previous Windows repair ZIP does not include this third-feedback pass. Audio balance was measured but not audibly auditioned.
+
+Validation: all 15 distinct targeted PlayMode checks passed across Library/third-feedback-tests.xml, Library/third-feedback-verified.xml, Library/third-feedback-final.xml and Library/third-feedback-slope-final.xml. Final checks cover actual hand-to-handle depth, both carrying directions for can/bucket, fixed hip attachment and opposite arm swing, hillside contact including upward climbing velocity, preservation of actual jump presentation, clear path vertices before stairs, flat paddock, consistent guard stopping/speech, well draw phases and cancellation cleanup, visible trough pouring, full return, and exactly-once cues for Ida/Marta/Hannes. Repeated completion conversations do not add cues. Reviewed the final carrying/walk/placement/slope images, the well side-pour, clear staircase and hay yard. The first grip checks exposed an out-of-plane hand target; this was corrected without relaxing the grip tolerance. The manual walking snapshot also isolates the normal sprite to avoid an extra test-only figure. Cue peak is -12.40 dBFS before effects gain; subjective audio balance was not auditioned. No new standalone build or commit was created.
+
+
+### Windows animation/water test build — 2026-11-08
+
+Created `Builds/Arkmon-Hof-Test-0.51.1-2026-11-08-Animationen/Arkmon.exe` and matching ZIP from the full current working tree. This build includes the third-feedback changes above: fixed limb anchors and carry ordering, grounded feet, clear tower treads, level hay paddock, consistent guard speech proportions, well draw-bucket choreography, animated trough/full-return delivery and the harp completion cue. All earlier repairs are retained. Previous builds/ZIPs are preserved.
+
+Built with Unity 6000.3.26f1-x86_64 through CreateDemoBuild.Run as a StandaloneWindows64 release build with zero build errors. The enabled scenes are TowerRoom, StartScene and BattleScene. The executable stayed running through a 20-second silent startup with no managed exceptions or shader errors in its startup log. This is a startup smoke check; the 15 preceding targeted PlayMode checks and reviewed snapshots are documented above. Normal launch retains audio; subjective audio balance still needs normal-play listening.
+
+The ZIP contains the required runtime files plus updated German TESTHINWEISE.txt and BUILDINFO.json. DoNotShip debug information is excluded. All archive entries/CRC were verified; the adjacent .zip.sha256 records its checksum. Logs: Library/windows-animation-test-build.log and Library/windows-animation-test-startup.log. Metadata remains 0.51.1, next proposed commit version 0.51.2. No commit or push was made.
+
+Suggested documentation commit: `docs(build): record courtyard animation test build` — record the delivered archive, contents and verification.
+
+
+### Fourth courtyard feedback: smooth steps, free arm and directed water actions
+
+Elian now keeps his stride phase when stopping and blends the gait in/out. The paper body has a fixed hip frame; modest shortening of the swinging leg supplies foot clearance instead of moving the entire figure from the rotated boot bounds. The rear resting boot sits further back. The general character bounce is suppressed for this continuous player puppet, including its stopping transition.
+
+Carrying uses the shoulder on the tool side. The free arm hangs at the opposite side, behind the torso; a small matching shoulder overlap covers the attachment. Pickup uses a shallower crouch so the complete painted arm can still reach the real handle. Both directions retain the same grip and tool sorting. These changes use the existing art without editing source atlas pixels.
+
+Hannes uses the intact forward brushing illustration throughout each stroke. A bounded, continuous brush/forearm deformation replaces swapping between differently painted arms. Its reusable mesh respects mirroring and tint, renders both sides, and is checked for folded triangles across the stroke.
+
+The well crank arm, handle and axle now turn together around the axle end. The draw bucket rises vertically and tips around a fixed lip resting on a cradle. A shallow wooden channel conducts the water to the front side, where Elian holds the receiving vessel. A clear side approach keeps the filling action visible. Trough delivery approaches its free side, lifts the bucket over the rim, tips its opening toward the trough, pours from the lower lip, and returns to the carrying pose. A single stream replaces the garden rose spray for these transfers. The trough level rises and the bucket's blue contents fade during pouring. Interrupted transfers retain their previous quest/water state and restore movement settings; completed pours still trigger the existing completion cue exactly once.
+
+Taking Hannes' bucket before speaking to him now opens a one-time greeting after pickup: he recognizes Prince Elian's offer to help and explains that the horses need water from the well. Prior conversation already counts as this introduction. Cancelled pickups do not consume it, and returning/taking the bucket again does not repeat it.
+
+Suggested coherent commits (no commits created):
+- `fix(character): smooth Elian steps and separate carrying arms` — player visual, walking/carrying rigs and their motion/grip regressions.
+- `fix(stable): keep Hannes rear arm throughout brushing` — stablekeeper presentation and reusable brushing mesh.
+- `fix(water): anchor the well crank and direct trough pouring` — well mechanism/channel, transfer choreography, single-stream effect, contents shading and water-flow checks.
+- `feat(quests): greet Elian when he first borrows Hannes bucket` — the one-time pickup introduction and repeat/cancel coverage.
+
+Metadata remains **0.51.1**. The next proposed version is **0.51.2** for the next actual commit; no commit or push was made. Current validation and the Windows test artifact are recorded below when completed.
+
+
+Validation: all 15 distinct targeted checks passed after the final relevant changes, combining Library/fourth-feedback-final.xml (14 passed; the walking fixture was then moved from changing-height terrain to the known flat paddock with ground/camera settling) and Library/fourth-feedback-motion-final.xml (11/11 passed). The latter reran the complete new feedback suite, water quest/can flows, full-return animation and pickup/grip cancellation after the final pour/hand/approach changes. Earlier runs are in Library/fourth-feedback-tests.xml and Library/fourth-feedback-verified.xml. Checked stride continuity through start/stop, fixed hips and foot clearance, the rear resting toe, both carry directions, handle alignment, Hannes mesh triangles through the complete stroke, fixed well lip, crank assembly/return, actual lower-lip pour orientation, visible stream into the trough interior, one-time pickup introduction, cancellation/reload, water amounts and once-only completion. All runs were silent. Reviewed successive native game captures in Builds/fourth-feedback-motion-final, including the now visible pour and normal-size arm. Scoped whitespace checks passed.
+
+The final trough approach uses a clear waypoint around its front corner so Elian can reach without enlarging his arm. The arm is drawn behind the vessel with matching fingers over the handle. The well lowers its emptied draw bucket again before resetting the mechanism, keeping its crank return continuous.
+
+
+### Windows motion/water repair test build — 2026-11-08
+
+Created `Builds/Arkmon-Hof-Test-0.51.1-2026-11-08-Bewegung/Arkmon.exe` and matching ZIP from the current working tree, including the fourth-feedback repairs above and all previous courtyard changes. Earlier builds are preserved. Unity 6000.3.26f1-x86_64 / StandaloneWindows64 release / CreateDemoBuild.Run succeeded with zero build errors. TowerRoom, StartScene and BattleScene remain enabled in that order.
+
+A 20-second silent standalone startup remained running without managed exceptions or shader errors. The quest/motion checks and reviewed frame sequences are documented above; the standalone check covers startup. Normal launching retains audio. Logs: Library/windows-motion-test-build.log and Library/windows-motion-test-startup.log.
+
+The ZIP contains 183 files (250,835,605 bytes), including complete runtime data, German TESTHINWEISE.txt and BUILDINFO.json with executable/managed-assembly checksums. DoNotShip debug information is excluded. All archive entries and CRC were verified; the adjacent .zip.sha256 records SHA-256 `29c3d53a8970fbec13ed9f6ae35ff7677f68c9c41db3b5fd703b037d0a0921e5`. Extract the full archive before starting Arkmon.exe. Version stays 0.51.1, next proposed commit version 0.51.2; no commit or push was made.
+
+Suggested documentation commit: `docs(build): record fourth courtyard feedback test build` — delivered archive, contents, validation and playtest instructions.
+
+
+### Fifth courtyard feedback: connected wake reveal and distinct, fixed-size hands
+
+The wake reveal and the first steps now use the same player puppet, avoiding the previous full-sprite/composite swap at the end of standing up. Moving shoulder pivots lie inside both their painted sleeve and the overlapping torso mesh. Leg drawings keep their source size, with their cut tops hidden inside the tunic overlap while foot height is corrected. Late tool-station updates now respect an already active walking puppet instead of re-enabling the original full-body sprite over it.
+
+Carrying uses the same head/garment texture as walking. `PaperArmBones` solves fixed shoulder–elbow and elbow–wrist lengths; the vessel follows the hand contact rather than resizing the whole arm to a requested vessel position. The arm mesh contains only the existing handless linen sleeve. Left and right fists are distinct rigid drawings at their respective wrists, outside all sleeve deformation. Their shared physical size is calibrated on import. The free arm hangs at Elian's side while carrying; well filling retains this comfortable hold instead of reaching toward a remote world-space target.
+
+Trough delivery brings the bucket inward, places the second hand at the lower barrel, lifts, tips and pours with both hands, then releases the support and returns to carrying. The handle and lower support contacts follow the actual bucket transform. Partial/cancelled transfers still preserve quest state and water amounts; completed transfers retain the existing once-only task cue.
+
+Hand artwork: built-in image_gen created a separate left/right atlas, then refined its simple cartoon style against `Assets/Resources/Elian-Walk-Rig.png`. Selected source: `Assets/Art/Intro/CharacterStyle/Elian distinct hands-v2.png`; the v1 sibling is preserved. Final tool/prompt metadata is in `docs/elian-hand-art.json`. `ImportElianHands.Run` regenerates the four `Assets/Resources/ElianHands` sprite assets and outline metadata without editing the PNG pixels. Runtime rigid hand meshes use the imported outline to exclude disconnected background flecks. Original character atlases are unchanged.
+
+Suggested coherent commits (no commits created):
+- `fix(character): preserve connected Elian presentation through waking` — wake/step presentation ownership, shoulder overlap, source-size legs and reveal regressions.
+- `fix(character): use fixed arm bones and distinct rigid hands` — arm/wrist control, handless sleeve rendering, selected hand artwork/import metadata and grip checks.
+- `feat(water): lift and pour the stable bucket with both hands` — preparation, lower-barrel support, lift/tip/return and contact checks.
+
+Metadata remains **0.51.1**. Next proposed version remains **0.51.2** for the next actual commit. No commit or push was made. Earlier Windows ZIPs do not contain this fifth-feedback pass.
+
+Final fifth-feedback refinement: active carrying arms render in front of the torso, with a feathered sleeve shoulder overlap. Wrist flex is limited to 40 degrees relative to the forearm; the distinct hand drawings remain rigid. The can anchor is derived from the actual painted handle bar, with the fingers drawn over it. Ground placement follows the updated sprite bounds, and the watering rose/receiving opening are expressed in painted sprite coordinates so pivot changes cannot detach their water effects.
+
+Validation: Library/fifth-feedback-final.xml passed 12/12 targeted PlayMode checks after the final handle, wrist and water-origin changes. This includes all six fifth-feedback checks, four water-task checks, both-direction can pickup/put-down cancellation, and the well/crank/trough regression. Earlier Library/fifth-feedback-verified.xml passed 16/16 checks covering the connected reveal, walking/grounding, quest and water changes; Library/fifth-feedback-wrist-grip.xml passed 11/11 after the wrist/layer/handle refinement. Inspected final native captures of can carrying, wake reveal and two-handed trough pouring in Builds/fifth-feedback-final. The checks cover fixed arm lengths, distinct hands, wrist angle limits, actual opaque finger/handle contact, foreground ordering, continuous reveal ownership, water amounts and completion/cancellation. These checks and stills do not replace judging the motion during normal play. Runs were silent. Scoped source whitespace checks passed; existing Unity-generated serialization whitespace in unrelated assets/settings was preserved.
+
+No new Windows build was created, at the user's request; the current changes can be tested directly in Unity. Metadata remains 0.51.1, with 0.51.2 proposed for the next actual commit. No commit or push was made.
+
+Additional suggested coherent commit: `fix(tools): anchor watering can on its painted handle` — painted handle metadata, ground placement and normalized water origins.
+
+### Isolated Elian bucket motion study
+
+Open **Arkmon > Animationsprobe > Eimer öffnen** in Unity, then press Play. The separate scene is `Assets/Scenes/AnimationStudies/ElianBucketMotionStudy.unity`. It presents a seekable 14-second sequence on a quiet stage: reach the handle, pick up a full bucket, carry it to the trough, support its lower edge with the other hand, lift, tip, pour and return to carrying. The panel provides pause, restart, direction, normal/quarter speed and a scrubber. Space pauses, Left/Right advance one source frame, F mirrors and R restarts. This scene starts with a full bucket to isolate the movement; it does not run the courtyard quests.
+
+The study shares the existing fixed-length painted arms and distinct hands. Optional lift-handle, lower-support and free-arm-swing inputs let this reference keep its elbow below the face and its supporting hand on the nearer base during the lift. Existing courtyard callers retain their previous default choreography. The study alone aligns the visible boot outlines to the floor instead of the transparent sprite rectangle. Artwork remains unchanged. The study scene is not in EditorBuildSettings.
+
+[Normal-speed video](docs/previews/elian-bucket/Elian-Eimer-Normaltempo.mp4) (right then left, 28.08 seconds), [half-speed video](docs/previews/elian-bucket/Elian-Eimer-Zeitlupe.mp4), [pose overview](docs/previews/elian-bucket/Schluesselposen.jpg) and [instructions](docs/previews/elian-bucket/README.md) are saved with the project. Unity renders supplied the frames; these are not synthesized motion previews. The in-editor quarter-speed control is independent of the exported half-speed clip. The repeat resets the scene after the final pose; putting the bucket down is outside this study.
+
+Validation: Library/elian-bucket-study-reviewed.xml passed 3/3 checks: the complete study plus the existing distinct-hand and courtyard bucket fill/trough checks after the shared-rig optional inputs. After the preview-only visible-foot placement and caption layout changes, Library/elian-bucket-study-grounded.xml passed the complete study again. Final capture covers 337 frames per direction at 24 fps (674 total), including attachment continuity, near-hand contact, actual lower supporting-hand contact, consecutive bucket positions and deterministic backwards seeking. Reviewed native final pickup/carry/lift/pour frames in both directions and the pose overview; normal and slow-motion MP4 files were decoded without errors. These mechanical checks are separate from judging the movement's style. The reusable exporter is `tools/export_elian_bucket_study.ps1` (requires FFmpeg); capture and export instructions are in the preview README. No standalone build was created.
+
+Suggested coherent commit: `feat(animation): add isolated Elian bucket motion study` — reference scene/controller, editor menu, optional rig pose inputs, motion review capture, export helper and documentation/videos. Include only the new optional-input hunks of the already modified shared rig; preserve the earlier courtyard work as separate changes. Version remains 0.51.1; proposed next actual commit version is 0.51.2. No commit or push was made.
+
+### Elian bucket pose review — static artwork before further animation
+
+The previous isolated motion study is not an accepted animation reference: the crouch, gait and two-handed arm posture still need visual work. The next review step is three separate drawn pose proposals in [docs/previews/elian-bucket/poses-v1](docs/previews/elian-bucket/poses-v1/README.md): squat at pickup, carrying, and lifting with a visible open supporting palm. They use the existing Elian/bucket artwork as references through built-in image_gen. Exact prompts and selected source files are recorded in prompts.json. These are illustrated design references, not Unity captures, registered animation frames or prepared rig parts. Visual acceptance and consistent scale/joint preparation precede any new transitions. No runtime code, transitions or scene behavior changed in this step; no build or commit was created.
+
+Suggested commit: `feat(art): add Elian bucket pose references` — three pose PNGs, prompt record and documentation. Version remains 0.51.1, next proposed actual commit version 0.51.2.
+
+### Squat-to-carry intermediate pose review
+
+The three original bucket key poses have received positive visual feedback. The next review artifact is [a four-pose comparison board](docs/previews/elian-bucket/inbetweens-v1/Zwischenposen-Hocke-Tragen.png), covering first clearance, half rise, almost upright and carrying. It uses the approved drawings as references and was refined for bucket scale and stance. Exact prompts and the selected image source are documented in [the pose-study folder](docs/previews/elian-bucket/inbetweens-v1/README.md). This is a drawn design proposal awaiting user review, not registered animation frames or a Unity capture. No further animation, runtime changes or build was created.
+
+Suggested commit: `feat(art): add squat-to-carry pose study` — comparison artwork, prompt record and documentation. Version remains 0.51.1; next proposed actual commit version 0.51.2. No commit or push.
+
+
+### Hannes' water task — bucket indicator
+
+Open the courtyard in Unity Play Mode. Talk to Hannes or take the empty bucket beside the stable to hear his request. The parchment card at the top right shows the bucket icon and switches between **Leerer Eimer** and **Voller Eimer**. Elian uses his ordinary standing and walking poses.
+
+Fill the bucket at the well. The bucket appears beneath the chute while the water flows. At the trough, the bucket is shown tipped on the rim and the stream raises the water level. Then return the empty bucket and talk to Hannes. Returning the full bucket directly at the stable also delivers the water and opens his thank-you dialogue.
+
+The completion cue triggers once when the water is delivered. Escape cancels a transfer before delivery and preserves the last committed bucket state. The item indicator is recreated from that state when the courtyard reloads. The courtyard movement restriction applies while Elian has the bucket.
+
+Unity PlayMode verification passed 9/9 targeted checks. After the final trough placement and stream adjustment, 6/6 follow-up checks passed. Native captures show the empty and full card, the well fill and the visible trough stream. The test runs were muted and checked that the completion cue was triggered once.
+
+Suggested commit: `feat(courtyard): show Hannes bucket in the item HUD` — empty/full indicator, well and trough staging, and PlayMode regressions. Proposed version for the next actual commit is 0.51.2.
+
+
+### Marta's garden task — shared item indicator
+
+In Unity Play Mode, talk to Marta and take the watering can from the stand on the garden path. The same top-right item card used for Hannes shows the empty can and the number of beds the remaining water can cover. Fill it beneath the well chute, then water each of the three beds. At the selected bed, the can appears tipped beside the soil and the spray comes from its rose. Elian uses his ordinary standing and walking poses. Talk to Marta and return the can to its stand.
+
+One filling supplies all three beds. A completed pour uses one charge and darkens the soil. Cancelling a pour restores the dry bed and keeps the charge. The card follows the saved can state across courtyard reloads. The existing work area still applies while the can is borrowed.
+
+The final Unity PlayMode run passed 5/5 checks covering the well, card, three beds, cancellation, reload, thank-you dialogue, return and work area. The earlier shared-card checks for Hannes and the watering-can water supply also passed. Native captures show the empty and full card, filling under the chute and watering from the rose.
+
+Suggested commit: `feat(courtyard): show Marta watering can in the item HUD` — shared item card, staged can and water effects, and PlayMode regressions. Proposed version for the next actual commit is 0.51.2.
+
+
+### Arkanmeisterin arrival at the outer gate
+
+Start from TowerRoom in Unity Play Mode. The opening thought mentions the carriage and the outer gate. Interact with the Burgtor in the courtyard to start the arrival. Elian steps out of the carriage lane when needed. The camera pulls back over the gate to show the coach approaching on the eastern field road, follows a wheel at ground level, then tracks beside the cabin with the hooded passenger visible through the window. After the bridge crossing, a close shot shows the coachman bringing the carriage to a stop. The sweating guard runs up, announces the Arkanmeisterin while the door is closed, and opens it after the line is dismissed. The guard clears the opening as the door swings and turns toward the passenger. The two low shots hold on the boots first on the wooden step and then on the ground, with a separate footfall on each surface. From the boots on the ground, the scene cuts to a full-length shot of the hooded Arkanmeisterin and her vessel. The camera holds that framing as a rising magical chime and the gold title enter together. The close shot holds briefly after the title fades, then cuts to an open-mouthed Elian. Elian reacts in a close two-shot with the Arkanmeisterin. Elian walks up to her as part of the sequence, and the greeting opens automatically in the same close-up. The objective banner and world interaction prompts stay hidden until the greeting is dismissed. The courtyard music fades out over the first 4.2 seconds. The Arkanmeisterin theme begins a 3.2-second fade-in with the first door movement, drops to a quiet level over the reaction shot, and continues through the first greeting and hood reveal. Its orchestral arrangement keeps the original four-note motif, grows into strings and horns around the title, then settles into piano and harp for the conversation. The courtyard mix fades back in when that greeting ends. The horse and coachman share the coach heading in the high three-quarter road shot. The hoofbeat cadence follows the distance travelled, and the volume follows the shot camera. Unity captures of the ten main shots are in `Library/ArkanmeisterinErstesGespraech`. Advance the greeting with E. If the player dismisses the greeting early, they can retry by speaking to her in the courtyard. The parked coach and greeting state persist on courtyard reloads within the play session.
+
+The first greeting starts with her face in shadow and only two silver strands visible. After “Seht mich an, Elian,” the next line switches both the standing figure and portrait to the unveiled pose. Closing the dialogue before that line keeps the hood raised and allows the player to restart the greeting. Once revealed, the pose persists across courtyard reloads. The reveal currently uses a cut between held drawings for review. The greeting and wake-up lines are drafts in `Assets/Scripts/Dialog/ArkanmeisterinConversation.cs`. The coach uses courtyard materials and the existing paper horse. The new character art uses two aligned cells in `Assets/Resources/Arkanmeisterin poses.png`.
+
+<details>
+<summary>Character artwork generation prompt</summary>
+
+The two-pose sheet was generated with the built-in image tool. The first prompt refined the hair and vessel. The second brought the vessel down to hand-lantern scale. The third obscured her face in the raised hood.
+
+Use case: precise-object-edit. Edit the two-character transparent Arkmon sprite sheet exactly as laid out. Preserve both poses, registered boot positions, same face with luminous lavender eyes and silver temple marks, facial expression, skin, silhouette of hood, muted purple and gold mantle with sun clasp, original proportions, belt, boots, same camera and page layout. Change only hair and belt vessel, consistently in both images. HAIR: a more distinctive sorceress silhouette, an elaborate crown of broad thick braided silver-white ribbons intertwined with deep plum-dark hair, with two long silver strands curling purposefully forward, dark roots still visible. Hair reads even beneath the raised hood, elegant graphic shapes, no accessories or hat. VESSEL: enlarge it to about twice the diameter, a conspicuous imposing arcane vessel visibly carried at her hip on the same belt, with a luminous amethyst glass core, three sturdy ornamental antique-brass ribs surrounding it, engraved thick round bezel and short finial like a miniature sealed reliquary, not a little perfume bottle and not her chest brooch. Vessel must be equally big in both cells and distinct against the dark cape. Both figures fully visible to the boots, ample empty alpha gap between the same left and right poses. True transparent alpha backdrop. Preserve original illustration exactly wherever edits aren't needed. No wording, scenery, gradients, detached magical particles or cast shadow.
+
+Use case: precise-object-edit. Edit this exact transparent 1536x1024 Arkmon two-pose sprite sheet in place. In each pose, make just the amethyst-and-brass magical vessel hanging from the belt clearly smaller, around two thirds of its current width AND height (65%, proportional, same circular design). Keep the very top belt hook attached at the same spot. The round body should be about 100–105 pixels wide in the 1536-pixel sheet, the whole object from belt hook to bottom finial about 150–155 pixels tall, about the size of a small handheld lantern. The lower finial should stop much higher on the thigh. Retain the purple luminous glass core and engraved brass ribs, do not replace it with a lantern. Restore the matching dress fabric and narrow gold seam in the area freed below and beside the smaller vessel. Keep the same vessel size in both cells. Keep everything outside the belt vessel exactly as drawn: face, expression, silver braid, purple hood up and down, arms and hands, cape pattern and outline, clothing, colors, both characters' exact scale and placement, matching boots and baseline, 1536x1024 dimensions and transparent alpha gutter. No other changes.
+
+Use case: precise-object-edit. Edit this exact Arkmon 1536x1024 transparent two-pose game sprite sheet. Change ONLY the visible head inside the raised hood of the LEFT figure. The raised hood now leans forward just enough to fully conceal the face. Its opening is opaque nearly black velvet shadow. NO eyes, glints, eye glow, face shape, facial marks, skin, ears, nose, lips, chin, or facial details visible anywhere within or outside that hood opening. Only the two existing silver curls come out of the dark hood and hang down alongside its opening. Keep the outer purple-and-gold hood silhouette and the same costume. Preserve the left figure's body and hands, gold trim, the small amethyst vessel, pose, position, width, boots and scale exactly. Preserve the RIGHT figure with lowered hood entirely unchanged, including face and hair, hands and same small lantern-sized vessel. Keep both cells registered and both figures fully visible, retain the transparent alpha outside the silhouettes and at the center, do not add scenery, lighting effects, writing, a mask, extra costume details or shadows outside the hood.
+
+</details>
+
+PlayMode verification covered the tower opening, the gate crossing, the guard patrol and the complete arrival and greeting across a courtyard reload. All scoped final checks passed. The tests were muted. Unity stills for both poses and the arrival are in Library/ArkanmeisterinReview.
+
+Suggested commit: `feat(intro): stage the Arkanmeisterin's carriage arrival` — gate trigger, carriage, guard, greeting, character art and PlayMode coverage. Proposed next actual commit version is 0.51.2.
+
+
+### First vessel trial
+
+After the arrival greeting, the Arkanmeisterin and Elian talk as they walk from the gate to the middle of the courtyard. She offers the vessel there. The handover cuts from the mentor holding it out to Elian holding it in both hands. The guard, John, Hannes, Marta, and Ida gather around them. Holding Space fills the meter in about twelve seconds. Releasing Space slowly drains it and the player can resume without a time limit. The same charge controls three fixed facial expressions, the courtyard's darkness, drifting violet and teal light, and a glass resonance with a separate overtone layer. Releasing Space eases both layers back as the vessel drains. The mentor's theme ducks under the charge and returns after the short D-minor resolution. John stands closer to the front and Hannes uses a slightly smaller uniform scale for this shot. At full charge Elian holds the vessel high. Daylight gradually returns as Marta, Hannes, and Ida react in the wide shot. The gem stays bright through the mentor's congratulations and the witnesses' replies. Escape during concentration restores the usual courtyard lighting and lets Elian retry with the mentor. A completed trial and the vessel persist across courtyard reloads in the current play session.
+
+### Arkanmeisterin hood removal
+
+After “Seht mich an, Elian,” advancing the greeting plays a two-second hood removal in the existing close-up. Both hands reach for the gold rim and pause at contact. The rim moves back as the face emerges, then the hands settle at the collar. The approved grip and halfway pose are included in the registered animation atlas, while the standing hood-up and hood-down sprites stay as the endpoints. Elian stays in the shot and the same quiet theme continues. The final line and its unveiled portrait appear after the action. Closing the dialogue during the pull restores the hooded pose and lets the player try the greeting again.
+
+<details>
+<summary>Grip drawing prompt</summary>
+
+The built-in image tool used the approved two-pose sheet as its reference.
+
+Use case: precise-object-edit. Produce a registered static IN-BETWEEN POSE for the Arkanmeisterin using this exact 1536x1024 transparent two-cell Arkmon sprite sheet. Edit ONLY the LEFT hood-up figure's upper arms, forearms and hands. Both hands have just reached the purple hood, and each grips the gold-trimmed cloth edge on its own side of the opening, near temple level. The hand on the viewer's left grips the left rim, the hand on the viewer's right grips the right rim. Fingers curl naturally around the cloth edge, with a readable thumb and continuous wrist into each existing pale cuff. Two anatomically distinct hands, bent elbows lower than the hands and outside the cheeks, shoulders naturally connected and consistent arm lengths. Keep the hood fully UP in exactly the same position and silhouette and leave the opening an opaque dark shadow. No face, eyes, skin or glow inside the opening; only the existing two silver strands fall out. Keep hood, braid, head height, entire torso, sun clasp, lavender dress, gold trim, small amethyst lantern-sized vessel, planted boots, framing, and exact scale and baseline of LEFT figure unchanged. Preserve the RIGHT hood-down reference figure exactly. Transparent alpha around both figures and through the center gutter. No extra pose, text, object, backdrop or cast shadow. This is a single held grip pose before the hood moves, not an animation.
+
+</details>
+
+Suggested commit: `feat(cutscene): animate the Arkanmeisterin removing her hood`. Proposed next actual commit version is 0.51.2.
+
+
+### Carriage team and coachman
+
+The carriage at the outer gate has an indigo cabin, a rounded roof, brass fittings, a compass-rose door badge and round spoked wheels. The coachman's seat and footboard support the seated figure. The reins join his painted gloves to the new bay horse's bridle and follow the carriage. The door still swings on the existing hinge. The arrival uses a longer, flatter camera view for the parked group. The guard stops at roughly the same depth as the Arkanmeisterin, and the seated coachman and footboard were rescaled together. Reviewed the new framing in Library/ArkanmeisterinScaleReview and passed the arrival PlayMode check. The guard figure is now uniformly scaled to 88 percent so the two standing adults are close in height. The stride distance and sweat offset follow the same figure scale. The coachman was enlarged a further 11.5 percent and moved slightly toward the near side of the bench. His footboard is deeper and lower. The updated comparison in Library/ArkanmeisterinDriverScaleReview and the arrival PlayMode check use the same scene camera.
+
+The two generated source textures are `Assets/Resources/Carriage Draft Horse.png` and `Assets/Resources/Carriage Coachman.png`. Both are single held illustrations with separate anchors on the moving carriage. Test the team by interacting with the outer gate in Unity Play Mode.
+
+<details>
+<summary>Carriage team artwork prompts</summary>
+
+Both images were generated with the built-in image tool. The stable horse and courtyard guard supplied style references.
+
+Use case: illustration-story. Generate ONE clean transparent full-body game sprite for Arkmon, using the attached stable horse as a STYLE reference only. A sturdy, handsome dark bay carriage horse with a warm deep chestnut-brown coat, dark chocolate mane and tail, expressive kind eye and a small cream star on its forehead. TRUE SIDE PROFILE facing screen LEFT, head left, rump right, all FOUR visible naturally planted hooves at the same floor line, realistic horse anatomy in the rounded paper-storybook proportions of the reference. Wearing a fitted dark brown leather driving bridle and a broad dark leather breastcollar harness, with a few small aged brass buckles. NO saddle, no rider, no reins trailing off the figure, no carriage, no wheels, no text. Painterly flat cel shading, defined warm sepia lines and a thin ivory paper outline matching the reference. Landscape 1536x1024 canvas, center the entire silhouette and leave a narrow safe transparent margin on all sides. True transparent alpha background, no scenery, no drop shadow, no floor and no props.
+
+Use case: illustration-story. Generate ONE clean transparent game sprite of a seated coachman for Arkmon. The attached courtyard guard is a STYLE reference only. He is a respectable, tidy gentleman in his late thirties with an upright long narrow face, a subtly pointed long nose, neatly combed short brown-blond hair in a precise side part, and a composed friendly expression. No cap or facial hair. Fitted deep charcoal-green travel coat with simple brass buttons and high collar, ecru shirt and cravat, brown gloves, tailored dark trousers and practical brown riding boots. Show his ENTIRE seated pose alone: three-quarter profile facing screen LEFT, upright torso, hips resting at a horizontal seat level, both knees bent naturally in front of him toward the left, both boots visible and down-left of hips as if on a footboard. Near and far hands held together at waist height out in front toward the left, lightly curled to hold thin reins that will be added in Unity. Draw no reins. No chair, bench, carriage or other props. Match the reference's slightly oversized character head, warm dark outlines, painted cel shading and thin warm ivory paper silhouette border. Keep the long face distinct within that style. Transparent alpha background, safe margin, no floor, no drop shadow, no background, no text.
+
+</details>
+
+Unity PlayMode verified the bridge, arrival, seated driver, reins, door, greeting and courtyard reload. Both initial checks and the final arrival check passed. Native stills are in Library/ArkanmeisterinCarriageReview.
+
+Suggested commit: `feat(intro): refine the carriage and add its team` — curved coach, brass detailing, draft horse, seated coachman and reins. Proposed next actual commit version is 0.51.2.
+
+
+### Courtyard character scale review
+
+Open **Arkmon > Animationsprobe > Größenprobe öffnen** in Unity and press Play. The standalone scene is `Assets/Scenes/AnimationStudies/CourtyardScaleReview.unity`. Elian, the guard, the Arkanmeisterin, the draft horse and the seated coachman share one floor line. The straight orthographic camera and half-unit grid make heights comparable. The coachman uses the game's seat and footboard dimensions.
+
+To compare a new sprite, assign it to **Comparison Sprite** on **Hof · Größenprobe** in the scene Inspector before pressing Play. Set **Comparison Scale** to its planned world scale. Use **Comparison Foot Offset** for any transparent margin below the soles. Compare the height, head and shoulders, then verify the same figure with the intended gameplay camera. For a seated character, also compare the hip and boot contacts. The reference figures are assembled from the live game assets and sizes so updates to them show up here.
+
+The two PlayMode checks passed. They cover the shared ground line, seat and boot contact, the extra sprite slot and the gate arrival. The review exposed a small gap beneath a boot, so the shared footboard was raised by 0.025 Unity units. The Unity capture is Library/CourtyardScaleReview/groessenprobe.png.
+
+Suggested commit: `feat(editor): add a courtyard character scale review` — reusable scene, ruler, comparison slot and shared reference figures. Proposed next actual commit version is 0.51.2.
+
+
+### Guard face comparison
+
+Open **Arkmon > Animationsprobe > Burgwache vergleichen** and press Play. The separate scene uses the same standing gameplay rig for both guards. A is the original. B uses the registered lower-cheek and jaw contour from `Assets/Art/Intro/CharacterStyle/Guard narrower jaw review.png`. Both use the same sprite dimensions, pivot, pose, camera and ground line. The generated contour was transferred locally onto the original artwork to preserve the moustache, hair, neck and shoulders. The variation is assigned in the comparison scene only.
+
+The guard atlas and the review crop import at their source dimensions (1536 × 1024 and 384 × 512). The importer re-slices both assets, and the rig uses the same scale on both image axes at the existing standing height. Unity captures are in `Library/GuardNativeProportions/burgwache-vergleich.png` and `Library/GuardNativeProportions/burgwache-gesichter.png`. The PlayMode comparison checks source dimensions, uniform scale, height, sole placement, pivots and limb sprites.
+
+<details>
+<summary>Guard jaw contour prompt</summary>
+
+Precisely retouch this existing game sprite (upper body of a mustachioed castle guard). It is a narrow 250 by 512 crop, with the bottom of the tunic fully visible. Keep the exact same three-quarter head angle, existing swept hair silhouette, visible ear placement, eyes, brows, nose, full original curled moustache and mouth, coloring, soft ivory sticker outline, green uniform, shoulders and all torso linework. Only subtly reshape the cheeks and lower jaw: tuck the contour immediately below the ear and at the outside of the lower cheek in toward the center, gently taper the square jaw into a slightly narrower rounded chin, with the chin at exactly the same height. About 12 to 15 percent less width at the lower jaw, taper smoothly up to the untouched eye area. The same sturdy, friendly adult man. Keep head height, neck, pose and scale fixed. Focus on the small local contour change. A crisp painted cutout with genuine transparent background and the entire original torso in frame. No new elements, labels, extra features or arms.
+
+</details>
+
+### Panfrie shield pose review
+
+Open **Arkmon > Animationsprobe > Panfries Schildposen vergleichen** to see the two static sprites in the Game view. The standalone scene is `Assets/Scenes/AnimationStudies/PanfrieShieldReview.unity`. Both poses keep the 1285 × 1224 source rectangle, 640 pixels per unit and the same pivot on the sole line. Use the comparison to review the shield silhouette, grip and foot placement before authoring a motion clip.
+
+
+### Meet Panfrie at the well
+
+After the courtyard summoning, Panfrie hides behind the draw well. The interaction point remains on the accessible side. After Elian greets him, Panfrie makes two short hops around the well, peeks around his shield and replies. Cancelling before he reaches the conversation spot returns him to his hiding spot. After the reveal, he stays beside the well for the rest of the visit. The encounter uses the two approved, equally registered sprites as held poses. The Ludo clip can be reviewed separately once a clean export is available. The PlayMode check covers the trial gate, interaction focus, the delayed pose and cancellation.
+
+### Meet Kafla at the guard training yard
+
+The guard training yard beside the terrace has a wooden practice dummy and a rack for practice swords. After the courtyard summoning, Kafla practises against the dummy when Elian is nearby. It sways on impact. Kafla finishes one last swing during the first conversation and then turns to greet Elian. The courtyard figure reuses Kafla’s sword rig and portrait without starting combat. Closing the dialogue cancels an in-progress swing. Panfrie remains independently approachable at the well.
+
+### Courtyard summoning after the vessel trial
+
+Finish the vessel trial and advance through the mentor's explanation to see the four Arkmon appear in order. Kafla uses the courtyard sword rig. Panfrie, Liora, and Rauk use illustrated poses. The eight-second stereo cue follows the approved charging transition and four distinct arrivals. The mentor dismisses the Arkmon, lets them leave the shot, and asks Elian to meet them before the last trial. The four encounters become available after the sequence. Find Liora outside the garden fence and Rauk on the low branch of the oak beside the gate house. Rauk glides down for the conversation and returns to the same branch afterward. The four encounters can be completed in any order. The mentor offers the playable seal-defense trial after all four are met.
+
+If the vessel trial is complete and the summoning was interrupted by leaving the scene, speak to the mentor again. A completed summoning stays complete across courtyard reloads within the session. The source and recipe for the soundtrack cue are in docs/audio-sources.json.
+
+### Starter movement and rank playtest
+
+Kafla has 3 AP per turn and can move up to three straight grid steps for 1 AP in the tactical demo. Diagonal movement uses the existing higher path cost. The planned field trial movement budgets per 1 AP are Kafla 3, Panfrie 2, Liora 3 and Rauk 4. 
+
+Starter Arkmon are rank 1. For future encounters, rank 5 should threaten a group of up to five rank-1 Arkmon. Extra AP or actions are balance options to test alongside damage, health and positioning. A fixed AP increase per rank is not defined.
+
+In the Unity Editor, use **Arkmon > Kampfprobe > Kafla gegen Distelwolle** or **Arkmon > Kampfprobe > Panfrie gegen Distelwolle**. Both open the same arena and use the same Distelwolle configuration. Deploy on the same blue cell for a direct comparison. Stop Play Mode before choosing the other starter.
+
+Panfrie has 115 HP, 3 AP and a movement budget of two tiles per AP. Schildhieb deals 12 damage for 1 AP. Schildwache costs 1 AP and intercepts one direct hit on an adjacent ally or Panfrie himself, applying half damage to Panfrie. Eiszapfensalve deals 16 damage up to three tiles away for 2 AP and reduces the target’s movement budget by one for its next turn. The action card shows the cooldown through Panfrie’s next turn. Schildwache uses the approved static shield pose.
+
+The same **Arkmon > Kampfprobe** menu also opens the Liora and Rauk variants. Liora (95 HP, 3 movement) uses Rosenstich, Dornenranke and Rosenlicht. Roots prevent movement, including charges, through the target’s next turn. Rauk (85 HP, 4 movement) uses Dolchhieb, Federwurf and Schattensprung. He can cross a single low obstacle in a straight glide, paying two movement steps for the obstacle and one for the landing. Shadow Step uses free fields on the west side of cover. Those fields are shaded even before selecting the action. A rear or pincer attack adds 6 damage to Dolchhieb once. A surviving target turns toward Rauk after taking damage from a rear strike.
+
+### Field trial prototype
+
+After meeting all four Arkmon, speak to the Arkanmeisterin. She recalls the starters and leads Elian through the gate to the field. The readiness question is asked outside. Choosing to wait leaves the mentor on the field for another conversation. Accept to enter the Golden Fields. The Arkanmeisterin summons Kafla, Panfrie, Liora and Rauk in turn to demonstrate their actions against a training golem. Continue each explanation with E or the button. After all four lessons, defend the 120-HP seal through three opponent turns or defeat the three training golems. The old trial remains available under Arkmon > Kampfprobe > Feldprüfung - Haltet das Siegel. Partner selection is pending.
+
+The separate Unity Editor preview Arkmon > Kampfprobe > Goldene Felder - Arenaprobe uses the courtyard lookout panorama with the farm hidden, a 2D capture of Aurenfeld Castle, asymmetrical groves, a curving field track, moving cloud shadows, training golems and an illustrated seal. It starts with a wide view and moves to a closer, steeper camera for combat. Three limestone formations and three burnable shrub groups provide tactical cover. The ridge and field hedge span two cells each. The limestone cluster spans a 2x2 area. Each obstacle has one shared health pool. In the preview the four starters deploy around the ground-inlaid seal, with three golems further out. The editor menu also offers a four-golem comparison. Training golems use Stone Fist (22 damage at 1 cell) and Stone Shard (12 damage at 2–3 cells), both at 2 AP. The preview has its own post-processing profile. The seal occupies 2x2 cells with one shared health pool. Panfrie can protect it from any adjacent edge.

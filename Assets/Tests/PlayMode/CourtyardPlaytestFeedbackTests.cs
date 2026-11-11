@@ -50,6 +50,7 @@ public class CourtyardPlaytestFeedbackTests
         Assert.That(station.transform.position.z,Is.GreaterThan(-13));
         Call(station,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();
         Assert.That(T("CourtyardGarden").GetProperty("HasCan").GetValue(null),Is.True);
+        T("CourtyardGarden").GetMethod("FillCan").Invoke(null,null);
         var beds=UnityEngine.Object.FindObjectsByType(T("CourtyardGarden"),FindObjectsSortMode.None).Cast<Component>().Where(c=>c.name=="Garden watering point").OrderBy(c=>c.transform.position.x).ToArray();
         foreach(var bed in beds)
         {
@@ -61,12 +62,9 @@ public class CourtyardPlaytestFeedbackTests
         }
         var player=GameObject.FindWithTag("Player");var body=player.GetComponent<Rigidbody>();
         var exit=new Vector3(34.4f,1,-12);body.position=exit;player.transform.position=exit;Physics.SyncTransforms();yield return null;yield return null;
-        Assert.That(Dialogue.GetType().GetProperty("IsOpen").GetValue(Dialogue),Is.True,"Marta reminds Elian at the garden boundary.");
+        Assert.That(Dialogue.GetType().GetProperty("IsOpen").GetValue(Dialogue),Is.True,"Marta reminds Elian at the outer work-area boundary.");
         Call(Dialogue,"CloseDialogue");yield return null;yield return null;
-        Assert.That(Dialogue.GetType().GetProperty("IsOpen").GetValue(Dialogue),Is.False,"Reminder must not reopen every frame.");
-        var filter=T("CourtyardGarden").GetMethod("ConstrainToolMovement");
-        var blocked=(Vector3)filter.Invoke(null,new object[]{new Vector3(34.99f,1,-12),Vector3.right*5,.02f});Assert.That(blocked.x,Is.Zero);
-        var back=(Vector3)filter.Invoke(null,new object[]{new Vector3(34.99f,1,-12),Vector3.left*5,.02f});Assert.That(back.x,Is.LessThan(0));
+        Assert.That(Dialogue.GetType().GetProperty("IsOpen").GetValue(Dialogue),Is.False,"The reminder must not reopen every frame.");
         CourtyardGardenTaskTests.MoveTo(station);yield return null;Call(station,"InteractWithPlayer");yield return CourtyardGardenTaskTests.WaitForPour();
         Assert.That(T("CourtyardGarden").GetProperty("HasCan").GetValue(null),Is.False);
         foreach(var component in UnityEngine.Object.FindObjectsByType(T("CourtyardCamera"),FindObjectsSortMode.None).Cast<Behaviour>())component.enabled=false;

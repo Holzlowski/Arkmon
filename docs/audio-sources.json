@@ -450,5 +450,68 @@
         "sha256": "dcfaddf440215f8db0315f737b1103a1ee66601f2f5672a9ec9e2406a3bda6c6"
       }
     ]
+  },
+  "lookout_breeze": {
+    "title": "Aurenfeld breeze audition",
+    "preview_only": false,
+    "source_type": "Original offline sound design; deterministic filtered noise, no sampled recordings",
+    "third_party_sources": [],
+    "seed": 8112026,
+    "runtime_file": "Assets/Resources/Audio/field-breeze.wav",
+    "seconds": 48,
+    "sample_rate": 32000,
+    "channels": 2,
+    "sample_peak": 0.062591552734375,
+    "rms": 0.011499068316074288,
+    "seam_step": 0.0,
+    "half_second_rms_p90_to_p10": 1.4108743279766724,
+    "maximum_half_second_level_step_relative_to_mean": 0.0920568564877254,
+    "sha256": "4e7585edfcbd7dc1e308eb1bb4f4039429ad3879bc37b0470d8fc3a4f04cdbd2",
+    "processing": "Soft broad pink-noise bands; rumble and high-frequency rolloff; Smooth overlapping swells (16/24/48 seconds for breeze, 8/12/48 for original); restrained stereo; 48-second periodic loop. No voices, foley, field recordings, melody or tonal oscillators.",
+    "previous_source": "Replaces Thimras Park ambiences recording because the user heard a voice and found its character unsuitable.",
+    "recipe": "tools/render_field_rustle.py --breeze-preview",
+    "preview": "Builds\\aurenfeld-breeze-preview.wav",
+    "protected_music_sha256": {
+      "aurenfeld-title.wav": "f694f771f938f554fd580a35c387f7996e0aa37b8d100b99f5b3cd36437997d8",
+      "aurenfeld-panorama.wav": "07cadf90eff84d68a07f4f31a563c2918c694dc1daadf48385994f08381f00ca",
+      "aurenfeld-approach.wav": "c6bccf9f2af7b7afdd2a306b4d1903a3e63b29709b58ee7b5597171ad0546604"
+    },
+    "note": "Quiet separate lookout ambience; enabled with effects volume, reduced under the unchanged title accent. Existing field-rustle and music assets are unchanged."
+  },
+  "quest_completion_motif": {
+    "file": "Assets/Resources/Audio/quest-complete.wav",
+    "description": "Original quiet four-note C-major harp completion motif, 2.1 seconds; no reused melody",
+    "soundfont": "GeneralUser GS 2.0.3 by S. Christian Collins",
+    "source": "https://github.com/mrbumpy409/GeneralUser-GS",
+    "local_license": "Builds/sample-audio/GeneralUser-LICENSE.txt",
+    "rendering": "tinysoundfont, acoustic harp program 46; peak limited to 0.24; effects gain 0.45"
+  },
+  "courtyard_summoning": {
+    "file": "Assets/Resources/Audio/VesselTrial/courtyard-summoning.wav",
+    "source": "https://pixabay.com/sound-effects/film-special-effects-fantasy-healing-spell-soft-magic-chime-1-546563/",
+    "author": "Vadim_Makes_Sound",
+    "license": "https://pixabay.com/service/license-summary/",
+    "description": "Eight-second approved cue with a reversed swell, the vessel overtones and four timed and tuned arrivals.",
+    "recipe": "python tools/render_courtyard_summoning.py path/to/original.mp3"
+  },
+  "arkanmeisterin_arrival_cues": {
+    "magic_reveal": {
+      "file": "Assets/Resources/Audio/IntroFoley/arkanmeisterin-reveal.wav",
+      "description": "Original rising crystal-bell cue over a soft airy swell, triggered on the reveal zoom.",
+      "seconds": 2.10
+    },
+    "arrival_theme": {
+      "file": "Assets/Resources/Audio/arkanmeisterin-theme.wav",
+      "description": "Original D-minor motif expanded into a twelve-bar orchestral loop. Recorded strings, concert harp, flute and grand piano carry the theme, with French horns, distant choir and two restrained timpani accents around the reveal.",
+      "recorded_instruments": {
+        "VSCO-2 CE": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+        "VCSL": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+        "license": "CC0-1.0"
+      },
+      "soundfont": "GeneralUser GS 2.0.3 by S. Christian Collins",
+      "license": "See Builds/sample-audio/GeneralUser-LICENSE.txt",
+      "recipe": "python tools/render_arkanmeisterin_theme.py Assets/Resources/Audio/arkanmeisterin-theme.wav",
+      "seconds": 30.86
+    }
   }
 }

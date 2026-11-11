@@ -26,7 +26,11 @@ public class CourtyardTreeStyleTests
         Assert.That(casters.All(r => sprites.Any(s => r.sharedMaterial.GetTexture("_BaseMap") == s.texture)), Is.True,
             "Shadow silhouettes must use the new tree textures.");
         var root = GameObject.Find("Aurenfeld tree varieties");
-        Assert.That(root.GetComponentsInChildren<Collider>(), Is.Empty);
+        var trunk=GameObject.Find("Garden apple trunk collision").GetComponent<CapsuleCollider>();
+        Assert.That(root.GetComponentsInChildren<Collider>().Length,Is.EqualTo(1));
+        Assert.That(trunk.enabled && !trunk.isTrigger,Is.True);
+        Assert.That(trunk.transform.rotation,Is.EqualTo(Quaternion.identity));
+        Assert.That(trunk.Raycast(new Ray(trunk.bounds.center+Vector3.left*2,Vector3.right),out _,4),Is.True,"Marta tree trunk must block traversal.");
         Assert.That(GameObject.Find("Garden apple tree").GetComponent<SpriteRenderer>().sprite.texture, Is.EqualTo(sprites[2].texture));
         Assert.That(GameObject.Find("Stream willow").GetComponent<SpriteRenderer>().sprite.texture, Is.EqualTo(sprites[3].texture));
         var follow = UnityEngine.Object.FindFirstObjectByType(T("CourtyardCamera"));

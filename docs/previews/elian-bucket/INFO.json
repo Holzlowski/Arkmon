@@ -1,0 +1,16 @@
+{
+  "slow_sha256": "2c05a1fa847a90b0202d31a6e4ab8e23db0dc428d4ecc910bb2c51827164a416",
+  "standalone_build_created": false,
+  "directions": [
+    "rechts",
+    "links"
+  ],
+  "frames_per_direction": 337,
+  "scene": "Assets/Scenes/AnimationStudies/ElianBucketMotionStudy.unity",
+  "proposed_next_commit_version": "0.51.2",
+  "project_version": "0.51.1",
+  "normal_sha256": "523e53874851f007ed916ba9be8132285350032d37986bb4a0bb626bdf4a612a",
+  "unity": "6000.3.26f1",
+  "capture_fps": 24,
+  "slow_motion_speed": 0.5
+}

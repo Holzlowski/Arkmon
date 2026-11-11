@@ -1,0 +1,7 @@
+{
+  "tool": "Built-in image_gen",
+  "source": "Elian distinct hands-v2.png",
+  "reference": "Assets/Resources/Elian-Walk-Rig.png",
+  "purpose": "Distinct anatomical hands; rigid artwork, no sleeve deformation applied to fingers.",
+  "prompt": "Use case: precise-object-edit.\nImage 1 is the EDIT TARGET: the four-hand sprite atlas. Image 2 is a STYLE REFERENCE: Elian's existing character sheet.\nRedraw the four hands in Image 1 to match EXACTLY the simple, cute, rounded child-hand drawing style of Elian in Image 2. Keep the atlas layout, each hand's opposite left/right anatomy and pose, and a truly transparent background.\nThe top two gripping fists must look like Elian's existing small round hands: warm peach/orange skin, bold dark brown contour, thick ivory-white cut-paper outline, flat soft shading. Simplify finger detail to the same few rounded curves used on Elian. NO fingernails, no adult palm creases, no wrinkles, no realistic knuckles, no long fingers, no long wrist stubs. Keep five-finger anatomy but fingers grouped naturally as in the reference.\nTop-left is anatomical right grip, thumb on image left. Top-right is anatomical left grip, thumb on image right. Bottom-left and bottom-right remain opposite cupped support hands. Do not duplicate handedness.\nNo sleeves, no cuffs, no objects, no body, no labels. Preserve generous clear separation between all four isolated sprites. Replace only the hand artwork and preserve the transparent alpha."
+}

@@ -178,20 +178,21 @@ Die Flächen werden bereits beim Hofumbau eingeplant. Die Starter erscheinen ers
 
 ### Festgelegte Starter und Persönlichkeiten
 
-- **Kafla:** mutige Katze; verkörpert Wildheit und Anstand.
-- **Eisschildkröte mit Schild — Name offen:** schüchtern, zurückhaltend und leicht ängstlich, zugleich mit einem großen Beschützerinstinkt.
-- **Pflanzenmagierin — Name offen:** mysteriös; liebt die Menschen und ihr Verhalten. Kann dadurch leicht kokett wirken. Gelegentliche Rätsel in ihren Äußerungen sind eine mögliche, noch nicht festgelegte Eigenschaft.
-- **Raben-Schurke — Name offen:** cool und sich dessen bewusst, hat immer einen coolen Spruch auf Lager. Ist gerne allein im Schatten.
+- **Kafla** (Katze + Flamme) ist eine mutige Katze, die Wildheit und Anstand verkörpert.
+- **Panfrie** (Panzer + Frieren) ist eine schüchterne, zurückhaltende Eisschildkröte mit Schild und einem großen Beschützerinstinkt.
+- **Liora** ist eine mysteriöse Pflanzenmagierin mit Rosenstab. Die Endung „ra“ passt zum Rosenmotiv. Sie liebt die Menschen und ihr Verhalten und kann leicht kokett wirken. Gelegentliche Rätsel in ihren Äußerungen sind eine mögliche, noch nicht festgelegte Eigenschaft.
+- **Rauk** (gesprochen **Ra-uk**, mit zwei getrennten Silben) ist ein cooler Raben-Schurke, der gern allein im Schatten ist und immer einen Spruch parat hat.
 
-Die drei offenen Namen nicht eigenständig als feststehende Namen vergeben. Aus diesen Persönlichkeiten folgen noch keine verbindlichen Fähigkeiten oder Kampfregeln.
+Fähigkeiten und Kampfregeln der vier Starter werden separat ausgearbeitet.
 
 ### Vorgeschlagene Plätze und erste Begegnungen
 
 - [ ] Vier unterscheidbare, gut erreichbare Aufenthaltsorte im Hof reservieren; keinen davon in die Ankunftsfläche oder einen wichtigen Durchgang legen.
-- [ ] Kaflas Platz vorschlagen: sonnige Steinfläche an einer niedrigen Mauer. Begegnungsidee: ein wilder Übungshieb, danach eine höfliche Begrüßung; Mut und Anstand sollen gleichzeitig sichtbar werden.
-- [ ] Der Pflanzenmagierin einen Platz am grünen Rand von Martas Garten vorschlagen, außerhalb des Gemüsebeets und des Gießablaufs. Begegnungsidee: Sie beobachtet menschliche Alltagsgewohnheiten mit neugieriger, geheimnisvoller Aufmerksamkeit.
-- [ ] Der Eisschildkröte einen geschützten Platz an der flachen Brunnenkante beziehungsweise Wasserstelle vorschlagen, mit freiem Zugang. Begegnungsidee: zuerst hinter dem Schild zurückhaltend, bei einem kleinen Missgeschick sofort schützend zur Stelle; keine inszenierte echte Bedrohung nötig.
-- [ ] Dem Raben-Schurken eine schattige Mauernische oder niedrige Sitzkante unter einem Baum vorschlagen, etwas abseits, aber gut erreichbar. Begegnungsidee: lässige Haltung und ein selbstsicherer Spruch, sobald Elian ihn anspricht.
+- [x] Kaflas erster Platz ist der Trainingsplatz der Wache an der Terrassenmauer. Er übt an der Trainingspuppe und begrüßt Elian höflich.
+- [ ] Den Trainingsplatz beim späteren Hofumbau ausbauen.
+- [x] Lioras Begegnung am grünen Rand von Martas Garten umsetzen, außerhalb des Gemüsebeets und des Gießablaufs. Sie beobachtet menschliche Alltagsgewohnheiten mit neugieriger, geheimnisvoller Aufmerksamkeit.
+- [ ] Panfrie einen geschützten Platz an der flachen Brunnenkante beziehungsweise Wasserstelle vorschlagen, mit freiem Zugang. Begegnungsidee: zuerst hinter dem Schild zurückhaltend, bei einem kleinen Missgeschick sofort schützend zur Stelle; keine inszenierte echte Bedrohung nötig.
+- [x] Rauks Begegnung an einer großen, schattenspendenden Eiche auf der Wiese seitlich vom Burgtor umsetzen. Die Durchfahrt der Kutsche bleibt frei. Rauk sitzt auf einem niedrigen Ast vor dem Haus am Burgtor. Spricht Elian ihn an, fliegt er herunter und landet neben ihm. Nach dem Gespräch fliegt er auf denselben Ast zurück. Flug- und Landeposen vor den Übergängen in Unity prüfen.
 - [ ] Plätze und kurze Verhaltensszenen für die vier festgelegten Starter gemeinsam abstimmen. Ihre Eigenheiten durch sichtbares Verhalten und Begegnungen zeigen; alle vier vor der Wahl erreichbar halten.
 - [ ] Eine Prüfungsfläche außerhalb der Burg auf den Feldern als bevorzugte Variante planen. Genauer Ablauf und endgültiger Ort bleiben offen.
 - [ ] Den Weg vom rechten Tor über Zugbrücke und Bach zu einer kleinen Wiese zwischen den Feldern gestalten; Wegeführung und Landschaft stimmen mit der Hofansicht überein.
@@ -279,12 +280,14 @@ Die drei offenen Namen nicht eigenständig als feststehende Namen vergeben. Aus 
 
 ## Danach: Ankunft und weiterer Introverlauf
 
-- [ ] Ankunft der Arkanmeisterin am Burgtor inszenieren.
-- [ ] Übergabe von Gefäß und gegebenenfalls Mantel sowie deren Herkunft ausarbeiten; offene Lore vorher festlegen.
-- [ ] Magisches Aufleuchten der Lampe und Elians Eignung als Beschwörer darstellen.
-- [ ] Vier Starter im Hof vorstellen und ihre Persönlichkeiten kennenlernen lassen.
-- [ ] Prüfung mit Einführung in Fähigkeiten, Eigenschaften und Kampfregeln gestalten.
-- [ ] Anschließende Starterwahl umsetzen.
+- [x] Ankunft der Arkanmeisterin am Burgtor inszenieren.
+- [x] Gefäß im Hof überreichen und Elians Eignung durch das erste eigenständige Aufleuchten zeigen.
+- [ ] Nach der Gefäßprobe erklärt die Meisterin Elian das Arkan und die Tradition der Arkanhüter. Aus dem Arkan entstehen Arkmon. Hüter können sie in ihren Gefäßen hüten und daraus rufen. Arkmon und Hüter helfen einander als Partner und erhalten gemeinsam das arkane Gleichgewicht. Je geübter ein Hüter im Umgang mit dem Arkan wird, desto mehr Arkmon kann er in seinem Gefäß hüten.
+- [ ] Die Meisterin hebt ihr eigenes Gefäß, ihre losen Haarsträhnen wallen und vier Lichtkugeln entstehen. Sie landen einzeln um die Meisterin. Aus ihnen bilden sich Kafla, Panfrie, Liora und Rauk. Sie schickt die vier los, sich im Hof umzusehen. Erst danach wendet sie sich Elian zu und bittet ihn, mit allen vier zu sprechen und sie kennenzulernen. Der Spieler erhält die Kontrolle zurück und kann die Begegnungen in beliebiger Reihenfolge spielen. Beschwörung, Tonspur und Abgang sind im Hof spielbar. Die Gefäßhebung nutzt drei registrierte Posen. Die vier Hofbegegnungen sind spielbar. Nach dem Kennenlernen kündigt die Meisterin die Prüfung an. Der Aufbruch und die Prüfung auf dem Feld bleiben offen.
+- [ ] Nachdem Elian alle vier kennengelernt hat, folgt die letzte Prüfung des Tages vor der Partnerwahl. Auf dem Feld führt eine gemeinsame Übung ins Kampfsystem ein. Der Spieler setzt alle vier Arkmon ein und lernt ihre vorgesehenen Fähigkeiten und Interaktionen mit dem Kampffeld praktisch kennen.
+- [ ] Nach der Prüfung bleiben die Meisterin, Elian und alle vier Arkmon auf dem Feld. Elian steht nachdenklich da, während der Spieler die vier betrachtet und einen Partner auswählt. Erst die Bestätigung macht die Wahl endgültig. Das gewählte Arkmon zeigt seine Freude.
+- [ ] Das Übertragungsritual folgt auf die bestätigte Wahl. Seinen Ablauf später gemeinsam ausarbeiten.
+- [ ] Offen bleibt, ob Arkanhüter mit zunehmender Übung auch eigene Zaubertricks lernen. Herkunft des Gefäßes und eine mögliche spätere Mantelübergabe gesondert klären.
 - [ ] Benötigte Burginnenräume und den mystischen Keller mit dem verschlossenen Tor ausarbeiten.
 
 ## Pflege der Liste
