@@ -26,8 +26,7 @@ public class BurningSystem : MonoBehaviour
                 foreach (BurningStatus target in targets)
                 {
                     if (target.IsBurning) continue;
-                    GridPosition a = source.Position, b = target.Position;
-                    if (Mathf.Abs(a.x - b.x) + Mathf.Abs(a.z - b.z) == 1) exposed.Add(target);
+                    if (Touching(source, target)) exposed.Add(target);
                 }
             foreach (BurningStatus source in sources) if (source != null) source.Tick();
             // Iterate in stable grid order; multiple neighbours give only one attempt.
@@ -37,6 +36,17 @@ public class BurningSystem : MonoBehaviour
                         Rules.durationRounds, Rules.damagePerRound);
         }
         finally { IsResolving = false; }
+    }
+
+    private static bool Touching(BurningStatus source, BurningStatus target)
+    {
+        IEnumerable<GridPosition> sourceCells = source.Obstacle != null ? source.Obstacle.OccupiedCells() : new[] { source.Position };
+        IEnumerable<GridPosition> targetCells = target.Obstacle != null ? target.Obstacle.OccupiedCells() : new[] { target.Position };
+        foreach (var a in sourceCells)
+            foreach (var b in targetCells)
+                if (Mathf.Abs(a.x - b.x) + Mathf.Abs(a.z - b.z) == 1)
+                    return true;
+        return false;
     }
 
     private void OnDestroy()

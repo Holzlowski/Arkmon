@@ -14,7 +14,7 @@ public static class CoverSystem
 
     public static System.Collections.Generic.IEnumerable<BurningObstacle> ObstaclesAt(GridPosition cell)
         => BurningStatus.Active.Select(s => s != null ? s.Obstacle : null)
-            .Where(o => o != null && !o.IsDestroyed && o.isActiveAndEnabled && o.GetGridPosition() == cell).Distinct();
+            .Where(o => o != null && !o.IsDestroyed && o.isActiveAndEnabled && o.Occupies(cell)).Distinct();
     public static BurningObstacle ObstacleAt(GridPosition cell) => ObstaclesAt(cell).FirstOrDefault();
 
     public static DamagePlan Preview(GridPosition origin, GridPosition destination, int damage, Unit target = null)
@@ -30,12 +30,10 @@ public static class CoverSystem
         foreach (RaycastHit hit in hits)
         {
             BurningObstacle obstacle = hit.collider.GetComponentInParent<BurningObstacle>();
-            if (obstacle != null && (obstacle == directTarget || target == null && obstacle.GetGridPosition() == destination || obstacle.IsDestroyed)) continue;
+            if (obstacle != null && (obstacle == directTarget || target == null && obstacle.Occupies(destination) || obstacle.IsDestroyed)) continue;
             if (obstacle == null || obstacle.BlocksSight)
             { plan.blocked = true; plan.damageBeforeGuard = plan.unitDamage = 0; return plan; }
-            GridPosition position = obstacle.GetGridPosition();
-            if (target == null || !obstacle.ProvidesCover
-                || Mathf.Max(Mathf.Abs(position.x - destination.x), Mathf.Abs(position.z - destination.z)) > 1) continue;
+            if (target == null || !obstacle.ProvidesCover || !obstacle.IsAdjacentTo(destination)) continue;
             // Choose the closest cover to the target, never stack multiple reductions.
             plan.cover = obstacle;
         }
@@ -48,10 +46,10 @@ public static class CoverSystem
         return plan;
     }
 
-    public static bool Apply(GridPosition origin, Unit target, int damage, Transform source, bool fire = false)
+    public static bool Apply(GridPosition origin, Unit target, int damage, Transform source, bool fire = false, GridPosition? hitCell = null)
     {
         if (target == null || target.IsDead) return false;
-        DamagePlan plan = Preview(origin, target.GetGridPosition(), damage, target);
+        DamagePlan plan = Preview(origin, hitCell ?? target.GetGridPosition(), damage, target);
         if (plan.blocked) return false;
         if (plan.cover != null)
         {

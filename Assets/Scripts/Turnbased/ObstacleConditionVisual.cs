@@ -68,7 +68,7 @@ public class ObstacleConditionVisual : MonoBehaviour
             if (action is EmberAction fan && !BaseAction.IsAnyActionActive)
             {
                 GridPosition centre = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
-                hovered |= fan.IsValidActionGridPosition(centre) && fan.GetImpactGridPositionList(centre).Contains(obstacle.GetGridPosition());
+                hovered |= fan.IsValidActionGridPosition(centre) && fan.GetImpactGridPositionList(centre).Exists(obstacle.Occupies);
             }
         }
         // The attack panel already describes these targets; avoid a competing world label.
