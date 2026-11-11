@@ -26,6 +26,14 @@ public sealed class CourtyardStableGardenStyle : MonoBehaviour
         var c=new Vector3(-8.6f,0,-5.1f);var d=new Vector3(-6.5f,0,-5.9f);
         for(int i=0;i<=56;i++)
         {float t=i/56f,u=1-t;style.route.Add(u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d);}
+        foreach(var f in FindObjectsByType<MeshFilter>(FindObjectsSortMode.None))
+        {
+            if(f.name!="Curved courtyard path" || f.sharedMesh==null)continue;
+            var v=f.sharedMesh.vertices;if(v.Length<17)continue;
+            var first=f.transform.TransformPoint((v[0]+v[16])*.5f);
+            if(Vector2.Distance(new Vector2(first.x,first.z),new Vector2(-16,-6))>.2f)continue;
+            var r=f.GetComponent<Renderer>();if(r!=null && r.enabled){style.hidden.Add(r);r.enabled=false;}
+        }
         Physics.SyncTransforms();style.RetireObscuringPlants();style.Footpath();style.PlantMargins();
     }
     static Vector3 Ground(Vector3 p)

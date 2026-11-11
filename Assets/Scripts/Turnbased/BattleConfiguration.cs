@@ -10,6 +10,9 @@ public class BattleConfiguration : ScriptableObject
     [Min(1)] public int deploymentDepth = 2;
     public Unit[] playerTeam;
     public Unit[] enemyTeam;
+    public bool defendSeal;
+    [SerializeField] private GoldenFieldArenaPreview.Art goldenFieldArt;
+    internal GoldenFieldArenaPreview.Art GoldenFieldArt => goldenFieldArt?.groundShader != null ? goldenFieldArt : null;
 
     public GridPosition GetTrainerPosition(int width, int height)
         => GetTrainerPositionForSide(playerSide, width, height);

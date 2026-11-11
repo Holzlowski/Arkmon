@@ -15,9 +15,11 @@ public abstract class MeleeAttackAction : BaseAction
     private float timer;
     private bool hitApplied;
     private PaperSwordAnimation swordAnimation;
+    protected virtual int MinimumRange => 1;
     public int Range => Definition != null ? Definition.range : 1;
     public int DamageAmount => Definition != null ? Definition.damage : DefaultDamage;
     public bool DealsFire => IsFire;
+    public virtual int DamageAt(GridPosition cell) => DamageAmount;
 
     public override List<GridPosition> GetValidActionGridPositionList()
         => GetValidActionGridPositionList(unit.GetGridPosition());
@@ -30,7 +32,7 @@ public abstract class MeleeAttackAction : BaseAction
             for (int z = -Range; z <= Range; z++)
             {
                 GridPosition cell = origin + new GridPosition(x, z);
-                if (cell == origin || !LevelGrid.Instance.IsValidGridPosition(cell)) continue;
+                if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) < MinimumRange || !LevelGrid.Instance.IsValidGridPosition(cell)) continue;
                 if (FindTarget(cell, out Unit target, out _)
                     && !CoverSystem.Preview(origin, cell, 0, target).blocked) result.Add(cell);
             }
@@ -76,10 +78,10 @@ public abstract class MeleeAttackAction : BaseAction
         Vector3 destination = LevelGrid.Instance.GetWorldPosition(targetCell) + Vector3.up * 0.5f;
         PaperCharacterVisual visual = unit.GetComponent<PaperCharacterVisual>();
         Vector3 origin = visual != null ? visual.GetAttackOrigin() : unit.transform.position + Vector3.up * 0.6f;
-        if (swordAnimation == null) CombatStrikeVisual.Show(origin, destination, IsFire);
+        if (swordAnimation == null) OnImpact(TargetUnit, origin, destination);
         OnAnyMeleeHit?.Invoke(this, EventArgs.Empty);
         if (IsFire) FlameSwordImpactVisual.Play(LevelGrid.Instance.GetWorldPosition(targetCell) + Vector3.up * .2f);
-        if (TargetUnit != null) TargetUnit.Damage(DamageAmount, unit.transform);
+        if (TargetUnit != null) ApplyUnitHit(TargetUnit,targetCell);
         else if (obstacle != null) obstacle.Damage(DamageAmount);
         if (IsFire)
         {
@@ -94,6 +96,12 @@ public abstract class MeleeAttackAction : BaseAction
             }
         }
     }
+
+    protected virtual void ApplyUnitHit(Unit target, GridPosition cell)
+        => target.Damage(DamageAt(cell),unit.transform);
+
+    protected virtual void OnImpact(Unit target, Vector3 origin, Vector3 destination)
+        => CombatStrikeVisual.Show(origin, destination, IsFire);
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition cell)
         => new EnemyAIAction { gridPosition = cell, actionValue = LevelGrid.Instance.GetUnitOnGridPosition(cell) != null

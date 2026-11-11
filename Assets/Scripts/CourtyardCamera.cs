@@ -29,14 +29,14 @@ public class CourtyardCamera : MonoBehaviour
     {
         talking=true;conversationPartner=null;
         var selected=player!=null?player.GetComponent<PlayerInteractionFocus>()?.Current:null;
-        if(selected is Component component && (component is NPC || component is CourtyardLife || component is CourtyardGuard))
+        if(selected is Component component && (component is NPC || component is CourtyardLife || component is CourtyardPanfrie || component is CourtyardKafla || component is CourtyardLiora || component is CourtyardGuard || component is ArkanmeisterinArrival))
             conversationPartner=component.transform;
     }
     private void PresentLine(string speaker,DialogueEmotion emotion)
     {
         if(!talking || conversationPartner!=null || player==null || speaker==IntroChapter.PlayerName)return;
         string resident=speaker=="Ida"?"Courtyard Carpenter":speaker=="Marta"?"Courtyard Gardener":
-            speaker=="Hannes"?"Courtyard Stablekeeper":speaker==CourtyardGuard.Speaker?"Courtyard Guard":null;
+            speaker=="Hannes"?"Courtyard Stablekeeper":speaker==CourtyardGuard.Speaker?"Courtyard Guard":speaker==ArkanmeisterinConversation.Speaker?ArkanmeisterinConversation.Speaker:null;
         Transform candidate=resident!=null?GameObject.Find(resident)?.transform:null;
         if(candidate==null)
             foreach(var npc in FindObjectsByType<NPC>(FindObjectsSortMode.None))
@@ -52,7 +52,7 @@ public class CourtyardCamera : MonoBehaviour
         brain=view.GetComponent<CinemachineBrain>();if(brain!=null){previousBrain=brain.enabled;brain.enabled=false;}
         focus=Target();currentYaw=DesiredYaw();CurrentDistance=distance;Apply();
     }
-    private Vector3 Target()=>new Vector3(Mathf.Clamp(player.position.x,horizontalBounds.x,horizontalBounds.y),focusHeight,Mathf.Clamp(player.position.z+forwardFocus,depthBounds.x,depthBounds.y));
+    private Vector3 Target()=>new Vector3(Mathf.Clamp(player.position.x,horizontalBounds.x,CourtyardStarterMeetings.AtTrialField ? Mathf.Max(horizontalBounds.y, 62f) : horizontalBounds.y),focusHeight,Mathf.Clamp(player.position.z+forwardFocus,depthBounds.x,depthBounds.y));
     private float DesiredYaw()=>gateYaw*Mathf.SmoothStep(0,1,Mathf.InverseLerp(gateTurnRange.x,gateTurnRange.y,focus.x));
     private void LateUpdate()
     {

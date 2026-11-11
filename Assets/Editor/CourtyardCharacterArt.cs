@@ -5,12 +5,13 @@ using UnityEngine;
 public static class CourtyardCharacterArt
 {
     public const string Folder="Assets/Art/Intro/CharacterStyle/";
-    public static Texture2D Texture(string path)
+    public static Texture2D Texture(string path,bool preserveDimensions=false)
     {
         var importer=(TextureImporter)AssetImporter.GetAtPath(path);
         importer.textureType=TextureImporterType.Default;importer.alphaIsTransparency=true;
         importer.mipmapEnabled=false;importer.wrapMode=TextureWrapMode.Clamp;
         importer.textureCompression=TextureImporterCompression.Uncompressed;importer.maxTextureSize=2048;
+        if(preserveDimensions)importer.npotScale=TextureImporterNPOTScale.None;
         importer.SaveAndReimport();return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
     }
     public static Sprite Sprite(Texture2D texture,Rect rect,Vector2 pivot,float ppu,string path,string name)

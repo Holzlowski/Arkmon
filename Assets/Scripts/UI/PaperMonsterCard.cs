@@ -66,7 +66,7 @@ public class PaperMonsterCard : MonoBehaviour
             pointsRoot.gameObject.SetActive(true);
             nameLabel.text = PaperUIStyle.MonsterName(current);
             PaperUIStyle style = PaperUIStyle.Load();
-            portrait.sprite = current.GetComponent<RamAction>() != null ? style.sheepPortrait : style.flacaPortrait;
+            portrait.sprite = current.Definition?.portrait ?? (current.GetComponent<RamAction>() != null ? style.sheepPortrait : style.flacaPortrait);
             portrait.enabled = portrait.sprite != null;
         }
         HealthSystem health = current.GetComponent<HealthSystem>();

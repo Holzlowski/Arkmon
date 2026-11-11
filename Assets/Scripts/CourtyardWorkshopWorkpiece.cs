@@ -1,9 +1,9 @@
 using UnityEngine;
 
-// Optional local observation, deliberately independent of inventory and quest progress.
+// The workbench opens Ida’s offer and provides the explicit repaired-handle pickup.
 public sealed class CourtyardWorkshopWorkpiece : MonoBehaviour,IInteractableAsPlayer
 {
-    public string Label=>"Werkstück ansehen";
+    public string Label=>CourtyardHandleDelivery.Offered && !CourtyardHandleDelivery.HasHandle && !CourtyardHandleDelivery.Completed ? "Schaufelstiel mitnehmen" : "Mit Ida über den Schaufelstiel sprechen";
     public Vector3 GetTransform()=>transform.position;
     public void InteractWithPlayer()
     {
@@ -13,22 +13,18 @@ public sealed class CourtyardWorkshopWorkpiece : MonoBehaviour,IInteractableAsPl
             SceneLoadManager.IsTransitioning)return;
         var controller=player.GetComponent<PlayerController>();
         if(controller==null || Vector3.Distance(player.transform.position,GetTransform())>controller.interacRange)return;
-        var ida=GameObject.Find("Courtyard Carpenter");
-        if(ida!=null)player.GetComponent<PaperCharacterVisual>()?.FaceWorldDirection(ida.transform.position-player.transform.position);
-        dialogue.ShowConversation(new[]{new DialogueSection{
-            dialogue=new[]{
-                "Ist das Martas Gartenschaufel? Der alte Griff hat ja einen richtigen Riss.",
-                "Gut gesehen! Den ersetze ich. Der Schaufelkopf ist noch bestens in Ordnung.",
-                "Deshalb hobelst du das Holz so sorgfältig?",
-                "Ja. Erst passe ich das Holz ein, dann runde und glätte ich den Griff. Er soll gut in Martas Hand liegen.",
-                "Dann kann sie damit bestimmt noch viele Jahre im Garten arbeiten.",
-                "Das hoffe ich auch. Oft braucht ein vertrautes Werkzeug nur ein wenig Zuwendung."
-            },
-            presentations=new[]{
-                Line(IntroChapter.PlayerName,DialogueEmotion.Worried),Line("Ida",DialogueEmotion.Friendly),
-                Line(IntroChapter.PlayerName,DialogueEmotion.Neutral),Line("Ida",DialogueEmotion.Neutral),
-                Line(IntroChapter.PlayerName,DialogueEmotion.Friendly),Line("Ida",DialogueEmotion.Friendly)},
-            endAfterDialogue=true}},IntroChapter.PlayerName,"",null);
+        if (CourtyardHandleDelivery.HasHandle || CourtyardHandleDelivery.Completed)
+        {
+            dialogue.ShowMessage(CourtyardHandleDelivery.Completed
+                ? "Martas Schaufelstiel ist wieder im Garten. Ida arbeitet schon am nächsten Stück."
+                : "Den reparierten Schaufelstiel bringe ich jetzt zu Marta.", IntroChapter.PlayerName);
+            return;
+        }
+        if(CourtyardGarden.HasCan || CourtyardWaterTask.HasBucket)
+        { dialogue.ShowMessage("Ich stelle erst das geliehene Gefäß zurück. Dann habe ich die Hände für den Stiel frei.",IntroChapter.PlayerName);return; }
+        if(CourtyardHandleDelivery.TakeHandle())
+        { dialogue.ShowMessage("Ich nehme den reparierten Schaufelstiel mit. Marta wartet im Garten darauf.",IntroChapter.PlayerName);return; }
+        IdaConversation.Open(dialogue);
     }
     static DialogueLinePresentation Line(string speaker,DialogueEmotion emotion)=>
         new DialogueLinePresentation{speaker=speaker,emotion=emotion};

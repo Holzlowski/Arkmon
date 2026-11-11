@@ -110,7 +110,7 @@ public class PaperSwordAnimation : MonoBehaviour
     public void BeginSwing(Vector3 target, bool flaming)
     {
         if (shoulder == null) return;
-        visual.FaceWorldDirection(target - transform.position);
+        visual?.FaceWorldDirection(target - transform.position);
         IsSwinging = true; elapsed = 0; fire = flaming; holdImpactFrame = false;
         fireTrail.Clear();
     }
@@ -122,7 +122,7 @@ public class PaperSwordAnimation : MonoBehaviour
         armRenderer.color = bodyRenderer.color;
         if (forearmRenderer != null) forearmRenderer.color = bodyRenderer.color;
         if(gripRenderer != null) gripRenderer.color = bodyRenderer.color;
-        if (visual.IsDefeated) { CancelSwing(); SetSwordColor(bodyRenderer.color); return; }
+        if (visual != null && visual.IsDefeated) { CancelSwing(); SetSwordColor(bodyRenderer.color); return; }
         if (IsScraping)
         {
             scrapeTime += Time.deltaTime;

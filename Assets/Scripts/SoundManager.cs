@@ -89,15 +89,22 @@ public class SoundManager : MonoBehaviour
         ApplyMusicVolumes();
         music.Stop(); music.clip = clip; music.volume = 0;
         if (clip != null) music.Play();
-        crossfade = StartCoroutine(FadeMusic());
+        crossfade = StartCoroutine(FadeMusic(scene == "StartScene" || tower ? 3.2f : .8f));
     }
-    private IEnumerator FadeMusic()
+    private IEnumerator FadeMusic(float duration)
     {
         float oldLevel = outgoingLevel;
-        for (float elapsed = 0; elapsed < .8f; elapsed += Time.unscaledDeltaTime)
+        float elapsed = 0;
+        while (elapsed < duration)
         {
-            float t = elapsed / .8f; musicLevel = t;
-            outgoingLevel = oldLevel * (1 - t); ApplyMusicVolumes(); yield return null;
+            // A scene activation hitch must not skip the audible tail of the old track.
+            elapsed += Mathf.Min(Time.unscaledDeltaTime, .05f);
+            if (transitionDestination != null && SceneManager.GetActiveScene().name != transitionDestination)
+                elapsed = Mathf.Min(elapsed, duration * .45f);
+            float t = Mathf.Clamp01(elapsed / duration);
+            musicLevel = Mathf.Sin(t * Mathf.PI * .5f);
+            outgoingLevel = oldLevel * Mathf.Cos(t * Mathf.PI * .5f);
+            ApplyMusicVolumes(); yield return null;
         }
         outgoing.Stop(); outgoingLevel = 0; musicLevel = 1; ApplyMusicVolumes(); crossfade = null;
     }

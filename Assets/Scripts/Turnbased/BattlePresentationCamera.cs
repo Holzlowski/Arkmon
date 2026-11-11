@@ -72,6 +72,37 @@ public class BattlePresentationCamera : MonoBehaviour
         FadeOccluders(focus);
     }
 
+    internal IEnumerator EstablishOverview(Vector3 center)
+    {
+        view = Camera.main;
+        controls = FindFirstObjectByType<CameraController>();
+        if (view == null || controls == null) yield break;
+        brain = view.GetComponent<CinemachineBrain>();
+        brainEnabled = brain != null && brain.enabled;
+        if (brain != null) brain.enabled = false;
+        controls.IsPresentationLocked = true;
+        active = true;
+        try
+        {
+            CameraState state = controls.PrepareBattleOverview(center);
+            float startingFov = view.fieldOfView;
+            Vector3 from = view.transform.position;
+            Quaternion facing = view.transform.rotation;
+            const float duration = .8f;
+            for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime)
+            {
+                float t = Mathf.SmoothStep(0, 1, elapsed / duration);
+                view.transform.SetPositionAndRotation(Vector3.Lerp(from, state.FinalPosition, t),
+                    Quaternion.Slerp(facing, state.FinalOrientation, t));
+                view.fieldOfView = Mathf.Lerp(startingFov, state.Lens.FieldOfView, t);
+                yield return null;
+            }
+            view.transform.SetPositionAndRotation(state.FinalPosition, state.FinalOrientation);
+            view.fieldOfView = state.Lens.FieldOfView;
+        }
+        finally { Release(); }
+    }
+
     public IEnumerator ReturnToOverview(Vector3 center)
     {
         if (!active || view == null) yield break;

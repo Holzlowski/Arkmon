@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac2fc9a8748709843af545d3d26a67ee, type: 3}
+  m_Name: 01-Hocke
+  m_EditorClassIdentifier: Assembly-CSharp::ElianJointPose
+  label: Hocke
+  pelvis: {x: -0.28, y: 0.425}
+  torsoDegrees: -28
+  headDegrees: -28
+  tunicFold: 100
+  rightSole: {x: -0.23, y: 0}
+  leftSole: {x: 0.1, y: 0}
+  bucketHandle: {x: 0.16, y: 0.572}
+  rightHandDegrees: 220
+  supportsBucket: 0
+  leftPalm: {x: -0.12, y: 0.49}
+  leftHandDegrees: 180

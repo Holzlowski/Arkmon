@@ -51,6 +51,7 @@ public class DemoOpeningPresentation : MonoBehaviour
             if (player != null) ExplorationPresentationMotion.Place(player, player.GetComponent<Rigidbody>(), paintedBed.BedsidePosition);
         }
         hidden = player != null ? player.GetComponentsInChildren<Renderer>() : new Renderer[0];
+        player?.GetComponent<PaperCharacterVisual>()?.SetPresentationHidden(true);
         enabledBefore = new bool[hidden.Length];
         for (int i = 0; i < hidden.Length; i++) { enabledBefore[i] = hidden[i].enabled; hidden[i].enabled = false; }
         var camera = FindFirstObjectByType<CinemachineVirtualCamera>();
@@ -201,7 +202,7 @@ public class DemoOpeningPresentation : MonoBehaviour
     private void RestoreVisuals(bool restoreCamera = true, bool restorePlayer = true)
     {
         if (restorePlayer && hidden != null) for (int i = 0; i < hidden.Length; i++) if (hidden[i] != null) hidden[i].enabled = enabledBefore[i];
-        if (restorePlayer) hidden = null;
+        if (restorePlayer) { hidden = null; GetComponent<PaperCharacterVisual>()?.SetPresentationHidden(false); GameObject.FindWithTag("Player")?.GetComponent<PaperCharacterVisual>()?.SetPresentationHidden(false); }
         if (paintedBed != null) { paintedBed.SetSleeping(false); if (restorePlayer) paintedBed.SetSeated(false); }
         if (restoreCamera && openingCamera != null) { openingCamera.transform.rotation = cameraRotation; openingCamera = null; }
         if (restoreCamera && framing != null) { framing.m_TrackedObjectOffset = focus; framing.m_CameraDistance = distance; framing = null; }

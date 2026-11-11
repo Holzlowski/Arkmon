@@ -1,12 +1,13 @@
 using UnityEngine;
 
-// Distance follows the player, not the elevated courtyard camera.
+// Station sounds follow the player. The cinematic carriage listens from the current shot.
 public sealed class StableLocalFoley : MonoBehaviour
 {
     private AudioSource source;
     private Transform player;
     private Camera view;
     public float Audibility { get; private set; }
+    internal bool ListenFromCamera { get; set; }
     private void Awake()
     {
         source=gameObject.AddComponent<AudioSource>();
@@ -16,15 +17,17 @@ public sealed class StableLocalFoley : MonoBehaviour
     private void Update()
     {
         if(player==null){Audibility=0;source.volume=0;return;}
-        float distance=Vector2.Distance(new Vector2(player.position.x,player.position.z),new Vector2(transform.position.x,transform.position.z));
+        if(view==null)view=Camera.main;
+        Vector3 listener=ListenFromCamera && view!=null ? view.transform.position : player.position;
+        Vector3 offset=transform.position-listener;
+        float distance=new Vector2(offset.x,offset.z).magnitude;
         Audibility=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.5f,14,distance));
         bool speaking=DialogueBoxController.instance!=null && DialogueBoxController.instance.IsOpen;
         float gain=SoundManager.instance!=null?SoundManager.instance.effectsVolume:.55f;
         bool scenic = CourtyardLookout.IsPresenting || SceneLoadManager.IsTransitioning;
         float target = scenic ? 0 : Audibility * gain * (speaking ? .24f : .85f);
         source.volume = Mathf.MoveTowards(source.volume, target, Time.unscaledDeltaTime * 1.5f);
-        if(view==null)view=Camera.main;
-        if(view!=null)source.panStereo=Mathf.Clamp(Vector3.Dot(transform.position-player.position,view.transform.right)/12,-.5f,.5f);
+        if(view!=null)source.panStereo=Mathf.Clamp(Vector3.Dot(offset,view.transform.right)/12,-.5f,.5f);
     }
     public void Play(AudioClip clip,float gain,float pitch=1)
     {

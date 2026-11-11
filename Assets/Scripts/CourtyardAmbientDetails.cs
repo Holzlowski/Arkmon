@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 public sealed class CourtyardAmbientDetails : MonoBehaviour
 {
     static CourtyardAmbientDetails active;
-    ParticleSystem dust,leaves;
+    ParticleSystem dust,leaves,oakLeaves;
     Material dustMaterial,leafMaterial;
     AudioSource stream;
     Transform player;
@@ -25,6 +25,17 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
         style.player=GameObject.FindWithTag("Player")?.transform;
         style.dust=style.Create("Courtyard footfall dust",style.dustMaterial,24,false);style.dust.Play();
         style.leaves=style.Create("Courtyard drifting leaves",style.leafMaterial,14,true);
+        style.oakLeaves = style.Create("Rauk oak falling leaves",style.leafMaterial,12,true);
+        style.oakLeaves.GetComponent<ParticleSystemRenderer>().maxParticleSize = .027f;
+        var oakEmission = style.oakLeaves.emission;
+        oakEmission.enabled = false;
+        var oakLeavesMain = style.oakLeaves.main;
+        oakLeavesMain.gravityModifier = .18f;
+        var oakSpin = style.oakLeaves.rotationOverLifetime;
+        oakSpin.enabled = true;
+        oakSpin.z = new ParticleSystem.MinMaxCurve(-2.5f,2.5f);
+        style.oakLeaves.Play();
+
         var home=GameObject.Find("Garden apple tree");
         style.leafOrigin=(home!=null?home.transform.position:Vector3.zero)+new Vector3(0,3.4f,0);
         style.leaves.transform.position=style.leafOrigin;
@@ -59,6 +70,25 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
         renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
         renderer.maxParticleSize=.012f;return ps;
     }
+    internal static void ShakeOakLeaves(Vector3 branch, Quaternion orientation, bool landing)
+    {
+        if (active == null || !active.isActiveAndEnabled || active.oakLeaves == null) return;
+        int count = landing ? 3 : 2;
+        for (int i = 0; i < count; i++)
+        {
+            var leaf = new ParticleSystem.EmitParams
+            {
+                position = branch + orientation*new Vector3(-.39f+.29f*i,.08f+.06f*i,-.72f),
+                velocity = orientation*new Vector3(-.58f+.43f*i,landing ? .25f : .10f,-.42f),
+                startLifetime = 1.50f+.14f*i,
+                startSize = .26f+.025f*i,
+                startColor = i == 1 ? new Color(.70f,.73f,.28f,.96f) : new Color(.98f,.74f,.24f,.96f),
+                rotation = -35f+54f*i
+            };
+            active.oakLeaves.Emit(leaf,1);
+        }
+    }
+
     public static void Footfall(Vector3 at)
     {
         if(active==null || !active.isActiveAndEnabled || SceneLoadManager.IsTransitioning)return;
@@ -93,6 +123,7 @@ public sealed class CourtyardAmbientDetails : MonoBehaviour
     {
         if(dust!=null)dust.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         if(leaves!=null)leaves.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        if(oakLeaves!=null)oakLeaves.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         if(stream!=null)stream.Stop();
         if(gardenWind!=null)gardenWind.Stop();
     }

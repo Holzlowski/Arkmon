@@ -170,6 +170,11 @@ public class GridSystemVisual : MonoBehaviour
                 gridVisualType = GridVisualType.Red;
                 ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), ember.Range, GridVisualType.RedSoft);
                 break;
+            case ShadowStepAction:
+                gridVisualType = GridVisualType.Yellow;
+                break;
+            case RoseLightAction:
+            case ShieldWatchAction:
             case GuardAction guard:
                 gridVisualType = GridVisualType.Blue;
                 break;

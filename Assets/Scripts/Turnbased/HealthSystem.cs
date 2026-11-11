@@ -5,6 +5,7 @@ public class HealthSystem : MonoBehaviour
 {
     public event EventHandler<Transform> OnDead;
     public event EventHandler OnDamage;
+    public event EventHandler OnHeal;
 
     [SerializeField] private int health = 100;
 
@@ -12,6 +13,8 @@ public class HealthSystem : MonoBehaviour
     public int Health => health;
     public int MaxHealth => healthMax;
     public bool IsDead { get; private set; }
+
+    internal void SetStartingHealth(int amount) => health = amount;
 
     private void Awake()
     {
@@ -40,6 +43,13 @@ public class HealthSystem : MonoBehaviour
         OnDamage?.Invoke(this, EventArgs.Empty);
 
         Debug.Log(health);
+    }
+
+    public void Heal(int amount)
+    {
+        if (IsDead || amount <= 0 || health == healthMax) return;
+        health = Mathf.Min(healthMax, health + amount);
+        OnHeal?.Invoke(this, EventArgs.Empty);
     }
 
     private void Die(Transform damageTransform = null)

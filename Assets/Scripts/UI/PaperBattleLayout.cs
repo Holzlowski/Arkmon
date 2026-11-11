@@ -30,10 +30,10 @@ public static class PaperBattleLayout
         Button basic = PaperUIFactory.Button("Aktionen tab", categories, style.card, new Vector2(0,.53f), Vector2.one, Vector2.zero, Vector2.zero);
         Button attacks = PaperUIFactory.Button("Attacken tab", categories, style.card, Vector2.zero, new Vector2(1,.47f), Vector2.zero, Vector2.zero);
         PaperUIFactory.Text("Actions category", basic.transform, "<b>Aktionen</b>\n<size=70%>Bewegen · Abwehr · Fliehen</size>", 23, Vector2.zero, Vector2.one, new Vector2(12,8), new Vector2(-12,-8), TextAlignmentOptions.Center);
-        PaperUIFactory.Text("Attacks category", attacks.transform, "<b>Attacken</b>\n<size=70%>Kaflas Fähigkeiten</size>", 23, Vector2.zero, Vector2.one, new Vector2(12,8), new Vector2(-12,-8), TextAlignmentOptions.Center);
+        PaperUIFactory.Text("Attacks category", attacks.transform, "<b>Attacken</b>\n<size=70%>Fähigkeiten</size>", 23, Vector2.zero, Vector2.one, new Vector2(12,8), new Vector2(-12,-8), TextAlignmentOptions.Center);
         var heading = PaperUIFactory.Text("Command step", tabs, "1 · Wähle einen Bereich", 19, Vector2.zero, new Vector2(.66f,1), Vector2.zero, Vector2.zero);
         var landing = PaperUIFactory.Text("Command choice instructions", band.transform,
-            "Was soll Kafla tun?\n\nLinks einen Bereich wählen.\nDanach einen Befehl und sein Zielfeld wählen.", 23,
+            "Was soll dein Arkmon tun?\n\nLinks einen Bereich wählen.\nDanach einen Befehl und sein Zielfeld wählen.", 23,
             new Vector2(.40f,0), new Vector2(.81f,.78f), new Vector2(12,20), new Vector2(-12,-8), TextAlignmentOptions.Center);
         controller.ConfigureMenuPresentation(landing.gameObject, heading);
         Button back = Category("Zurück", tabs, style, .68f, .84f);

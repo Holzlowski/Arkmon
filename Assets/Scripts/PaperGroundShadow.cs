@@ -99,7 +99,7 @@ public class PaperGroundShadow : MonoBehaviour
                 Vector3.down, reach + 10, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (hit.transform == transform || hit.transform.IsChildOf(transform)
-                    || transform.IsChildOf(hit.transform) || hit.normal.y < .9f) continue;
+                    || transform.IsChildOf(hit.transform) || hit.normal.y < .55f) continue;
                 if (hit.distance < nearest) { nearest = hit.distance; groundHeight = hit.point.y; groundNormal = hit.normal; hasGround = true; }
             }
             // Decorative paving sits above the collider floor without its own collider.

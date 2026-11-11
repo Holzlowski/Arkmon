@@ -66,6 +66,9 @@ public class Pathfinding : MonoBehaviour
     }
 
     public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, out int pathLength)
+        => FindMovementPath(startGridPosition,endGridPosition,false,out pathLength);
+
+    internal List<GridPosition> FindMovementPath(GridPosition startGridPosition, GridPosition endGridPosition, bool glide, out int pathLength)
     {
         List<PathNode> openList = new List<PathNode>();
         List<PathNode> closedList = new List<PathNode>();
@@ -107,7 +110,7 @@ public class Pathfinding : MonoBehaviour
             openList.Remove(currentNode);
             closedList.Add(currentNode);
 
-            foreach (PathNode neighbourNode in GetNeighbourList(currentNode))
+            foreach (PathNode neighbourNode in GetMovementNeighbours(currentNode,glide))
             {
                 //wir chechen ob der Nachbar schon untersucht wurde
                 if (closedList.Contains(neighbourNode))
@@ -128,8 +131,10 @@ public class Pathfinding : MonoBehaviour
                         || !CanEnter(new GridPosition(current.x, next.z), startGridPosition))) continue;
 
                 //Berechnung der Kosten vom Startnode zu diesem Node
-                int tentativeGCost =
-                    currentNode.GetGCost() + CalculateDistance(currentNode.GetGridPosition(), neighbourNode.GetGridPosition());
+                int stepCost = CalculateDistance(current,next);
+                // A cardinal glide pays twice for the crossed cell, plus the landing cell.
+                if (stepCost == 2*MOVE_STRAIGHT_COST) stepCost += MOVE_STRAIGHT_COST;
+                int tentativeGCost = currentNode.GetGCost() + stepCost;
 
                 //falls die berechneten Kosten kleiner sind als die schon vorhandenen Kosten muss die Node aktualisiert werden
                 if (tentativeGCost < neighbourNode.GetGCost())
@@ -150,6 +155,24 @@ public class Pathfinding : MonoBehaviour
         //Kein Weg gefunden
         pathLength = 0;
         return null;
+    }
+
+    private IEnumerable<PathNode> GetMovementNeighbours(PathNode node, bool glide)
+    {
+        var current = node.GetGridPosition();
+        foreach (var neighbour in GetNeighbourList(node))
+        {
+            yield return neighbour;
+            if (!glide) continue;
+            var middle = neighbour.GetGridPosition();
+            var direction = middle-current;
+            if (direction.x != 0 && direction.z != 0) continue;
+            var cover = CoverSystem.ObstacleAt(middle);
+            if (cover == null || cover.BlocksSight || LevelGrid.Instance.HasAnyUnitOnGridPosition(middle)) continue;
+            var landing = middle+direction;
+            if (LevelGrid.Instance.IsValidGridPosition(landing) && CanEnter(landing,current))
+                yield return gridSystem.GetGridObject(landing);
+        }
     }
 
     public int CalculateDistance(GridPosition gridPositionA, GridPosition gridPositionB)

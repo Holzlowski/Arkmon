@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -13,9 +14,10 @@ public class MoveAction : BaseAction
     [SerializeField] float moveSpeed = 4f;
     [SerializeField] float rotationSpeed = 0f;
     [SerializeField] private int maxMoveDistance = 4;
-    private int MaxMoveDistance => Definition != null ? Definition.range : maxMoveDistance;
+    private int MaxMoveDistance => Mathf.Max(1, (Definition != null ? Definition.range : maxMoveDistance) - (unit != null && unit.IsChilled ? 1 : 0));
 
     private List<Vector3> positionList;
+    internal bool IsGliding => IsActive && unit.Definition != null && unit.Definition.canGlide;
     private int currentPositionIndex;
     float stoppingDistance = .1f;
 
@@ -35,9 +37,12 @@ public class MoveAction : BaseAction
         }
 
         Vector3 targetPosittion = positionList[currentPositionIndex];
-        Vector3 moveDirection = (targetPosittion - transform.position).normalized;
+        Vector3 moveDirection = targetPosittion-transform.position;
+        moveDirection.y = 0;
+        moveDirection.Normalize();
 
-        transform.forward = Vector3.Lerp(transform.forward, moveDirection, rotationSpeed * Time.deltaTime);
+        if (moveDirection.sqrMagnitude > .001f)
+            transform.forward = Vector3.Lerp(transform.forward, moveDirection, rotationSpeed * Time.deltaTime);
 
         transform.position = Vector3.MoveTowards(transform.position, targetPosittion, moveSpeed * Time.deltaTime);
         if (Vector3.Distance(transform.position, targetPosittion) <= stoppingDistance)
@@ -50,6 +55,7 @@ public class MoveAction : BaseAction
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
 
                 //in der BaseActionklasse gespeichert, Clearbusy() wird aufgerufen
+                if (IsGliding) unit.MoveToWorldPosition(targetPosittion);
                 ActionComplete();
             }
 
@@ -67,7 +73,7 @@ public class MoveAction : BaseAction
             onActionComplete?.Invoke();
             return;
         }
-        List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLength);
+        List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindMovementPath(unit.GetGridPosition(), gridPosition, unit.Definition != null && unit.Definition.canGlide, out _);
 
         if (pathGridPositionList == null || pathGridPositionList.Count == 0)
         {
@@ -79,9 +85,14 @@ public class MoveAction : BaseAction
         currentPositionIndex = 0;
         positionList = new List<Vector3>();
 
-        foreach (GridPosition pathGridPosition in pathGridPositionList)
+        var grid = LevelGrid.Instance;
+        for (int i = 0; i < pathGridPositionList.Count; i++)
         {
-            positionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPosition));
+            var cell = pathGridPositionList[i];
+            var world = grid.GetWorldPosition(cell);
+            if (i > 0 && Pathfinding.Instance.CalculateDistance(pathGridPositionList[i-1],cell) > 14)
+                positionList.Add((grid.GetWorldPosition(pathGridPositionList[i-1])+world)*.5f+Vector3.up*.9f);
+            positionList.Add(world);
         }
 
         //Animatorskript setzt Walkinganimation auf true
@@ -130,7 +141,7 @@ public class MoveAction : BaseAction
                     continue;
                 }
 
-                List<GridPosition> path = Pathfinding.Instance.FindPath(unitGridPosition, testGridPosition, out int pathLength);
+                List<GridPosition> path = Pathfinding.Instance.FindMovementPath(unitGridPosition, testGridPosition, unit.Definition != null && unit.Definition.canGlide, out int pathLength);
                 if (path == null)
                 {
                     continue;
@@ -169,11 +180,12 @@ public class MoveAction : BaseAction
         EmberAction emberAction = unit.GetAction<EmberAction>();
         int targetCount = shootAction != null ? shootAction.GetTargetCountAtPosition(gridPosition) : 0;
         if (swordAction != null) targetCount += swordAction.GetValidActionGridPositionList(gridPosition).Count;
-        if (ramAction != null) targetCount += ramAction.GetValidActionGridPositionList(gridPosition).Count;
+        if (ramAction != null) targetCount += ramAction.GetValidActionGridPositionList(gridPosition)
+            .Select(LevelGrid.Instance.GetUnitOnGridPosition).Distinct().Count();
         if (emberAction != null) targetCount += emberAction.GetTargetCountAtPosition(gridPosition);
         MeleeAttackAction[] meleeActions = unit.GetComponents<MeleeAttackAction>();
         foreach (MeleeAttackAction melee in meleeActions) targetCount += melee.GetValidActionGridPositionList(gridPosition)
-            .FindAll(cell => LevelGrid.Instance.GetUnitOnGridPosition(cell) != null).Count;
+            .Select(LevelGrid.Instance.GetUnitOnGridPosition).Where(target => target != null).Distinct().Count();
         int approachValue = 0;
         if (shootAction == null && (swordAction != null || ramAction != null || meleeActions.Length > 0))
         {
@@ -192,6 +204,18 @@ public class MoveAction : BaseAction
                     ? candidateX + candidateZ : Mathf.Max(candidateX, candidateZ));
             }
             if (candidateDistance < currentDistance) approachValue = 1;
+        }
+        if (unit.IsEnemy() && BattleDeployment.Instance?.SealTrial != null)
+        {
+            foreach (var target in UnitManager.Instance.GetFriendlyUnitList())
+            {
+                if (!target.IsTrialObjective || target.IsDead) continue;
+                var pathfinding = Pathfinding.Instance;
+                int before = target.OccupiedCells().Min(cell => pathfinding.CalculateDistance(unit.GetGridPosition(), cell));
+                int after = target.OccupiedCells().Min(cell => pathfinding.CalculateDistance(gridPosition, cell));
+                approachValue += Mathf.Max(0,before-after);
+                break;
+            }
         }
         int coverValue = 0;
         if (targetCount > 0)

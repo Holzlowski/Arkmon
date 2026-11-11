@@ -67,6 +67,14 @@ public class SceneLoadManager : MonoBehaviour
     {
         if (!returnResult.HasValue || DialogueBoxController.instance == null) return;
         UnitManager.BattleState result = returnResult.Value; returnResult = null;
+        if (battleSpeaker == ArkanmeisterinConversation.Speaker)
+        {
+            CourtyardStarterMeetings.FieldTrialWon = result == UnitManager.BattleState.Won;
+            DialogueBoxController.instance.ShowMessage(CourtyardStarterMeetings.FieldTrialWon
+                ? "Gut gemacht, Elian. Gemeinsam habt Ihr das Siegel beschützt."
+                : "Sammelt Euch kurz. Wenn Ihr bereit seid, versuchen wir es erneut.",battleSpeaker);
+            return;
+        }
         NPC speaker = null;
         foreach (NPC npc in FindObjectsByType<NPC>(FindObjectsSortMode.None))
             if (speaker == null || npc.npcName == battleSpeaker) { speaker = npc; if (npc.npcName == battleSpeaker) break; }

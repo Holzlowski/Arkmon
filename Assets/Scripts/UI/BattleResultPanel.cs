@@ -38,12 +38,15 @@ public class BattleResultPanel : MonoBehaviour
             new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-330, -190), new Vector2(330, 190));
         string heading = result == UnitManager.BattleState.Won ? "Prüfung bestanden"
             : result == UnitManager.BattleState.Lost ? "Heute war der Gegner stärker" : "Kampf verlassen";
-        string message = result == UnitManager.BattleState.Won ? "Kafla und du haben die Prüfung gemeistert."
+        var lead = BattleDeployment.Instance?.LeadMonster;
+        bool sealTrial = BattleDeployment.Instance?.SealTrial != null;
+        string message = sealTrial && result == UnitManager.BattleState.Won ? "Ihr habt das Siegel gemeinsam beschützt."
+            : result == UnitManager.BattleState.Won ? $"{lead?.name ?? "Kafla"} und du haben die Prüfung gemeistert."
             : result == UnitManager.BattleState.Lost ? "Dein Team braucht eine Pause. Im Hof könnt ihr euch neu sammeln."
             : "Ihr zieht euch zurück. Im Hof könnt ihr jederzeit weiterüben.";
         PaperUIFactory.Text("Result heading", sheet.transform, heading, 34,
             new Vector2(.08f, .72f), new Vector2(.92f, .9f), Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
-        Image portrait = PaperUIFactory.Image("Result portrait", sheet.transform, style != null ? style.flacaPortrait : null,
+        Image portrait = PaperUIFactory.Image("Result portrait", sheet.transform, lead?.portrait ?? style?.flacaPortrait,
             new Vector2(.08f, .31f), new Vector2(.31f, .7f), Vector2.zero, Vector2.zero, false);
         portrait.preserveAspect = true;
         PaperUIFactory.Text("Result explanation", sheet.transform, message, 24,

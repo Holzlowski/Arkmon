@@ -94,6 +94,7 @@ public sealed class CourtyardVergePolish : MonoBehaviour
                     {
                         var point=center+(vertices[first+side]-center)*width+across*drift;
                         world=filter.transform.TransformPoint(point)+Vector3.forward*extension;
+                        if(world.x> -36.75f && world.x< -31.25f && world.z>4.52f && world.z<7.95f)world.z=4.52f;
                         vertices[first+side]=filter.transform.InverseTransformPoint(Ground(world)-Vector3.up*.005f);
                     }
                 }

@@ -8,15 +8,24 @@ public class CombatStrikeVisual : MonoBehaviour
     private float elapsed;
     public static void Show(Vector3 origin, Vector3 destination, bool fire)
     {
-        var root = new GameObject(fire ? "Flame sword slash" : "Claw slash");
+        Show(origin, destination, fire ? new Color(1f, .35f, .03f) : new Color(1f, .9f, .7f),
+            fire ? .15f : .08f, fire ? "Flame sword slash" : "Claw slash");
+    }
+
+    public static void ShowIce(Vector3 origin, Vector3 destination)
+        => Show(origin, destination, new Color(.44f, .86f, 1f), .12f, "Ice volley");
+
+    internal static void Show(Vector3 origin, Vector3 destination, Color tint, float width, string name)
+    {
+        var root = new GameObject(name);
         var effect = root.AddComponent<CombatStrikeVisual>();
         effect.origin = origin; effect.destination = destination;
         effect.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        effect.material.color = fire ? new Color(1f, 0.35f, 0.03f) : new Color(1f, 0.9f, 0.7f);
+        effect.material.color = tint;
         effect.line = root.AddComponent<LineRenderer>();
         effect.line.sharedMaterial = effect.material;
         effect.line.positionCount = 8; effect.line.numCapVertices = 3;
-        effect.line.startWidth = fire ? 0.15f : 0.08f; effect.line.endWidth = 0.01f;
+        effect.line.startWidth = width; effect.line.endWidth = 0.01f;
         effect.Draw(0.2f);
     }
     private void Update()

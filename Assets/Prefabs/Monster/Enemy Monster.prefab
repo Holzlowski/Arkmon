@@ -716,7 +716,7 @@ MonoBehaviour:
   cycleDuration: 2.4
   breathingAmount: 0.012
   bobHeight: 0.015
-  visualScale: 0.5
+  visualScale: 0.547
   walkCycleDuration: 0.32
   walkHeight: 0.055
   summonOffset: {x: -0.18, y: 0.9, z: 0}

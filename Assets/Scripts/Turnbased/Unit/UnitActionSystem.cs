@@ -45,7 +45,7 @@ public class UnitActionSystem : MonoBehaviour
     private void EnsureValidSelection()
     {
         if (selectedUnit != null && selectedUnit.isActiveAndEnabled && !selectedUnit.IsDead && !selectedUnit.IsEnemy()) return;
-        Unit replacement = unitManager.GetFriendlyUnitList().Find(unit => unit != null && !unit.IsDead);
+        Unit replacement = unitManager.GetFriendlyUnitList().Find(unit => unit != null && !unit.IsDead && !unit.IsTrialObjective);
         SetSelectedUnit(replacement);
     }
 
@@ -141,7 +141,10 @@ public class UnitActionSystem : MonoBehaviour
                         return false;
                     }
 
-                    if (unit.IsEnemy())
+                    // Let targeted support actions resolve before selecting a different ally.
+                    if ((selectedAction is ShieldWatchAction || selectedAction is RoseLightAction)
+                        && selectedAction.IsValidActionGridPosition(unit.GetGridPosition())) return false;
+                    if (unit.IsEnemy() || unit.IsTrialObjective)
                     {
                         //Clicked on Enemy
                         return false;

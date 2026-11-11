@@ -57,7 +57,13 @@ public class UnitManager : MonoBehaviour
     {
         if (!IsBattleRunning) return null;
         // Defeat takes precedence if both teams are eliminated together.
-        if (friendlyUnitList.Count == 0) return BattleState.Lost;
+        var sealTrial = BattleDeployment.Instance?.SealTrial;
+        if (sealTrial != null)
+        {
+            if (sealTrial.IsSealLost || !friendlyUnitList.Exists(u => !u.IsTrialObjective)) return BattleState.Lost;
+            if (sealTrial.TimeSurvived) return BattleState.Won;
+        }
+        else if (friendlyUnitList.Count == 0) return BattleState.Lost;
         if (enemyUnitList.Count == 0) return BattleState.Won;
         return null;
     }

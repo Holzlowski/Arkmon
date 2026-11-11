@@ -38,14 +38,14 @@ public sealed class CourtyardTreeShadows : MonoBehaviour
             if (tree.sprite == null) continue;
             if (!painted.TryGetValue(tree.sprite, out var material))
             {
-                material = new Material(casterShader) { name = "Western tree alpha shadow caster" }; style.materials.Add(material); painted.Add(tree.sprite, material);
-                material.SetTexture("_BaseMap", tree.sprite.texture);
-                material.SetFloat("_AlphaClip", 1); material.SetFloat("_Cutoff", .35f); material.SetFloat("_Cull", 0);
-                material.EnableKeyword("_ALPHATEST_ON"); material.SetOverrideTag("RenderType", "TransparentCutout"); material.renderQueue = 2450;
+                material = CreateCasterMaterial(tree.sprite.texture);
+                style.materials.Add(material);
+                painted.Add(tree.sprite, material);
             }
             float width = tree.sprite.bounds.size.x * Mathf.Abs(tree.transform.lossyScale.x);
             var anchor = tree.transform.position;
-            var canopy = style.Caster(tree, across, material);
+            var canopy = CreateCaster(style.transform,tree,across,material,out var mesh);
+            style.meshes.Add(mesh);
             var root = style.Patch("Tree root contact shadow", anchor, Vector3.right, Vector3.forward, width * .31f, width * .23f, contact);
             style.trees.Add(new Tree { source = tree, shadows = new[] { canopy, root } });
         }
@@ -86,17 +86,32 @@ public sealed class CourtyardTreeShadows : MonoBehaviour
         }
         return meadow != null ? meadow.SurfacePoint(p).y : p.y;
     }
-    MeshRenderer Caster(SpriteRenderer tree, Vector3 across, Material material)
+    internal static Material CreateCasterMaterial(Texture2D texture)
+    {
+        var shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null) return null;
+        var material = new Material(shader) { name = "Tree alpha shadow caster" };
+        material.SetTexture("_BaseMap",texture);
+        material.SetFloat("_AlphaClip",1);
+        material.SetFloat("_Cutoff",.35f);
+        material.SetFloat("_Cull",0);
+        material.EnableKeyword("_ALPHATEST_ON");
+        material.SetOverrideTag("RenderType","TransparentCutout");
+        material.renderQueue = 2450;
+        return material;
+    }
+
+    internal static MeshRenderer CreateCaster(Transform parent, SpriteRenderer tree, Vector3 across, Material material, out Mesh mesh)
     {
         var source = tree.sprite.vertices; var vertices = new Vector3[source.Length];
         var scale = tree.transform.lossyScale;
         for (int i = 0; i < source.Length; i++)
             vertices[i] = tree.transform.position + across * (source[i].x * Mathf.Abs(scale.x) * (tree.flipX ? -1 : 1))
                 + Vector3.up * (source[i].y * Mathf.Abs(scale.y));
-        var mesh = new Mesh { name = "Tree illustration shadow caster" }; meshes.Add(mesh);
+        mesh = new Mesh { name = "Tree illustration shadow caster" };
         mesh.vertices = vertices; mesh.uv = tree.sprite.uv; mesh.triangles = tree.sprite.triangles.Select(i=>(int)i).ToArray();
         mesh.RecalculateNormals(); mesh.RecalculateBounds();
-        var go = new GameObject(mesh.name, typeof(MeshFilter), typeof(MeshRenderer)); go.transform.SetParent(transform, false);
+        var go = new GameObject(mesh.name, typeof(MeshFilter), typeof(MeshRenderer)); go.transform.SetParent(parent, false);
         go.GetComponent<MeshFilter>().sharedMesh = mesh;
         var renderer = go.GetComponent<MeshRenderer>(); renderer.sharedMaterial = material;
         renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly; renderer.receiveShadows = false;

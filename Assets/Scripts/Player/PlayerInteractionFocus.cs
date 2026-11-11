@@ -56,10 +56,17 @@ public class PlayerInteractionFocus : MonoBehaviour
         if (item is NPC npc) return "Mit " + npc.npcName + " sprechen";
         if (item is CourtyardEntrance entrance) return entrance.Label;
         if (item is CourtyardGarden garden) return garden.Label;
+        if (item is CourtyardWell well) return well.Label;
+        if (item is CourtyardPanfrie panfrie) return panfrie.Label;
+        if (item is CourtyardKafla kafla) return kafla.Label;
+        if (item is CourtyardRauk rauk) return rauk.Label;
+        if (item is CourtyardLiora liora) return liora.Label;
+        if (item is CourtyardWaterTask water) return water.Label;
         if (item is CourtyardLife life) return life.Label;
         if (item is CourtyardHorseGreeting horse) return horse.Label;
         if (item is CourtyardWorkshopWorkpiece workpiece) return workpiece.Label;
         if (item is CourtyardGuard guard) return guard.Label;
+        if (item is ArkanmeisterinArrival meisterin) return meisterin.Label;
         if (item is DemoInteractable target)
             switch (target.kind)
             {
@@ -75,7 +82,9 @@ public class PlayerInteractionFocus : MonoBehaviour
     {
         Refresh();
         if (Current == null || Camera.main == null) { Hide(); return; }
-        Vector3 point = Current.GetTransform();
+        var panfrie = Current as CourtyardPanfrie;
+        Vector3 point = Current is CourtyardRauk rauk ? rauk.PromptPosition
+            : panfrie != null ? panfrie.PromptPosition : Current.GetTransform();
         bool undergroundCellar = Current is CourtyardEntrance cellar && cellar.destination == CourtyardEntrance.Destination.Cellar;
         Vector3 screen = Camera.main.WorldToScreenPoint(point + Vector3.up * (undergroundCellar ? 2.6f : 1.65f));
         if (screen.z <= 0) { Hide(); return; }
@@ -99,9 +108,9 @@ public class PlayerInteractionFocus : MonoBehaviour
         local.y=Mathf.Clamp(local.y,canvasRect.rect.yMin+halfHeight+12,canvasRect.rect.yMax-halfHeight-12);
         panel.anchoredPosition = local;
         var prop = Current as DemoInteractable;
-        ring.enabled = prop == null || prop.kind != DemoInteractable.Kind.Wardrobe;
+        ring.enabled = (panfrie == null || !panfrie.IsHiding) && (prop == null || prop.kind != DemoInteractable.Kind.Wardrobe);
         if (!ring.enabled) return;
-        Vector3 markerPoint = prop != null ? prop.GetMarkerPosition() : point;
+        Vector3 markerPoint = prop != null ? prop.GetMarkerPosition() : Current is CourtyardRauk ? Current.GetTransform() : point;
         float radius = prop != null && prop.kind == DemoInteractable.Kind.RoomDoor ? .35f : .55f;
         float markerHeight = Current is CourtyardLookout || Current is CourtyardEntrance entrance && entrance.destination == CourtyardEntrance.Destination.Cellar ? markerPoint.y + .035f : .035f;
         float pulse = 1 + .035f * Mathf.Sin(Time.unscaledTime * 3);

@@ -15,4 +15,4 @@ MonoBehaviour:
   actionName: Move
   actionPointCost: 1
   damage: 0
-  range: 4
+  range: 3

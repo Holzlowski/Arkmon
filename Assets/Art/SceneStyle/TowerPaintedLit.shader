@@ -2,6 +2,8 @@ Shader "Arkmon/Tower Painted Light"
 {
  Properties
  {
+  _StableGroundMap("Stable ground overlay",2D)="white" {} _StableGroundScale("Stable ground repeats",Float)=0
+  _StableGroundTint("Stable ground tint",Vector)=(1,1,1,1)
   _BaseMap("Painted texture",2D)="white" {} _BaseColor("Tint",Color)=(1,1,1,1)
   _TextureScale("World texture scale",Float)=.35 _DetailStrength("Painted detail",Range(0,1))=1
   _Illustration("Illustrated stone",Range(0,1))=0
@@ -26,7 +28,10 @@ Shader "Arkmon/Tower Painted Light"
    struct A { float4 positionOS:POSITION;float3 normalOS:NORMAL; };
    struct V { float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1; };
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
+   TEXTURE2D(_StableGroundMap);SAMPLER(sampler_StableGroundMap);
+   #include "StableGroundBlend.hlsl"
    CBUFFER_START(UnityPerMaterial)
+   float4 _StableGroundTint; float _StableGroundScale;
    float4 _BaseColor;float _TextureScale,_DetailStrength,_Illustration;
    CBUFFER_END
    V Vert(A i){V o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.normal=TransformObjectToWorldNormal(i.normalOS);o.positionCS=TransformWorldToHClip(o.world);return o;}
@@ -49,6 +54,15 @@ Shader "Arkmon/Tower Painted Light"
         half ink = smoothstep(.013,.065,length(float2(ddx(value),ddy(value))));
         half3 illustrated = lerp(pigment, broad, .18) * (1 - ink * .38) * _BaseColor.rgb;
         paint = lerp(paint, illustrated, _Illustration);
+    }
+    if (_StableGroundScale > 0)
+    {
+        float blend = StableGroundBlend(i.world.xz);
+        if (blend > 0)
+        {
+            half3 stablePaint = SAMPLE_TEXTURE2D(_StableGroundMap,sampler_StableGroundMap,i.world.xz*_StableGroundScale).rgb;
+            paint = lerp(paint,stablePaint*_StableGroundTint.rgb,blend);
+        }
     }
     half3 lighting=max(SampleSH(n),half3(.09,.11,.16));
     lighting+=Contribution(GetMainLight(TransformWorldToShadowCoord(i.world)),n);

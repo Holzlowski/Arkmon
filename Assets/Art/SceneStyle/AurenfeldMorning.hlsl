@@ -4,6 +4,7 @@
 float _AurenfeldMorning;
 // XY is scene-owned wind drift in metres; Z controls cloud shade opacity.
 float4 _AurenfeldClouds;
+float4 _AurenfeldArenaWeather;
 float AurenfeldCloudNoise(float2 p)
 {
     float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);
@@ -13,16 +14,26 @@ float AurenfeldCloudNoise(float2 p)
     float d=frac(sin(dot(cell+1,float2(127.1,311.7)))*43758.5453);
     return lerp(lerp(a,b,f.x),lerp(c,d,f.x),f.y);
 }
+float AurenfeldCloudCover(float2 q)
+{
+    float cover=AurenfeldCloudNoise(q/38)*.78+AurenfeldCloudNoise(q/17+13.7)*.22;
+    return smoothstep(.43,.59,cover);
+}
 float AurenfeldCloud(float3 p)
 {
     // A moving world-space pattern, shared by soil, crops and paper vegetation.
     // Two scales form rounded cloud banks with irregular edges and clear sunlight gaps.
     float2 q=p.xz-_AurenfeldClouds.xy+float2(43,18);
-    float cover=AurenfeldCloudNoise(q/38)*.78+AurenfeldCloudNoise(q/17+13.7)*.22;
-    return smoothstep(.43,.59,cover)*_AurenfeldClouds.z;
+    return AurenfeldCloudCover(q)*_AurenfeldClouds.z;
 }
 half3 AurenfeldMorningLight(half3 color,float3 p,float tips)
 {
+    if (_AurenfeldArenaWeather.z > 0)
+    {
+        float2 field=(p.xz-_AurenfeldArenaWeather.xy)*2.05;
+        float cloud=AurenfeldCloudCover(field)*_AurenfeldArenaWeather.z;
+        return color*lerp(half3(1,1,1),half3(.53,.59,.69),cloud);
+    }
     float weight=_AurenfeldMorning*smoothstep(48,78,-p.x);
     float foreground=1-smoothstep(78,142,-p.x);
     float farm=exp(-dot((p.xz-float2(-148,18))/float2(55,65),(p.xz-float2(-148,18))/float2(55,65)));

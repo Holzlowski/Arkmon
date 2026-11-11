@@ -10,6 +10,7 @@ public struct DialogueLinePresentation
     public DialogueEmotion emotion;
     [Tooltip("Optional override; otherwise the speaker's expression set is used.")]
     public Sprite portrait;
+    [System.NonSerialized] internal System.Func<System.Collections.IEnumerator> BeforePresentation;
 }
 
 // Shared by authored dialogue trees and runtime conversations.

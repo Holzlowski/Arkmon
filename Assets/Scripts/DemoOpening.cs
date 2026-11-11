@@ -28,7 +28,7 @@ public class DemoOpening : MonoBehaviour
         bool pending = firstTrialPending; firstTrialPending = false; return pending;
     }
     public static bool IsPresenting => presentation != null && presentation.IsBusy
-        || CourtyardArrivalPresentation.IsPresenting || DemoCompletionPanel.IsOpen || CourtyardGarden.IsBusy || CourtyardLookout.IsPresenting;
+        || CourtyardArrivalPresentation.IsPresenting || ArkanmeisterinArrival.IsPresenting || CourtyardRauk.IsPresenting || DemoCompletionPanel.IsOpen || CourtyardGarden.IsBusy || CourtyardWaterTask.IsBusy || CourtyardLookout.IsPresenting;
     private static DemoOpeningPresentation presentation;
     public static void RecordTrialVictory() => PassedFirstTrial = true;
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -77,7 +77,7 @@ public class DemoOpening : MonoBehaviour
         }
         if (towerRoom && IntroChapter.Active)
         {
-            if(!IntroChapter.HasFamilyOutfit) DialogueBoxController.instance.ShowMessage("Heute kommt die Arkanmeisterin an den Hof. Ob mein Gefäß dieses Jahr auf mich antwortet? Erst ziehe ich mein Familiengewand an. Es hängt im Schrank.", IntroChapter.PlayerName);
+            if(!IntroChapter.HasFamilyOutfit) DialogueBoxController.instance.ShowMessage(ArkanmeisterinConversation.Morning, IntroChapter.PlayerName);
             yield break;
         }
         if (towerRoom && !IsEquipped)
@@ -147,7 +147,7 @@ public class DemoOpening : MonoBehaviour
             objective.text = towerRoom ? !HasAwakened ? "Elian von Aurenfeld · Ein neuer Morgen"
                 : !IntroChapter.HasFamilyOutfit ? "Vorbereitung · Hol dein Familiengewand aus dem Schrank"
                 : "Bereit · Geh durch die Tür in den Burghof"
-                : CourtyardGarden.ObjectiveText ?? "Aurenfeld · Erkunde den Hof und begrüße seine Bewohner";
+                : ArkanmeisterinArrival.ObjectiveText ?? CourtyardWaterTask.ObjectiveText ?? (CourtyardGarden.HasCan ? CourtyardGarden.ObjectiveText : null) ?? CourtyardHandleDelivery.ObjectiveText ?? CourtyardGarden.ObjectiveText ?? CourtyardStarterMeetings.Objective ?? (ArkanmeisterinArrival.Greeted ? "Aurenfeld · Erkunde den Hof und begrüße seine Bewohner" : "Aurenfeld · Erkunde den Hof oder sieh am Burgtor nach");
             return;
         }
         if (IsPresenting)

@@ -12,6 +12,16 @@ public class MeadowVegetation : MonoBehaviour
     [SerializeField] private int seed = 721;
     [SerializeField] private Rect clearWorldArea;
     internal Material FieldMaterial => material;
+    private bool goldenArenaPreview;
+    private Vector2 goldenArenaCenter;
+    internal void SetGoldenArenaPreview(Material wheat, Vector3 center)
+    {
+        material=wheat;
+        goldenArenaPreview=true;
+        nearSpacing=.60f;
+        goldenArenaCenter = new Vector2(center.x, center.z);
+        SetClearArea(default);
+    }
     public void SetClearArea(Rect area) { clearWorldArea = area; rebuild = true; }
     private GameObject generated;
     private readonly List<Mesh> meshes = new List<Mesh>();
@@ -177,8 +187,21 @@ public class MeadowVegetation : MonoBehaviour
                 }
                 if (clearWorldArea.width > 0 && clearWorldArea.Contains(new Vector2(world.x, world.z))) continue;
                 // The entire board, its walls and a small margin remain clear.
-                if (wx > 4.8f && wx < 32.4f && wz > -2 && wz < 25) continue;
+                bool keepLegacyMargin = true;
+                float arenaEdgeGrowth = 1;
+                if (goldenArenaPreview)
+                {
+                    keepLegacyMargin = false;
+                    var point = new Vector2(world.x, world.z) - goldenArenaCenter;
+                    float edge = GoldenFieldArenaPreview.ClearingDistance(point);
+                    float path = GoldenFieldArenaPreview.PathDistance(point);
+                    if (edge < .75f || path < .9f) continue;
+                    arenaEdgeGrowth = Mathf.Min(Mathf.InverseLerp(.75f, 1.12f, edge), Mathf.InverseLerp(.9f, 2.2f, path));
+                    if (Mathf.PerlinNoise(world.x * .56f, world.z * .56f) > Mathf.Lerp(.35f, 1f, arenaEdgeGrowth)) continue;
+                }
+                if (keepLegacyMargin && wx > 4.8f && wx < 32.4f && wz > -2 && wz < 25) continue;
                 float gold = Gold(wx, wz), y = Height(wx, wz) + .01f;
+                if (goldenArenaPreview) gold=1;
                 if (illustrated)
                 {
                     if (CourtyardFieldMargins.IsBarePath(world) || CourtyardEastFieldStyle.IsBarePath(world) || CourtyardFarmApproach.IsBareGround(world)) continue;
@@ -219,6 +242,7 @@ public class MeadowVegetation : MonoBehaviour
                     height *= Mathf.Lerp(.24f, 1, edgeGrowth);
                 }
                 if (stubble) height = .13f + detail * .19f;
+                height *= Mathf.Lerp(.16f, 1f, arenaEdgeGrowth);
                 int bladeCount = illustrated ? (detailed ? 3 + Mathf.RoundToInt(fullness * 2) : 3) : 3;
                 if (ripeGrain) bladeCount = stubble ? 2 : (detailed ? 5 + Mathf.RoundToInt(fullness * 2) : 3);
                 if (illustrated && detailed)

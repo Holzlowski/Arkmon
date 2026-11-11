@@ -9,14 +9,23 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
     private Sprite[] work;
     private CourtyardGroomPose groom;
     private Camera view;
-    private bool engaged;
+    private bool engaged, stagedForVesselTrial;
     private float workTime,reactionTime=1,resumeAt;
     private int lastStroke=-1;
+    private float brushReach;
     private StableLocalFoley foley;
     private AudioClip brush;
     public bool IsWorking { get; private set; }
     public bool IsCheckingHorse { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
+
+    internal void SetVesselTrialScale(bool staged) => stagedForVesselTrial = staged;
+
+    internal void ReactToVessel()
+    {
+        CurrentEmotion = DialogueEmotion.Friendly;
+        reactionTime = 0;
+    }
 
     private void OnEnable()
     {
@@ -81,14 +90,13 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
             float strokePhase=Mathf.Repeat(phase,.72f);
             float reach=!IsCheckingHorse && phase<2.16f?.5f-.5f*Mathf.Cos(strokePhase/.72f*Mathf.PI*2):0;
             // Back -> middle -> forward -> middle; ease at the ends, then rest.
-            int pose=Mathf.RoundToInt(reach*2);
-            int frame=pose==0?2:pose==1?1:0;
             int stroke=Mathf.FloorToInt(workTime/3.6f)*3+Mathf.FloorToInt(phase/.72f);
             if(!IsCheckingHorse && phase<2.16f && strokePhase>.12f && stroke!=lastStroke && Time.time>=resumeAt)
             {
                 lastStroke=stroke;foley.Play(brush,.15f,.94f+(stroke%3)*.035f);
             }
-            illustration.sprite=IsCheckingHorse ? idle : work[frame]!=null?work[frame]:idle;
+            illustration.sprite=IsCheckingHorse ? idle : work[0]!=null?work[0]:idle;
+            brushReach=reach;
             illustration.flipX=IsCheckingHorse && horse!=null && horse.position.x<transform.position.x;
             if(IsCheckingHorse)foley.Stop();
         }
@@ -100,11 +108,14 @@ public sealed class CourtyardStablekeeperVisual : MonoBehaviour
                 illustration.flipX=player.position.x<transform.position.x;
         }
         if(horse!=null)horse.GetComponent<CourtyardHorse>()?.PairWith(transform);
-        groom.Present(illustration,IsWorking && !IsCheckingHorse);
+        groom.Present(illustration,IsWorking && !IsCheckingHorse,brushReach);
         reactionTime+=Time.deltaTime;
-        float wave=engaged?Mathf.Sin(Mathf.Clamp01(reactionTime/.6f)*Mathf.PI):0;
+        float wave=Mathf.Sin(Mathf.Clamp01(reactionTime/.6f)*Mathf.PI);
         float breath=Mathf.Sin(Time.time*1.9f)*.005f;
-        paper.localScale=new Vector3(1-breath*.3f,1+breath-wave*.012f,1);
-        paper.localPosition=Vector3.up*(wave*(CurrentEmotion==DialogueEmotion.Friendly?.035f:.015f));
+        float lift=CurrentEmotion==DialogueEmotion.Friendly?(engaged?.035f:.095f):.015f;
+        float scale=stagedForVesselTrial?.91f:1f;
+        paper.localScale=new Vector3(1-breath*.3f,1+breath-wave*.012f,1)*scale;
+        paper.localPosition=Vector3.up*(wave*lift);
+        if(!engaged && reactionTime>=.6f)CurrentEmotion=DialogueEmotion.Neutral;
     }
 }

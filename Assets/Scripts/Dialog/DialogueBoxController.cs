@@ -28,6 +28,7 @@ public class DialogueBoxController : MonoBehaviour
     private Image portraitImage;
     private bool typing;
     private bool revealLine;
+    private bool stagingLine;
     private int answerCount;
     private DialogueTree temporaryDialogue;
     private string conversationSpeaker;
@@ -130,7 +131,14 @@ public class DialogueBoxController : MonoBehaviour
         for (int i = 0; i < dialogueTree.sections[section].dialogue.Length; i++)
         {
             var presentations=dialogueTree.sections[section].presentations;
-            PresentLine(presentations!=null && i<presentations.Length?presentations[i]:default);
+            var presentation = presentations != null && i < presentations.Length ? presentations[i] : default;
+            if (presentation.BeforePresentation != null)
+            {
+                stagingLine = true;
+                yield return presentation.BeforePresentation();
+                stagingLine = false;
+            }
+            PresentLine(presentation);
             dialogueText.text="";
             typing = true;
             revealLine = false;
@@ -227,7 +235,7 @@ public class DialogueBoxController : MonoBehaviour
 
     public void SkipLine()
     {
-        if (!IsOpen || answerBox.activeSelf) return;
+        if (!IsOpen || answerBox.activeSelf || stagingLine) return;
         if (typing) revealLine = true;
         else skipLineTriggered = true;
     }
@@ -248,7 +256,7 @@ public class DialogueBoxController : MonoBehaviour
         answerBox.SetActive(false);
         skipLineTriggered = false;
         answerTriggered = false;
-        typing = revealLine = false;
+        typing = revealLine = stagingLine = false;
         answerCount = 0;
     }
 

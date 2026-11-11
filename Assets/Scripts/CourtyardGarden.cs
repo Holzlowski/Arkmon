@@ -9,31 +9,12 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     static bool hasCan, requested, thanksPending;
     static int watered;
     static CourtyardGarden canStation;
-    bool departureReminded;
-    public static bool InsideToolArea(Vector3 p) => p.x >= 19 && p.x <= 35 && p.z >= -16.4f && p.z <= -3.4f;
-    // Stop only outward movement at the garden boundary; returning remains possible.
-    public static Vector3 ConstrainToolMovement(Vector3 position, Vector3 movement, float dt)
+    // The borrowed can may travel to the well; CourtyardBorrowedTools limits its work area.
+    public static int WaterCharges { get; private set; }
+    public static bool FillCan()
     {
-        if (!hasCan || canStation == null || dt <= 0) return movement;
-        var next = position + movement * dt;
-        if ((next.x < 19 && movement.x < 0) || (next.x > 35 && movement.x > 0)) movement.x = 0;
-        if ((next.z < -16.4f && movement.z < 0) || (next.z > -3.4f && movement.z > 0)) movement.z = 0;
-        return movement;
-    }
-    void CheckBorrowedTool()
-    {
-        if (!hasCan || player == null || IsBusy) { departureReminded = false; return; }
-        var p = player.transform.position;
-        bool nearExit = p.x < 19.8f || p.x > 34.2f || p.z < -15.6f || p.z > -4.2f;
-        if (!nearExit)
-        {
-            if (p.x > 20.6f && p.x < 33.4f && p.z > -14.8f && p.z < -5.0f) departureReminded = false;
-            return;
-        }
-        var dialogue = DialogueBoxController.instance;
-        if (departureReminded || dialogue == null || dialogue.IsOpen || DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning) return;
-        departureReminded = true;
-        dialogue.ShowMessage("Prinz Elian, bitte lasst die Gießkanne hier. Die brauche ich noch.", "Marta");
+        if (!hasCan || IsBusy || WaterCharges == 3) return false;
+        WaterCharges = 3; return true;
     }
     static CourtyardGarden activeAction;
     const int AllBeds = 7;
@@ -54,6 +35,11 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
 
     public static bool Completed => watered == AllBeds;
     public static bool HasCan => hasCan;
+    internal static SpriteRenderer CanSprite => canStation != null ? canStation.canSprite : null;
+    internal static void RestoreCanPlacement()
+    {
+        if (canStation != null) canStation.PlaceCanOnGround();
+    }
     public static bool IsBusy => activeAction != null;
     public static bool IsWatering => activeAction != null && activeAction.action == GardenAction.Pour;
     public static bool ThanksReceived { get; private set; }
@@ -69,6 +55,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
             if (Completed) return !ThanksReceived ? "Garten · Alle Beete gegossen! Sprich mit Marta"
                 : hasCan ? "Garten · Stelle die Gießkanne zurück" : null;
             if (!requested) return null;
+            if (hasCan && WaterCharges == 0) return "Marta helfen · Fülle die Gießkanne am Brunnen";
             return hasCan ? $"Marta helfen · Gieße die Gemüsebeete ({WateredCount}/3)"
                 : "Marta helfen · Nimm die Gießkanne am seitlichen Gartenweg";
         }
@@ -76,12 +63,12 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     public static void ResetProgress()
     {
         if (activeAction != null) activeAction.CancelWatering();
-        hasCan = requested = thanksPending = ThanksReceived = false; watered = 0;
+        hasCan = requested = thanksPending = ThanksReceived = false; watered = 0; WaterCharges = 0;
     }
     public static void OfferHelp() => requested = true;
     public static void BeginThanks() => thanksPending = true;
     public string Label => bedIndex < 0 ? hasCan ? "Gießkanne zurückstellen" : "Gießkanne nehmen"
-        : IsWatered ? "Beet ansehen" : hasCan ? "Beet gießen" : "Trockenes Beet ansehen";
+        : IsWatered ? "Beet ansehen" : hasCan ? WaterCharges > 0 ? "Beet gießen" : "Leere Kanne" : "Trockenes Beet ansehen";
     internal static bool IsBedWatered(int index) => index >= 0 && index < 3 && (watered & (1 << index)) != 0;
     bool IsWatered => IsBedWatered(bedIndex);
     public Vector3 GetTransform() => transform.position;
@@ -105,6 +92,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         var original = station.player != null ? station.player.GetComponentInChildren<SpriteRenderer>() : null;
         if (original != null) station.canSprite.sharedMaterial = original.sharedMaterial;
         canStation = station;
+        station.CreateReturnStand();
         station.PlaceCanOnGround();
     }
     static CourtyardGarden Spawn(string name, Vector3 position)
@@ -134,7 +122,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         DialogueBoxController.OnLinePresented -= OnLine;
         DialogueBoxController.OnDialogueEnded -= OnDialogueEnded;
         CancelWatering();
-        if (canModel != null) { thanksPending = false; if (visual != null) visual.SetGardenPose(null, false); }
+        if (canModel != null) thanksPending = false;
     }
     void Update()
     {
@@ -142,18 +130,35 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
     }
     void LateUpdate()
     {
-        if (canModel == null || IsBusy) return;
-        FindPlayer();
-        CheckBorrowedTool();
-        if (hasCan && visual != null) visual.SetGardenPose(canSprite, true);
-        else { if (visual != null) visual.SetGardenPose(null, false); PlaceCanOnGround(); }
+        if (canModel == null || IsBusy || CourtyardWaterTask.IsBusy) return;
+        PlaceCanOnGround();
     }
     void OnDestroy() { if (canStation == this) canStation = null; }
+    void CreateReturnStand()
+    {
+        var wood=Resources.Load<Material>("CourtyardStyle/Oak");
+        if(wood==null)return;
+        var stand=new GameObject("Watering can return stand");stand.transform.SetParent(transform,false);
+        for(int i=0;i<3;i++)
+        {
+            var slat=GameObject.CreatePrimitive(PrimitiveType.Cube);slat.name="Drip stand wooden slat";
+            slat.transform.SetParent(stand.transform,false);
+            slat.transform.localPosition=new Vector3((i-1)*.30f,.025f,0);
+            slat.transform.localScale=new Vector3(.285f,.05f,.76f);
+            var renderer=slat.GetComponent<Renderer>();renderer.sharedMaterial=wood;
+            var block=new MaterialPropertyBlock();block.SetVector("_ObjectScale",slat.transform.lossyScale);
+            block.SetFloat("_GrainAxis",2);block.SetFloat("_EdgeWidth",.012f);
+            renderer.SetPropertyBlock(block);
+            var collider=slat.GetComponent<Collider>();collider.enabled=false;Destroy(collider);
+        }
+    }
     void PlaceCanOnGround()
     {
         if (canSprite == null || canSprite.sprite == null) return;
+        canSprite.enabled = !hasCan;
+        canSprite.sortingOrder=0;
         var rotation = Camera.main != null ? Camera.main.transform.rotation : Quaternion.identity;
-        canSprite.transform.SetPositionAndRotation(transform.position + rotation * Vector3.up * .6016f, rotation);
+        canSprite.transform.SetPositionAndRotation(transform.position + Vector3.up*.05f + rotation * Vector3.up * -canSprite.sprite.bounds.min.y, rotation);
         canSprite.transform.localScale = Vector3.one;
     }
     public void InteractWithPlayer()
@@ -163,13 +168,17 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         if (bedIndex >= 0 && IsWatered) { dialogue.ShowMessage("Dieses Beet hat schon genug Wasser.", IntroChapter.PlayerName); return; }
         if (bedIndex >= 0 && !hasCan)
         { requested = true; dialogue.ShowMessage("Die Erde ist trocken. Die Gießkanne steht am seitlichen Gartenweg.", IntroChapter.PlayerName); return; }
+        if (CourtyardWaterTask.HasBucket)
+        { dialogue.ShowMessage("Ich stelle erst Hannes’ Eimer zurück, bevor ich die Gießkanne nehme.", IntroChapter.PlayerName); return; }
+        if (bedIndex >= 0 && WaterCharges == 0)
+        { dialogue.ShowMessage("Die Kanne ist leer. Ich fülle sie zuerst am Brunnen.", IntroChapter.PlayerName); return; }
         FindPlayer();
         station = canModel != null ? this : Array.Find(FindObjectsByType<CourtyardGarden>(FindObjectsSortMode.None), p => p.canModel != null);
         if (player == null || visual == null || station == null || station.canSprite.sprite == null) return;
         Vector3 right = Camera.main != null ? Camera.main.transform.right : Vector3.right;
         right.y = 0; right.Normalize();
         float side = bedIndex >= 0 ? 1 : Vector3.Dot(transform.position - player.transform.position, right) < 0 ? -1 : 1;
-        Vector3 stand = bedIndex < 0 ? transform.position - right * (.65f * side) : transform.position;
+        Vector3 stand = bedIndex < 0 ? transform.position - right * (.42f * side) : transform.position;
         stand.y = player.transform.position.y;
         if (!CanApproach(stand))
         { dialogue.ShowMessage("Ich gehe erst näher heran. Hier ist etwas im Weg.", IntroChapter.PlayerName); return; }
@@ -206,22 +215,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
             else
             {
                 bool pickup = action == GardenAction.PickUp;
-                for (float t = 0; t < .55f; t += Time.deltaTime)
-                {
-                    float u = Mathf.SmoothStep(0, 1, t / .55f);
-                    visual.SetGardenPose(station.canSprite, !pickup, u, 0, u);
-                    yield return null;
-                }
-                // The hand reaches the handle before ownership changes; cancellation rolls it back.
-                visual.SetGardenPose(station.canSprite, pickup, 1, 0, 1);
-                if (!pickup) station.PlaceCanOnGround();
-                yield return null;
-                for (float t = 0; t < .55f; t += Time.deltaTime)
-                {
-                    float u = 1 - Mathf.SmoothStep(0, 1, t / .55f);
-                    visual.SetGardenPose(station.canSprite, pickup, u, 0, u);
-                    yield return null;
-                }
+                yield return new WaitForSeconds(.24f);
                 hasCan = pickup;
             }
         }
@@ -261,19 +255,27 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         pourAudio.clip = Resources.Load<AudioClip>("Audio/IntroFoley/garden-water");
         pourAudio.volume = (SoundManager.instance != null ? SoundManager.instance.effectsVolume : .55f) * .55f;
         if (!Application.isBatchMode && pourAudio.clip != null) pourAudio.Play();
-        Vector3 target = soil.bounds.center + new Vector3(-soil.bounds.extents.x * .45f, .42f, 0);
+        var bounds = soil.bounds;
+        Vector3 target = new Vector3(bounds.min.x + .48f, bounds.max.y + .06f, bounds.center.z);
+        Vector3 spout = new Vector3(bounds.min.x + .04f, bounds.max.y + .60f, bounds.center.z);
+        var model = station.canSprite;
+        var spoutOffset = CanArtOffset(model.sprite, new Vector2(.91f,.64f));
+        model.enabled = true;
         for (float t = 0; t < 1.9f; t += Time.deltaTime)
         {
-            float tilt = Mathf.SmoothStep(0, 1, Mathf.Clamp01(Mathf.Min(t, 1.9f - t) / .3f));
-            visual.SetGardenPose(station.canSprite, true, .10f * tilt, 38 * tilt);
-            Vector3 spout = station.canSprite.transform.TransformPoint(new Vector3(.41f, -.19f, 0));
+            var cameraRotation = Camera.main != null ? Camera.main.transform.rotation : Quaternion.identity;
+            var rotation = cameraRotation * Quaternion.Euler(0,0,-32);
+            model.transform.SetPositionAndRotation(spout - rotation * spoutOffset, rotation);
             Vector3 sweep = target + Vector3.forward * (Mathf.Sin(t * 2.1f) * .32f);
-            spray.Present(spout, sweep, t, tilt);
+            spray.Present(spout, sweep, t, t >= .18f && t < 1.72f ? 1 : 0);
             SetWetness(Mathf.Clamp01((t - .2f) / 1.4f)); yield return null;
         }
-        watered |= 1 << bedIndex; RefreshAppearance();
-        if (Completed) OnCompleted?.Invoke();
+        watered |= 1 << bedIndex; WaterCharges = Mathf.Max(0, WaterCharges - 1); RefreshAppearance();
+        if (Completed) { CourtyardTaskFeedback.Complete("Marta"); OnCompleted?.Invoke(); }
     }
+    internal static Vector3 CanArtOffset(Sprite sprite, Vector2 point)
+        => (point * sprite.rect.size - sprite.pivot) / sprite.pixelsPerUnit;
+
     public void CancelWatering()
     {
         if (activeAction != this) return;
@@ -285,8 +287,7 @@ public sealed class CourtyardGarden : MonoBehaviour, IInteractableAsPlayer
         RestoreMovement();
         if (dropsRoot != null) Destroy(dropsRoot); dropsRoot = null;
         if (pourAudio != null) { pourAudio.Stop(); Destroy(pourAudio); } pourAudio = null;
-        if (visual != null) visual.SetGardenPose(hasCan && station != null ? station.canSprite : null, hasCan);
-        if (!hasCan && station != null) station.PlaceCanOnGround();
+        if (station != null) station.PlaceCanOnGround();
         routine = null; action = GardenAction.None; if (activeAction == this) activeAction = null;
         RefreshAppearance();
     }

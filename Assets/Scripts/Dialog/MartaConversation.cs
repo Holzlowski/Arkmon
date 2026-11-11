@@ -4,6 +4,24 @@ public static class MartaConversation
 {
     public static void Open(DialogueBoxController dialogue)
     {
+        if (CourtyardHandleDelivery.HasHandle)
+        {
+            var delivery = new[]{
+                "Marta, Ida schickt mich. Ich habe deinen reparierten Schaufelstiel dabei.",
+                "Oh, wie schön! Der Riss hat mir schon Sorgen gemacht.",
+                "Sie hat das Holz geglättet. Du kannst ihn wieder bedenkenlos anfassen.",
+                "Danke fürs Bringen, Elian! Und richte Ida meinen Dank aus. Den Stiel setze ich nachher gleich wieder ein."
+            };
+            CourtyardHandleDelivery.AwaitHandover(delivery.Length, true);
+            dialogue.ShowConversation(new[]{new DialogueSection{
+                dialogue=delivery, presentations=new[]{
+                    new DialogueLinePresentation{speaker=IntroChapter.PlayerName,emotion=DialogueEmotion.Friendly},
+                    Mood(DialogueEmotion.Surprised),
+                    new DialogueLinePresentation{speaker=IntroChapter.PlayerName,emotion=DialogueEmotion.Neutral},
+                    Mood(DialogueEmotion.Friendly)},endAfterDialogue=true
+            }},"Marta","",null);
+            return;
+        }
         string[] lines;
         DialogueLinePresentation[] presentations;
         if(CourtyardGarden.Completed && CourtyardGarden.ThanksReceived)
@@ -27,7 +45,7 @@ public static class MartaConversation
         {
             lines=new[]{
                 $"Danke, dass du mir hilfst, Elian. {CourtyardGarden.WateredCount} von den drei Beeten haben schon Wasser bekommen.",
-                "Geh mit der Kanne an ein trockenes Beet und gieße es mit [E].",
+                CourtyardGarden.WaterCharges == 0 ? "Fülle die leere Kanne zuerst am Brunnen zwischen Garten und Stall. Eine Füllung reicht für alle drei Beete." : "Geh mit der Kanne an ein trockenes Beet und gieße es mit [E].",
                 "Danach stell die Kanne bitte wieder an ihren Platz."
             };
             presentations=new[]{Mood(DialogueEmotion.Friendly),Mood(DialogueEmotion.Neutral),Mood(DialogueEmotion.Friendly)};
@@ -40,7 +58,7 @@ public static class MartaConversation
                 "Heute schon? Dann ist das wirklich ein besonderer Morgen!",
                 "Ich sortiere gerade die Ernte. Ein Teil davon kommt später in die Küche.",
                 "Nur die jungen Pflanzen machen mir Sorgen. Die Erde in den Beeten ist ganz trocken.",
-                "Wenn du noch einen Moment Zeit hast: Die Gießkanne steht am ersten Beet. Ein wenig Wasser würde ihnen guttun."
+                "Wenn du noch einen Moment Zeit hast: Die leere Gießkanne steht am seitlichen Gartenweg. Fülle sie am Brunnen; eine Füllung reicht für die drei Beete."
             };
             presentations=new[]{Mood(DialogueEmotion.Friendly),
                 new DialogueLinePresentation{speaker=IntroChapter.PlayerName,emotion=DialogueEmotion.Neutral},

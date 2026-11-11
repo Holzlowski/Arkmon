@@ -18,6 +18,12 @@ public sealed class CourtyardGardenerVisual : MonoBehaviour
     public bool IsWatchingWatering { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
 
+    internal void ReactToVessel()
+    {
+        CurrentEmotion = DialogueEmotion.Friendly;
+        reactionTime = 0;
+    }
+
     private void OnEnable()
     {
         DialogueBoxController.OnLinePresented+=OnLine;

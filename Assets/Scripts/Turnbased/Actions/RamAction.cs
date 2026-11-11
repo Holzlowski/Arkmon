@@ -75,12 +75,16 @@ public class RamAction : BaseAction
                 origin.z + direction.z * step))) return false;
         pushed = destination + direction;
         // An obstacle or board boundary stops the push; another monster blocks the attack.
-        return !LevelGrid.Instance.IsValidGridPosition(pushed)
+        return target.IsTrialObjective || !LevelGrid.Instance.IsValidGridPosition(pushed)
             || !LevelGrid.Instance.HasAnyUnitOnGridPosition(pushed);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
-        => new EnemyAIAction { gridPosition = gridPosition, actionValue = 200 };
+        => new EnemyAIAction
+        {
+            gridPosition = gridPosition,
+            actionValue = LevelGrid.Instance.GetUnitOnGridPosition(gridPosition)?.IsTrialObjective == true ? 230 : 200
+        };
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
@@ -94,6 +98,7 @@ public class RamAction : BaseAction
             targetUnit = null;
             return;
         }
+        transform.forward = new Vector3(direction.x,0,direction.z);
         blockedPush = !IsFree(pushCell);
         targetCell = gridPosition;
         approachCell = targetCell + new GridPosition(-direction.x, -direction.z);
@@ -138,7 +143,12 @@ public class RamAction : BaseAction
                 hitApplied = true;
                 targetUnit.Damage(DamageAmount, unit.transform);
                 OnAnyRamHit?.Invoke(this, EventArgs.Empty);
-                if (blockedPush && targetUnit != null && !targetUnit.IsDead)
+                if (targetUnit != null && targetUnit.IsTrialObjective)
+                {
+                    targetUnit = null;
+                    ActionComplete();
+                }
+                else if (blockedPush && targetUnit != null && !targetUnit.IsDead)
                 {
                     targetUnit.SetKnockedDown(true);
                     targetUnit = null;

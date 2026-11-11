@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 10f;
     private bool isGrounded;
     private bool isJumping;
+    private float jumpVisualUntil=-1;
+    public bool HasActiveJump => Time.time<jumpVisualUntil;
     public float fallMultiplier = 2.5f; // Multiplikator für die Fallgeschwindigkeit
 
     public float interacRange = 3f;
@@ -63,6 +65,7 @@ public class PlayerController : MonoBehaviour
         }
         HandleMovement();
         HandleJump();
+        rb.linearVelocity=CourtyardBorrowedTools.ConstrainMovement(transform.position,rb.linearVelocity,Time.fixedDeltaTime);
         ApplyFallMultiplier();
     }
 
@@ -115,12 +118,13 @@ public class PlayerController : MonoBehaviour
         if (isJumping) return;
         Vector3 movement = new Vector3(input.x, 0, input.y) * speed;
         if (movement.sqrMagnitude > speed * speed) movement = movement.normalized * speed;
-        movement = CourtyardGarden.ConstrainToolMovement(transform.position, movement, Time.fixedDeltaTime);
+
         rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
     }
 
     void Jump()
     {
+        jumpVisualUntil=Time.time+1f;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isGrounded = false;
     }

@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     float zoomSpeed = 5f;
     public bool IsPresentationLocked { get; set; }
 
-    public CameraState PrepareBattleOverview(Vector3 center)
+    public CameraState PrepareBattleOverview(Vector3 center, bool wideGoldenField = false)
     {
         transform.position = center;
         if (cinemachineTransposer == null)
@@ -22,8 +22,20 @@ public class CameraController : MonoBehaviour
         targetFollowOffset = new Vector3(0, 12, -18);
         cinemachineTransposer.m_FollowOffset = targetFollowOffset;
         cinemachineVirtualCamera.m_Lens.FieldOfView = 55;
+        bool goldenReview = FindFirstObjectByType<GoldenFieldArenaPreview>() != null;
+        if (goldenReview)
+        {
+            targetFollowOffset = wideGoldenField ? new Vector3(0, 10, -24) : new Vector3(0, 11.8f, -20f);
+            cinemachineTransposer.m_FollowOffset = targetFollowOffset;
+            cinemachineVirtualCamera.m_Lens.FieldOfView = wideGoldenField ? 52f : 49f;
+        }
         CinemachineComposer composer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineComposer>();
-        if (composer != null) composer.m_ScreenY = .32f;
+        if (composer != null)
+        {
+            composer.m_ScreenY = .32f;
+            if (goldenReview)
+                composer.m_TrackedObjectOffset = Vector3.up * (wideGoldenField ? 8.5f : .8f);
+        }
         cinemachineVirtualCamera.PreviousStateIsValid = false;
         cinemachineVirtualCamera.UpdateCameraState(Vector3.up, -1);
         return cinemachineVirtualCamera.State;

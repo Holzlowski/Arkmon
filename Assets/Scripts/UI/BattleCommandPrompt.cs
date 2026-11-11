@@ -17,7 +17,7 @@ public class BattleCommandPrompt : MonoBehaviour
     }
     public static string Instruction(BaseAction action)
         => action==null ? "Bereich → Befehl → Zielfeld · Wähle einen Befehl in der unteren Leiste."
-        : action is GuardAction ? "Abwehr · Wähle Kaflas eigenes Feld. Zurück bricht die Auswahl ab."
+        : action is GuardAction ? "Abwehr · Wähle das eigene Feld deines Arkmon. Zurück bricht die Auswahl ab."
         : action is StandUpAction ? "Aufstehen · Wähle das eigene Feld deines Monsters."
         : PaperUIStyle.ActionName(action)+" · Wähle ein markiertes Zielfeld. Zurück bricht die Auswahl ab.";
     private void LateUpdate()

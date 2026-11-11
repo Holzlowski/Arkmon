@@ -13,7 +13,7 @@ public sealed class CourtyardFeedbackPolish : MonoBehaviour
     {
         if(GameObject.Find("Courtyard playtest corrections")!=null)return;
         var style=new GameObject("Courtyard playtest corrections").AddComponent<CourtyardFeedbackPolish>();
-        style.Facade();style.Terrace();style.SandyPaths();style.Bank();style.Hedgerows();style.TrimOuterGround();
+        style.Facade();style.Terrace();style.SandyPaths();style.StableGround();style.Bank();style.Hedgerows();style.TrimOuterGround();
     }
     void Facade()
     {
@@ -84,6 +84,38 @@ public sealed class CourtyardFeedbackPolish : MonoBehaviour
                 if(sand.HasProperty("_SandBlend"))sand.SetFloat("_SandBlend",.58f);
             }
             r.sharedMaterial=sand;
+        }
+    }
+
+    void StableGround()
+    {
+        var grass = Resources.Load<Texture2D>("CourtyardStyle/Stable JulioVII Grass");
+        var dirt = Resources.Load<Texture2D>("CourtyardStyle/Stable JulioVII Dirt");
+        if (grass == null || dirt == null) return;
+
+        var replacements = new Dictionary<Material, Material>();
+        foreach (var renderer in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+        {
+            var material = renderer.sharedMaterial;
+            if (!renderer.enabled || material == null) continue;
+
+            bool isGrass = renderer.name == "Rolling courtyard meadow";
+            bool isSoil = material.shader.name == "Arkmon/Courtyard Painted Ground Patch";
+            if (!isGrass && !isSoil) continue;
+            // Skip renderers outside the same fade rectangle used by StableGroundBlend.hlsl.
+            var bounds = renderer.bounds;
+            if (bounds.max.x <= -21 || bounds.min.x >= 0 || bounds.max.z <= -15 || bounds.min.z >= 7) continue;
+
+            if (!replacements.TryGetValue(material, out var stableGround))
+            {
+                stableGround = new Material(material) { name = material.name + " JulioVII stable finish" };
+                stableGround.SetTexture("_StableGroundMap", isGrass ? grass : dirt);
+                stableGround.SetFloat("_StableGroundScale", isGrass ? .32f : .43f);
+                stableGround.SetVector("_StableGroundTint", isGrass ? new Vector4(.25f, .35f, .92f, 1) : Vector4.one);
+                replacements.Add(material, stableGround);
+                materials.Add(stableGround);
+            }
+            renderer.sharedMaterial = stableGround;
         }
     }
     void Bank()

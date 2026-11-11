@@ -9,7 +9,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
     readonly Vector3[] vertices = new Vector3[9];
     Material ink;
     AudioSource rustle;
-    [SerializeField] bool enableWindAudio = false;
+    [SerializeField] bool enableWindAudio = true;
     float age;
     CourtyardLookout lookout;
 
@@ -39,7 +39,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
         }
         rustle=gameObject.AddComponent<AudioSource>();
         rustle.playOnAwake=false;rustle.loop=true;rustle.spatialBlend=0;rustle.volume=0;
-        rustle.clip=Resources.Load<AudioClip>("Audio/field-rustle");
+        rustle.clip=Resources.Load<AudioClip>("Audio/field-breeze");
         CourtyardBirdsong.Install(transform, lookout);
     }
     void Update()
@@ -64,7 +64,7 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
             wings[i].vertices=vertices;
         }
         if(rustle==null)return;
-        // Paused by art direction; retain the source for later sound auditions.
+        // Independent quiet breeze; music and the name accent keep their own sources.
         if (!enableWindAudio)
         {
             rustle.volume = 0;
@@ -75,8 +75,8 @@ public sealed class CourtyardFieldAtmosphere : MonoBehaviour
         float gain=SoundManager.instance!=null?SoundManager.instance.effectsVolume:.55f;
         // Leave room for the one-time title chord, then let the fields breathe again.
         bool title = lookout != null && lookout.Progress >= .68f && lookout.Progress < .84f;
-        float target = presenting ? (title ? .20f : .34f) * gain : 0;
-        rustle.volume=Mathf.MoveTowards(rustle.volume,target,Time.unscaledDeltaTime*.18f);
+        float target = presenting ? (title ? .28f : .78f) * gain : 0;
+        rustle.volume = gain <= 0 ? 0 : Mathf.MoveTowards(rustle.volume,target,Time.unscaledDeltaTime*.18f);
         if(!Application.isBatchMode && presenting && !rustle.isPlaying && rustle.clip!=null)rustle.Play();
         if(!presenting && rustle.volume<=0 && rustle.isPlaying)rustle.Stop();
     }

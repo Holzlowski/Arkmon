@@ -11,6 +11,34 @@ public sealed class CourtyardGuard : MonoBehaviour,IInteractableAsPlayer
     private int direction=1;
     private float wait,resumeAt;
     private bool speaking;
+    private bool arrivalStaged;
+    private Vector3 arrivalMark;
+    internal bool IsArrivalRunning { get; private set; }
+
+    internal void BeginArrivalRun(Vector3 entry, Vector3 mark)
+    {
+        arrivalMark = Grounded(mark);
+        body.position = Grounded(entry);
+        transform.position = body.position;
+        arrivalStaged = IsArrivalRunning = true;
+    }
+
+    internal void FaceArrivalGuest(Vector3 guest)
+    {
+        FacingLeft = guest.x < transform.position.x;
+    }
+
+    internal void EndArrivalRun()
+    {
+        if (!arrivalStaged) return;
+        arrivalStaged = IsArrivalRunning = IsMoving = false;
+        if (route != null)
+        {
+            TargetIndex = route.stops.Length - 2;
+            direction = 1;
+            wait = 1.0f;
+        }
+    }
     private readonly RaycastHit[] hits=new RaycastHit[32];
     public int TargetIndex { get; private set; }
     public bool IsMoving { get; private set; }
@@ -71,6 +99,20 @@ public sealed class CourtyardGuard : MonoBehaviour,IInteractableAsPlayer
     private void FixedUpdate()
     {
         IsMoving=false;IsWaitingForObstacle=false;
+        if (arrivalStaged)
+        {
+            if (IsArrivalRunning)
+            {
+                var currentMark = body.position;
+                var nextMark = Vector3.MoveTowards(currentMark,arrivalMark,5.1f*Time.fixedDeltaTime);
+                if (Mathf.Abs(nextMark.x-currentMark.x)>.001f) FacingLeft=nextMark.x<currentMark.x;
+                body.MovePosition(Grounded(nextMark));
+                TravelDistance += Vector3.Distance(currentMark,nextMark);
+                IsMoving = true;
+                IsArrivalRunning = Vector3.Distance(nextMark,arrivalMark) > .035f;
+            }
+            return;
+        }
         if(route==null || DemoOpening.IsPresenting || SceneLoadManager.IsTransitioning ||
             Time.time<resumeAt || DialogueBoxController.instance!=null && DialogueBoxController.instance.IsOpen)return;
         if(wait>0){wait=Mathf.Max(0,wait-Time.fixedDeltaTime);return;}
@@ -109,7 +151,7 @@ public sealed class CourtyardGuard : MonoBehaviour,IInteractableAsPlayer
                 !hits[i].collider.CompareTag("Ground") && hits[i].normal.y<.65f)return true;
         return count==hits.Length;
     }
-    private static Vector3 Grounded(Vector3 point)
+    internal static Vector3 Grounded(Vector3 point)
     {
         float height=float.NegativeInfinity;
         foreach(var hit in Physics.RaycastAll(new Vector3(point.x,6,point.z),Vector3.down,12,~0,QueryTriggerInteraction.Ignore))

@@ -2,6 +2,8 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
 {
  Properties
  {
+  _StableGroundMap("Stable ground overlay",2D)="white" {} _StableGroundScale("Stable ground repeats",Float)=0
+  _StableGroundTint("Stable ground tint",Vector)=(1,1,1,1)
   _BaseMap("Painted ground atlas",2D)="white" {} _BaseColor("Tint",Color)=(1,1,1,1)
   _EdgeStart("Edge fade begins",Range(0,1))=.62
   _EdgeBreakup("Irregular edge",Range(0,.2))=.04
@@ -30,7 +32,10 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
    struct A {float4 positionOS:POSITION;float4 color:COLOR;};
    struct V {float4 positionCS:SV_POSITION;float3 world:TEXCOORD0;float edge:TEXCOORD1;float fog:TEXCOORD2;float across:TEXCOORD3;};
    TEXTURE2D(_BaseMap);SAMPLER(sampler_BaseMap);
+   TEXTURE2D(_StableGroundMap);SAMPLER(sampler_StableGroundMap);
+   #include "StableGroundBlend.hlsl"
    CBUFFER_START(UnityPerMaterial)
+   float4 _StableGroundTint; float _StableGroundScale;
    float4 _BaseColor,_Tile;float _TextureScale,_FogStrength,_WheelRuts,_EdgeStart,_EdgeBreakup,_SandBlend;
    CBUFFER_END
    V Vert(A i){V o;o.world=TransformObjectToWorld(i.positionOS.xyz);o.positionCS=TransformWorldToHClip(o.world);o.edge=i.color.r;o.across=i.color.g*2-1;o.fog=ComputeFogFactor(o.positionCS.z);return o;}
@@ -41,6 +46,15 @@ Shader "Arkmon/Courtyard Painted Ground Patch"
     half3 paint=SAMPLE_TEXTURE2D_GRAD(_BaseMap,sampler_BaseMap,at,clamp(ddx(uv)*_Tile.xy,-.002,.002),clamp(ddy(uv)*_Tile.xy,-.002,.002)).rgb*_BaseColor.rgb;
     float grain=dot(paint,float3(.3,.59,.11));
     paint=lerp(paint,float3(.63,.49,.30)*(.72+grain*.75),_SandBlend);
+    if (_StableGroundScale > 0)
+    {
+        float blend = StableGroundBlend(i.world.xz);
+        if (blend > 0)
+        {
+            half3 stablePaint = SAMPLE_TEXTURE2D(_StableGroundMap,sampler_StableGroundMap,i.world.xz*_StableGroundScale).rgb;
+            paint = lerp(paint,stablePaint*_StableGroundTint.rgb,blend);
+        }
+    }
     float irregular=_EdgeBreakup*(.65*sin(i.world.x*2.7+i.world.z*1.6)+.35*sin(i.world.x*8+i.world.z*4))+_WheelRuts*.055*sin(i.world.x*.9+i.world.z*.8);
     float track=exp(-pow((abs(i.across)-.51)/.13,2));
     float worn=.92+.08*sin(i.world.x*.7+i.world.z*.6);

@@ -30,6 +30,7 @@ public class ShootAction : BaseAction
     private float rotationSpeed = 0f;
     private bool canShootBullet;
     private Unit targetUnit;
+    private GridPosition targetCell;
     public Unit TargetUnit => IsActive ? targetUnit : null;
     public int DamageAmount => Definition != null ? Definition.damage : 40;
 
@@ -108,7 +109,8 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        CoverSystem.Apply(unit.GetGridPosition(), targetUnit, DamageAmount, unit.transform);
+        CoverSystem.Apply(unit.GetGridPosition(), targetUnit, DamageAmount, unit.transform,
+            hitCell: targetUnit.IsTrialObjective ? targetCell : null);
     }
 
     public override string GetActionName()
@@ -177,6 +179,7 @@ public class ShootAction : BaseAction
         if (isActive) return;
         if (!IsValidActionGridPosition(gridPosition)) { onActionComplete?.Invoke(); return; }
         targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(gridPosition);
+        targetCell = gridPosition;
 
         state = State.Aiming;
         float aimingStateTime = 1f;

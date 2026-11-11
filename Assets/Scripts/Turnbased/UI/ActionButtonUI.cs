@@ -42,11 +42,17 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             Image icon = PaperUIFactory.Image("Action icon", transform, style.Icon(action),
                 new Vector2(0.22f, 0.43f), new Vector2(0.78f, 0.83f), Vector2.zero, Vector2.zero, false);
             icon.preserveAspect = true;
-            if (action is GuardAction)
+            if (action is GuardAction || action is ShieldWatchAction || action is ShieldBashAction)
             {
                 icon.enabled = false;
                 var shield = PaperUIFactory.Rect("Guard shield", icon.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
                 shield.gameObject.AddComponent<PaperGuardIcon>().raycastTarget = false;
+            }
+            if (action is IceVolleyAction)
+            {
+                icon.enabled = false;
+                var crystals = PaperUIFactory.Rect("Ice crystals", icon.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                crystals.gameObject.AddComponent<PaperIceIcon>().raycastTarget = false;
             }
             textMeshProUGUI = PaperUIFactory.Text("Action name", transform, PaperUIStyle.ActionName(action), 20,
                 new Vector2(0.08f, 0.23f), new Vector2(0.92f, 0.44f), Vector2.zero, Vector2.zero, TextAlignmentOptions.Center);
@@ -76,6 +82,9 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if(unit.IsDead)return "Monster besiegt";
         if(unit.IsKnockedDown && !(action is StandUpAction))return "Zuerst aufstehen";
         if(action is GuardAction && unit.IsGuarding)return "Abwehr schon aktiv";
+        if(action is IceVolleyAction volley && volley.IsRecharging)return "Zapfen wachsen nach";
+        if(action is ShieldWatchAction watch && watch.IsProtecting)return "Schildwache aktiv";
+        if(unit.IsRooted && (action is MoveAction || action is RamAction || action is ShadowStepAction))return "Festgewurzelt";
         if(!unit.CanPerformAction(action))return "Aktion nicht verfügbar";
         if(unit.GetActionPoints()<action.GetActionPointCost())return "Zu wenig AP";
         return "";
@@ -118,6 +127,16 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             : baseAction is ClawAction ? "Ein schneller Krallenhieb ohne Elementarschaden."
             : baseAction is EmberAction ? "Funken treffen 3 Nachbarfelder um Kafla (2 AP, 18 Feuerschaden). Diagonal läuft die Fläche um die Ecke. Auch Verbündete werden getroffen; Holz und Pflanzen entzünden sich."
             : baseAction is GuardAction ? "Wähle dein eigenes Feld: 50 % weniger direkter Schaden bis zum nächsten eigenen Zug. Weitere Aktionen beenden Abwehr."
+            : baseAction is ShieldBashAction ? "12 physischer Schaden auf einem Nachbarfeld."
+            : baseAction is ShieldWatchAction ? "Schützt Panfrie selbst oder einen Nachbarn vor dem nächsten direkten Treffer. Panfrie nimmt den halben Schaden."
+            : baseAction is IceVolleyAction ? "16 Eisschaden bis zu 3 Felder weit. Das Ziel läuft im nächsten Zug ein Feld weniger. Die Zapfen wachsen nach einem eigenen Zug nach."
+            : baseAction is RoseThrustAction ? "12 Schaden bis zu zwei Felder weit."
+            : baseAction is ThornVineAction ? "10 Schaden bis zu drei Felder weit. Das Ziel kann sich im nächsten Zug nicht bewegen."
+            : baseAction is RoseLightAction ? "Heilt Liora oder einen Verbündeten bis zu drei Felder weit um bis zu 18 LP."
+            : baseAction is DaggerStrikeAction ? "12 Schaden, von hinten oder mit einem Verbündeten gegenüber zusätzlich 6 Schaden."
+            : baseAction is FeatherThrowAction ? "8 Schaden bis zu vier Felder weit."
+            : baseAction is ShadowStepAction ? "Versetzt Rauk auf ein freies, gelb markiertes Schattenfeld."
+            : baseAction is MoveAction && baseAction.GetUnit().Definition?.canGlide == true ? "Rauk gleitet über niedrige Hindernisse. Das übersprungene Feld zählt doppelt."
             : baseAction is StandUpAction ? "Richte dein Monster auf: Wähle sein eigenes Feld."
             : baseAction is MoveAction ? "Wähle ein erreichbares Feld, um dein Monster zu bewegen."
             : baseAction is EscapeAction ? "Rufe dein Team zurück und verlasse den Kampf."

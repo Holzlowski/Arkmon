@@ -38,7 +38,7 @@ public sealed class CourtyardStableStyle : MonoBehaviour
         style.Patch("Hay rack scattered straw",new Vector3(-.65f,0,-2.82f),new Vector2(1.10f,.58f),"Stable straw earth",.050f);
         style.Patch("Horse stall straw bedding",new Vector3(-1.55f,.35f,-.8f),new Vector2(1.45f,1.1f),"Stable straw earth",.016f);
         style.Patch("Spare stall straw bedding",new Vector3(1.7f,.35f,-.7f),new Vector2(1.3f,1.0f),"Stable straw earth",.016f);
-        style.Patch("Grooming hoof ground",new Vector3(2.05f,0,-3.85f),new Vector2(1.15f,.65f),"Stable earth",.052f);
+
         style.Patch("Trough worn approach",new Vector3(4.15f,0,-1.65f),new Vector2(.95f,1.1f),"Stable earth",.044f);
         var shader=Resources.Load<Shader>("CourtyardFarmContact");
         if(shader!=null)

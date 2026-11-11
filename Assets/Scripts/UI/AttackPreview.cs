@@ -25,11 +25,18 @@ public class AttackPreview : MonoBehaviour
         if (action == null || !action.IsValidActionGridPosition(cell)) return "";
         if (action is EmberAction fan) return DescribeFan(fan, cell);
         Unit attacker = action.GetUnit(); Unit target = LevelGrid.Instance.GetUnitOnGridPosition(cell);
-        int raw = action is MeleeAttackAction melee ? melee.DamageAmount : action is RamAction ram ? ram.DamageAmount
+        int raw = action is MeleeAttackAction melee ? melee.DamageAt(cell) : action is RamAction ram ? ram.DamageAmount
             : action is EmberAction ember ? ember.DamageAmount : action is ShootAction shoot ? shoot.DamageAmount : 0;
         string cost = $"{action.GetActionName()} · {action.GetActionPointCost()} AP";
         if (action is GuardAction) return cost + "\n50 % weniger direkter Schaden bis zum nächsten eigenen Zug. Eine weitere Aktion beendet Abwehr.";
+        if (action is ShieldWatchAction) return cost + "\nPanfrie fängt den nächsten direkten Treffer ab und erleidet halben Schaden.";
         if (action is StandUpAction) return cost + "\nDein Monster steht auf und kann wieder handeln.";
+        if (action is RoseLightAction heal && target != null)
+        {
+            var health = target.GetComponent<HealthSystem>();
+            return cost + $"\n{PaperUIStyle.MonsterName(target)}: +{Mathf.Min(heal.Healing,health.MaxHealth-health.Health)} LP";
+        }
+        if (action is ShadowStepAction) return cost + "\nRauk versetzt sich auf dieses Schattenfeld.";
         if (raw == 0) return "";
         BurningObstacle obstacle = target == null ? CoverSystem.ObstacleAt(cell) : null;
         int damage = target != null ? target.PreviewDamage(raw, true) : raw;
@@ -59,6 +66,9 @@ public class AttackPreview : MonoBehaviour
                 : $" · Stoß nach ({pushed.x}, {pushed.z}); Angreifer übernimmt das Zielfeld";
             details += "\nBlau: Endposition des Angreifers · Violett: geschobenes Ziel · Grau: blockiert";
         }
+        if (target != null && action is ThornVineAction) details += " · Im nächsten Zug festgewurzelt";
+        if (target != null && action is DaggerStrikeAction dagger && raw > dagger.DamageAmount) details += " · +6 durch Position";
+        if (target != null && action is IceVolleyAction) details += " · Nächster Zug: −1 Feld Laufweite";
         if (target != null && target.IsGuarding) details += " · Abwehr aktiv";
         return cost + "\n" + details + (attacker.CanSpendActionPointsToTakeAction(action) ? "" : " · Zu wenig AP");
     }

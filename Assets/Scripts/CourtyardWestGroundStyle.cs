@@ -100,7 +100,7 @@ public sealed class CourtyardWestGroundStyle : MonoBehaviour
     }
     void Doorways(Transform workshop)
     {
-        Patch("Worn tower stair approach",new Vector3(-34,0,4.55f),2.65f,.85f,earth,1);
+        Patch("Worn tower stair approach",new Vector3(-34,0,3.75f),2.65f,.65f,earth,1);
         Patch("Worn workshop entrance",workshop.TransformPoint(new Vector3(1.6f,0,-2.75f)),.85f,1.1f,earth,2);
         Patch("Worn carpenter standing place",workshop.TransformPoint(new Vector3(-2.0f,0,-4.65f)),1.4f,.85f,earth,3);
     }

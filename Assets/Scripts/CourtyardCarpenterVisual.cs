@@ -19,6 +19,12 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
     public bool IsInspecting { get; private set; }
     public DialogueEmotion CurrentEmotion { get; private set; }
 
+    internal void ReactToVessel()
+    {
+        CurrentEmotion = DialogueEmotion.Friendly;
+        reactionTime = 0;
+    }
+
     private void OnEnable()
     {
         DialogueBoxController.OnDialogueStarted+=BeginConversation;
@@ -118,9 +124,11 @@ public sealed class CourtyardCarpenterVisual : MonoBehaviour
                 illustration.flipX=player.position.x<transform.position.x;
         }
         reactionTime+=Time.deltaTime;
-        float wave=engaged?Mathf.Sin(Mathf.Clamp01(reactionTime/.6f)*Mathf.PI):0;
+        float wave=Mathf.Sin(Mathf.Clamp01(reactionTime/.6f)*Mathf.PI);
         float breath=Mathf.Sin(Time.time*1.9f)*.005f;
+        float lift=CurrentEmotion==DialogueEmotion.Friendly?(engaged?.035f:.095f):.015f;
         paper.localScale=new Vector3(1-breath*.3f,1+breath-wave*.012f,1);
-        paper.localPosition=Vector3.up*(wave*(CurrentEmotion==DialogueEmotion.Friendly?.035f:.015f));
+        paper.localPosition=Vector3.up*(wave*lift);
+        if(!engaged && reactionTime>=.6f)CurrentEmotion=DialogueEmotion.Neutral;
     }
 }

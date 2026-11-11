@@ -44,6 +44,14 @@ public sealed class CourtyardResidentPlaces : MonoBehaviour
         Rail(yard,new Vector3(-16.5f,0,-.2f),new Vector3(-16.5f,0,1.0f),.95f);
         Rail(yard,new Vector3(-16.5f,0,4.8f),new Vector3(-16.5f,0,6.1f),.95f);
         Patch(yard,"Paddock hoof worn ground",new Vector3(-19.4f,0,2.7f),2.7f,2.8f,earth);
+        var hay=Resources.Load<Sprite>("StableCare/Hay");
+        if(hay!=null)
+        {
+            var go=new GameObject("Paddock fresh hay",typeof(SpriteRenderer));go.transform.SetParent(yard,false);
+            go.transform.position=Ground(new Vector3(-21.4f,0,3.95f));
+            go.transform.rotation=Camera.main!=null?Camera.main.transform.rotation:Quaternion.identity;
+            go.transform.localScale=Vector3.one*1.9f;go.GetComponent<SpriteRenderer>().sprite=hay;
+        }
         var straw=Resources.Load<Material>("CourtyardStyle/Stable straw earth");
         if(straw!=null)Patch(yard,"Paddock feeding straw",new Vector3(-21.5f,0,4.5f),.85f,.55f,straw);
         // A feeding rack and a low water trough explain the enclosure even when both horses are being cared for.

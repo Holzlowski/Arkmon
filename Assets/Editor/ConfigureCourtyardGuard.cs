@@ -5,6 +5,7 @@ using UnityEngine;
 public static class ConfigureCourtyardGuard
 {
     private const string Folder="Assets/Art/Intro/CharacterStyle/";
+    internal const string FaceVariantPath="Assets/Scenes/AnimationStudies/Guard narrower jaw.asset";
     [MenuItem("Arkmon/Import courtyard guard art and patrol")]
     public static void Run()
     {
@@ -38,10 +39,10 @@ public static class ConfigureCourtyardGuard
     }
     private static CourtyardGuardRoute.Stop Stop(float x,float z,float wait=0,bool left=false)=>
         new CourtyardGuardRoute.Stop{position=new Vector3(x,0,z),wait=wait,lookLeft=left};
-    private static void ImportRig()
+    public static void ImportRig()
     {
         string path=Folder+"Guard puppet.png";
-        CourtyardCharacterArt.Texture(path);
+        CourtyardCharacterArt.Texture(path,preserveDimensions:true);
         var importer=(TextureImporter)AssetImporter.GetAtPath(path);
         importer.isReadable=true;importer.filterMode=FilterMode.Bilinear;importer.SaveAndReimport();
         var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(path);var pixels=texture.GetPixels32();
@@ -64,7 +65,21 @@ public static class ConfigureCourtyardGuard
             if(i==3 || i==4)FitLegOutline(sprite,texture,pixels,rect);
         }
         importer.isReadable=false;importer.SaveAndReimport();
+        ImportFaceVariant();
+        AssetDatabase.SaveAssets();
     }
+
+    internal static Sprite ImportFaceVariant()
+    {
+        var original=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/Guard/Body.asset");
+        var texture=CourtyardCharacterArt.Texture(Folder+"Guard narrower jaw review.png",preserveDimensions:true);
+        // The registered crop starts at source x = 162 and shares the top edge of the atlas.
+        var rect=original.rect;
+        rect.position-=new Vector2(162,original.texture.height-texture.height);
+        var pivot=new Vector2(original.pivot.x/rect.width,original.pivot.y/rect.height);
+        return CourtyardCharacterArt.Sprite(texture,rect,pivot,original.pixelsPerUnit,FaceVariantPath,"Guard narrower jaw");
+    }
+
     private static void FitLegOutline(Sprite sprite,Texture2D texture,Color32[] pixels,Rect rect)
     {
         // A convex alpha outline gives the runtime real boot contacts, not empty rectangle corners.

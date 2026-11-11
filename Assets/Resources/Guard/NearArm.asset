@@ -9,17 +9,17 @@ Sprite:
   m_Name: Guard-NearArm
   m_Rect:
     serializedVersion: 2
-    x: 906
+    x: 679
     y: 525
-    width: 247
+    width: 186
     height: 461
-  m_Offset: {x: 37.05005, y: 184.40002}
+  m_Offset: {x: 27.900024, y: 184.40002}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 426.85184
   m_Pivot: {x: 0.65, y: 0.9}
   m_Extrude: 0
   m_IsPolygon: 0
-  m_PackingTag:
+  m_PackingTag: 
   m_RenderDataKey:
     84be898e8b20c254a968ca848743265f: 21300000
   m_AtlasTags: []
@@ -102,18 +102,18 @@ Sprite:
         format: 0
         dimension: 0
       m_DataSize: 80
-      _typelessdata: 9493c0be132fdd3d00000000cf634f3e132fdd3d000000009493c0beffd478bf00000000cf634f3effd478bf000000000000000000000000000000000000000000000000000000000000000000000000
+      _typelessdata: 600491be132fdd3d00000000132c1c3e132fdd3d00000000600491beffd478bf00000000132c1c3effd478bf000000000000000000000000000000000000000000000000000000000000000000000000
     m_Bindpose: []
     textureRect:
       serializedVersion: 2
-      x: 906
+      x: 679
       y: 525
-      width: 247
+      width: 186
       height: 461
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 0
-    uvTransform: {x: 426.85184, y: 1066.55, z: 426.85184, w: 939.9}
+    uvTransform: {x: 426.85184, y: 799.9, z: 426.85184, w: 939.9}
     downscaleMultiplier: 1
   m_AtlasRD:
     serializedVersion: 3
@@ -193,20 +193,20 @@ Sprite:
         format: 0
         dimension: 0
       m_DataSize: 80
-      _typelessdata: 9493c0be132fdd3d00000000cf634f3e132fdd3d000000009493c0beffd478bf00000000cf634f3effd478bf000000000000000000000000000000000000000000000000000000000000000000000000
+      _typelessdata: 600491be132fdd3d00000000132c1c3e132fdd3d00000000600491beffd478bf00000000132c1c3effd478bf000000000000000000000000000000000000000000000000000000000000000000000000
     m_Bindpose: []
     textureRect:
       serializedVersion: 2
-      x: 906
+      x: 679
       y: 525
-      width: 247
+      width: 186
       height: 461
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 0
-    uvTransform: {x: 426.85184, y: 1066.55, z: 426.85184, w: 939.9}
+    uvTransform: {x: 426.85184, y: 799.9, z: 426.85184, w: 939.9}
     downscaleMultiplier: 1
   m_PhysicsShape: []
   m_Bones: []
   m_ScriptableObjects: []
-  m_SpriteID:
+  m_SpriteID: 

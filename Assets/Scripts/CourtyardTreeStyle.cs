@@ -69,6 +69,15 @@ public sealed class CourtyardTreeStyle : MonoBehaviour
         tree.transform.localScale = Vector3.one * (height / sprite.bounds.size.y);
         var renderer = tree.GetComponent<SpriteRenderer>(); renderer.sprite = sprite; renderer.sharedMaterial = paper;
         added.Add(tree.transform);
+        if (label == "Garden apple tree")
+        {
+            var trunk = new GameObject("Garden apple trunk collision", typeof(CapsuleCollider));
+            trunk.transform.SetParent(transform, false);
+            trunk.transform.position = point;
+            var collider = trunk.GetComponent<CapsuleCollider>();
+            collider.direction = 1; collider.radius = .38f; collider.height = 1.8f;
+            collider.center = Vector3.up * .9f;
+        }
     }
     void LateUpdate()
     {

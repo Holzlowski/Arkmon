@@ -23,9 +23,9 @@ public sealed class CourtyardStableCare : MonoBehaviour
         }
         var rail=stable.Find("Stable tack rail");
         if(rail!=null)rail.localPosition=new Vector3(-4.1f,0,-1.7f);
-        care.Prop("Hanging stable bridle","Bridle",new Vector3(3.38f,1.05f,-2.08f),false);
+        care.Prop("Hanging stable bridle","Bridle",new Vector3(2.8f,1.05f,-1.65f),false);
         care.Prop("Stable grooming caddy","Caddy",new Vector3(.20f,.02f,-2.65f),true);
-        care.Prop("Stable water bucket","Bucket",new Vector3(4.55f,.02f,-1.85f),true);
+        care.Prop("Stable water bucket","Bucket",new Vector3(4.55f,.02f,-1.85f),false);
         care.Prop("Spare golden hay","Hay",new Vector3(-2.3f,.02f,-2.65f),true);
         foreach(var horse in stable.GetComponentsInChildren<CourtyardHorse>())
         {

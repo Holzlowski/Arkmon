@@ -2,6 +2,11 @@ public static class GuardConversation
 {
     public static void Open(DialogueBoxController dialogue)
     {
+        if (ArkanmeisterinArrival.Arrived)
+        {
+            dialogue.ShowMessage("Die Kutsche steht sicher. Ich hole kurz Luft und mache dann meine Runde weiter.",CourtyardGuard.Speaker);
+            return;
+        }
         dialogue.ShowConversation(new[]{new DialogueSection{
             dialogue=new[]{
                 "Guten Morgen, Prinz Elian! Schon unterwegs? Schön, Euch im Hof zu sehen.",

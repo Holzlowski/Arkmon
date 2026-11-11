@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -13,19 +14,52 @@ public class Unit : MonoBehaviour
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyKnockdownChanged;
     public bool IsKnockedDown { get; private set; }
+    internal bool IsTrialObjective => trialCells != null;
+    private GridPosition[] trialCells;
+
+    internal void SetTrialCells(GridPosition[] cells) => trialCells = cells;
+
+    internal IEnumerable<GridPosition> OccupiedCells()
+    {
+        if (trialCells == null) yield return gridPosition;
+        else
+            foreach (var cell in trialCells) yield return cell;
+    }
+
+    internal bool IsWithinGridRange(GridPosition origin, int range)
+    {
+        foreach (var cell in OccupiedCells())
+            if (Mathf.Max(Mathf.Abs(origin.x - cell.x), Mathf.Abs(origin.z - cell.z)) <= range)
+                return true;
+        return false;
+    }
     public bool IsGuarding { get; private set; }
     public void SetGuarding(bool guarding) { IsGuarding = guarding && !IsDead && !IsKnockedDown; }
-    public int PreviewDamage(int damage, bool direct) => Mathf.Max(0,
-        IsGuarding && direct ? Mathf.CeilToInt(damage * .5f) : damage);
+    internal ShieldWatchAction ShieldCover { get; set; }
+    private int chillEndsAt, rootEndsAt;
+    public bool IsRooted => TurnSystem.Instance != null && TurnSystem.Instance.GetTurnNumber() < rootEndsAt;
+    internal void ApplyRoot() => rootEndsAt = TurnSystem.Instance.GetTurnNumber() + 2;
+    public bool IsChilled => TurnSystem.Instance != null && TurnSystem.Instance.GetTurnNumber() < chillEndsAt;
+    internal void ApplyChill() => chillEndsAt = TurnSystem.Instance.GetTurnNumber() + 2;
 
-    public bool CanPerformAction(BaseAction action) => !IsDead && enabled
+    public int PreviewDamage(int damage, bool direct)
+    {
+        if (direct && ShieldCover != null && ShieldCover.CanIntercept(this))
+            return ShieldCover.GetUnit() == this ? Mathf.CeilToInt(Mathf.Max(0, damage) * .5f) : 0;
+        return Mathf.Max(0, IsGuarding && direct ? Mathf.CeilToInt(damage * .5f) : damage);
+    }
+
+    public bool CanPerformAction(BaseAction action) => !IsTrialObjective && !IsDead && enabled
         && action != null && action.enabled
         && !(action is GuardAction && IsGuarding)
+        && !(action is IceVolleyAction volley && volley.IsRecharging)
+        && !(IsRooted && (action is MoveAction || action is RamAction || action is ShadowStepAction))
+        && !(action is ShieldWatchAction watch && watch.IsProtecting)
         && (IsKnockedDown ? action is StandUpAction : !(action is StandUpAction));
 
     public void SetKnockedDown(bool knockedDown)
     {
-        if (IsDead || IsKnockedDown == knockedDown) return;
+        if (IsTrialObjective || IsDead || IsKnockedDown == knockedDown) return;
         IsKnockedDown = knockedDown;
         if (knockedDown) { isInAttackSelection = false; SetGuarding(false); }
         OnAnyKnockdownChanged?.Invoke(this, EventArgs.Empty);
@@ -63,7 +97,8 @@ public class Unit : MonoBehaviour
     {
         if (GetComponent<PaperHitFeedback>() == null) gameObject.AddComponent<PaperHitFeedback>();
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
+        foreach (var cell in OccupiedCells())
+            LevelGrid.Instance.AddUnitAtGridPosition(cell, this);
 
         //Shift - F12(Windows).This will show you all references(within your solution) to that event
         subscribedTurnSystem = TurnSystem.Instance;
@@ -75,12 +110,12 @@ public class Unit : MonoBehaviour
 
     void Update()
     {
-        SyncGridPosition();
+        if (!IsTrialObjective && (definition == null || !definition.canGlide || GetAction<MoveAction>()?.IsGliding != true)) SyncGridPosition();
     }
 
     public void MoveToWorldPosition(Vector3 worldPosition)
     {
-        if (IsDead) return;
+        if (IsTrialObjective || IsDead) return;
         transform.position = worldPosition;
         SyncGridPosition();
     }
@@ -206,15 +241,26 @@ public class Unit : MonoBehaviour
         {
             actionPoints = MaxActionPoints;
             SetGuarding(false);
+            GetAction<ShieldWatchAction>()?.ClearProtection();
 
             OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
         }
 
     }
 
+    internal void RetireDemonstration()
+    {
+        foreach (var cell in OccupiedCells())
+            LevelGrid.Instance.RemoveUnitAtGridPosition(cell, this);
+        gameObject.SetActive(false);
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+        Destroy(gameObject);
+    }
+
     private void HealthSystem_OnDead(object sender, Transform e)
     {
-        LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
+        foreach (var cell in OccupiedCells())
+            LevelGrid.Instance.RemoveUnitAtGridPosition(cell, this);
         actionPoints = 0;
         SetGuarding(false);
         foreach (BaseAction action in baseActionArray) action.enabled = false;
@@ -235,6 +281,13 @@ public class Unit : MonoBehaviour
 
     public void Damage(int damage, Transform damageSource = null)
     {
+        if (damage > 0 && damageSource != null && ShieldCover != null && ShieldCover.CanIntercept(this))
+        {
+            var protector = ShieldCover.GetUnit();
+            ShieldCover.ClearProtection();
+            protector.healthSystem.Damage(Mathf.CeilToInt(damage * .5f), damageSource);
+            return;
+        }
         healthSystem.Damage(PreviewDamage(damage, damageSource != null), damageSource);
     }
 

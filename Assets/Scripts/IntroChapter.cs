@@ -23,6 +23,7 @@ public class IntroChapter : MonoBehaviour
         {
             CourtyardScenicMorning.Install();
             CourtyardGardenPlace.PrepareBeds();
+            CourtyardTowerGround.PrepareTerrain();
             CourtyardEastGroundStyle.PrepareTerrain();
             CourtyardResidentPlaces.Install();
             CourtyardGarden.Install();
@@ -72,9 +73,18 @@ public class IntroChapter : MonoBehaviour
             CourtyardBreachSunrays.Install();
             CourtyardNearView.Install();
             CourtyardFeedbackPolish.Install();
+            CourtyardWaterTask.Install();
+            CourtyardWell.Install();
+            CourtyardPanfrie.Install();
+            CourtyardKafla.Install();
+            CourtyardRauk.Install();
+            CourtyardLiora.Install();
+            CourtyardHandleDelivery.Install();
+            gameObject.AddComponent<CourtyardItemIndicator>();
+            ArkanmeisterinArrival.Install(transform);
         }
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    public static void ResetProgress() { Active = false; HasFamilyOutfit = false;roomReturn=false; TowerScene="TowerRoom"; CourtyardGarden.ResetProgress(); }
+    public static void ResetProgress() { Active = false; HasFamilyOutfit = false;roomReturn=false; TowerScene="TowerRoom"; CourtyardGarden.ResetProgress(); CourtyardHandleDelivery.ResetProgress(); CourtyardWaterTask.ResetProgress(); CourtyardTaskFeedback.Reset(); ArkanmeisterinArrival.ResetProgress(); }
     public static void EquipFamilyOutfit() => HasFamilyOutfit = true;
 }

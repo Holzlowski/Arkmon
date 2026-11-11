@@ -23,6 +23,7 @@ public class UnitWorldUI : MonoBehaviour
         phase = gameObject.AddComponent<CanvasGroup>();
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
         healthSystem.OnDamage += HealthSystem_OnDamaged;
+        healthSystem.OnHeal += HealthSystem_OnDamaged;
         UpdateActionPoints();
         UpdateHealthBar();
     }
@@ -100,6 +101,10 @@ public class UnitWorldUI : MonoBehaviour
     private void OnDestroy()
     {
         Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
-        if (healthSystem != null) healthSystem.OnDamage -= HealthSystem_OnDamaged;
+        if (healthSystem != null)
+        {
+            healthSystem.OnDamage -= HealthSystem_OnDamaged;
+            healthSystem.OnHeal -= HealthSystem_OnDamaged;
+        }
     }
 }

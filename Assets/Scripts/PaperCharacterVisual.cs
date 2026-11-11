@@ -38,26 +38,55 @@ public class PaperCharacterVisual : MonoBehaviour
     private float hitRemaining;
     private float outfitProgress = -1;
     private float wakeProgress = -1;
+    private bool presentationHidden;
+    public void SetPresentationHidden(bool hidden)
+    {
+        presentationHidden=hidden;
+        if(hidden){playerWalkRig?.Hide();gardenRig?.Hide();}
+        if(spriteRenderer!=null)spriteRenderer.forceRenderingOff=hidden;
+    }
     private PlayerController playerController;
     private Sprite[] roomWalk, mantleWalk, roomNoLampWalk, mantleNoLampWalk, familyWalk;
     private float travelled;
     [SerializeField, Min(.2f)] private float walkStrideLength = 2.4f;
     private PaperPlayerWalkRig playerWalkRig;
+    private Transform arrivalLookTarget, trialLookTarget;
+    private Sprite vesselTrialPose;
+    private Vector2 vesselTrialGem;
+    internal Vector3 VesselTrialOrigin => paperPivot != null
+        ? paperPivot.TransformPoint(new Vector3(spriteRenderer != null && spriteRenderer.flipX ? -vesselTrialGem.x : vesselTrialGem.x,vesselTrialGem.y,-.045f))
+        : transform.position+Vector3.up;
+
+    internal void SetVesselTrialPose(Sprite pose, Vector2? gem = null)
+    {
+        vesselTrialPose = pose;
+        vesselTrialGem = gem ?? new Vector2(.27f,1.07f);
+        if (spriteRenderer != null) spriteRenderer.sprite = pose != null ? pose : restingSprite;
+    }
+
+    internal void SetArrivalReaction(Transform target) => arrivalLookTarget = target;
+    internal void SetTrialLookTarget(Transform target) => trialLookTarget = target;
     private PaperPlayerGardenRig gardenRig;
     private SpriteRenderer gardenCan;
-    private float gardenBend, gardenTilt, gardenReach;
+    private float gardenBend, gardenTilt, gardenReach, gardenSupport;
     private bool gardenAttached;
+    private Vector3? gardenContact, gardenGrip;
     public Vector3 GardenHandPosition => gardenRig != null ? gardenRig.HandPosition : transform.position;
-    public void SetGardenPose(SpriteRenderer can, bool attached, float bend = 0, float tilt = 0, float reach = 1)
+    public Vector3 GardenSupportHandPosition => gardenRig != null ? gardenRig.SupportHandPosition : transform.position;
+    public void SetGardenPose(SpriteRenderer can, bool attached, float bend = 0, float tilt = 0, float reach = 1, Vector3? contact = null, Vector3? grip = null,float support = 0)
     {
         gardenCan = can; gardenAttached = attached;
-        gardenBend = bend; gardenTilt = tilt; gardenReach = reach;
+        gardenBend = bend; gardenTilt = tilt; gardenReach = reach; gardenContact = contact; gardenGrip = grip; gardenSupport=support;
         if (can != null && gardenRig == null && spriteRenderer != null)
             gardenRig = new PaperPlayerGardenRig(paperPivot, spriteRenderer);
-        if (can == null) { gardenRig?.Hide(); if(spriteRenderer != null) spriteRenderer.forceRenderingOff = false; }
+        if (can == null) { gardenRig?.Hide(); if(spriteRenderer != null) spriteRenderer.forceRenderingOff = presentationHidden || playerWalkRig!=null && playerWalkRig.Visible; }
     }
     public bool IsPlayingWalkCycle { get; private set; }
-    public void SetWakeUpProgress(float progress) => wakeProgress = progress;
+    public void SetWakeUpProgress(float progress)
+    {
+        if(progress>=0 && wakeProgress<0){walkWeight=0;travelled=0;}
+        wakeProgress=progress;
+    }
     public void SetOutfitChangeProgress(float progress) => outfitProgress = progress;
     public void PlayHitReaction() => hitRemaining = .22f;
 
@@ -109,6 +138,7 @@ public class PaperCharacterVisual : MonoBehaviour
     private void LateUpdate()
     {
         if (paperPivot == null || !paperPivot.gameObject.activeInHierarchy) return;
+        if(presentationHidden){playerWalkRig?.Hide();gardenRig?.Hide();if(spriteRenderer!=null)spriteRenderer.forceRenderingOff=true;return;}
         if (IsDefeated)
         {
             playerWalkRig?.Hide();
@@ -129,7 +159,7 @@ public class PaperCharacterVisual : MonoBehaviour
         Vector3 movement = transform.position - previousPosition;
         movement.y = 0f;
         bool walking = movement.sqrMagnitude > 0.000001f;
-        if(playerController != null) walking = playerController.isActiveAndEnabled && playerController.IsMoving;
+        if(playerController != null) walking = playerController.IsScriptedMoving || playerController.isActiveAndEnabled && playerController.IsMoving;
         UpdateWalkFrame(walking, movement.magnitude);
         bool idle = !walking;
         previousPosition = transform.position;
@@ -137,10 +167,12 @@ public class PaperCharacterVisual : MonoBehaviour
         idleWeight = Mathf.MoveTowards(idleWeight, idle ? 1f : 0f, Time.deltaTime * 6f);
         phase += Time.deltaTime * Mathf.PI * 2f / cycleDuration;
         walkWeight = Mathf.MoveTowards(walkWeight, walking ? 1f : 0f, Time.deltaTime * 10f);
-        if(playerController != null)walkWeight=walking?1:0;
+
         walkPhase += Time.deltaTime * Mathf.PI * 2f / walkCycleDuration;
         float wave = Mathf.Sin(phase) * idleWeight;
-        float step = IsPlayingWalkCycle ? 0f : Mathf.Abs(Mathf.Sin(walkPhase)) * walkWeight;
+        bool continuousPlayer=playerController!=null && playerWalkRig!=null && playerWalkRig.Available && restingSprite!=null
+            && (restingSprite.name=="Prince-Family" || restingSprite.name=="Prince-Room-NoLamp");
+        float step = continuousPlayer || IsPlayingWalkCycle ? 0f : Mathf.Abs(Mathf.Sin(walkPhase)) * walkWeight;
         paperPivot.localPosition = restPosition + Vector3.up * visualScale
             * ((wave + idleWeight) * 0.5f * bobHeight + step * walkHeight * (IsPlayingWalkCycle ? .2f : 1));
         paperPivot.localScale = Vector3.Scale(restScale * visualScale,
@@ -176,26 +208,40 @@ public class PaperCharacterVisual : MonoBehaviour
         {
             // Match the camera's image plane: no yaw toward targets and no rocking.
             paperPivot.rotation = camera.transform.rotation;
-            Vector3 direction = unit != null ? GetOpponentDirection() : movement;
+            var facingTarget = arrivalLookTarget != null ? arrivalLookTarget : trialLookTarget;
+            Vector3 direction = facingTarget != null ? facingTarget.position-transform.position
+                : unit == null ? movement : BattleDeployment.Instance?.HasGlider == true ? transform.forward : GetOpponentDirection();
             float horizontal = Vector3.Dot(direction, camera.transform.right);
-            if (spriteRenderer != null && wakeProgress < 0 && Mathf.Abs(horizontal) > 0.025f)
+            if (spriteRenderer != null && wakeProgress < 0 && !(gardenCan != null && (gardenContact.HasValue || CourtyardWaterTask.IsBusy || CourtyardGarden.IsBusy)) && Mathf.Abs(horizontal) > 0.025f)
                 spriteRenderer.flipX = horizontal < 0f;
         }
         bool rigOutfit = restingSprite != null && (restingSprite.name == "Prince-Family" || restingSprite.name == "Prince-Room-NoLamp");
-        playerWalkRig?.Present(gardenCan == null && IsPlayingWalkCycle && rigOutfit && !summoningPose,
+        playerWalkRig?.Present(gardenCan == null && rigOutfit && !summoningPose && vesselTrialPose == null,
             restingSprite != null && restingSprite.name == "Prince-Family", spriteRenderer != null && spriteRenderer.flipX,
-            travelled / walkStrideLength * Mathf.PI * 2);
+            travelled / walkStrideLength * Mathf.PI * 2, walking, walkWeight, arrivalLookTarget != null);
         if (gardenCan != null && !summoningPose && gardenRig != null)
             gardenRig.Present(restingSprite != null && restingSprite.name == "Prince-Family",
                 spriteRenderer.flipX, walking, travelled / walkStrideLength * Mathf.PI * 2,
-                gardenBend, gardenTilt, gardenReach, gardenCan, gardenAttached);
+                gardenBend, gardenTilt, gardenReach, gardenCan, gardenAttached, gardenContact, gardenGrip, walkWeight, gardenSupport);
         else gardenRig?.Hide();
+        AlignGroundedPaper();
+    }
+    void AlignGroundedPaper()
+    {
+        if(playerController==null || wakeProgress>=0 || outfitProgress>=0 || DemoOpening.IsPresenting)return;
+        var rb=GetComponent<Rigidbody>();if(playerController.HasActiveJump || rb!=null && !rb.isKinematic && rb.linearVelocity.y< -3f)return;
+        float floor=float.NegativeInfinity;
+        foreach(var hit in Physics.RaycastAll(transform.position+Vector3.up*.3f,Vector3.down,2.0f,~0,QueryTriggerInteraction.Ignore))
+            if(hit.collider.CompareTag("Ground") && !hit.transform.IsChildOf(transform) && hit.normal.y>.55f)floor=Mathf.Max(floor,hit.point.y);
+        if(float.IsNegativeInfinity(floor))return;
+        float offset=floor-paperPivot.position.y;
+        if(Mathf.Abs(offset)<.45f)paperPivot.position+=Vector3.up*offset;
     }
 
     private void UpdateWalkFrame(bool walking, float distance)
     {
         IsPlayingWalkCycle = false;
-        if(playerController == null || spriteRenderer == null || summoningPose || restingSprite == null) return;
+        if(playerController == null || spriteRenderer == null || summoningPose || vesselTrialPose != null || restingSprite == null) return;
         bool rigAvailable = playerWalkRig != null && playerWalkRig.Available
             && (restingSprite.name == "Prince-Family" || restingSprite.name == "Prince-Room-NoLamp");
         Sprite[] frames = restingSprite.name == "Prince-Family" ? familyWalk
@@ -204,7 +250,7 @@ public class PaperCharacterVisual : MonoBehaviour
             : restingSprite.name == "Prince-Mantle-NoLamp" ? mantleNoLampWalk
             : restingSprite.name == "Prince-Room-NoLamp" ? roomNoLampWalk : null;
         if(!walking || (!rigAvailable && (frames == null || frames.Length == 0)) || wakeProgress >= 0 || outfitProgress >= 0)
-        { travelled = 0; spriteRenderer.sprite = restingSprite; return; }
+        { spriteRenderer.sprite = restingSprite; return; }
         // Distance-based steps stop at walls and do not keep running after key release.
         // Reject scene/spawn teleports; the phase follows real distance, not fixed-tick cadence.
         if(distance < .5f) travelled += distance;
@@ -246,6 +292,12 @@ public class PaperCharacterVisual : MonoBehaviour
             ? "John-Summoning" : "Player-Summoning") : restingSprite;
         if (pose != null) spriteRenderer.sprite = pose;
         summoningPose = active && pose != null;
+    }
+
+    internal void SetBattleTrainerPivot(Transform pivot, Vector3 vesselOffset)
+    {
+        paperPivot = pivot;
+        summonOffset = vesselOffset;
     }
 
     public void SetRestingSprite(Sprite sprite)
