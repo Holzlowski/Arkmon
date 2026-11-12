@@ -70,6 +70,8 @@ public class SceneLoadManager : MonoBehaviour
         if (battleSpeaker == ArkanmeisterinConversation.Speaker)
         {
             CourtyardStarterMeetings.FieldTrialWon = result == UnitManager.BattleState.Won;
+            var mentor = FindFirstObjectByType<ArkanmeisterinArrival>();
+            if (CourtyardStarterMeetings.FieldTrialWon && mentor != null && mentor.BeginPartnerChoice(true)) return;
             DialogueBoxController.instance.ShowMessage(CourtyardStarterMeetings.FieldTrialWon
                 ? "Gut gemacht, Elian. Gemeinsam habt Ihr das Siegel beschützt."
                 : "Sammelt Euch kurz. Wenn Ihr bereit seid, versuchen wir es erneut.",battleSpeaker);

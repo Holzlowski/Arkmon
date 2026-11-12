@@ -15,10 +15,28 @@ internal static class CourtyardStarterMeetings
     internal static bool FieldTrialWon { get; set; }
     internal static bool RecalledForTrial { get; set; }
     internal static bool AtTrialField { get; set; }
-    internal static void ResetProgress() { met = 0; FieldTrialWon = RecalledForTrial = AtTrialField = false; }
+    internal static Starter? ChosenPartner { get; private set; }
+    internal static bool PartnerBound { get; set; }
+    internal static bool HasKeeperMantle { get; set; }
+    internal static bool ConfirmPartner(Starter starter)
+    {
+        if (!FieldTrialWon || ChosenPartner.HasValue || !Enum.IsDefined(typeof(Starter), starter)) return false;
+        ChosenPartner = starter;
+        return true;
+    }
+
+    internal static void ResetProgress()
+    {
+        met = 0;
+        FieldTrialWon = RecalledForTrial = AtTrialField = false;
+        ChosenPartner = null;
+        PartnerBound = HasKeeperMantle = false;
+    }
 
     internal static string Objective => !CourtyardStarterSummoning.Completed ? null
-        : FieldTrialWon ? "Letzte Prüfung · Siegel beschützt"
+        : PartnerBound ? "Arkanbund · " + ChosenPartner.Value + " ist Elians Partner"
+        : ChosenPartner.HasValue ? "Arkanbund · Sprecht mit der Arkanmeisterin"
+        : FieldTrialWon ? "Partnerwahl · Wählt eines der vier Arkmon"
         : AtTrialField ? "Letzte Prüfung · Sprecht mit der Arkanmeisterin auf dem Feld"
         : ReadyForBriefing ? "Letzte Prüfung · Kehrt zur Arkanmeisterin zurück"
         : "Arkmon · Lernt die vier im Hof kennen";

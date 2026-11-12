@@ -3,7 +3,8 @@ using UnityEngine;
 // One mapping for world sprites, walking sheets and dialogue portraits.
 public static class PlayerEquipmentAppearance
 {
-    public static string SpriteName => IntroChapter.Active ? IntroChapter.HasFamilyOutfit ? "Prince-Family" : "Prince-Room-NoLamp"
+    public static string SpriteName => CourtyardStarterMeetings.HasKeeperMantle ? "Prince-Mantle-NoLamp"
+        : IntroChapter.Active ? IntroChapter.HasFamilyOutfit ? "Prince-Family" : "Prince-Room-NoLamp"
         : "Prince-" + (!DemoOpening.Started || DemoOpening.HasMantle ? "Mantle" : "Room")
         + (DemoOpening.Started && !DemoOpening.HasLamp ? "-NoLamp" : "");
     public static Sprite RestingSprite => Resources.Load<Sprite>(SpriteName);

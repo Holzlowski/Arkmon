@@ -107,7 +107,7 @@ public static class ArkanmeisterinConversation
             "Kafla findet Ihr am Trainingsplatz und Panfrie beim Brunnen. Liora zieht es zum Garten, Rauk eher zum Burgtor.",
             "Kommt danach zu mir zurück. Eine letzte Prüfung wartet heute noch auf Euch.");
 
-    static void SpeakAsMentor(DialogueBoxController dialogue, Sprite portrait, params string[] lines)
+    internal static void SpeakAsMentor(DialogueBoxController dialogue, Sprite portrait, params string[] lines)
     {
         var faces = new DialogueLinePresentation[lines.Length];
         for (int i=0; i<faces.Length; i++)
@@ -138,10 +138,51 @@ public static class ArkanmeisterinConversation
         } }, Speaker, "", null);
     }
 
+    internal static void AwardKeeperMantle(DialogueBoxController dialogue, Sprite portrait,
+        string partner, string reaction, System.Func<System.Collections.IEnumerator> putOnMantle)
+    {
+        var mentor = new DialogueLinePresentation { portrait = portrait, emotion = DialogueEmotion.Friendly };
+        dialogue.ShowConversation(new[] { new DialogueSection {
+            dialogue = new[] {
+                "Ihr habt die Prüfung bestanden, Elian. Von heute an dürft Ihr den Mantel eines Arkanhüters tragen.",
+                "Diesen hier habe ich einst Eurem Vater überreicht. Jetzt gehört er Euch.",
+                reaction
+            },
+            presentations = new[] {
+                mentor, mentor,
+                new DialogueLinePresentation { speaker = partner, BeforePresentation = putOnMantle }
+            },
+            endAfterDialogue = true
+        } }, Speaker, "", null);
+    }
+
+    internal static void WalkBackToCourtyard(DialogueBoxController dialogue, Sprite portrait,
+        CourtyardStarterMeetings.Starter partner, System.Func<System.Collections.IEnumerator> onPath,
+        System.Func<System.Collections.IEnumerator> insideGate)
+    {
+        dialogue.ShowConversation(new[] { new DialogueSection {
+            dialogue = new[] {
+                "Kommt, Elian. Gehen wir zurück zum Hof.",
+                $"Kann {partner} mich im Gefäß noch spüren?",
+                $"Ja. Auch im Gefäß bleibt {partner} mit Eurem Arkan verbunden.",
+                "Mit jeder Erfahrung lernt Ihr einander besser kennen. So könnt Ihr beide gemeinsam stärker werden."
+            },
+            presentations = new[] {
+                new DialogueLinePresentation { portrait = portrait, emotion = DialogueEmotion.Friendly },
+                new DialogueLinePresentation { speaker = IntroChapter.PlayerName, emotion = DialogueEmotion.Neutral },
+                new DialogueLinePresentation { portrait = portrait, emotion = DialogueEmotion.Friendly, BeforePresentation = onPath },
+                new DialogueLinePresentation { portrait = portrait, emotion = DialogueEmotion.Friendly, BeforePresentation = insideGate }
+            },
+            endAfterDialogue = true
+        } }, Speaker, "", null);
+    }
+
     public static void SpeakAgain(DialogueBoxController dialogue, Sprite portrait)
     {
         if (CourtyardStarterMeetings.FieldTrialWon)
-            SpeakAsMentor(dialogue,portrait,"Ihr habt das Siegel gemeinsam beschützt. Bald trefft Ihr Eure Wahl, Elian.");
+            SpeakAsMentor(dialogue, portrait, CourtyardStarterMeetings.ChosenPartner.HasValue
+                ? $"Ihr habt {CourtyardStarterMeetings.ChosenPartner.Value} gewählt, Elian."
+                : "Ihr habt das Siegel gemeinsam beschützt. Schaut Euch die vier noch einmal an, Elian.");
         else if (CourtyardStarterMeetings.ReadyForBriefing)
         {
             var configuration = Resources.Load<BattleConfiguration>("Golden Field Trial");

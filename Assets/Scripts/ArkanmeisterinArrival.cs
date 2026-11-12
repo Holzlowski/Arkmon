@@ -14,6 +14,10 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
     static readonly Vector3 GreetingSpot = new Vector3(37.74f,0,-3.38f);
     static readonly Vector3 TrialSpot = new Vector3(13.2f,0,-1.8f);
     static Vector3 FieldStop => CourtyardGateForecourt.Center + new Vector3(.9f, 0, -.45f);
+    static readonly Vector3[] FieldWaypoints = {
+        new Vector3(20, 0, 2.1f), new Vector3(35, 0, 2.1f),
+        new Vector3(40, 0, -.85f), new Vector3(47, 0, -.85f), FieldStop
+    };
     static readonly Vector3 TrialPlayerOffset = new Vector3(1.52f,0,-.20f);
     static ArkanmeisterinArrival instance;
     public static bool Arrived { get; private set; }
@@ -27,6 +31,7 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
     public Vector3 GetTransform() => transform.position + Vector3.up*.8f;
 
     bool presenting;
+    Coroutine carriageDeparture;
     PlayerController steppingPlayer;
     Transform player;
     ArrivalCarriage carriage;
@@ -71,7 +76,11 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         instance.greeting.center = Vector3.up*.85f;
         instance.greeting.radius = .48f;
         instance.greeting.enabled = false;
-        if (Arrived && instance.BuildStage()) instance.ParkAndReveal();
+        if (Arrived && instance.BuildStage())
+        {
+            instance.ParkAndReveal();
+            if (Greeted) instance.carriage.ParkAtStable(instance.StableParkingSpot());
+        }
     }
 
     internal static void ResetProgress()
@@ -87,7 +96,7 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         if (instance == null || !instance.isActiveAndEnabled) return false;
         if (Arrived)
         {
-            dialogue.ShowMessage(Greeted ? "Die Kutsche der Arkanmeisterin steht noch am Tor."
+            dialogue.ShowMessage(Greeted ? "Der Kutscher wartet mit der Kutsche bei Hannes am Stall."
                 : "Da steht ihre Kutsche. Ich sollte die Arkanmeisterin begrüßen.",IntroChapter.PlayerName);
             return true;
         }
@@ -401,6 +410,24 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         }
     }
 
+    private Vector3 StableParkingSpot()
+    {
+        var stable = GameObject.Find("Stable")?.transform;
+        return stable != null ? stable.position + new Vector3(-2.1f, 0, -7.8f) : new Vector3(-13.6f, 0, -2.8f);
+    }
+
+    private IEnumerator SendCarriageToStable()
+    {
+        yield return new WaitForSeconds(1.2f);
+        var route = new[] {
+            carriage.transform.position, new Vector3(30f, 0, -4.15f), new Vector3(20f, 0, -4.0f),
+            new Vector3(8f, 0, -3.9f), new Vector3(-4f, 0, -6.15f), new Vector3(-9.5f, 0, -5.5f),
+            StableParkingSpot()
+        };
+        yield return carriage.DriveToStable(route);
+        carriageDeparture = null;
+    }
+
     private static Vector3 RoadPosition(float x) => new Vector3(x,Parked.y,CourtyardEastFieldStyle.PathZ(x));
 
     private IEnumerator TravelTo(float x,float duration,Shot shot)
@@ -657,6 +684,17 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         {
             if (CourtyardStarterSummoning.Completed)
             {
+                if (CourtyardStarterMeetings.PartnerBound && CourtyardStarterMeetings.AtTrialField)
+                {
+                    player = GameObject.FindWithTag("Player")?.transform;
+                    follow = FindFirstObjectByType<CourtyardCamera>();
+                    if (player == null || follow == null || Camera.main == null) return;
+                    presenting = true;
+                    HideObjective();
+                    StartCoroutine(CompleteReturnToCourtyard(dialogue));
+                    return;
+                }
+                if (BeginPartnerChoice(false)) return;
                 if (CourtyardStarterMeetings.ReadyForBriefing && !CourtyardStarterMeetings.FieldTrialWon
                     && !CourtyardStarterMeetings.AtTrialField)
                 {
@@ -685,15 +723,40 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         StartCoroutine(ResumeVesselTrial(dialogue));
     }
 
+    internal bool BeginPartnerChoice(bool congratulate)
+    {
+        var dialogue = DialogueBoxController.instance;
+        if (presenting || !CourtyardStarterMeetings.FieldTrialWon || CourtyardStarterMeetings.PartnerBound
+            || dialogue == null || dialogue.IsOpen) return false;
+        player = GameObject.FindWithTag("Player")?.transform;
+        follow = FindFirstObjectByType<CourtyardCamera>();
+        if (player == null || follow == null || Camera.main == null) return false;
+        presenting = true;
+        HideObjective();
+        StartCoroutine(ChoosePartner(dialogue, congratulate));
+        return true;
+    }
+
+    private IEnumerator ChoosePartner(DialogueBoxController dialogue, bool congratulate)
+    {
+        var choice = gameObject.AddComponent<CourtyardPartnerChoice>();
+        try
+        {
+            yield return choice.Play(player, follow, dialogue, congratulate, figure, unveiledPortrait);
+            if (CourtyardStarterMeetings.PartnerBound && CourtyardStarterMeetings.AtTrialField)
+                yield return ReturnToCourtyard(dialogue);
+        }
+        finally
+        {
+            if (choice != null) Destroy(choice);
+            FinishPresentation();
+        }
+    }
+
     private IEnumerator LeadToField(DialogueBoxController dialogue)
     {
         try
         {
-            var body = player.GetComponent<Rigidbody>();
-            if (body == null) yield break;
-            var marks = new[] { new Vector3(20, 0, 2.1f), new Vector3(35, 0, 2.1f),
-                new Vector3(40, 0, -.85f), new Vector3(47, 0, -.85f), FieldStop };
-            float footOffset = Mathf.Clamp(body.position.y - CourtyardGuard.Grounded(body.position).y, 0, 1.5f);
             if (!CourtyardStarterMeetings.RecalledForTrial)
             {
                 ArkanmeisterinConversation.RecallBeforeField(dialogue, unveiledPortrait);
@@ -702,43 +765,9 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
                 yield return RecallCourtyardStarters();
             }
 
-            var camera = Camera.main;
-            var cameraStart = camera.transform.position;
-            var angleStart = camera.transform.rotation;
-            float lens = camera.fieldOfView;
             ArkanmeisterinConversation.WalkToField(dialogue, unveiledPortrait,
                 () => new WaitUntil(() => transform.position.x >= 47));
-            steppingPlayer = player.GetComponent<PlayerController>();
-            elianVisual = player.GetComponent<PaperCharacterVisual>();
-            steppingPlayer?.SetScriptedMovement(true);
-            walkingToTrial = true;
-            var followerOffset = body.position - transform.position;
-            followerOffset.y = 0;
-            float time = 0;
-            foreach (var mark in marks)
-            {
-                var start = transform.position;
-                start.y = 0;
-                float duration = Vector3.Distance(start, mark) / 2.65f;
-                for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime)
-                {
-                    time += Time.deltaTime;
-                    Vector3 point = Vector3.Lerp(start, mark, elapsed / duration);
-                    transform.position = CourtyardGuard.Grounded(point);
-                    float settle = Mathf.SmoothStep(0, 1, Mathf.Clamp01(time / 1.1f));
-                    Vector3 beside = point + Vector3.Lerp(followerOffset, new Vector3(-1.10f, 0, -.48f), settle);
-                    Vector3 grounded = CourtyardGuard.Grounded(beside) + Vector3.up * footOffset;
-                    body.position = player.position = grounded;
-                    elianVisual?.FaceWorldDirection(mark - point);
-                    figure.transform.localPosition = Vector3.up * Mathf.Abs(Mathf.Sin(time * 7f)) * .032f;
-                    FrameFieldWalk(point, cameraStart, angleStart, lens, settle);
-                    yield return null;
-                }
-            }
-            transform.position = CourtyardGuard.Grounded(FieldStop);
-            body.position = player.position = CourtyardGuard.Grounded(FieldStop + new Vector3(-1.10f,0,-.48f)) + Vector3.up * footOffset;
-            body.linearVelocity = Vector3.zero;
-            StopTrialWalk();
+            yield return WalkFieldRoute(false);
             CourtyardStarterMeetings.AtTrialField = true;
             elianVisual?.FaceWorldDirection(transform.position - player.position);
             yield return new WaitWhile(() => dialogue != null && dialogue.IsOpen);
@@ -749,9 +778,76 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         finally { FinishPresentation(); }
     }
 
+    private IEnumerator CompleteReturnToCourtyard(DialogueBoxController dialogue)
+    {
+        try { yield return ReturnToCourtyard(dialogue); }
+        finally { FinishPresentation(); }
+    }
+
+    private IEnumerator ReturnToCourtyard(DialogueBoxController dialogue)
+    {
+        CurrentShot = Shot.FieldWalk;
+        follow.ClearScenicView();
+        ArkanmeisterinConversation.WalkBackToCourtyard(dialogue, unveiledPortrait,
+            CourtyardStarterMeetings.ChosenPartner.Value,
+            () => new WaitUntil(() => transform.position.x <= 51),
+            () => new WaitUntil(() => transform.position.x <= 35));
+        yield return WalkFieldRoute(true);
+        CourtyardStarterMeetings.AtTrialField = false;
+        elianVisual?.FaceWorldDirection(transform.position - player.position);
+        yield return new WaitWhile(() => dialogue != null && dialogue.IsOpen);
+    }
+
+    private IEnumerator WalkFieldRoute(bool returning)
+    {
+        var body = player.GetComponent<Rigidbody>();
+        if (body == null) yield break;
+        float footOffset = Mathf.Clamp(body.position.y - CourtyardGuard.Grounded(body.position).y, 0, 1.5f);
+        var camera = Camera.main;
+        var cameraStart = camera.transform.position;
+        var angleStart = camera.transform.rotation;
+        float lens = camera.fieldOfView;
+        var followerOffset = body.position - transform.position;
+        followerOffset.y = 0;
+        var besideOffset = new Vector3(returning ? 1.10f : -1.10f, 0, -.48f);
+        steppingPlayer = player.GetComponent<PlayerController>();
+        elianVisual = player.GetComponent<PaperCharacterVisual>();
+        steppingPlayer?.SetScriptedMovement(true);
+        walkingToTrial = true;
+        float time = 0;
+        int first = returning ? FieldWaypoints.Length - 2 : 0;
+        int step = returning ? -1 : 1;
+        for (int i = first; i >= 0 && i < FieldWaypoints.Length; i += step)
+        {
+            var mark = FieldWaypoints[i];
+            if (returning && i == 1) mark.z = .85f;
+            var start = transform.position;
+            start.y = 0;
+            float duration = Vector3.Distance(start, mark) / 2.65f;
+            for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime)
+            {
+                time += Time.deltaTime;
+                Vector3 point = Vector3.Lerp(start, mark, elapsed / duration);
+                float settle = Mathf.SmoothStep(0, 1, Mathf.Clamp01(time / 1.1f));
+                transform.position = CourtyardGuard.Grounded(point);
+                Vector3 beside = point + Vector3.Lerp(followerOffset, besideOffset, settle);
+                body.position = player.position = CourtyardGuard.Grounded(beside) + Vector3.up * footOffset;
+                elianVisual?.FaceWorldDirection(mark - point);
+                figure.transform.localPosition = Vector3.up * Mathf.Abs(Mathf.Sin(time * 7f)) * .032f;
+                if (!returning) FrameFieldWalk(point, cameraStart, angleStart, lens, settle);
+                yield return null;
+            }
+        }
+        var destination = returning ? FieldWaypoints[0] : FieldStop;
+        transform.position = CourtyardGuard.Grounded(destination);
+        body.position = player.position = CourtyardGuard.Grounded(destination + besideOffset) + Vector3.up * footOffset;
+        body.linearVelocity = Vector3.zero;
+        StopTrialWalk();
+    }
+
     private void FrameFieldWalk(Vector3 point, Vector3 cameraStart, Quaternion angleStart, float lens, float blend)
     {
-        // Cut to the far side before the carriage can cross the foreground.
+        // Cut inside after the bridge shot so the camera stays clear of the wall.
         float passage = point.x < 39f ? 0f : 1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(49, 54, point.x));
         Vector3 side = new Vector3(-2.8f, 3f, -6.6f);
         Vector3 throughGate = new Vector3(6.5f, 2.7f, -.20f);
@@ -987,6 +1083,8 @@ public sealed class ArkanmeisterinArrival : MonoBehaviour, IInteractableAsPlayer
         if (!greetingActive) return;
         greetingActive = false;
         if (!Greeted) { PresentHoodPose(true); return; }
+        if (carriage != null && carriageDeparture == null)
+            carriageDeparture = StartCoroutine(SendCarriageToStable());
         if (!presenting && arrivalAudio != null) returnMusic = StartCoroutine(FadeBackToCourtyard());
     }
 

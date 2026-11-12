@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -239,6 +240,65 @@ public sealed class ArrivalCarriage : MonoBehaviour
     {
         parkedBody.enabled=true;
         foley.Stop();
+    }
+
+    internal IEnumerator DriveToStable(Vector3[] route)
+    {
+        var startRotation = transform.rotation;
+        for (float elapsed = 0; elapsed < .65f; elapsed += Time.deltaTime)
+        {
+            PresentDoor(1 - Mathf.SmoothStep(0, 1, elapsed / .65f));
+            yield return null;
+        }
+        BeginApproach();
+        FaceAlongRoad = true;
+
+        const float duration = 17f;
+        float distance = 0;
+        for (float elapsed = 0; elapsed < duration; elapsed += Time.deltaTime)
+        {
+            float progress = Mathf.SmoothStep(0, 1, elapsed / duration);
+            float x = Mathf.Lerp(route[0].x, route[route.Length - 1].x, progress);
+            Vector3 point = CarriageGround(new Vector3(x, 0, RouteDepth(route, x)));
+            float depthSlope = (RouteDepth(route, x + .12f) - RouteDepth(route, x - .12f)) / .24f;
+            var heading = Quaternion.Euler(0, -Mathf.Atan(depthSlope) * Mathf.Rad2Deg, 0);
+            distance += Vector3.Distance(transform.position, point);
+            transform.SetPositionAndRotation(point, Quaternion.Slerp(startRotation, heading, Mathf.Clamp01(elapsed)));
+            PresentTravel(distance, true);
+            yield return null;
+        }
+        PresentTravel(distance, false);
+        ParkAtStable(route[route.Length - 1]);
+    }
+
+    internal void ParkAtStable(Vector3 spot)
+    {
+        transform.SetPositionAndRotation(CarriageGround(spot), Quaternion.identity);
+        FaceAlongRoad = true;
+        PresentDoor(0);
+        Park();
+    }
+
+    private static Vector3 CarriageGround(Vector3 point) => CourtyardGuard.Grounded(point) + Vector3.up * .02f;
+
+    private static float RouteDepth(Vector3[] route, float x)
+    {
+        if (x >= route[0].x) return route[0].z;
+        for (int i = 1; i < route.Length; i++)
+        {
+            var from = route[i - 1];
+            var to = route[i];
+            if (x < to.x) continue;
+            var before = route[Mathf.Max(0, i - 2)];
+            var after = route[Mathf.Min(route.Length - 1, i + 1)];
+            float span = to.x - from.x;
+            float entry = i == 1 ? 0 : (to.z - before.z) / (to.x - before.x) * span;
+            float exit = i == route.Length - 1 ? 0 : (after.z - from.z) / (after.x - from.x) * span;
+            float t = (x - from.x) / span;
+            float t2 = t * t;
+            return Mathf.SmoothStep(from.z, to.z, t) + t * (1 - t) * (1 - t) * entry + (t2 * t - t2) * exit;
+        }
+        return route[route.Length - 1].z;
     }
 
     private void LateUpdate()
